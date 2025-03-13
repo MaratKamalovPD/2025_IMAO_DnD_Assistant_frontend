@@ -2,7 +2,8 @@ import { useState } from 'react';
 import reactLogo from 'shared/assets/images/react.svg';
 import viteLogo from '/vite.svg';
 
-import style from './Test.module.scss';
+import s from './Test.module.scss';
+import clsx from 'clsx';
 
 export function TestPage() {
   const [count, setCount] = useState(0);
@@ -11,14 +12,18 @@ export function TestPage() {
     <>
       <div>
         <a href='https://vite.dev' target='blank'>
-          <img src={viteLogo} className={style.logo} alt='Vite logo' />
+          <img src={viteLogo} className={s.logo} alt='Vite logo' />
         </a>
         <a href='https://react.dev' target='_blank'>
-          <img src={reactLogo} className={style.logo} alt='React logo' />
+          <img
+            src={reactLogo}
+            className={clsx(s.logo, s.react)}
+            alt='React logo'
+          />
         </a>
       </div>
       <h1>Vite + React</h1>
-      <div className={style.card}>
+      <div className={s.card}>
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
@@ -26,7 +31,7 @@ export function TestPage() {
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
       </div>
-      <p className={style['read-the-docs']}>
+      <p className={s['read-the-docs']}>
         Click on the Vite and React logos to learn more
       </p>
     </>

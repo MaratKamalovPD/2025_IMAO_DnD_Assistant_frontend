@@ -1,14 +1,28 @@
-import { createHashRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { Link } from 'react-router';
 
-import { TestPage } from './../../pages/test';
+import { TestPage } from 'pages/test';
 
-const router = createHashRouter([
+const Test = () => {
+  return (
+    <div>
+      Hello, world!
+      <Link to='test'>TestPage</Link>
+    </div>
+  );
+};
+
+const router = createBrowserRouter([
   {
     path: '/',
+    element: <Test />,
+  },
+  {
+    path: 'test',
     element: <TestPage />,
   },
 ]);
 
-export const AppRouter = () => {
+export function AppRouter() {
   return <RouterProvider router={router} />;
-};
+}
