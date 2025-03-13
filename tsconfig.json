@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    "paths": {
+      "app/*": ["src/app/*"],
+      "entities/*": ["src/entities/*"],
+      "pages/*": ["src/pages/*"],
+      "shared/*": ["src/shared/*"]
+    }
+  }
+}
