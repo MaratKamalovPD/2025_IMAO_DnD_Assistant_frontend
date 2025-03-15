@@ -1,0 +1,1 @@
+export { creaturesReduser } from './model';

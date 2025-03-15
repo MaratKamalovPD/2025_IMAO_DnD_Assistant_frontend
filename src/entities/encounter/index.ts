@@ -1,0 +1,1 @@
+export { encounterReduser } from './model';
