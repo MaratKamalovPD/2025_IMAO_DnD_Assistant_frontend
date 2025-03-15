@@ -18,7 +18,7 @@ export const CreatureCard = ({ id }: CreatureCardProps) => {
   const dispatch = useDispatch();
 
   // Получаем данные персонажа
-  const Creature = useSelector<CreaturesStore>((state) =>
+  const creature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, id),
   ) as Creature;
 
@@ -26,11 +26,11 @@ export const CreatureCard = ({ id }: CreatureCardProps) => {
   const { selectedCreatureId, currentTurnIndex, participants } =
     useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
 
-  if (!Creature) return null;
+  if (!creature) return null;
 
   // Рассчитываем процент HP для прогресс-бара
   const hpPercentage = Math.floor(
-    (Creature.hp.current / Creature.hp.max) * 100,
+    (creature.hp.current / creature.hp.max) * 100,
   );
 
   const handleClick = () => {
@@ -40,7 +40,7 @@ export const CreatureCard = ({ id }: CreatureCardProps) => {
   // Определяем классы для стилизации
   const cardClasses = clsx(s.card, {
     [s.selected]: selectedCreatureId === id,
-    [s.dead]: Creature.hp.current <= 0,
+    [s.dead]: creature.hp.current <= 0,
     [s.currentTurn]: participants[currentTurnIndex] === id,
   });
 
@@ -50,13 +50,13 @@ export const CreatureCard = ({ id }: CreatureCardProps) => {
       onClick={handleClick}
       role='button'
       tabIndex={0}
-      aria-label={`Выбрать ${Creature.name}`}
+      aria-label={`Выбрать ${creature.name}`}
     >
       {/* Блок с изображением */}
       <div className={s.imageContainer}>
         <img
-          src={Creature.image || placeholderImage}
-          alt={Creature.name}
+          src={creature.image || placeholderImage}
+          alt={creature.name}
           className={s.image}
           onError={(e) => {
             (e.target as HTMLImageElement).src = placeholderImage;
@@ -66,7 +66,7 @@ export const CreatureCard = ({ id }: CreatureCardProps) => {
 
       {/* Блок с основной информацией */}
       <div className={s.info}>
-        <h3 className={s.name}>{Creature.name}</h3>
+        <h3 className={s.name}>{creature.name}</h3>
 
         {/* Индикатор HP */}
         <div className={s.hpBlock}>
@@ -74,17 +74,17 @@ export const CreatureCard = ({ id }: CreatureCardProps) => {
             <div className={s.hpFill} style={{ width: `${hpPercentage}%` }} />
           </div>
           <span className={s.hpText}>
-            {Creature.hp.current}/{Creature.hp.max} HP
+            {creature.hp.current}/{creature.hp.max} HP
           </span>
         </div>
 
         {/* Блок с AC и условиями */}
         <div className={s.statsRow}>
-          <div className={s.ac}>AC: {Creature.ac}</div>
+          <div className={s.ac}>AC: {creature.ac}</div>
 
-          {Creature.conditions.length > 0 && (
+          {creature.conditions.length > 0 && (
             <div className={s.conditions}>
-              {Creature.conditions.map((condition) => (
+              {creature.conditions.map((condition) => (
                 <span
                   key={condition}
                   className={s.conditionBadge}
