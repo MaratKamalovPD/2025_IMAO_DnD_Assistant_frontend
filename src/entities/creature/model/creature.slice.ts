@@ -27,6 +27,9 @@ export type Creature = {
   };
   image?: string;
   notes: string;
+  actions?: {
+    name: string;
+  }[];
 };
 
 const creatureAdapter = createEntityAdapter<Creature>({

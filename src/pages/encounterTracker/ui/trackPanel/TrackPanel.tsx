@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-
+import { Link } from 'react-router';
 import {
   Creature,
   creatureSelectors,
@@ -22,12 +22,15 @@ export const TrackPanel = () => {
   ) as Creature;
 
   return (
-    <div className='tracker'>
-      <span>Раунд: {currentRound}</span>
-      <span>Ход: {name}</span>
-      <button onClick={() => dispatch(encounterActions.nextTurn())}>
-        Следующий ход
-      </button>
-    </div>
+    <>
+      <div className='tracker'>
+        <span>Раунд: {currentRound}</span>
+        <span>Ход: {name}</span>
+        <button onClick={() => dispatch(encounterActions.nextTurn())}>
+          Следующий ход
+        </button>
+      </div>
+      <Link to='/bestiary'>Перейти в бестиарий</Link>
+    </>
   );
 };
