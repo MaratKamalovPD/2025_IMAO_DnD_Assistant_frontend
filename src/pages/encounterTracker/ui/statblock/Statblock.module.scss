@@ -1,0 +1,136 @@
+.statblockContainer {
+  display: flex;
+  padding: 15px;
+  justify-content: center;
+}
+
+.creaturePanel {
+  border: 1px solid #2A2A40;
+  border-radius: 15px;
+  background-color: #2A2A40;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 25px;
+
+  &__titleContainer{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 20px 0;
+  }
+
+  &__title {
+    color: #FF6F61;
+    font-weight: bold;
+    font-size: 24px;
+    display: flex;
+  }
+
+  &__statsContainer {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+  }
+
+  &__deadElement {
+    min-width: 10% !important;
+  }
+
+  &__statsElement {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-width: 30%;
+
+    &__image {
+    }
+
+    &__text {
+      font-size: 15px;
+      font-weight: bold;
+      color: white;
+      margin-left: 10px;
+    }
+
+    input[type="text"] {
+      font-size: 15px;
+      padding: 8px;
+      color: white;
+      border-radius: 8px;
+      border: none;
+      background-color: #3A3A50;
+      width: 120px;
+      margin-left: 10px;
+    }
+
+    input[type="checkbox"] {
+      margin-left: 10px;
+      width: auto;
+    }
+  }
+
+  &__actionsContainer {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    padding: 0 5px;
+
+    &__header {
+      font-size: 20px;
+      font-weight: bold;
+      color: #FF6F61;
+    }
+  }
+
+  &__actionsList {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+
+    &__element {
+      background-color: #FF6F61;
+      color: rgba(255, 255, 255, 0.829);
+      padding: 15px 10px;
+      border-radius: 8px;
+      border: none;
+      font-weight: bolder;
+      font-size: 13px;
+      margin-right: 15px;
+    }
+
+    button {
+      &:hover {
+        color: white;
+      }
+
+      &:active {
+        opacity: 0.8;
+        border: 0.5px solid white;
+      }
+    }
+  }
+
+  &__notesContainer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+
+    &__title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #FF6F61;
+    }
+
+    textarea {
+      margin-top: 5px;
+      font-size: 14px;
+      padding: 15px;
+      border-radius: 8px;
+      border: none;
+      background-color: #3A3A50;
+      resize: none;
+      height: 150px;
+    }
+  }
+}

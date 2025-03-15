@@ -1,5 +1,10 @@
+@font-face {
+  font-family: 'OpenSans';
+  src: url('../../shared/assets/fonts/OpenSans.ttf'), format('ttf');
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
