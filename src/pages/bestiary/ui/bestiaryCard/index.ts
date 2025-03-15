@@ -1,0 +1,1 @@
+export { BestiaryCard } from './BestiaryCard';
