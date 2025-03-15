@@ -83,6 +83,12 @@ export const Statblock = () => {
           <textarea placeholder='Введите заметки...'></textarea>
         </div>
       </div>
+      <textarea className={s.desciptionContainer}>
+        
+      </textarea>
+      <button className={s.creaturePanel__actionsList__element}>
+        Сгенерировать
+      </button>
     </div>
   );
 };

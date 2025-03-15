@@ -2,6 +2,22 @@
   display: flex;
   padding: 15px;
   justify-content: center;
+  flex-direction: column;
+
+  textarea {
+    margin-top: 5px;
+    font-size: 14px;
+    padding: 15px;
+    border-radius: 8px;
+    border: none;
+    background-color: #3A3A50;
+    resize: none;
+  }
+}
+
+.desciptionContainer {
+  display: flex;
+  margin-top: 30px;
 }
 
 .creaturePanel {
@@ -10,7 +26,6 @@
   background-color: #2A2A40;
   display: flex;
   flex-direction: column;
-  width: 100%;
   padding: 25px;
 
   &__titleContainer{
@@ -121,15 +136,7 @@
       font-weight: bold;
       color: #FF6F61;
     }
-
     textarea {
-      margin-top: 5px;
-      font-size: 14px;
-      padding: 15px;
-      border-radius: 8px;
-      border: none;
-      background-color: #3A3A50;
-      resize: none;
       height: 150px;
     }
   }
