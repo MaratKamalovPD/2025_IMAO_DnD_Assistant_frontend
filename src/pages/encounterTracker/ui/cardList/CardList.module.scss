@@ -1,0 +1,49 @@
+.listContainer {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  position: relative;
+  min-height: 220px; /* Минимальная высота для визуальной целостности */
+  margin: 0 -1rem; /* Компенсация для скрытия боковых теней */
+  padding: 0 1rem; /* Чтобы контент не прилипал к краям */
+  max-width: 80vw;
+}
+
+/* Стили для скроллбара */
+.listContainer::-webkit-scrollbar {
+  height: 8px;
+  background-color: transparent;
+}
+
+.listContainer::-webkit-scrollbar-thumb {
+  background-color: #4a4a4a;
+  border-radius: 4px;
+}
+
+.listContainer::-webkit-scrollbar-thumb:hover {
+  background-color: #5a5a5a;
+}
+
+/* Градиенты для индикации скролла */
+.listContainer::before,
+.listContainer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.listContainer::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.7), transparent);
+}
+
+.listContainer::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.7), transparent);
+}
