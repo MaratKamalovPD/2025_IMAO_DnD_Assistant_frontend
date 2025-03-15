@@ -1,14 +1,20 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Link } from 'react-router';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import { TestPage } from 'pages/test';
+import { Bestiary } from 'pages/bestiary';
 import { EncounterTracker } from 'pages/encounterTracker';
+import { TestPage } from 'pages/test';
 
 const Test = () => {
   return (
     <>
       <div>Hello, world!</div>
-      <Link to='encounter_tracker'>EncounterTracker</Link>
+      <div>
+        <Link to='encounter_tracker'>EncounterTracker</Link>
+      </div>
+      <div>
+        <Link to='bestiary'>Bestiary</Link>
+      </div>
     </>
   );
 };
@@ -25,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: 'encounter_tracker',
     element: <EncounterTracker />,
+  },
+  {
+    path: 'bestiary',
+    element: <Bestiary />,
   },
 ]);
 

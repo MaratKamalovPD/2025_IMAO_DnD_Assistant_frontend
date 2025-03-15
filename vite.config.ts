@@ -8,6 +8,12 @@ export default defineConfig({
   // base: '/2025_IMAO_DnD_Assistant_frontend/',
   server: {
     port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:8080',
+        changeOrigin: true,
+      },
+    },
   },
   resolve: {
     alias: {

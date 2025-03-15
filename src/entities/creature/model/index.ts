@@ -5,4 +5,8 @@ export {
 } from './creature.slice';
 
 export type { Creature } from './creature.slice';
-export type { CreaturesStore } from './types';
+export type {
+  CreatureClippedData,
+  CreatureFullData,
+  CreaturesStore,
+} from './types';
