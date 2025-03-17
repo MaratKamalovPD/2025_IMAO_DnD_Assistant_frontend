@@ -1,7 +1,7 @@
 import { AppRouter } from './routes';
 
-import { MainProviders } from './providers';
 import 'app/styles/global.scss';
+import { MainProviders } from './providers';
 
 function App() {
   return (
