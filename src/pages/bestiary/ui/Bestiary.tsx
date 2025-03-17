@@ -36,41 +36,71 @@ export const Bestiary = () => {
     console.log("Выбранные фильтры:", newFilters);
   };
 
-  // Структура запроса
-  const requestBody: GetCreaturesRequest = {
-    start, // начальная позиция (например, 0)
-    size: 100, // количество элементов
-    search: {
-      value: debouncedSearchValue, // значение для поиска
-      exact: false, // точный поиск (true/false)
-    },
-    order: [
-      {
-        field: 'exp', // поле для сортировки
-        direction: 'asc', // направление сортировки
+  const mapFiltersToRequestBody = (filters: { [key: string]: string[] }): GetCreaturesRequest => {
+    const requestBody: GetCreaturesRequest = {
+      start: 0, // начальная позиция (например, 0)
+      size: 100, // количество элементов
+      search: {
+        value: debouncedSearchValue, // значение для поиска
+        exact: false, // точный поиск (true/false)
       },
-      {
-        field: 'name', // поле для сортировки
-        direction: 'asc', // направление сортировки
+      order: [
+        {
+          field: 'exp', // поле для сортировки
+          direction: 'asc', // направление сортировки
+        },
+        {
+          field: 'name', // поле для сортировки
+          direction: 'asc', // направление сортировки
+        },
+      ],
+      filter: {
+        book: [], // фильтр по книгам
+        npc: [], // фильтр по NPC
+        challengeRating: [], // фильтр по уровню сложности
+        type: [], // фильтр по типу существа
+        size: [], // фильтр по размеру
+        tag: [], // фильтр по тегам
+        moving: [], // фильтр по способу перемещения
+        senses: [], // фильтр по чувствам
+        vulnerabilityDamage: [], // фильтр по уязвимостям к урону
+        resistanceDamage: [], // фильтр по сопротивлению к урону
+        immunityDamage: [], // фильтр по иммунитету к урону
+        immunityCondition: [], // фильтр по иммунитету к состояниям
+        features: [], // фильтр по особенностям
+        environment: [], // фильтр по окружению
       },
-    ],
-    filter: {
-      book: [], // фильтр по книгам
-      npc: [], // фильтр по NPC
-      challengeRating: [], // фильтр по уровню сложности
-      type: [], // фильтр по типу существа
-      size: [], // фильтр по размеру
-      tag: [], // фильтр по тегам
-      moving: [], // фильтр по способу перемещения
-      senses: [], // фильтр по чувствам
-      vulnerabilityDamage: [], // фильтр по уязвимостям к урону
-      resistanceDamage: [], // фильтр по сопротивлению к урону
-      immunityDamage: [], // фильтр по иммунитету к урону
-      immunityCondition: [], // фильтр по иммунитету к состояниям
-      features: [], // фильтр по особенностям
-      environment: [], // фильтр по окружению
-    },
+    };
+  
+    // Маппинг ключей из filters в соответствующие поля в requestBody.filter
+    const filterMapping: { [key: string]: keyof typeof requestBody.filter } = {
+      "Иммунитет к урону": "immunityDamage",
+      "Иммунитет к состояниям": "immunityCondition",
+      "Сопротивление к урону": "resistanceDamage",
+      "Уязвимость к урону": "vulnerabilityDamage",
+      "Чувства":"senses",
+      "Перемещение": "moving",
+      "Размер существа": "size",
+      "Тип существа":"type",
+      "Уровень опасности":"challengeRating", 
+      "Места обитания":"environment",
+      "Умения":"features",
+      // Добавьте другие соответствия, если необходимо
+    };
+  
+    // Применяем фильтры
+    Object.entries(filters).forEach(([key, values]) => {
+      const mappedKey = filterMapping[key];
+      if (mappedKey && requestBody.filter[mappedKey]) {
+        requestBody.filter[mappedKey] = values;
+      }
+    });
+  
+    return requestBody;
   };
+  
+  // Использование функции
+  const requestBody = mapFiltersToRequestBody(filters);
 
   const {
     data: creatures,
@@ -95,7 +125,7 @@ export const Bestiary = () => {
     setAllCreatures([]); // Очищаем старые данные
     setStart(0); // Сбрасываем смещение
     setHasMore(true); // Сбрасываем флаг наличия данных
-  }, [debouncedSearchValue]);
+  }, [debouncedSearchValue, filters]);
 
   // Эффект для отслеживания прокрутки страницы
   useEffect(() => {
@@ -144,7 +174,10 @@ export const Bestiary = () => {
         <div className={s.modalOverlay} onClick={() => setIsModalOpen(false)}>
           <div className={s.modalContent} onClick={(e) => e.stopPropagation()}>
             <button className={s.closeButton} onClick={() => setIsModalOpen(false)}>✖</button>
-            <FilterModalWindow onFilterChange={handleFilterChange} />
+            <FilterModalWindow
+              onFilterChange={handleFilterChange}
+              selectedFilters={filters} // Передаем текущие фильтры
+            />
           </div>
         </div>
       )}
