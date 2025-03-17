@@ -1,9 +1,24 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { CreatureClippedData, CreatureFullData } from 'entities/creature/model';
 
+// Тип для поля "search"
+type SearchParams = {
+  value: string;
+  exact: boolean;
+};
+
+// Тип для поля "order"
+type OrderParams = {
+  field: string;
+  direction: 'asc' | 'desc';
+};
+
+// Новый тип для запроса
 export type GetCreaturesRequest = {
-  size: number;
   start: number;
+  size: number;
+  search: SearchParams;
+  order: OrderParams[];
 };
 
 const bestiaryApi = createApi({
@@ -15,7 +30,7 @@ const bestiaryApi = createApi({
       query: (body) => ({
         url: '/bestiary/list',
         method: 'POST',
-        body,
+        body, 
       }),
     }),
 
