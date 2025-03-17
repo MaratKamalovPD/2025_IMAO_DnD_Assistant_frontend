@@ -13,12 +13,31 @@ type OrderParams = {
   direction: 'asc' | 'desc';
 };
 
+// Тип для поля "filter"
+type FilterParams = {
+  book: string[];
+  npc: string[];
+  challengeRating: string[];
+  type: string[];
+  size: string[];
+  tag: string[];
+  moving: string[];
+  senses: string[];
+  vulnerabilityDamage: string[];
+  resistanceDamage: string[];
+  immunityDamage: string[];
+  immunityCondition: string[];
+  features: string[];
+  environment: string[];
+};
+
 // Новый тип для запроса
 export type GetCreaturesRequest = {
   start: number;
   size: number;
   search: SearchParams;
   order: OrderParams[];
+  filter: FilterParams;
 };
 
 const bestiaryApi = createApi({

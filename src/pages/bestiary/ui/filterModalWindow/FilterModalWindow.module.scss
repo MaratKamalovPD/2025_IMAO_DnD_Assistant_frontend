@@ -1,7 +1,74 @@
+/* FilterModalWindow.module.scss*/
+
 .selectedCategoryCheckbox {
-    background-color: #e22626;
-    color: #374151;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 14px;
+    background-color: #c98d8d;
+    border-color: black;
+  }
+
+/* Padding */
+.padding4 {
+    padding: 1rem; /* 4 * 0.25rem = 1rem */
+  }
+  
+  /* Background color */
+  .backgroundColorGray100 {
+    background-color: #f3f4f6; /* Пример цвета для bg-gray-100 */
+  }
+  
+  /* Border radius */
+  .borderRadiusLg {
+    border-radius: 0.5rem; /* Пример для rounded-lg */
+  }
+  
+  /* Margin bottom */
+  .marginBottom4 {
+    margin-bottom: 1rem; /* 4 * 0.25rem = 1rem */
+  }
+  
+  /* Font size and weight */
+  .fontSizeLg {
+    font-size: 1.125rem; /* Пример для text-lg */
+  }
+  
+  .fontWeightSemibold {
+    font-weight: 600; /* Пример для font-semibold */
+  }
+  
+  /* Flexbox and gap */
+  .flexWrap {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .gap2 {
+    gap: 0.5rem; /* 2 * 0.25rem = 0.5rem */
+  }
+  
+  /* Button styles */
+  .buttonPadding {
+    padding: 0.75rem 1rem; /* Пример для px-3 py-1 */
+  }
+  
+  .buttonBorder {
+    border: 1px solid #e5e7eb; /* Пример для border */
+  }
+  
+  .buttonBorderRadius {
+    border-radius: 0.5rem; /* Пример для rounded-lg */
+  }
+  
+  .buttonFontSize {
+    font-size: 0.875rem; /* Пример для text-sm */
+  }
+  
+  .buttonTransition {
+    transition: background-color 0.2s ease; /* Пример для transition-colors */
+  }
+  
+  .buttonBackgroundGray200 {
+    background-color: #e5e7eb; /* Пример для bg-gray-200 */
+  }
+  
+  .buttonBackgroundGray200:hover {
+    background-color: #d1d5db; /* Пример для hover:bg-gray-300 */
   }

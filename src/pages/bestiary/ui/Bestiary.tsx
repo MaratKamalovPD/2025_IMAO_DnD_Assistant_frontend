@@ -38,22 +38,38 @@ export const Bestiary = () => {
 
   // Структура запроса
   const requestBody: GetCreaturesRequest = {
-    start,
-    size: 100,
+    start, // начальная позиция (например, 0)
+    size: 100, // количество элементов
     search: {
-      value: debouncedSearchValue,
-      exact: false,
+      value: debouncedSearchValue, // значение для поиска
+      exact: false, // точный поиск (true/false)
     },
     order: [
       {
-        field: 'exp',
-        direction: 'asc',
+        field: 'exp', // поле для сортировки
+        direction: 'asc', // направление сортировки
       },
       {
-        field: 'name',
-        direction: 'asc',
+        field: 'name', // поле для сортировки
+        direction: 'asc', // направление сортировки
       },
     ],
+    filter: {
+      book: [], // фильтр по книгам
+      npc: [], // фильтр по NPC
+      challengeRating: [], // фильтр по уровню сложности
+      type: [], // фильтр по типу существа
+      size: [], // фильтр по размеру
+      tag: [], // фильтр по тегам
+      moving: [], // фильтр по способу перемещения
+      senses: [], // фильтр по чувствам
+      vulnerabilityDamage: [], // фильтр по уязвимостям к урону
+      resistanceDamage: [], // фильтр по сопротивлению к урону
+      immunityDamage: [], // фильтр по иммунитету к урону
+      immunityCondition: [], // фильтр по иммунитету к состояниям
+      features: [], // фильтр по особенностям
+      environment: [], // фильтр по окружению
+    },
   };
 
   const {
