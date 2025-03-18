@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { CreatureClippedData } from 'entities/creature/model/types';
 import { GetCreaturesRequest, useGetCreaturesQuery } from 'pages/bestiary/api';
+import { useEffect, useState } from 'react';
+import s from './Bestiary.module.scss';
 import { BestiaryCard } from './bestiaryCard';
 import { FilterModalWindow } from './filterModalWindow';
-import { CreatureClippedData } from 'entities/creature/model/types';
-import s from './Bestiary.module.scss';
 
 // Хук для дебаунса
 const useDebounce = (value: string, delay: number) => {
@@ -22,6 +22,27 @@ const useDebounce = (value: string, delay: number) => {
   return debouncedValue;
 };
 
+const throttle = (
+  func: (...args: any[]) => void,
+  delay: number,
+): ((...args: any[]) => void) => {
+  let isCalled: boolean = false; // Флаг, указывающий, была ли функция вызвана
+
+  return function (...args: any[]): void {
+    if (isCalled) return;
+
+    isCalled = true;
+
+    func(...args);
+
+    setTimeout(() => {
+      isCalled = false; // Сбрасываем флаг
+    }, delay);
+  };
+};
+
+const SIZE = 50;
+
 export const Bestiary = () => {
   const [start, setStart] = useState(0); // Текущее смещение для запроса
   const [allCreatures, setAllCreatures] = useState<CreatureClippedData[]>([]); // Все загруженные существа
@@ -29,17 +50,24 @@ export const Bestiary = () => {
   const [hasMore, setHasMore] = useState(true); // Есть ли ещё данные для загрузки
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filters, setFilters] = useState<{ [key: string]: string[] }>({});
+
   const debouncedSearchValue = useDebounce(searchValue, 500); // Дебаунс для поиска
+  const setStartThrottled = throttle(setStart, 1000);
 
   const handleFilterChange = (newFilters: { [key: string]: string[] }) => {
     setFilters(newFilters);
-    console.log("Выбранные фильтры:", newFilters);
+    console.log('Выбранные фильтры:', newFilters);
   };
 
-  const mapFiltersToRequestBody = (filters: { [key: string]: string[] }): GetCreaturesRequest => {
+  const mapFiltersToRequestBody = (
+    filters: {
+      [key: string]: string[];
+    },
+    start: number,
+  ): GetCreaturesRequest => {
     const requestBody: GetCreaturesRequest = {
-      start: 0, // начальная позиция (например, 0)
-      size: 100, // количество элементов
+      start: start, // начальная позиция (например, 0)
+      size: SIZE, // количество элементов
       search: {
         value: debouncedSearchValue, // значение для поиска
         exact: false, // точный поиск (true/false)
@@ -71,23 +99,23 @@ export const Bestiary = () => {
         environment: [], // фильтр по окружению
       },
     };
-  
+
     // Маппинг ключей из filters в соответствующие поля в requestBody.filter
     const filterMapping: { [key: string]: keyof typeof requestBody.filter } = {
-      "Иммунитет к урону": "immunityDamage",
-      "Иммунитет к состояниям": "immunityCondition",
-      "Сопротивление к урону": "resistanceDamage",
-      "Уязвимость к урону": "vulnerabilityDamage",
-      "Чувства":"senses",
-      "Перемещение": "moving",
-      "Размер существа": "size",
-      "Тип существа":"type",
-      "Уровень опасности":"challengeRating", 
-      "Места обитания":"environment",
-      "Умения":"features",
+      'Иммунитет к урону': 'immunityDamage',
+      'Иммунитет к состояниям': 'immunityCondition',
+      'Сопротивление к урону': 'resistanceDamage',
+      'Уязвимость к урону': 'vulnerabilityDamage',
+      Чувства: 'senses',
+      Перемещение: 'moving',
+      'Размер существа': 'size',
+      'Тип существа': 'type',
+      'Уровень опасности': 'challengeRating',
+      'Места обитания': 'environment',
+      Умения: 'features',
       // Добавьте другие соответствия, если необходимо
     };
-  
+
     // Применяем фильтры
     Object.entries(filters).forEach(([key, values]) => {
       const mappedKey = filterMapping[key];
@@ -95,12 +123,14 @@ export const Bestiary = () => {
         requestBody.filter[mappedKey] = values;
       }
     });
-  
+
     return requestBody;
   };
-  
+
   // Использование функции
-  const requestBody = mapFiltersToRequestBody(filters);
+  const [requestBody, setRequestBody] = useState<GetCreaturesRequest>(
+    mapFiltersToRequestBody(filters, 0),
+  );
 
   const {
     data: creatures,
@@ -111,21 +141,31 @@ export const Bestiary = () => {
   // Эффект для добавления новых данных к существующим
   useEffect(() => {
     if (creatures) {
-      // Если данные закончились, останавливаем загрузку
-      if (creatures.length === 0) {
-        setHasMore(false);
+      if (start === 0) {
+        setAllCreatures(creatures);
       } else {
         setAllCreatures((prev) => [...prev, ...creatures]);
+      }
+    } else {
+      if (start === 0) {
+        setAllCreatures([]);
+      } else {
+        setHasMore(false);
       }
     }
   }, [creatures]);
 
-  // Эффект для сброса данных при изменении поискового запроса
+  // Эффект для сброса данных при изменении поискового запроса/фильтра
   useEffect(() => {
-    setAllCreatures([]); // Очищаем старые данные
     setStart(0); // Сбрасываем смещение
     setHasMore(true); // Сбрасываем флаг наличия данных
+    setRequestBody(mapFiltersToRequestBody(filters, 0));
   }, [debouncedSearchValue, filters]);
+
+  // Эффект для запроса при прокрутки страницы
+  useEffect(() => {
+    setRequestBody(mapFiltersToRequestBody(filters, start));
+  }, [start]);
 
   // Эффект для отслеживания прокрутки страницы
   useEffect(() => {
@@ -137,8 +177,7 @@ export const Bestiary = () => {
         !isLoading &&
         hasMore
       ) {
-        // Увеличиваем смещение для следующего запроса
-        setStart((prev) => prev + 100);
+        setStartThrottled((prev: any) => prev + SIZE);
       }
     };
 
@@ -149,7 +188,7 @@ export const Bestiary = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isLoading, hasMore]);
 
-  if (isLoading && start === 0) return <div>Loading...</div>;
+  if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading creatures</div>;
 
   return (
@@ -159,8 +198,8 @@ export const Bestiary = () => {
       {/* Поисковая строка */}
       <div className={s.searchContainer}>
         <input
-          type="text"
-          placeholder="Поиск по названию..."
+          type='text'
+          placeholder='Поиск по названию...'
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           className={s.searchInput}
@@ -173,7 +212,12 @@ export const Bestiary = () => {
       {isModalOpen && (
         <div className={s.modalOverlay} onClick={() => setIsModalOpen(false)}>
           <div className={s.modalContent} onClick={(e) => e.stopPropagation()}>
-            <button className={s.closeButton} onClick={() => setIsModalOpen(false)}>✖</button>
+            <button
+              className={s.closeButton}
+              onClick={() => setIsModalOpen(false)}
+            >
+              ✖
+            </button>
             <FilterModalWindow
               onFilterChange={handleFilterChange}
               selectedFilters={filters} // Передаем текущие фильтры
@@ -182,11 +226,12 @@ export const Bestiary = () => {
         </div>
       )}
 
-
       {/* Список существ */}
       <div className={s.bestiaryContainer}>
         {allCreatures.map((creature) => (
-          <BestiaryCard key={creature._id} creature={creature} />
+          <div key={creature._id}>
+            <BestiaryCard creature={creature} />
+          </div>
         ))}
       </div>
 
@@ -194,9 +239,7 @@ export const Bestiary = () => {
       {isLoading && <div>Loading more creatures...</div>}
 
       {/* Сообщение, если ничего не найдено */}
-      {allCreatures.length === 0 && !isLoading && (
-        <div>Ничего не найдено</div>
-      )}
+      {allCreatures.length === 0 && !isLoading && <div>Ничего не найдено</div>}
 
       {/* Сообщение, если данные закончились */}
       {!hasMore && <div>Все данные загружены</div>}
