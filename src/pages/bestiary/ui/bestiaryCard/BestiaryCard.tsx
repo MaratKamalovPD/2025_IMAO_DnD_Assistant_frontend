@@ -57,7 +57,7 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
       <div className={s.cardContainer}>
         <div className={s.imageWrapper}>
           <img
-            src={creature.images[0]}
+            src={creature.images[2] || creature.images[1] || placeholderImage}
             alt={creature.name.eng}
             className={s.creatureImage}
           />

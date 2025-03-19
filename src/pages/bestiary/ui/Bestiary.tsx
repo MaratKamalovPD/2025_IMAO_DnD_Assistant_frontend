@@ -4,59 +4,23 @@ import { useEffect, useState } from 'react';
 import s from './Bestiary.module.scss';
 import { BestiaryCard } from './bestiaryCard';
 import { FilterModalWindow } from './filterModalWindow';
-
-// Хук для дебаунса
-const useDebounce = (value: string, delay: number) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-};
-
-const throttle = (
-  func: (...args: any[]) => void,
-  delay: number,
-): ((...args: any[]) => void) => {
-  let isCalled: boolean = false; // Флаг, указывающий, была ли функция вызвана
-
-  return function (...args: any[]): void {
-    if (isCalled) return;
-
-    isCalled = true;
-
-    func(...args);
-
-    setTimeout(() => {
-      isCalled = false; // Сбрасываем флаг
-    }, delay);
-  };
-};
+import {useDebounce, throttle} from 'shared/lib'
 
 const SIZE = 50;
 
 export const Bestiary = () => {
   const [start, setStart] = useState(0); // Текущее смещение для запроса
   const [allCreatures, setAllCreatures] = useState<CreatureClippedData[]>([]); // Все загруженные существа
-  const [searchValue, setSearchValue] = useState(''); // Значение поисковой строки
-  const [hasMore, setHasMore] = useState(true); // Есть ли ещё данные для загрузки
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [filters, setFilters] = useState<{ [key: string]: string[] }>({});
+  const [searchValue, setSearchValue] = useState<string>(''); // Значение поисковой строки
+  const [hasMore, setHasMore] = useState<boolean>(true); // Есть ли ещё данные для загрузки
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Состояние модального окна (открыто/закрыто)
+  const [filters, setFilters] = useState<Record<string, string[]>>({}); // Фильтры, где ключ — строка, а значение — массив строк
 
   const debouncedSearchValue = useDebounce(searchValue, 500); // Дебаунс для поиска
   const setStartThrottled = throttle(setStart, 1000);
 
   const handleFilterChange = (newFilters: { [key: string]: string[] }) => {
     setFilters(newFilters);
-    console.log('Выбранные фильтры:', newFilters);
   };
 
   const mapFiltersToRequestBody = (

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import s from './Login.module.scss';
+import clsx from 'clsx';
 
 export const Login = () => {
     const [email, setEmail] = useState<string>('');
@@ -27,47 +28,47 @@ export const Login = () => {
     };
 
     return (
-        <div className={s['main-page']}>
-            <div className={s['auth-page']}>
-                <div className={s['auth-form']}>
-                    <div className={s['auth-form__main']}>
-                        <a href="{{urlMain}}" data-url="{{urlMain}}">
-                            <img
-                                className={s.logo}
-                                src="/images/image.png"
-                                alt="Logo Image"
-                            />
-                        </a>
-                        <p className={s['auth-form__title']}>
-                            {titleBlack} <span>{titleBlue}</span>
-                        </p>
-                        <form className={s.form} onSubmit={handleSubmit}>
-                            <div className={s['form__input']}>
-                                <input
-                                    name="login"
-                                    type="text"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Логин"
-                                />
-                            </div>
-                            <div className={s['form__input']}>
-                                <input
-                                    name="password"
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="Пароль"
-                                />
-                            </div>
-                            <button type="submit" className={`${s['form__btn']} ${s['btn-primary']}`}>
-                                {buttonText}
-                            </button>
-                        </form>
-                        <div className={s.error}></div>
-                    </div>
-                </div>
+        <div className={s.mainPage}>
+          <div className={s.authPage}>
+            <div className={s.authForm}>
+              <div className={s.authFormMain}>
+                <a href="{{urlMain}}" data-url="{{urlMain}}">
+                  <img
+                    className={s.logo}
+                    src="/images/image.png"
+                    alt="Logo Image"
+                  />
+                </a>
+                <p className={s.authFormTitle}>
+                  {titleBlack} <span>{titleBlue}</span>
+                </p>
+                <form className={s.form} onSubmit={handleSubmit}>
+                  <div className={s.formInput}>
+                    <input
+                      name="login"
+                      type="text"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Логин"
+                    />
+                  </div>
+                  <div className={s.formInput}>
+                    <input
+                      name="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Пароль"
+                    />
+                  </div>
+                  <button type="submit" className={clsx(s.formBtn, s.btnPrimary)}>
+                    {buttonText}
+                  </button>
+                </form>
+                <div className={s.error}></div>
+              </div>
             </div>
+          </div>
         </div>
-    );
+      );
 };
