@@ -1,99 +1,35 @@
 import { CreatureClippedData } from 'entities/creature/model/types';
 import { GetCreaturesRequest, useGetCreaturesQuery } from 'pages/bestiary/api';
-import { useEffect, useState } from 'react';
+import { mapFiltersToRequestBody } from 'pages/bestiary/lib';
+import { Filters } from 'pages/bestiary/model';
+import { useCallback, useEffect, useState } from 'react';
+import { throttle, useDebounce } from 'shared/lib';
 import s from './Bestiary.module.scss';
 import { BestiaryCard } from './bestiaryCard';
 import { FilterModalWindow } from './filterModalWindow';
-import {useDebounce, throttle} from 'shared/lib'
 
-const SIZE = 50;
+const RESPONSE_SIZE = 50;
+const DEBOUNCE_TIME = 500;
+const THROTTLE_TIME = 1000;
 
 export const Bestiary = () => {
-  const [start, setStart] = useState(0); // Текущее смещение для запроса
-  const [allCreatures, setAllCreatures] = useState<CreatureClippedData[]>([]); // Все загруженные существа
-  const [searchValue, setSearchValue] = useState<string>(''); // Значение поисковой строки
-  const [hasMore, setHasMore] = useState<boolean>(true); // Есть ли ещё данные для загрузки
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Состояние модального окна (открыто/закрыто)
-  const [filters, setFilters] = useState<Record<string, string[]>>({}); // Фильтры, где ключ — строка, а значение — массив строк
+  const [start, setStart] = useState(0);
+  const [allCreatures, setAllCreatures] = useState<CreatureClippedData[]>([]);
+  const [searchValue, setSearchValue] = useState<string>('');
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [filters, setFilters] = useState<Filters>({});
 
-  const debouncedSearchValue = useDebounce(searchValue, 500); // Дебаунс для поиска
-  const setStartThrottled = throttle(setStart, 1000);
+  const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
+  const setStartThrottled = throttle(setStart, THROTTLE_TIME);
 
-  const handleFilterChange = (newFilters: { [key: string]: string[] }) => {
+  const handleFilterChange = useCallback((newFilters: Filters) => {
     setFilters(newFilters);
-  };
-
-  const mapFiltersToRequestBody = (
-    filters: {
-      [key: string]: string[];
-    },
-    start: number,
-  ): GetCreaturesRequest => {
-    const requestBody: GetCreaturesRequest = {
-      start: start, // начальная позиция (например, 0)
-      size: SIZE, // количество элементов
-      search: {
-        value: debouncedSearchValue, // значение для поиска
-        exact: false, // точный поиск (true/false)
-      },
-      order: [
-        {
-          field: 'exp', // поле для сортировки
-          direction: 'asc', // направление сортировки
-        },
-        {
-          field: 'name', // поле для сортировки
-          direction: 'asc', // направление сортировки
-        },
-      ],
-      filter: {
-        book: [], // фильтр по книгам
-        npc: [], // фильтр по NPC
-        challengeRating: [], // фильтр по уровню сложности
-        type: [], // фильтр по типу существа
-        size: [], // фильтр по размеру
-        tag: [], // фильтр по тегам
-        moving: [], // фильтр по способу перемещения
-        senses: [], // фильтр по чувствам
-        vulnerabilityDamage: [], // фильтр по уязвимостям к урону
-        resistanceDamage: [], // фильтр по сопротивлению к урону
-        immunityDamage: [], // фильтр по иммунитету к урону
-        immunityCondition: [], // фильтр по иммунитету к состояниям
-        features: [], // фильтр по особенностям
-        environment: [], // фильтр по окружению
-      },
-    };
-
-    // Маппинг ключей из filters в соответствующие поля в requestBody.filter
-    const filterMapping: { [key: string]: keyof typeof requestBody.filter } = {
-      'Иммунитет к урону': 'immunityDamage',
-      'Иммунитет к состояниям': 'immunityCondition',
-      'Сопротивление к урону': 'resistanceDamage',
-      'Уязвимость к урону': 'vulnerabilityDamage',
-      Чувства: 'senses',
-      Перемещение: 'moving',
-      'Размер существа': 'size',
-      'Тип существа': 'type',
-      'Уровень опасности': 'challengeRating',
-      'Места обитания': 'environment',
-      Умения: 'features',
-      // Добавьте другие соответствия, если необходимо
-    };
-
-    // Применяем фильтры
-    Object.entries(filters).forEach(([key, values]) => {
-      const mappedKey = filterMapping[key];
-      if (mappedKey && requestBody.filter[mappedKey]) {
-        requestBody.filter[mappedKey] = values;
-      }
-    });
-
-    return requestBody;
-  };
+  }, []);
 
   // Использование функции
   const [requestBody, setRequestBody] = useState<GetCreaturesRequest>(
-    mapFiltersToRequestBody(filters, 0),
+    mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue),
   );
 
   const {
@@ -123,12 +59,21 @@ export const Bestiary = () => {
   useEffect(() => {
     setStart(0); // Сбрасываем смещение
     setHasMore(true); // Сбрасываем флаг наличия данных
-    setRequestBody(mapFiltersToRequestBody(filters, 0));
+    setRequestBody(
+      mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue),
+    );
   }, [debouncedSearchValue, filters]);
 
   // Эффект для запроса при прокрутки страницы
   useEffect(() => {
-    setRequestBody(mapFiltersToRequestBody(filters, start));
+    setRequestBody(
+      mapFiltersToRequestBody(
+        filters,
+        start,
+        RESPONSE_SIZE,
+        debouncedSearchValue,
+      ),
+    );
   }, [start]);
 
   // Эффект для отслеживания прокрутки страницы
@@ -141,7 +86,7 @@ export const Bestiary = () => {
         !isLoading &&
         hasMore
       ) {
-        setStartThrottled((prev: any) => prev + SIZE);
+        setStartThrottled((prev: any) => prev + RESPONSE_SIZE);
       }
     };
 
@@ -173,6 +118,7 @@ export const Bestiary = () => {
         </button>
       </div>
 
+      {/* Модальное окно */}
       {isModalOpen && (
         <div className={s.modalOverlay} onClick={() => setIsModalOpen(false)}>
           <div className={s.modalContent} onClick={(e) => e.stopPropagation()}>
