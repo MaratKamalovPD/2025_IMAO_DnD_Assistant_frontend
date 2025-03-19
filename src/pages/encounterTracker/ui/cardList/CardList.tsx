@@ -11,8 +11,10 @@ export const CardList = () => {
 
   return (
     <div className={s.listContainer}>
-      {participants.map((id) => (
-        <CreatureCard key={id} id={id} />
+      {participants.map((participant) => (
+        <div key={participant.id}>
+          <CreatureCard id={participant.id} />
+        </div>
       ))}
     </div>
   );

@@ -7,6 +7,7 @@ import {
 } from '@reduxjs/toolkit';
 
 export type Creature = {
+  _id: string;
   id: string;
   name: string;
   hp: {
@@ -41,7 +42,17 @@ export const creatureSlice = createSlice({
   name: 'creature',
   initialState: creatureAdapter.getInitialState(),
   reducers: {
-    addCreature: creatureAdapter.addOne,
+    addCreature: (state, action: PayloadAction<Creature>) => {
+      const count = Object.values(state.entities).reduce(
+        (akk, value) => (value._id == action.payload._id ? akk + 1 : akk),
+        0,
+      );
+
+      if (count !== 0) {
+        action.payload.name = `${action.payload.name} (${count + 1})`;
+      }
+      creatureAdapter.addOne(state, action.payload);
+    },
     addCreatures: creatureAdapter.addMany,
     updateCreature: creatureAdapter.updateOne,
     removeCreature: creatureAdapter.removeOne,
