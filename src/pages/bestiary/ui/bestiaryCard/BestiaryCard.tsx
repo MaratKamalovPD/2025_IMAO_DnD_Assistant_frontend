@@ -1,11 +1,17 @@
-import { CreatureClippedData } from 'entities/creature/model/types';
-import { FC, useEffect } from 'react';
-
-import { Creature, creatureActions } from 'entities/creature/model';
-import { encounterActions } from 'entities/encounter/model';
-import { useLazyGetCreatureByNameQuery } from 'pages/bestiary/api';
+import { FC, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router';
+import { toast } from 'react-toastify';
+import uniqid from 'uniqid';
+
+import {
+  Creature,
+  creatureActions,
+  CreatureClippedData,
+} from 'entities/creature/model';
+import { encounterActions } from 'entities/encounter/model';
+import { useLazyGetCreatureByNameQuery } from 'pages/bestiary/api';
+
 import placeholderImage from 'shared/assets/images/placeholder.png';
 import s from './BestiaryCard.module.scss';
 
@@ -14,17 +20,20 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const [trigger, { data: creatureData, isLoading, isError }] =
-    useLazyGetCreatureByNameQuery();
+  const [
+    trigger,
+    { data: creatureData, isLoading, isError, isUninitialized, requestId },
+  ] = useLazyGetCreatureByNameQuery();
 
-  const handleSearchClick = () => {
+  const handleSearchClick = useCallback(() => {
     trigger(`${creature.url}`);
-  };
+  }, [creature.url]);
 
   useEffect(() => {
     if (!isLoading && !isError && creatureData) {
       const currentCreature: Creature = {
-        id: creatureData._id,
+        _id: creatureData._id,
+        id: uniqid(),
         name: creatureData.name.rus,
         hp: {
           current: creatureData.hits.average,
@@ -46,11 +55,20 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
         notes: '',
       };
 
-      dispatch(encounterActions.addParticipant(currentCreature.id));
+      dispatch(
+        encounterActions.addParticipant({
+          _id: currentCreature._id,
+          id: currentCreature.id,
+          initiative: currentCreature.initiative,
+        }),
+      );
       dispatch(creatureActions.addCreature(currentCreature));
-      console.log(creature);
+
+      toast.success(`${currentCreature.name} успешно добавлен!`);
+    } else if (isError && !isUninitialized) {
+      toast.error(`Упс, ${isUninitialized} что-то пошло не так :(`);
     }
-  }, [creatureData, isLoading, isError]);
+  }, [creatureData, isLoading, isError, isUninitialized, requestId]);
 
   return (
     <div className={s.card}>
