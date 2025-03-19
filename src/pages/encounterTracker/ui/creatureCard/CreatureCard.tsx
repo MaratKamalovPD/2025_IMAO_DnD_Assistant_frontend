@@ -12,9 +12,10 @@ import s from './CreatureCard.module.scss';
 
 interface CreatureCardProps {
   id: string;
+  ind: number;
 }
 
-export const CreatureCard = ({ id }: CreatureCardProps) => {
+export const CreatureCard = ({ id, ind }: CreatureCardProps) => {
   const dispatch = useDispatch();
 
   // Получаем данные персонажа
@@ -39,9 +40,16 @@ export const CreatureCard = ({ id }: CreatureCardProps) => {
 
   // Определяем классы для стилизации
   const cardClasses = clsx(s.card, {
+    [s.card__blue]: ind % 2 === 1,
+    [s.card__red]: ind % 2 === 0,
     [s.selected]: selectedCreatureId === id,
     [s.dead]: creature.hp.current <= 0,
     [s.currentTurn]: participants[currentTurnIndex] === id,
+  });
+
+  const infoClasses = clsx(s.info, {
+    [s.info__blue]: ind % 2 === 1,
+    [s.info__red]: ind % 2 === 0,
   });
 
   return (
@@ -52,7 +60,12 @@ export const CreatureCard = ({ id }: CreatureCardProps) => {
       tabIndex={0}
       aria-label={`Выбрать ${creature.name}`}
     >
-      {/* Блок с изображением */}
+      <div className={s.initiativeContainer}>
+        <span className={s.initiativeContainer__text}>
+          {creature.initiative}
+        </span>
+      </div>
+
       <div className={s.imageContainer}>
         <img
           src={creature.image || placeholderImage}
@@ -64,38 +77,16 @@ export const CreatureCard = ({ id }: CreatureCardProps) => {
         />
       </div>
 
-      {/* Блок с основной информацией */}
-      <div className={s.info}>
-        <h3 className={s.name}>{creature.name}</h3>
-
-        {/* Индикатор HP */}
-        <div className={s.hpBlock}>
-          <div className={s.hpBar}>
-            <div className={s.hpFill} style={{ width: `${hpPercentage}%` }} />
-          </div>
-          <span className={s.hpText}>
-            {creature.hp.current}/{creature.hp.max} HP
-          </span>
+      <div className={infoClasses}>
+        <div className={clsx(s.shield, s.shield__outer)}>
+          <div className={clsx(s.shield, s.shield__inner)}>{creature.ac}</div>
         </div>
-
-        {/* Блок с AC и условиями */}
-        <div className={s.statsRow}>
-          <div className={s.ac}>AC: {creature.ac}</div>
-
-          {creature.conditions.length > 0 && (
-            <div className={s.conditions}>
-              {creature.conditions.map((condition) => (
-                <span
-                  key={condition}
-                  className={s.conditionBadge}
-                  title={condition}
-                >
-                  {condition[0]}
-                </span>
-              ))}
-            </div>
-          )}
+        <div className={s.hpBar}>
+          <div className={s.hpFill} style={{ width: `${hpPercentage}%` }} />
         </div>
+        <span className={s.hpText}>
+          {creature.hp.current} / {creature.hp.max} HP
+        </span>
       </div>
     </div>
   );
