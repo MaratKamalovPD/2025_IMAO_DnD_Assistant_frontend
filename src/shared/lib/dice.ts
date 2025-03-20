@@ -1,3 +1,5 @@
+const SAME_VALUE_MAX_TIMES = 5;
+
 class BalancedDice {
   private rollHistory: number[] = [];
   private counts: Record<number, number> = {};
@@ -41,8 +43,8 @@ class BalancedDice {
       number = this.weightedRandom(numbers, weights);
 
       if (
-        this.rollHistory.length >= 5 &&
-        this.rollHistory.slice(-5).every((x) => x === number)
+        this.rollHistory.length >= SAME_VALUE_MAX_TIMES &&
+        this.rollHistory.slice(-SAME_VALUE_MAX_TIMES).every((x) => x === number)
       ) {
         continue;
       }
