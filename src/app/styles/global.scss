@@ -18,6 +18,19 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+#root {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin-top: 100px;
+  width: 100%;
+}
+
+main {
+  width: 80vw;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -29,12 +42,8 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 320px;
-  min-height: 100vh;
-  margin-bottom: 25px;
+  padding: 0;
+  width: 100%;
 }
 
 h1 {
