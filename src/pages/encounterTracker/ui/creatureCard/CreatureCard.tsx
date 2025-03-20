@@ -41,7 +41,7 @@ export const CreatureCard = ({ id }: CreatureCardProps) => {
   const cardClasses = clsx(s.card, {
     [s.selected]: selectedCreatureId === id,
     [s.dead]: creature.hp.current <= 0,
-    [s.currentTurn]: participants[currentTurnIndex] === id,
+    [s.currentTurn]: participants[currentTurnIndex].id === id,
   });
 
   return (

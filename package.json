@@ -23,7 +23,9 @@
     "react-redux": "^9.2.0",
     "react-router": "^7.3.0",
     "react-router-dom": "^7.3.0",
-    "redux": "^5.0.1"
+    "react-toastify": "^11.0.5",
+    "redux": "^5.0.1",
+    "uniqid": "^5.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
@@ -31,6 +33,7 @@
     "@types/node": "^22.13.10",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "@types/uniqid": "^5.3.4",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.21.0",
     "eslint-config-prettier": "^10.1.1",

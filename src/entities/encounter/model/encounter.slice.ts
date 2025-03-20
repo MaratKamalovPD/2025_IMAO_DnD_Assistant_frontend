@@ -1,28 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { UUID } from 'shared/lib';
+import { Participant } from './types';
 
 export type EncounterState = {
+  hasStarted: boolean;
   currentRound: number;
   currentTurnIndex: number;
-  participants: UUID[]; // IDs персонажей
+  participants: Participant[]; // IDs персонажей
   selectedCreatureId: string | null;
 };
 
 const initialState: EncounterState = {
+  hasStarted: false,
   currentRound: 1,
   currentTurnIndex: 0,
-  participants: [
-    // 'creature-1',
-    // 'creature-2',
-    // 'creature-3',
-    // 'creature-4',
-    // 'creature-5',
-    // 'creature-6',
-    // 'creature-7',
-    // 'creature-9',
-    // 'creature-10',
-  ],
+  participants: [],
   selectedCreatureId: null,
 };
 
@@ -30,6 +22,10 @@ const encounterSlice = createSlice({
   name: 'encounter',
   initialState,
   reducers: {
+    start: (state) => {
+      state.hasStarted = true;
+      state.participants.sort((a, b) => a.initiative - b.initiative);
+    },
     nextTurn: (state) => {
       if (state.currentTurnIndex >= state.participants.length - 1) {
         state.currentRound++;
@@ -48,14 +44,18 @@ const encounterSlice = createSlice({
         state.currentTurnIndex--;
       }
     },
-    setInitiativeOrder: (state, action: PayloadAction<string[]>) => {
+    setInitiativeOrder: (state, action: PayloadAction<Participant[]>) => {
       state.participants = action.payload;
     },
     selectCreature: (state, action: PayloadAction<string>) => {
       state.selectedCreatureId = action.payload;
     },
-    addParticipant: (state, action: PayloadAction<string>) => {
+    addParticipant: (state, action: PayloadAction<Participant>) => {
       state.participants.push(action.payload);
+
+      if (state.hasStarted) {
+        state.participants.sort((a, b) => a.initiative - b.initiative);
+      }
     },
   },
 });
