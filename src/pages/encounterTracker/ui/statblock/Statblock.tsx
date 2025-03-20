@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature } from 'entities/creature/model/creature.slice';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
@@ -12,12 +13,23 @@ import s from './Statblock.module.scss';
 
 export const Statblock = () => {
   const [promt, setPromt] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);; // Состояние для управления модальным окном
 
   const [trigger, { data: promtData, isLoading, isError }] =
     useLazyGetPromtQuery();
 
   const handleSearchClick = (data: GetPromtRequest) => {
     trigger(data);
+  };
+
+  // Функция для открытия модального окна
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // Функция для закрытия модального окна
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -105,6 +117,22 @@ export const Statblock = () => {
             <button className={s.creaturePanel__actionsList__element}>
               Добавить действие
             </button>
+            <button className={s.creaturePanel__actionsList__element} onClick={openModal}>
+              Deal damage
+            </button>
+            {isModalOpen && (
+              <div className={s.modalOverlay}>
+                <div className={s.modalContent}>
+                  {/* Кнопка закрытия модального окна */}
+                  <button className={s.closeButton} onClick={closeModal}>
+                    &times; {/* Символ "крестик" */}
+                  </button>
+
+                  {/* Компонент DamageTypesForm внутри модального окна */}
+                  <DamageTypesForm />
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className={s.creaturePanel__notesContainer}>
