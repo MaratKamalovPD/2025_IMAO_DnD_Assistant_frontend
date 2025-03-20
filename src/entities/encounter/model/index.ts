@@ -1,7 +1,7 @@
 export {
-  default as encounterReduser,
   encounterActions,
+  default as encounterReduser,
 } from './encounter.slice';
 
 export type { EncounterState } from './encounter.slice';
-export type { EncounterStore } from './types';
+export type { EncounterStore, Participant } from './types';

@@ -11,13 +11,11 @@ export const CardList = () => {
 
   return (
     <div className={s.listContainer}>
-      <div className={s.listContainer__inside}>
-        {participants.map((id, ind) => (
-          <div key={id}>
-            <CreatureCard key={id} id={id} ind={ind} />
-          </div>
-        ))}
-      </div>
+      {participants.map((participant, ind) => (
+        <div key={participant.id}>
+          <CreatureCard id={participant.id} ind={ind} />
+        </div>
+      ))}
     </div>
   );
 };

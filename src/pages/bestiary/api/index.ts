@@ -1,7 +1,7 @@
 export {
-  bestiaryApi,
+  default as bestiaryApi,
   useGetCreaturesQuery,
   useLazyGetCreatureByNameQuery,
-} from './model';
+} from './bestiary.api';
 
-export type { GetCreaturesRequest } from './model';
+export type { GetCreaturesRequest } from './bestiary.api';

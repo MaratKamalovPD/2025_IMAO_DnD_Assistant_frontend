@@ -1,9 +1,15 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { CreatureClippedData, CreatureFullData } from 'entities/creature/model';
 
+import type { FilterParams, OrderParams, SearchParams } from './types';
+
+// Новый тип для запроса
 export type GetCreaturesRequest = {
-  size: number;
   start: number;
+  size: number;
+  search: SearchParams;
+  order: OrderParams[];
+  filter: FilterParams;
 };
 
 const bestiaryApi = createApi({
