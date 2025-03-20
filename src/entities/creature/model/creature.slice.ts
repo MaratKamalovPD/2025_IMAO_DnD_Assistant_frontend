@@ -5,6 +5,7 @@ import {
   PayloadAction,
   Reducer,
 } from '@reduxjs/toolkit';
+import { Attack } from './types';
 
 export type Creature = {
   _id: string;
@@ -31,6 +32,7 @@ export type Creature = {
   actions?: {
     name: string;
   }[];
+  attacks?: Attack[]
 };
 
 const creatureAdapter = createEntityAdapter<Creature>({

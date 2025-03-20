@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { damageTypeIcons, damageTypes, DamageTypeValue,DamageTypeOption } from 'pages/encounterTracker/lib';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
@@ -8,7 +8,7 @@ import { OptionWithIcon } from 'pages/encounterTracker/ui/dealDamage/optionWithI
 import { SingleValueWithIcon } from 'pages/encounterTracker/ui/dealDamage/singleValueWithIcon'
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, creatureActions } from 'entities/creature/model/creature.slice';
-import { useSelector } from 'react-redux';
+
 import s from './DealDamage.module.scss';
 
 // Преобразуем damageTypes в формат, подходящий для react-select

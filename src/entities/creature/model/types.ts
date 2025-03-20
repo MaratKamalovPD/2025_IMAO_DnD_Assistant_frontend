@@ -35,7 +35,21 @@ export type CreatureFullData = {
   description: string;
   tags: Tag[];
   images: string[];
+  attacks: Attack[];
 };
+
+export type Attack = {
+  name: string;           // Название атаки
+  type: AttackType;       // Тип атаки
+  toHitBonus: number;     // Бонус на попадание (например, +4)
+  reach?: string;         // Досягаемость (например, "5 фт.")
+  effectiveRange?: string; // Эффективная дальность (например, "30 фт.")
+  maxRange?: string;      // Максимальная дальность (например, "120 фт.")
+  target: TargetType;     // Тип цели
+  damage: Damage[];       // Урон (может быть несколько костей)
+  damageBonus?: number;   // Бонус к урону
+  ammo?: string;          // Боеприпасы (например, "10 болтов для арбалета")
+}
 
 // Вспомогательные интерфейсы
 type NameTranslations = {
@@ -101,6 +115,114 @@ type Tag = {
   name: string;
   description: string;
 };
+
+enum AttackTypeEn {
+  MeleeWeaponAttack = "MeleeWeaponAttack",
+  RangedWeaponAttack = "RangedWeaponAttack",
+  MeleeSpellAttack = "MeleeSpellAttack",
+  RangedSpellAttack = "RangedSpellAttack",
+  MeleeOrRangedWeaponAttack = "MeleeOrRangedWeaponAttack",
+  MeleeOrRangedSpellAttack = "MeleeOrRangedSpellAttack",
+}
+
+// Перечисление типов цели
+enum TargetTypeEn {
+  SingleTarget = "SingleTarget",
+  Cone = "Cone",
+  Cube = "Cube",
+  Sphere = "Sphere",
+  Cylinder = "Cylinder",
+  Line = "Line",
+  Self = "Self",
+  Touch = "Touch",
+  MultipleTargets = "MultipleTargets",
+  Object = "Object",
+  Point = "Point",
+  AllCreaturesInRange = "AllCreaturesInRange",
+  AllEnemiesInRange = "AllEnemiesInRange",
+  AllAlliesInRange = "AllAlliesInRange",
+}
+
+// Перечисление типов урона
+enum DamageTypeEn {
+  Acid = "Acid",
+  Bludgeoning = "Bludgeoning",
+  Cold = "Cold",
+  Fire = "Fire",
+  Force = "Force",
+  Lightning = "Lightning",
+  Necrotic = "Necrotic",
+  Piercing = "Piercing",
+  Poison = "Poison",
+  Psychic = "Psychic",
+  Radiant = "Radiant",
+  Slashing = "Slashing",
+  Thunder = "Thunder",
+}
+
+// Перечисление типов атаки
+enum AttackType {
+  MeleeWeaponAttack = "Рукопашная атака оружием",
+  RangedWeaponAttack = "Дальнобойная атака оружием",
+  MeleeSpellAttack = "Рукопашная атака заклинанием",
+  RangedSpellAttack = "Дальнобойная атака заклинанием",
+  MeleeOrRangedWeaponAttack = "Рукопашная или дальнобойная атака оружием",
+  MeleeOrRangedSpellAttack = "Рукопашная или дальнобойная атака заклинанием",
+}
+
+// Перечисление типов цели
+enum TargetType {
+  SingleTarget = "Одна цель",
+  Cone = "Конус",
+  Cube = "Куб",
+  Sphere = "Сфера",
+  Cylinder = "Цилиндр",
+  Line = "Линия",
+  Self = "Сам на себя",
+  Touch = "Касание",
+  MultipleTargets = "Несколько целей",
+  Object = "Объект",
+  Point = "Точка в пространстве",
+  AllCreaturesInRange = "Все существа в радиусе",
+  AllEnemiesInRange = "Все враги в радиусе",
+  AllAlliesInRange = "Все союзники в радиусе",
+}
+
+// Перечисление типов урона
+enum DamageType {
+  Acid = "Кислотный",
+  Bludgeoning = "Дробящий",
+  Cold = "Холод",
+  Fire = "Огонь",
+  Force = "Силовой",
+  Lightning = "Молния",
+  Necrotic = "Некротический",
+  Piercing = "Колющий",
+  Poison = "Ядовитый",
+  Psychic = "Психический",
+  Radiant = "Светящийся",
+  Slashing = "Рубящий",
+  Thunder = "Громовой",
+}
+
+
+// Перечисление типов костей
+enum DiceType {
+  D4 = "d4",
+  D6 = "d6",
+  D8 = "d8",
+  D10 = "d10",
+  D12 = "d12",
+  D20 = "d20",
+  D100 = "d100",
+}
+
+// Интерфейс для описания урона
+interface Damage {
+  dice: DiceType;       // Тип кости (например, "d10")
+  count: number;       // Количество костей (например, 1)
+  damageType: DamageType; // Тип урона (например, "дробящий")
+}
 
 export type CreaturesStore = ReturnType<
   Reducer<{ creatures: EntityState<Creature, string> }>
