@@ -24,7 +24,7 @@ export const CreatureCard = ({ id, ind }: CreatureCardProps) => {
   ) as Creature;
 
   // Текущий выбранный персонаж
-  const { selectedCreatureId, currentTurnIndex, participants } =
+  const { hasStarted, selectedCreatureId, currentTurnIndex, participants } =
     useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
 
   if (!creature) return null;
@@ -62,7 +62,7 @@ export const CreatureCard = ({ id, ind }: CreatureCardProps) => {
     >
       <div className={s.initiativeContainer}>
         <span className={s.initiativeContainer__text}>
-          {creature.initiative}
+          {hasStarted ? creature.initiative : '?'}
         </span>
       </div>
 

@@ -24,7 +24,7 @@ const encounterSlice = createSlice({
   reducers: {
     start: (state) => {
       state.hasStarted = true;
-      state.participants.sort((a, b) => a.initiative - b.initiative);
+      state.participants.sort((a, b) => b.initiative - a.initiative);
     },
     nextTurn: (state) => {
       if (state.currentTurnIndex >= state.participants.length - 1) {
@@ -54,7 +54,7 @@ const encounterSlice = createSlice({
       state.participants.push(action.payload);
 
       if (state.hasStarted) {
-        state.participants.sort((a, b) => a.initiative - b.initiative);
+        state.participants.sort((a, b) => b.initiative - a.initiative);
       }
     },
   },
