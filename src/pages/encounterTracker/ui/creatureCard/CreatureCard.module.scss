@@ -1,13 +1,28 @@
+$gap: 0.3rem;
+$border-width: 2px;
+
 .card {
   position: relative;
-  width: 200px;
-  min-width: 200px;
-  border: 2px solid #3d3d3d;
-  border-radius: 8px;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  min-width: 150px;
+  height: 250px;
+  border-radius: 20px 8px 8px;
+  overflow: visible;
   transition: all 0.2s ease;
   cursor: pointer;
-  background: #1a1a1a;
+  padding: $gap;
+
+  &__blue {
+    background-color: #77B8D4;
+    border: 2px solid #3F1F77;
+  }
+
+  &__red {
+    background-color: #D47777;
+    border: 2px solid #7E5555;
+  }
 }
 
 .card:hover {
@@ -27,9 +42,6 @@
 
 .currentTurn {
   border-width: 5px;
-  border-style: solid;
-  border-image: linear-gradient(to bottom, red, rgba(0, 0, 0, 0)) 1 100%;
-  border-radius: 8px;
 }
 
 .dead {
@@ -38,31 +50,34 @@
 }
 
 .imageContainer {
-  height: 150px;
-  background: #000;
+  height: 80%;
+  border: $border-width solid black;
+  border-radius: 16px 6px 0 0;
+  box-sizing: border-box;
 }
 
 .image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 16px 6px 0 0;
 }
 
 .info {
-  padding: 12px;
-}
+  margin-top: $gap;
+  height: calc(20% - $gap);
+  border: $border-width solid black;
+  padding: $gap;
+  box-sizing: border-box;
+  position: relative;
 
-.name {
-  margin: 0 0 8px 0;
-  font-size: 1.1rem;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  &__red {
+    background-color: #823737;
+  }
 
-.hpBlock {
-  margin-bottom: 8px;
+  &__blue {
+    background-color: #14386F;
+  }
 }
 
 .hpBar {
@@ -70,42 +85,73 @@
   background: #444;
   border-radius: 4px;
   overflow: hidden;
+  border: 1px solid rgb(155, 145, 145);
+  box-sizing: border-box;
 }
 
 .hpFill {
   height: 100%;
-  background: #e74c3c;
+  background: #5FAA5F;
   transition: width 0.3s ease;
 }
 
 .hpText {
-  display: block;
-  font-size: 0.9rem;
-  color: #e74c3c;
+  display: flex;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #FFFFFF;
   margin-top: 4px;
 }
 
-.statsRow {
+.initiativeContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 45px;
+  height: 45px;
+  background-color: #9FBB84;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 1px solid black;
+  transform: translate(20%, -20%);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+
+  &__text {
+    font-size: 28px;
+    color: #000000;
+    font-weight: 100;
+  }
 }
 
-.ac {
-  font-size: 0.9rem;
-  color: #3498db;
-}
-
-.conditions {
+.shield {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 60% 95%, 40% 95%, 0% 70%);
+  box-sizing: border-box;
   display: flex;
-  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  font-size: 22px;
+  font-weight: 100;
+
+  &__outer {
+    position: absolute;
+    border-radius: 10px;
+    top: 0;
+    transform: translate(0%, -75%);
+    width: 35px;
+    height: 50px;
+    background-color: #D9D9D9;
+  }
+
+  &__inner {
+    width: 28px;
+    height: 43px;
+    border-radius: 5px;
+    background-color: #DABF74;
+    padding-bottom: 10px;
+  }
 }
 
-.conditionBadge {
-  background: #8e44ad;
-  color: white;
-  padding: 2px 6px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  cursor: help;
-}
