@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
+import { useDispatch } from 'react-redux';
+
 import { damageTypeIcons, damageTypes, DamageTypeValue,DamageTypeOption } from 'pages/encounterTracker/lib';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { OptionWithIcon } from 'pages/encounterTracker/ui/dealDamage/optionWithIcon'
 import { SingleValueWithIcon } from 'pages/encounterTracker/ui/dealDamage/singleValueWithIcon'
+import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
+import { Creature, creatureActions } from 'entities/creature/model/creature.slice';
 import { useSelector } from 'react-redux';
 import s from './DealDamage.module.scss';
 
@@ -14,16 +18,22 @@ const damageTypeOptions: DamageTypeOption[] = damageTypes.map((damageType) => ({
   icon: damageTypeIcons[damageType.value],
 }));
 
-
-
-
-
 export const DamageTypesForm: React.FC = () => {
   const [selectedDamageType, setSelectedDamageType] = useState<DamageTypeValue>('acid');
   const [damageAmount, setDamageAmount] = useState<number>(0); // Состояние для количества урона
 
+  const dispatch = useDispatch();
+
   const { selectedCreatureId, currentTurnIndex, participants } =
     useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
+
+  const selectedCreature = useSelector<CreaturesStore>((state) =>
+      creatureSelectors.selectById(state, selectedCreatureId || ''),
+    ) as Creature | undefined;  
+
+  const currentTurnCreature = useSelector<CreaturesStore>((state) =>
+    creatureSelectors.selectById(state, participants[currentTurnIndex]?.id || ''),
+  ) as Creature | undefined; 
 
   const handleDamageTypeChange = (option: DamageTypeOption | null) => {
     if (option) {
@@ -39,6 +49,15 @@ export const DamageTypesForm: React.FC = () => {
   const handleDealDamage = () => {
     // Выводим в консоль тип урона и его количество
     console.log(`Нанесён урон: ${damageAmount} (тип: ${selectedDamageType})`);
+
+    // Обновляем текущее здоровье существа
+    dispatch(
+      creatureActions.updateCurrentHp({
+        id: selectedCreatureId || '', // ID выбранного существа
+        delta: damageAmount, // Количество урона
+        //damageType: selectedDamageType, // Тип урона
+      })
+    );
   };
 
   return (
@@ -51,7 +70,7 @@ export const DamageTypesForm: React.FC = () => {
             onChange={handleDamageAmountChange}
             className={s.damageAmountInput}
             placeholder="Урон"
-            min="0"
+            min="-1000"
           />
           <Select
             id="damageTypesInput"
@@ -68,6 +87,13 @@ export const DamageTypesForm: React.FC = () => {
           />
         </div>
       </label>
+
+      {/* Отображение значений participants[currentTurnIndex] и selectedCreatureId */}
+      <div className={s.debugInfo}>
+        <p>Текущий участник: {currentTurnCreature?.name || 'Не выбрано'}</p>
+        <p>Выбранное существо: {selectedCreature?.name || 'Не выбрано'}</p>
+      </div>      
+
       {/* Кнопка "Нанести урон" */}
       <button type="button" onClick={handleDealDamage} className={s.dealDamageButton}>
         Нанести урон

@@ -58,9 +58,9 @@ export const creatureSlice = createSlice({
     removeCreature: creatureAdapter.removeOne,
     updateCurrentHp: (
       state,
-      action: PayloadAction<{ id: string; current: number }>,
+      action: PayloadAction<{ id: string; delta: number }>,
     ) => {
-      const { id, current } = action.payload;
+      const { id, delta } = action.payload;
       const creature = state.entities[id];
     
       if (!creature) {
@@ -70,15 +70,17 @@ export const creatureSlice = createSlice({
     
       // Если текущие HP отрицательные, лечение устанавливает HP равным значению current
       if (creature.hp.current <= 0) {
-        creature.hp.current = Math.max(current, 0); // Гарантируем, что HP не станет отрицательным после лечения
+        creature.hp.current = Math.max(delta, 0); // Гарантируем, что HP не станет отрицательным после лечения
       }
       // Если текущие HP положительные, добавляем значение current
       else {
-        creature.hp.current += current;
+        creature.hp.current += delta;
       }
     
       // Гарантируем, что текущие HP не превышают максимальные
       creature.hp.current = Math.min(creature.hp.current, creature.hp.max);
+
+      console.log(creature.hp.current)
     },
     updateMaxHp: (
       state,
