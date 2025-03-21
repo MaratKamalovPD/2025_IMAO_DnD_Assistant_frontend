@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
-import { weapons, weaponIcons} from 'pages/encounterTracker/lib';
+import { weapons, weaponIcons, conditions,conditionIcons} from 'pages/encounterTracker/lib';
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, Attack, creatureActions } from 'entities/creature/model';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
@@ -45,7 +45,8 @@ const calculateDamage = (attack: Attack): number => {
 
 export const Statblock = () => {
   const [promt, setPromt] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);; // Состояние для управления модальным окном
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Состояние для управления модальным окном
+  const [isConditionModalOpen, setIsConditionModalOpen] = useState<boolean>(false);
 
   const dispatch = useDispatch();
 
@@ -64,6 +65,16 @@ export const Statblock = () => {
   // Функция для закрытия модального окна
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+   // Функция для открытия модального окна
+   const openModalConditions = () => {
+    setIsConditionModalOpen(true);
+  };
+
+  // Функция для закрытия модального окна
+  const closeModalConditions = () => {
+    setIsConditionModalOpen(false);
   };
 
   useEffect(() => {
@@ -176,7 +187,7 @@ export const Statblock = () => {
             })}
 
             <button className={s.creaturePanel__actionsList__element} onClick={openModal}>
-              Deal damage
+              Нанести урон
             </button>
           </div>
           
@@ -197,6 +208,60 @@ export const Statblock = () => {
             )}
           </div>
         </div>
+        <div className={s.creaturePanel__actionsContainer}>
+            <div className={s.creaturePanel__actionsContainer__header}>
+              Состояния
+            </div >
+            <div className={s.creaturePanel__actionsList}>
+              {selectedCreature.conditions?.map((condition, ind) => {
+                // Нормализуем название условия
+                const normalizedConditionName = normalizeString(condition);
+
+                const conditionInstanse = conditions.find((cnd) => normalizeString(cnd.label.ru) === normalizedConditionName);
+
+                // Находим иконку для условия по нормализованному названию
+                const icon = conditionInstanse ? conditionIcons[conditionInstanse.value] : null;
+
+                return (
+                  <div
+                    className={s.creaturePanel__actionsList__element}
+                    key={ind}
+                  >
+                    {/* Отображаем иконку, если она найдена */}
+                    {icon && <img src={icon} alt={condition} className={s.attackIcon} />}
+                    {condition}
+                  </div>
+                );
+              })}
+
+              <button className={s.creaturePanel__actionsList__element} onClick={openModalConditions}>
+                Повесить состояние
+              </button>
+
+              <div className={s.creaturePanel__actionsList}>
+                {isConditionModalOpen && (
+                  <div className={s.modalOverlay}>
+                    <div className={s.modalContent}>
+                      {/* Кнопка закрытия модального окна */}
+                      <button className={s.closeButton} onClick={closeModalConditions}>
+                        &times; {/* Символ "крестик" */}
+                      </button>
+
+                      {/* Компонент DamageTypesForm внутри модального окна */}
+                      <DamageTypesForm />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+        </div>
+
+        <div className={s.creaturePanel__actionsContainer}>
+          <div className={s.creaturePanel__actionsContainer__header}>
+              Эффекты
+            </div >
+        </div>
+        
         <div className={s.creaturePanel__notesContainer}>
           <div className={s.creaturePanel__notesContainer__title}>Заметки</div>
           <textarea placeholder='Введите заметки...'></textarea>
