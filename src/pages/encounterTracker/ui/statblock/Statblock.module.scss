@@ -185,3 +185,15 @@
 }
 
 //============++++++++++++++===============
+
+
+.creaturePanel__actionsList__element {
+  display: flex;
+  align-items: center; // Выравниваем иконку и текст по центру
+  gap: 8px; // Расстояние между иконкой и текстом
+}
+
+.attackIcon {
+  width: 32px; // Размер иконки
+  height: 32px;
+}

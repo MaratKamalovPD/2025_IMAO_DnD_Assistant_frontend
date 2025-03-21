@@ -1,9 +1,11 @@
 import clsx from 'clsx';
 import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
+import { weapons, weaponIcons} from 'pages/encounterTracker/lib';
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, Attack, creatureActions } from 'entities/creature/model';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { useDispatch, useSelector } from 'react-redux';
+import { normalizeString } from 'shared/lib';
 import {
   GetPromtRequest,
   useLazyGetPromtQuery,
@@ -150,15 +152,28 @@ export const Statblock = () => {
             Действия
           </div >
           <div className={s.creaturePanel__actionsList}>
-          {selectedCreature.attacks?.map((attack, ind) => (
-              <button
-                className={s.creaturePanel__actionsList__element}
-                key={ind}
-                onClick={() => handleAttack(ind, attack)} // Передаем индекс и атаку в обработчик
-              >
-                {attack.name}
-              </button>
-            ))}
+            {selectedCreature.attacks?.map((attack, ind) => {
+               // Нормализуем название атаки
+              const normalizedAttackName = normalizeString(attack.name);
+
+              // Находим оружие по нормализованному названию атаки
+              const weapon = weapons.find((w) => normalizeString(w.label.ru) === normalizedAttackName);
+
+              // Получаем иконку из объекта weaponIcons
+              const icon = weapon ? weaponIcons[weapon.value] : null;
+
+              return (
+                <button
+                  className={s.creaturePanel__actionsList__element}
+                  key={ind}
+                  onClick={() => handleAttack(ind, attack)}
+                >
+                  {/* Отображаем иконку, если она найдена */}
+                  {icon && <img src={icon} alt={attack.name} className={s.attackIcon} />}
+                  {attack.name}
+                </button>
+              );
+            })}
 
             <button className={s.creaturePanel__actionsList__element} onClick={openModal}>
               Deal damage
@@ -166,12 +181,6 @@ export const Statblock = () => {
           </div>
           
           <div className={s.creaturePanel__actionsList}>
-            {/* <div className={s.creaturePanel__actionsList__element}>
-              Атака2 (4d20)
-            </div>
-            <button className={s.creaturePanel__actionsList__element}>
-              Добавить действие
-            </button> */}
             
             {isModalOpen && (
               <div className={s.modalOverlay}>
