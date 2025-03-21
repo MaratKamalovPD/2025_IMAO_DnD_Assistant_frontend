@@ -10,4 +10,7 @@ export type {
   CreatureFullData,
   CreaturesStore,
   Attack,
+ 
 } from './types';
+
+export { DiceType} from './types';

@@ -249,7 +249,7 @@ enum DamageType {
 
 
 // Перечисление типов костей
-enum DiceType {
+export enum DiceType {
   D4 = "d4",
   D6 = "d6",
   D8 = "d8",
