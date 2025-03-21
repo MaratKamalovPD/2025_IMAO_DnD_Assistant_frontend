@@ -1,6 +1,7 @@
 import { Dice10, Dice100, Dice12, Dice20, Dice4, Dice6, Dice8,  } from './dice';
 import { Creature, Attack} from 'entities/creature/model';
-import {DiceType} from 'entities/creature/model'
+import { DiceType } from 'entities/creature/model'
+import { D20Roll } from './types';
 
 function rollDice(diceType: DiceType): number {
     switch (diceType) {
@@ -15,7 +16,8 @@ function rollDice(diceType: DiceType): number {
     }
   }
   
-export function rollToHit(attacker: Creature, defender: Creature, attack: Attack): { hit: boolean, critical: boolean, damage?: number } {
+export function rollToHit(attacker: Creature, defender: Creature, attack: Attack): { hit: boolean,
+    critical: boolean, d20Roll: D20Roll, damage?: number } {
     // Бросок d20 для попадания
     const roll = Dice20.roll();
     const totalToHit = roll + (attack.toHitBonus ? attack.toHitBonus : 0);
@@ -23,10 +25,16 @@ export function rollToHit(attacker: Creature, defender: Creature, attack: Attack
     // Проверка на критический провал (1) или критический успех (20)
     const isCriticalMiss = roll === 1;
     const isCriticalHit = roll === 20;
+
+    const d20Roll: D20Roll = {
+        roll: roll,    // Пример значения для roll
+        bonus: attack.toHitBonus,    // Пример значения для bonus
+        total: totalToHit    // Пример значения для total
+    };
   
     // Если критический провал, атака автоматически промахивается
     if (isCriticalMiss) {
-      return { hit: false, critical: false };
+      return { hit: false, critical: false, d20Roll: d20Roll };
     }
   
     // Проверка на попадание
@@ -47,9 +55,11 @@ export function rollToHit(attacker: Creature, defender: Creature, attack: Attack
       if (attack.damageBonus) {
         totalDamage += attack.damageBonus;
       }
+
+      
   
-      return { hit: true, critical: isCriticalHit, damage: totalDamage };
+      return { hit: true, critical: isCriticalHit, d20Roll: d20Roll, damage: totalDamage };
     } else {
-      return { hit: false, critical: false };
+      return { hit: false, critical: false, d20Roll: d20Roll };
     }
   }

@@ -7,6 +7,8 @@ import { Creature, Attack, creatureActions } from 'entities/creature/model';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { useDispatch, useSelector } from 'react-redux';
 import { normalizeString, rollToHit } from 'shared/lib';
+import { toast } from 'react-toastify';
+import { D20AttackRollToast} from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast'
 import {
   GetPromtRequest,
   useLazyGetPromtQuery,
@@ -65,9 +67,15 @@ export const Statblock = () => {
   const handleAttack = (index: number, attack: Attack) => {
     // Ваша логика обработки атаки в зависимости от индекса и объекта атаки
 
-    const {hit, critical, damage} = rollToHit(selectedCreature, selectedCreature, attack)
+    const {hit, critical, d20Roll, damage} = rollToHit(selectedCreature, selectedCreature, attack)
+
+    toast(
+      <D20AttackRollToast total={d20Roll.total} roll={d20Roll.roll} bonus={d20Roll.bonus} hit={hit}/>
+    );
 
     if (hit) {
+      //toast.success(`${d20Roll.total}:  [${d20Roll.roll}] + ${d20Roll.bonus}`);
+      
       dispatch(
         creatureActions.updateCurrentHp({
           id: selectedCreatureId || '', // ID выбранного существа
@@ -75,6 +83,8 @@ export const Statblock = () => {
           //damageType: selectedDamageType, // Тип урона
         })
       );
+    } else {
+
     }
   };
 
