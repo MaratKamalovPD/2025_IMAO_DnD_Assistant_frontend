@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { categories } from 'pages/bestiary/lib';
+import { CATEGORIES } from 'pages/bestiary/lib';
 import { Filters } from 'pages/bestiary/model';
 import { useEffect, useState } from 'react';
 import s from './FilterModalWindow.module.scss';
@@ -38,7 +38,7 @@ export const FilterModalWindow = ({
     <div
       className={clsx(s.padding4, s.backgroundColorGray100, s.borderRadiusLg)}
     >
-      {Object.entries(categories).map(([category, items]) => (
+      {Object.entries(CATEGORIES).map(([category, items]) => (
         <div key={category} className={s.marginBottom4}>
           <h2
             className={clsx(
