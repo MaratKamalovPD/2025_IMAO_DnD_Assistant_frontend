@@ -13,7 +13,7 @@ export type CreatureClippedData = {
 };
 
 export type CreatureFullData = {
-  _id: string;
+  _id: string; 
   name: NameTranslations;
   size: SizeTranslations;
   type: CreatureType;
@@ -21,21 +21,63 @@ export type CreatureFullData = {
   url: string;
   source: Source;
   id: number;
+  experience?: number; 
   proficiencyBonus: string;
   alignment: string;
   armorClass: number;
+  armors?: Armor[];
   hits: HitPoints;
   speed: Speed[];
   ability: AbilityScores;
+  savingThrows?: SavingThrow[]; 
   skills: Skill[];
+  damageVulnerabilities?: string[]; 
+  damageResistances?: string[]; 
+  conditionImmunities?: string[]; 
+  damageImmunities?: string[]; 
   senses: Senses;
   languages: string[];
+  feats?: Feat[]; 
   actions: Action[];
-  reactions: Action[];
+  legendary?: Legendary[]; 
+  reactions: Reaction[];
   description: string;
   tags: Tag[];
   images: string[];
-  attacks: Attack[];
+  attacks?: Attack[]; 
+  environment?: string[]; 
+};
+
+type Reaction = {
+  name: string;
+  value: string;
+};
+
+type SavingThrow = {
+  name: string;
+  shortName: string;
+  value: number | string; 
+};
+
+type Feat = {
+  name: string;
+  value: number | string; 
+};
+
+type LegendaryAction = {
+  name: string;
+  value: number | string; 
+};
+
+type Legendary = {
+  list: LegendaryAction[];
+  count: number | string; 
+};
+
+type Armor = {
+  name: string;
+  type: string;
+  url: string | null;
 };
 
 export type Attack = {

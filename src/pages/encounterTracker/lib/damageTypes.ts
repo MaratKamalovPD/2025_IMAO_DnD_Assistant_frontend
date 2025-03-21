@@ -78,5 +78,3 @@
     nonadamantine: '/src/shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png',
     other: '/src/shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png',
   };
-
-
