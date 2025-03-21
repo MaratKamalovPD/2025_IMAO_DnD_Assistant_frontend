@@ -1,10 +1,10 @@
 import React from 'react';
 import { components, OptionProps} from 'react-select';
-import {DamageTypeOption } from 'pages/encounterTracker/lib';
+import {ConditionOption } from 'pages/encounterTracker/lib';
 import s from './OptionWithIcon.module.scss';
 
 // Кастомный компонент для отображения опции с иконкой
-export const OptionWithIcon: React.FC<OptionProps<DamageTypeOption, false>> = (props) => {
+export const OptionWithIcon: React.FC<OptionProps<ConditionOption, false>> = (props) => {
     return (
       <components.Option {...props}>
         <div className={s.optionContainer}>

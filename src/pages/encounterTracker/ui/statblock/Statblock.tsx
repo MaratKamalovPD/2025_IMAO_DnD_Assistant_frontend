@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
+import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
 import { weapons, weaponIcons, conditions,conditionIcons} from 'pages/encounterTracker/lib';
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, Attack, creatureActions } from 'entities/creature/model';
@@ -217,7 +218,7 @@ export const Statblock = () => {
                 // Нормализуем название условия
                 const normalizedConditionName = normalizeString(condition);
 
-                const conditionInstanse = conditions.find((cnd) => normalizeString(cnd.label.ru) === normalizedConditionName);
+                const conditionInstanse = conditions.find((cnd) => normalizeString(cnd.label.en) === normalizedConditionName);
 
                 // Находим иконку для условия по нормализованному названию
                 const icon = conditionInstanse ? conditionIcons[conditionInstanse.value] : null;
@@ -229,7 +230,7 @@ export const Statblock = () => {
                   >
                     {/* Отображаем иконку, если она найдена */}
                     {icon && <img src={icon} alt={condition} className={s.attackIcon} />}
-                    {condition}
+                    {conditionInstanse ? conditionInstanse.label.ru : condition}
                   </div>
                 );
               })}
@@ -247,8 +248,7 @@ export const Statblock = () => {
                         &times; {/* Символ "крестик" */}
                       </button>
 
-                      {/* Компонент DamageTypesForm внутри модального окна */}
-                      <DamageTypesForm />
+                      <ApplyConditionModal />
                     </div>
                   </div>
                 )}
