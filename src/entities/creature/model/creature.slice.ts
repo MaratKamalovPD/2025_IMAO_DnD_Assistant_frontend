@@ -32,7 +32,7 @@ export type Creature = {
   actions?: {
     name: string;
   }[];
-  attacks?: Attack[]
+  attacks?: Attack[];
 };
 
 const creatureAdapter = createEntityAdapter<Creature>({
@@ -64,25 +64,24 @@ export const creatureSlice = createSlice({
     ) => {
       const { id, delta } = action.payload;
       const creature = state.entities[id];
-    
+      let hpCurrent = creature.hp.current;
+
       if (!creature) {
         console.warn(`Creature with id ${id} not found.`);
         return;
       }
-    
-      // Если текущие HP отрицательные, лечение устанавливает HP равным значению current
-      if (creature.hp.current <= 0) {
-        creature.hp.current = Math.max(delta, 0); // Гарантируем, что HP не станет отрицательным после лечения
-      }
-      // Если текущие HP положительные, добавляем значение current
-      else {
-        creature.hp.current += delta;
-      }
-    
-      // Гарантируем, что текущие HP не превышают максимальные
-      creature.hp.current = Math.min(creature.hp.current, creature.hp.max);
+      hpCurrent += delta;
 
-      console.log(creature.hp.current)
+      // Гарантируем, что текущие HP не вышел за границы диапазона
+      hpCurrent = Math.max(hpCurrent, 0);
+      hpCurrent = Math.min(hpCurrent, creature.hp.max);
+
+      creatureAdapter.updateOne(state, {
+        id,
+        changes: { hp: { ...creature.hp, current: hpCurrent } },
+      });
+
+      console.log(creature.hp.current, hpCurrent);
     },
     updateMaxHp: (
       state,
@@ -90,21 +89,21 @@ export const creatureSlice = createSlice({
     ) => {
       const { id, max } = action.payload;
       const creature = state.entities[id];
-    
+
       if (!creature) {
         console.warn(`Creature with id ${id} not found.`);
         return;
       }
-    
+
       const oldMax = creature.hp.max;
       const newMax = max;
-    
+
       // Разница между новым и старым максимальным HP
       const difference = newMax - oldMax;
-    
+
       // Обновляем максимальное HP
       creature.hp.max = newMax;
-    
+
       // Если максимальное HP увеличилось, увеличиваем текущее HP на ту же величину
       if (difference > 0) {
         creature.hp.current += difference;
@@ -113,7 +112,7 @@ export const creatureSlice = createSlice({
       else if (difference < 0 && creature.hp.current > newMax) {
         creature.hp.current = newMax;
       }
-    
+
       // Проверка на мгновенную смерть
       if (creature.hp.current <= -creature.hp.max) {
         console.log(`Creature ${id} has died instantly!`);
@@ -127,15 +126,15 @@ export const creatureSlice = createSlice({
     ) => {
       const { id, temporary } = action.payload;
       const creature = state.entities[id];
-    
+
       if (!creature) {
         console.warn(`Creature with id ${id} not found.`);
         return;
       }
-    
+
       // Гарантируем, что temporary не отрицательное
       const newTemporary = Math.max(temporary, 0);
-    
+
       // Если новое значение временных хитов больше текущего, заменяем его
       if (newTemporary > creature.hp.temporary) {
         creature.hp.temporary = newTemporary;
