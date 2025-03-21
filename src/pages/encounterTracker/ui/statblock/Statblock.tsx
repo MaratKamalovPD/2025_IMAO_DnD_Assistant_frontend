@@ -6,43 +6,15 @@ import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, Attack, creatureActions } from 'entities/creature/model';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { useDispatch, useSelector } from 'react-redux';
-import { normalizeString } from 'shared/lib';
+import { normalizeString, rollToHit } from 'shared/lib';
+import { toast } from 'react-toastify';
+import { D20AttackRollToast} from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast'
 import {
   GetPromtRequest,
   useLazyGetPromtQuery,
 } from 'pages/encounterTracker/api';
 import { useEffect, useState } from 'react';
 import s from './Statblock.module.scss';
-
-// Функция для симуляции броска кости
-const rollDice = (dice: string): number => {
-  const diceSides = parseInt(dice.slice(1)); // Извлекаем число из строки "d6" (получаем 6)
-  return Math.floor(Math.random() * diceSides) + 1; // Генерируем случайное число от 1 до diceSides
-};
-
-const calculateDamage = (attack: Attack): number => {
-  let totalDamage = 0;
-
-  // Проходим по всем элементам damage
-  attack.damage.forEach((damage) => {
-    // Проверяем, что кость является d6
-    if (damage.dice === "d6") {
-      // Бросаем кость damage.count раз
-      for (let i = 0; i < damage.count; i++) {
-        totalDamage += rollDice(damage.dice); // Добавляем результат броска к общему урону
-      }
-    } else {
-      console.warn(`Тип кости ${damage.dice} не поддерживается.`);
-    }
-  });
-
-  // Добавляем damage_bonus к общему урону
-  totalDamage += attack.damageBonus || 0;
-
-  console.warn(`Total damage: ${totalDamage} `);
-
-  return -totalDamage;
-};
 
 export const Statblock = () => {
   const [promt, setPromt] = useState('');
@@ -90,18 +62,30 @@ export const Statblock = () => {
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
-  ) as Creature | undefined;
+  ) as Creature; // as Creature || undefined
 
   const handleAttack = (index: number, attack: Attack) => {
     // Ваша логика обработки атаки в зависимости от индекса и объекта атаки
-    
-    dispatch(
+
+    const {hit, critical, d20Roll, damage} = rollToHit(selectedCreature, selectedCreature, attack)
+
+    toast(
+      <D20AttackRollToast total={d20Roll.total} roll={d20Roll.roll} bonus={d20Roll.bonus} hit={hit}/>
+    );
+
+    if (hit) {
+      //toast.success(`${d20Roll.total}:  [${d20Roll.roll}] + ${d20Roll.bonus}`);
+      
+      dispatch(
         creatureActions.updateCurrentHp({
           id: selectedCreatureId || '', // ID выбранного существа
-          delta: calculateDamage(attack), // Количество урона
+          delta: damage ? -damage : 0, // Количество урона
           //damageType: selectedDamageType, // Тип урона
         })
       );
+    } else {
+
+    }
   };
 
   if (!selectedCreature)
@@ -271,7 +255,7 @@ export const Statblock = () => {
       <button
         onClick={() =>
           handleSearchClick({
-            first_char_id: participants[currentTurnIndex],
+            first_char_id: participants[currentTurnIndex]?.id,
             second_char_id: selectedCreatureId || '',
           })
         }
