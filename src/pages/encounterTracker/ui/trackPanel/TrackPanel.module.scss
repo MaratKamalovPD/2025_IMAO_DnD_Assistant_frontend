@@ -1,0 +1,44 @@
+.trackPanel {
+  display: flex;
+
+  &__bestiaryLink {
+    display: flex;
+    width: 20%;
+    justify-content: flex-end;
+    align-items: flex-end;
+
+    a {
+      background-color: #4A5633;
+      color: white;
+      opacity: 0.8;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.tracker {
+  display: flex;
+  width: 80%;
+  align-items: flex-end;
+
+  &__btn {
+    height: 100%;
+  }
+}
+
+.activeTracker {
+  display: flex;
+  width: 80%;
+
+  &__battleInfo {
+    flex-direction: column;
+    display: flex;
+    width: 25%;
+    gap: 0.5rem;
+    margin-right: 1rem;
+  }
+}
+
