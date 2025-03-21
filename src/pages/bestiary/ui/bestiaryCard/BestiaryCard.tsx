@@ -12,6 +12,7 @@ import {
 import { encounterActions } from 'entities/encounter/model';
 import { useLazyGetCreatureByNameQuery } from 'pages/bestiary/api';
 
+import { calculateInitiative } from 'pages/bestiary/model';
 import placeholderImage from 'shared/assets/images/placeholder.png';
 import s from './BestiaryCard.module.scss';
 
@@ -41,7 +42,7 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
           temporary: 0,
         },
         ac: creatureData.armorClass,
-        initiative: Math.floor(Math.random() * 19) + 2,
+        initiative: calculateInitiative(creatureData.ability.dex),
         conditions: [],
         stats: {
           strength: creatureData.ability.str,
@@ -53,6 +54,7 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
         },
         image: creatureData.images[2] || placeholderImage,
         notes: '',
+        attacks: creatureData.attacks,
       };
 
       dispatch(

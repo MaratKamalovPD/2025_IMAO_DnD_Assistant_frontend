@@ -141,3 +141,59 @@
     }
   }
 }
+
+//============ MODAL WINDOW ===============
+
+// Оверлей (фон модального окна)
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); // Полупрозрачный чёрный фон
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; // Убедимся, что модальное окно поверх других элементов
+}
+
+// Контент модального окна
+.modalContent {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px; // Ограничиваем максимальную ширину
+  position: relative;
+}
+
+// Кнопка закрытия модального окна
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+
+  &:hover {
+    color: #000;
+  }
+}
+
+//============++++++++++++++===============
+
+
+.creaturePanel__actionsList__element {
+  display: flex;
+  align-items: center; // Выравниваем иконку и текст по центру
+  gap: 8px; // Расстояние между иконкой и текстом
+}
+
+.attackIcon {
+  width: 32px; // Размер иконки
+  height: 32px;
+}

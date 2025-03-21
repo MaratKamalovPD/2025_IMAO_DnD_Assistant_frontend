@@ -9,4 +9,5 @@ export type {
   CreatureClippedData,
   CreatureFullData,
   CreaturesStore,
+  Attack,
 } from './types';

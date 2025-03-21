@@ -5,6 +5,7 @@ import {
   PayloadAction,
   Reducer,
 } from '@reduxjs/toolkit';
+import { Attack } from './types';
 
 export type Creature = {
   _id: string;
@@ -31,6 +32,7 @@ export type Creature = {
   actions?: {
     name: string;
   }[];
+  attacks?: Attack[]
 };
 
 const creatureAdapter = createEntityAdapter<Creature>({
@@ -56,14 +58,93 @@ export const creatureSlice = createSlice({
     addCreatures: creatureAdapter.addMany,
     updateCreature: creatureAdapter.updateOne,
     removeCreature: creatureAdapter.removeOne,
-    updateHp: (
+    updateCurrentHp: (
       state,
-      action: PayloadAction<{ id: string; hp: Partial<Creature['hp']> }>,
+      action: PayloadAction<{ id: string; delta: number }>,
     ) => {
-      const { id, hp } = action.payload;
-      const Creature = state.entities[id];
-      if (Creature) {
-        Creature.hp = { ...Creature.hp, ...hp };
+      const { id, delta } = action.payload;
+      const creature = state.entities[id];
+      let hpCurrent = creature.hp.current;
+    
+      if (!creature) {
+        console.warn(`Creature with id ${id} not found.`);
+        return;
+      }
+    
+      // Если текущие HP отрицательные, лечение устанавливает HP равным значению current
+      if (hpCurrent <= 0) {
+        hpCurrent = Math.max(delta, 0); // Гарантируем, что HP не станет отрицательным после лечения
+      }
+      // Если текущие HP положительные, добавляем значение current
+      else {
+        hpCurrent += delta;
+      }
+    
+      // Гарантируем, что текущие HP не превышают максимальные
+      hpCurrent = Math.min(hpCurrent, creature.hp.max);
+
+      creatureAdapter.updateOne(state, {
+        id,
+        changes: { hp: { ...creature.hp, current: hpCurrent } },
+      });
+
+      console.log(creature.hp.current, hpCurrent)
+    },
+    updateMaxHp: (
+      state,
+      action: PayloadAction<{ id: string; max: number }>,
+    ) => {
+      const { id, max } = action.payload;
+      const creature = state.entities[id];
+    
+      if (!creature) {
+        console.warn(`Creature with id ${id} not found.`);
+        return;
+      }
+    
+      const oldMax = creature.hp.max;
+      const newMax = max;
+    
+      // Разница между новым и старым максимальным HP
+      const difference = newMax - oldMax;
+    
+      // Обновляем максимальное HP
+      creature.hp.max = newMax;
+    
+      // Если максимальное HP увеличилось, увеличиваем текущее HP на ту же величину
+      if (difference > 0) {
+        creature.hp.current += difference;
+      }
+      // Если максимальное HP уменьшилось, проверяем, не превышает ли текущее HP новое максимальное
+      else if (difference < 0 && creature.hp.current > newMax) {
+        creature.hp.current = newMax;
+      }
+    
+      // Проверка на мгновенную смерть
+      if (creature.hp.current <= -creature.hp.max) {
+        console.log(`Creature ${id} has died instantly!`);
+        // Здесь можно добавить логику для смерти существа
+        creature.hp.current = -creature.hp.max; // Устанавливаем текущее HP на минимальное значение
+      }
+    },
+    updateTemporaryHp: (
+      state,
+      action: PayloadAction<{ id: string; temporary: number }>,
+    ) => {
+      const { id, temporary } = action.payload;
+      const creature = state.entities[id];
+    
+      if (!creature) {
+        console.warn(`Creature with id ${id} not found.`);
+        return;
+      }
+    
+      // Гарантируем, что temporary не отрицательное
+      const newTemporary = Math.max(temporary, 0);
+    
+      // Если новое значение временных хитов больше текущего, заменяем его
+      if (newTemporary > creature.hp.temporary) {
+        creature.hp.temporary = newTemporary;
       }
     },
     addCondition: (

@@ -1,0 +1,53 @@
+.damageTypesForm {
+  font-family: Arial, sans-serif;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-top: 40px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.damageTypesLabel {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.damageInputContainer {
+  display: flex;
+  gap: 10px; // Расстояние между select и input
+  align-items: center;
+}
+
+.damageTypesSelect {
+  flex: 1; // Занимает всё доступное пространство
+}
+
+.damageAmountInput {
+  width: 100px; // Ширина поля для ввода урона
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.dealDamageButton {
+  margin-top: 15px;
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+}
+
+  

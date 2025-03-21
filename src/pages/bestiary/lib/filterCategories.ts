@@ -1,6 +1,6 @@
 import { Filters } from '../model';
 
-export const categories: Filters = {
+export const CATEGORIES: Filters = {
   'Иммунитет к урону': [
     'огонь',
     'холод',
