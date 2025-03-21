@@ -64,6 +64,7 @@ export const creatureSlice = createSlice({
     ) => {
       const { id, delta } = action.payload;
       const creature = state.entities[id];
+      let hpCurrent = creature.hp.current;
     
       if (!creature) {
         console.warn(`Creature with id ${id} not found.`);
@@ -71,18 +72,23 @@ export const creatureSlice = createSlice({
       }
     
       // Если текущие HP отрицательные, лечение устанавливает HP равным значению current
-      if (creature.hp.current <= 0) {
-        creature.hp.current = Math.max(delta, 0); // Гарантируем, что HP не станет отрицательным после лечения
+      if (hpCurrent <= 0) {
+        hpCurrent = Math.max(delta, 0); // Гарантируем, что HP не станет отрицательным после лечения
       }
       // Если текущие HP положительные, добавляем значение current
       else {
-        creature.hp.current += delta;
+        hpCurrent += delta;
       }
     
       // Гарантируем, что текущие HP не превышают максимальные
-      creature.hp.current = Math.min(creature.hp.current, creature.hp.max);
+      hpCurrent = Math.min(hpCurrent, creature.hp.max);
 
-      console.log(creature.hp.current)
+      creatureAdapter.updateOne(state, {
+        id,
+        changes: { hp: { ...creature.hp, current: hpCurrent } },
+      });
+
+      console.log(creature.hp.current, hpCurrent)
     },
     updateMaxHp: (
       state,
