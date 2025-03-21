@@ -1,23 +1,67 @@
 import clsx from 'clsx';
+import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
-import { Creature } from 'entities/creature/model/creature.slice';
+import { Creature, Attack, creatureActions } from 'entities/creature/model';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   GetPromtRequest,
   useLazyGetPromtQuery,
 } from 'pages/encounterTracker/api';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import s from './Statblock.module.scss';
+
+// Функция для симуляции броска кости
+const rollDice = (dice: string): number => {
+  const diceSides = parseInt(dice.slice(1)); // Извлекаем число из строки "d6" (получаем 6)
+  return Math.floor(Math.random() * diceSides) + 1; // Генерируем случайное число от 1 до diceSides
+};
+
+const calculateDamage = (attack: Attack): number => {
+  let totalDamage = 0;
+
+  // Проходим по всем элементам damage
+  attack.damage.forEach((damage) => {
+    // Проверяем, что кость является d6
+    if (damage.dice === "d6") {
+      // Бросаем кость damage.count раз
+      for (let i = 0; i < damage.count; i++) {
+        totalDamage += rollDice(damage.dice); // Добавляем результат броска к общему урону
+      }
+    } else {
+      console.warn(`Тип кости ${damage.dice} не поддерживается.`);
+    }
+  });
+
+  // Добавляем damage_bonus к общему урону
+  totalDamage += attack.damageBonus || 0;
+
+  console.warn(`Total damage: ${totalDamage} `);
+
+  return -totalDamage;
+};
 
 export const Statblock = () => {
   const [promt, setPromt] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);; // Состояние для управления модальным окном
+
+  const dispatch = useDispatch();
 
   const [trigger, { data: promtData, isLoading, isError }] =
     useLazyGetPromtQuery();
 
   const handleSearchClick = (data: GetPromtRequest) => {
     trigger(data);
+  };
+
+  // Функция для открытия модального окна
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // Функция для закрытия модального окна
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -33,6 +77,18 @@ export const Statblock = () => {
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
   ) as Creature | undefined;
+
+  const handleAttack = (index: number, attack: Attack) => {
+    // Ваша логика обработки атаки в зависимости от индекса и объекта атаки
+    
+    dispatch(
+        creatureActions.updateCurrentHp({
+          id: selectedCreatureId || '', // ID выбранного существа
+          delta: calculateDamage(attack), // Количество урона
+          //damageType: selectedDamageType, // Тип урона
+        })
+      );
+  };
 
   if (!selectedCreature)
     return (
@@ -92,19 +148,44 @@ export const Statblock = () => {
         <div className={s.creaturePanel__actionsContainer}>
           <div className={s.creaturePanel__actionsContainer__header}>
             Действия
-          </div>
-          {selectedCreature.actions?.map((action, ind) => (
-            <div className={s.creaturePanel__actionsList__element} key={ind}>
-              {action.name}
-            </div>
-          ))}
+          </div >
           <div className={s.creaturePanel__actionsList}>
-            <div className={s.creaturePanel__actionsList__element}>
+          {selectedCreature.attacks?.map((attack, ind) => (
+              <button
+                className={s.creaturePanel__actionsList__element}
+                key={ind}
+                onClick={() => handleAttack(ind, attack)} // Передаем индекс и атаку в обработчик
+              >
+                {attack.name}
+              </button>
+            ))}
+
+            <button className={s.creaturePanel__actionsList__element} onClick={openModal}>
+              Deal damage
+            </button>
+          </div>
+          
+          <div className={s.creaturePanel__actionsList}>
+            {/* <div className={s.creaturePanel__actionsList__element}>
               Атака2 (4d20)
             </div>
             <button className={s.creaturePanel__actionsList__element}>
               Добавить действие
-            </button>
+            </button> */}
+            
+            {isModalOpen && (
+              <div className={s.modalOverlay}>
+                <div className={s.modalContent}>
+                  {/* Кнопка закрытия модального окна */}
+                  <button className={s.closeButton} onClick={closeModal}>
+                    &times; {/* Символ "крестик" */}
+                  </button>
+
+                  {/* Компонент DamageTypesForm внутри модального окна */}
+                  <DamageTypesForm />
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className={s.creaturePanel__notesContainer}>
