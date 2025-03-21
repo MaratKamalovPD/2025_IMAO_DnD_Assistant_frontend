@@ -13,6 +13,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router';
 import { toast } from 'react-toastify';
 
+import s from './TrackPanel.module.scss';
+
 export const TrackPanel = () => {
   const dispatch = useDispatch();
 
@@ -30,24 +32,30 @@ export const TrackPanel = () => {
 
   if (!hasStarted)
     return (
-      <>
-        <div className='tracker'>
-          <button onClick={() => handleStart()}>Начать бой</button>
+      <div className={s.trackPanel}>
+        <div className={s.tracker}>
+          <button onClick={() => handleStart()} className={s.tracker__btn}>Начать бой</button>
         </div>
-        <Link to='/bestiary'>Перейти в бестиарий</Link>
-      </>
+        <div className={s.trackPanel__bestiaryLink}>
+          <Link data-role='btn' to='/bestiary'>Перейти в бестиарий</Link>
+        </div>
+      </div>
     );
 
   return (
-    <>
-      <div className='tracker'>
-        <span>Раунд: {currentRound}</span>
-        <span>Ход: {name}</span>
-        <button onClick={() => dispatch(encounterActions.nextTurn())}>
+    <div className={s.trackPanel}>
+      <div className={s.activeTracker}>
+        <div className={s.activeTracker__battleInfo}>
+          <span>Раунд: {currentRound}</span>
+          <span>Ход: {name}</span>
+        </div>
+        <button onClick={() => dispatch(encounterActions.nextTurn())} className={s.tracker__btn}>
           Следующий ход
         </button>
       </div>
-      <Link to='/bestiary'>Перейти в бестиарий</Link>
-    </>
+      <div className={s.trackPanel__bestiaryLink}>
+        <Link data-role='btn' to='/bestiary'>Перейти в бестиарий</Link>
+      </div>
+    </div>
   );
 };

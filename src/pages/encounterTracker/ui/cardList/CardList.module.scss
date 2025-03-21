@@ -2,7 +2,7 @@
   display: flex;
   position: relative;
   min-height: 220px; /* Минимальная высота для визуальной целостности */
-  margin: 1rem -1rem; /* Компенсация для скрытия боковых теней */
+  margin: 1rem 0;
   padding: 1rem; /* Чтобы контент не прилипал к краям */
   max-width: 80vw;
   background-color: #2A2A40;
