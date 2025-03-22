@@ -52,6 +52,7 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
           wisdom: creatureData.ability.wiz,
           charisma: creatureData.ability.cha,
         },
+        savingThrows: creatureData.savingThrows || [],
         image: creatureData.images[2] || placeholderImage,
         notes: '',
         attacks: creatureData.attacks,

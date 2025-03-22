@@ -5,7 +5,7 @@ import {
   PayloadAction,
   Reducer,
 } from '@reduxjs/toolkit';
-import { Attack } from './types';
+import { Attack, SavingThrow } from './types';
 
 export type Creature = {
   _id: string;
@@ -27,6 +27,7 @@ export type Creature = {
     wisdom: number;
     charisma: number;
   };
+  savingThrows: SavingThrow[];
   image?: string;
   notes: string;
   actions?: {

@@ -1,3 +1,6 @@
+import {Damage } from 'entities/creature/model';
+
+
 export type UUID = string;
 
 export type D20Roll = {
@@ -5,3 +8,16 @@ export type D20Roll = {
     bonus: number;
     total: number;
 };
+
+
+export type DamageDicesRolls = {
+  total: number;
+  dices: DamageDicesRoll[]
+  bonus: number;  
+}
+
+export type DamageDicesRoll = {
+    total: number;
+    damage: Damage
+}
+

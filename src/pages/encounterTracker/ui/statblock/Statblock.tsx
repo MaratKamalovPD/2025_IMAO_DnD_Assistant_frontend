@@ -6,9 +6,10 @@ import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, Attack, creatureActions } from 'entities/creature/model';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { useDispatch, useSelector } from 'react-redux';
-import { normalizeString, rollToHit } from 'shared/lib';
+import { normalizeString, rollToHit, rollDamage } from 'shared/lib';
 import { toast } from 'react-toastify';
-import { D20AttackRollToast} from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast'
+import { D20AttackRollToast} from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast' 
+import { DamageRollToast} from 'pages/encounterTracker/ui/trackerToasts/damageRollToast' 
 import {
   GetPromtRequest,
   useLazyGetPromtQuery,
@@ -70,7 +71,7 @@ export const Statblock = () => {
     const advantage = true
     const disadvantage = false
 
-    const {hit, critical, d20Roll, damage} = rollToHit(selectedCreature, selectedCreature, attack, true)
+    const {hit, critical, d20Roll} = rollToHit(selectedCreature, selectedCreature, attack, true)
 
     toast(
       <D20AttackRollToast
@@ -84,7 +85,13 @@ export const Statblock = () => {
   );
 
     if (hit) {
-      //toast.success(`${d20Roll.total}:  [${d20Roll.roll}] + ${d20Roll.bonus}`);
+      const damageDicesRolls = rollDamage(attack, critical);
+
+      const damage = damageDicesRolls.total
+
+      toast(
+          <DamageRollToast damageRolls={damageDicesRolls} />
+      );  
       
       dispatch(
         creatureActions.updateCurrentHp({

@@ -6,3 +6,5 @@ export { weapons, weaponIcons} from './humanoidWeaponTypes';
 
 export type { Condition, ConditionOption, ConditionValue} from './conditionsTypes';
 export { conditions, conditionIcons} from './conditionsTypes';
+
+export {mapDamageType} from './damageTypes';

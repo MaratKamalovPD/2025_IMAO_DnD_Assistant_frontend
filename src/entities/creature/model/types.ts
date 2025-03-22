@@ -53,7 +53,7 @@ type Reaction = {
   value: string;
 };
 
-type SavingThrow = {
+export type SavingThrow = {
   name: string;
   shortName: string;
   value: number | string; 
@@ -247,7 +247,6 @@ enum DamageType {
   Thunder = "Громовой",
 }
 
-
 // Перечисление типов костей
 export enum DiceType {
   D4 = "d4",
@@ -260,10 +259,10 @@ export enum DiceType {
 }
 
 // Интерфейс для описания урона
-interface Damage {
+export interface Damage {
   dice: DiceType;       // Тип кости (например, "d10")
   count: number;       // Количество костей (например, 1)
-  damageType: DamageType; // Тип урона (например, "дробящий")
+  damageType: number; // Тип урона (в виде числа, потому что в GO пречисляемый тип только в виде числа)
 }
 
 export type CreaturesStore = ReturnType<

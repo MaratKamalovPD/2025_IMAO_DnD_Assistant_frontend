@@ -1,0 +1,50 @@
+.toastContainer {
+    display: flex;
+    flex-direction: column;
+    background: #121212;
+    color: #ffffff;
+    padding: 10px 15px;
+    font-family: Arial, sans-serif;
+    max-width: 350px;
+    position: relative;
+    overflow: hidden;
+}
+
+.toastContent {
+    display: flex;
+}
+
+.toastTotal {
+    font-size: 32px;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.toastText {
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dicesDetails {
+    margin-bottom: 5px;
+}
+
+.diceRoll {
+    margin-right: 5px;
+}
+
+.bonusDetails {
+    font-style: italic;
+}
+
+.hitText {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.totalContainer {
+    display: flex;
+    align-items: center;
+}
