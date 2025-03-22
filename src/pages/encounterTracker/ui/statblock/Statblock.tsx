@@ -67,11 +67,21 @@ export const Statblock = () => {
   const handleAttack = (index: number, attack: Attack) => {
     // Ваша логика обработки атаки в зависимости от индекса и объекта атаки
 
-    const {hit, critical, d20Roll, damage} = rollToHit(selectedCreature, selectedCreature, attack)
+    const advantage = true
+    const disadvantage = false
+
+    const {hit, critical, d20Roll, damage} = rollToHit(selectedCreature, selectedCreature, attack, true)
 
     toast(
-      <D20AttackRollToast total={d20Roll.total} roll={d20Roll.roll} bonus={d20Roll.bonus} hit={hit}/>
-    );
+      <D20AttackRollToast
+          total={d20Roll[0].total}
+          rolls={d20Roll.map(roll => roll.roll)} // Передаем массив бросков
+          bonus={d20Roll[0].bonus}
+          hit={hit}
+          advantage={advantage} // Передаем флаг преимущества
+          disadvantage={disadvantage} // Передаем флаг помехи
+      />
+  );
 
     if (hit) {
       //toast.success(`${d20Roll.total}:  [${d20Roll.roll}] + ${d20Roll.bonus}`);
