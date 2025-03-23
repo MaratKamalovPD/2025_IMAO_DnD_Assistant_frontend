@@ -6,10 +6,11 @@ import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, Attack, creatureActions } from 'entities/creature/model';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { useDispatch, useSelector } from 'react-redux';
-import { normalizeString, rollToHit, rollDamage } from 'shared/lib';
+import { normalizeString, rollToHit, rollDamage, rollSavingThrow, SavingThrow } from 'shared/lib';
 import { toast } from 'react-toastify';
 import { D20AttackRollToast} from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast' 
 import { DamageRollToast} from 'pages/encounterTracker/ui/trackerToasts/damageRollToast' 
+import { D20SavingThrowToast} from 'pages/encounterTracker/ui/trackerToasts/d20SavingThrow' 
 import {
   GetPromtRequest,
   useLazyGetPromtQuery,
@@ -82,7 +83,7 @@ export const Statblock = () => {
           advantage={advantage} // Передаем флаг преимущества
           disadvantage={disadvantage} // Передаем флаг помехи
       />
-  );
+    );
 
     if (hit) {
       const damageDicesRolls = rollDamage(attack, critical);
@@ -92,7 +93,28 @@ export const Statblock = () => {
       toast(
           <DamageRollToast damageRolls={damageDicesRolls} />
       );  
-      
+
+      const constitutionSavingThrow: SavingThrow = {
+        challengeRating: 12,
+        ability: 'телосложение'
+      };
+
+      const advantageSavingThrow = false
+      const disadvantageSavingThrow = false
+
+      const {successSavingThrow, criticalSavingThrow, d20RollsSavingThrow}  = rollSavingThrow(selectedCreature, constitutionSavingThrow, advantageSavingThrow);
+
+      toast(
+        <D20SavingThrowToast
+            total={d20RollsSavingThrow[0].total}
+            rolls={d20RollsSavingThrow.map(roll => roll.roll)} // Передаем массив бросков
+            bonus={d20RollsSavingThrow[0].bonus}
+            hit={successSavingThrow}
+            advantage={advantageSavingThrow} // Передаем флаг преимущества
+            disadvantage={disadvantageSavingThrow} // Передаем флаг помехи
+        />
+      );
+
       dispatch(
         creatureActions.updateCurrentHp({
           id: selectedCreatureId || '', // ID выбранного существа

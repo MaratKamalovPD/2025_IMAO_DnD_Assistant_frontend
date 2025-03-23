@@ -1,4 +1,4 @@
-import {Damage } from 'entities/creature/model';
+import {Damage, AbilityValueRu} from 'entities/creature/model';
 
 
 export type UUID = string;
@@ -19,5 +19,10 @@ export type DamageDicesRolls = {
 export type DamageDicesRoll = {
     total: number;
     damage: Damage
+}
+
+export type SavingThrow = {
+    challengeRating: number;
+    ability: AbilityValueRu
 }
 

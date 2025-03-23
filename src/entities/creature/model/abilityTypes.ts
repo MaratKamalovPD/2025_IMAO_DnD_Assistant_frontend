@@ -28,6 +28,14 @@ export type AbilityValue =
   | 'wisdom'
   | 'charisma';
 
+  export type AbilityValueRu =
+  | 'сила'
+  | 'ловкость'
+  | 'телосложение'
+  | 'интеллект'
+  | 'мудрость'
+  | 'харизма';  
+
 export const abilityIcons: Record<AbilityValue, string> = {
   strength: '/src/shared/assets/images/abilities/50px-Strength_Icon.png',
   dexterity: '/src/shared/assets/images/abilities/50px-Dexterity_Icon.png',
