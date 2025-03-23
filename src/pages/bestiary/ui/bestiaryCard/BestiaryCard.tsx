@@ -115,7 +115,7 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
 
           <div className={s.linkWrapper}>
             <button onClick={() => handleSearchClick()} className={s.link}>
-              Дабавить в трекер
+              Добавить в трекер
             </button>
             <Link to={'/encounter_tracker'} className={s.link}>
               Перейти в трекер

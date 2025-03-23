@@ -1,5 +1,6 @@
 $gap: 0.3rem;
 $border-width: 2px;
+$selected-card-color: #FFD700;
 
 .card {
   position: relative;
@@ -31,17 +32,17 @@ $border-width: 2px;
 }
 
 .selected {
-  border-color: #ffd700;
+  border-color: $selected-card-color;
   box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
 }
 
 .selected {
-  border-color: #ffd700;
+  border-color: $selected-card-color;
   box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
 }
 
 .currentTurn {
-  outline: 5px solid #ffd700;
+  outline: 5px solid $selected-card-color;
 }
 
 .dead {
