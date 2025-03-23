@@ -34,10 +34,18 @@ export const TrackPanel = () => {
     return (
       <div className={s.trackPanel}>
         <div className={s.tracker}>
-          <button onClick={() => handleStart()} className={s.tracker__btn}>Начать бой</button>
+          <button onClick={() => handleStart()} data-variant='accent'>
+            Начать бой
+          </button>
         </div>
         <div className={s.trackPanel__bestiaryLink}>
-          <Link data-role='btn' to='/bestiary'>Перейти в бестиарий</Link>
+        <Link 
+          data-role='btn' 
+          data-variant='secondary' 
+          to='/bestiary'
+        >
+          Перейти в бестиарий
+        </Link>
         </div>
       </div>
     );
@@ -45,16 +53,22 @@ export const TrackPanel = () => {
   return (
     <div className={s.trackPanel}>
       <div className={s.activeTracker}>
+        <button onClick={() => dispatch(encounterActions.nextTurn())}  data-variant='accent'>
+          Следующий ход
+        </button>
         <div className={s.activeTracker__battleInfo}>
           <span>Раунд: {currentRound}</span>
           <span>Ход: {name}</span>
         </div>
-        <button onClick={() => dispatch(encounterActions.nextTurn())} className={s.tracker__btn}>
-          Следующий ход
-        </button>
       </div>
       <div className={s.trackPanel__bestiaryLink}>
-        <Link data-role='btn' to='/bestiary'>Перейти в бестиарий</Link>
+        <Link 
+          data-role='btn' 
+          data-variant='secondary' 
+          to='/bestiary'
+        >
+          Перейти в бестиарий
+        </Link>
       </div>
     </div>
   );

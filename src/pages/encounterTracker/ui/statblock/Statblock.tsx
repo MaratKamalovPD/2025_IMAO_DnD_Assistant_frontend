@@ -200,6 +200,7 @@ export const Statblock = () => {
               return (
                 <button
                   className={s.creaturePanel__actionsList__element}
+                  data-variant='primary'
                   key={ind}
                   onClick={() => handleAttack(ind, attack)}
                 >
@@ -210,7 +211,11 @@ export const Statblock = () => {
               );
             })}
 
-            <button className={s.creaturePanel__actionsList__element} onClick={openModal}>
+            <button 
+              className={s.creaturePanel__actionsList__element} 
+              onClick={openModal}
+              data-variant='primary'
+            >
               Нанести урон
             </button>
           </div>
@@ -258,7 +263,11 @@ export const Statblock = () => {
                 );
               })}
 
-              <button className={s.creaturePanel__actionsList__element} onClick={openModalConditions}>
+              <button 
+                className={s.creaturePanel__actionsList__element} 
+                data-variant='primary'
+                onClick={openModalConditions}
+              >
                 Повесить состояние
               </button>
 
@@ -299,6 +308,7 @@ export const Statblock = () => {
           })
         }
         className={s.creaturePanel__actionsList__element}
+        data-variant='primary'
       >
         Сгенерировать красочное описание
       </button>

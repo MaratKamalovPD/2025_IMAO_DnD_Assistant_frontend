@@ -8,13 +8,9 @@
     align-items: flex-end;
 
     a {
-      background-color: #4A5633;
-      color: white;
-      opacity: 0.8;
-
-      &:hover {
-        opacity: 1;
-      }
+      height: 100%;
+      display: flex;
+      align-items: center;
     }
   }
 }
@@ -23,10 +19,6 @@
   display: flex;
   width: 80%;
   align-items: flex-end;
-
-  &__btn {
-    height: 100%;
-  }
 }
 
 .activeTracker {
@@ -36,9 +28,9 @@
   &__battleInfo {
     flex-direction: column;
     display: flex;
-    width: 25%;
+    width: fit-content;
     gap: 0.5rem;
-    margin-right: 1rem;
+    margin-left: 1rem;
   }
 }
 
