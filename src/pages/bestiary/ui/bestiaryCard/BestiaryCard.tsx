@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router';
 import { toast } from 'react-toastify';
 import uniqid from 'uniqid';
 
@@ -84,9 +83,9 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
 
       <div className={s.infoContainer}>
         <div className={s.header}>
-          <div className={s.header__title} data-title={creature.name.rus}>
-            {creature.name.rus}
-            <span className={s.tooltip}>adssaddsa</span>
+          <div className={s.header__titleContainer} data-title={creature.name.rus}>
+            <div className={s.header__title}>{creature.name.rus}</div>
+            <span className={s.tooltip}>{creature.name.rus}</span>
           </div>
           <div className={s.header__tags}>
             <span className={s.header__typeTag}>{creature.type.name}</span>
