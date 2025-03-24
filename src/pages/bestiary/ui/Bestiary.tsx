@@ -111,9 +111,9 @@ export const Bestiary = () => {
           placeholder='Поиск по названию...'
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          className={s.searchInput}
+          className={s.searchContainer__input}
         />
-        <button onClick={() => setIsModalOpen(true)} className={s.filterButton}>
+        <button onClick={() => setIsModalOpen(true)} data-variant='secondary'>
           Открыть фильтр
         </button>
       </div>
