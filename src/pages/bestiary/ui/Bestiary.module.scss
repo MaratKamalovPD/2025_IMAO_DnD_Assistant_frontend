@@ -1,7 +1,10 @@
+@use "./bestiaryCard/BestiaryCard.module.scss" as card;
+
 .bestiaryContainer {
   display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, clamp(129px, 50vw, card.$card-width));
+  justify-content: space-evenly;
   width: 80vw;
   padding: 16px;
   box-sizing: border-box;

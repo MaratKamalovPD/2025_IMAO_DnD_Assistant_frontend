@@ -65,6 +65,8 @@ button, a[data-role=btn] {
   cursor: pointer;
   transition: border-color 0.25s;
   border: 2px solid transparent;
+  text-align: center;
+  line-height: 1;
 
   &[data-variant=primary] {
     background-color: var(--primary-btn-color);
