@@ -39,13 +39,9 @@ export const TrackPanel = () => {
           </button>
         </div>
         <div className={s.trackPanel__bestiaryLink}>
-        <Link 
-          data-role='btn' 
-          data-variant='secondary' 
-          to='/bestiary'
-        >
-          Перейти в бестиарий
-        </Link>
+          <Link data-role='btn' data-variant='secondary' to='/bestiary'>
+            Перейти в бестиарий
+          </Link>
         </div>
       </div>
     );
@@ -53,7 +49,10 @@ export const TrackPanel = () => {
   return (
     <div className={s.trackPanel}>
       <div className={s.activeTracker}>
-        <button onClick={() => dispatch(encounterActions.nextTurn())}  data-variant='accent'>
+        <button
+          onClick={() => dispatch(encounterActions.nextTurn())}
+          data-variant='accent'
+        >
           Следующий ход
         </button>
         <div className={s.activeTracker__battleInfo}>
@@ -62,11 +61,7 @@ export const TrackPanel = () => {
         </div>
       </div>
       <div className={s.trackPanel__bestiaryLink}>
-        <Link 
-          data-role='btn' 
-          data-variant='secondary' 
-          to='/bestiary'
-        >
+        <Link data-role='btn' data-variant='secondary' to='/bestiary'>
           Перейти в бестиарий
         </Link>
       </div>
