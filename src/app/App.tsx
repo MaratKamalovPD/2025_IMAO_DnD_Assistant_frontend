@@ -1,4 +1,5 @@
 import { Bounce, ToastContainer } from 'react-toastify';
+import { Footer } from 'shared/ui';
 import { MainProviders } from './providers';
 import { AppRouter } from './routes';
 
@@ -22,6 +23,7 @@ function App() {
           theme='dark'
           transition={Bounce}
         />
+        <Footer />
       </MainProviders>
     </main>
   );
