@@ -17,10 +17,7 @@
     text-align: center;
 
     li {
-      font-size: 3rem;
-      @media (max-width: 768px) {
-        font-size: 1.5rem;
-      }
+      font-size: 2rem;
       color: white;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
       margin-bottom: 1rem;
@@ -30,16 +27,36 @@
       background-color: rgba(236, 157, 237, 0.5);
       @include startOpacity();
 
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+
+      &:nth-child(1)::before {
+        content: '🔮';
+      }
+
+      &:nth-child(2)::before {
+        content: '🧙‍♂️';
+      }
+
+      &:nth-child(3)::before {
+        content: '⚔️';
+      }
+
+      &:nth-child(4)::before {
+        content: '👑';
+      }
+
       &::before {
-        content: '🔥';
         font-size: 2rem;
         position: absolute;
-        @media (min-width: 768px) {
-          left: 5%;
-        }
         left: -5%;
         top: 50%;
         transform: translateY(-50%);
+
+        @media (min-width: 768px) {
+          left: 5%;
+        }
       }
 
       @media (max-width: 768px) {
@@ -63,19 +80,22 @@
   .logo {
     width: clamp(200px, 80%, 600px);
     margin-top: 2rem;
-    @media (min-width: 768px) {
-      margin-bottom: 14rem;
-    }
     @include startOpacity();
+
+    @media (min-width: 768px) {
+      margin-bottom: 16rem;
+    }
   }
 
   .dndLogo {
+    margin-top: 2rem;
     margin-bottom: 2rem;
     width: 40%;
+    @include startOpacity();
+
     @media (max-width: 768px) {
       width: 60%;
     }
-    @include startOpacity();
   }
 
   button {

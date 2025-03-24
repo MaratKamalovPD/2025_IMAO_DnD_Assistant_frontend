@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import s from './Hero.module.scss';
 
 import dndLogo from 'shared/assets/images/DnD_logo.png';
@@ -18,7 +19,9 @@ export const Hero = () => {
       <div>
         <img className={s.dndLogo} src={dndLogo} alt='DnD_logo'></img>
       </div>
-      <button data-variant='primary'>Начать использовать</button>
+      <Link to='bestiary'>
+        <button data-variant='primary'>Вперёд к сражениям!</button>
+      </Link>
     </section>
   );
 };

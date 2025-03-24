@@ -1,4 +1,4 @@
-import { Dice, Features, Hero } from 'pages/main/ui';
+import { Background, Dice, Features, Hero } from 'pages/main/ui';
 import { useEffect } from 'react';
 
 import s from './Main.module.scss';
@@ -35,6 +35,7 @@ export const Main = () => {
 
   return (
     <div className={s.mainPage}>
+      <Background />
       <Dice />
       <Hero />
       <Features />
