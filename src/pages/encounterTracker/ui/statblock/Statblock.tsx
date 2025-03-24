@@ -3,10 +3,10 @@ import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
 import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
 import { weapons, weaponIcons, conditions,conditionIcons, monsterAttacks, monsterAttackIcons} from 'pages/encounterTracker/lib';
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
-import { Creature, Attack, creatureActions, AttackLLM } from 'entities/creature/model';
+import { Creature, Attack, creatureActions, AttackLLM, dndTraitToInitialForm } from 'entities/creature/model';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { useDispatch, useSelector } from 'react-redux';
-import { normalizeString, rollToHit, rollDamage, rollSavingThrow, SavingThrow, rollToHitLLM, rollDamageLLM } from 'shared/lib';
+import { normalizeString, rollToHit, rollDamage, rollSavingThrow, SavingThrow, rollToHitLLM, rollDamageLLM, calculateDndDamage } from 'shared/lib';
 import { toast } from 'react-toastify';
 import { D20AttackRollToast} from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast' 
 import { DamageRollToast} from 'pages/encounterTracker/ui/trackerToasts/damageRollToast' 
@@ -72,31 +72,41 @@ export const Statblock = () => {
     const advantage = true
     const disadvantage = false
 
-    const {hit, critical, d20Roll} = rollToHitLLM(selectedCreature, selectedCreature, attack, true)
+    if (attack.attackBonus) {
+        const {hit, critical, d20Roll} = rollToHitLLM(selectedCreature, selectedCreature, attack, true)
 
-    toast(
-      <D20AttackRollToast
-          total={d20Roll[0].total}
-          rolls={d20Roll.map(roll => roll.roll)} // Передаем массив бросков
-          bonus={d20Roll[0].bonus}
-          hit={hit}
-          advantage={advantage} // Передаем флаг преимущества
-          disadvantage={disadvantage} // Передаем флаг помехи
-      />
-    );
+        toast(
+          <D20AttackRollToast
+              total={d20Roll[0].total}
+              rolls={d20Roll.map(roll => roll.roll)} // Передаем массив бросков
+              bonus={d20Roll[0].bonus}
+              hit={hit}
+              advantage={advantage} // Передаем флаг преимущества
+              disadvantage={disadvantage} // Передаем флаг помехи
+          />
+        );
 
-    if (hit) {
-      const damageDicesRolls = rollDamageLLM(attack, critical);
-
-      const damage = damageDicesRolls.total
-
-      toast(
-          <DamageRollToast damageRolls={damageDicesRolls} />
-      );  
-
+        if (hit) {
+          const damageDicesRolls = rollDamageLLM(attack, critical);
+    
+          const damage = damageDicesRolls.total
+    
+          toast(
+              <DamageRollToast damageRolls={damageDicesRolls} />
+          ); 
+          
+          dispatch(
+            creatureActions.updateCurrentHp({
+              id: selectedCreatureId || '', // ID выбранного существа
+              delta: damage ? -damage : 0, // Количество урона
+              //damageType: selectedDamageType, // Тип урона
+            })
+          );
+        }
+    } else if (attack.saveDc && attack.saveType) {
       const constitutionSavingThrow: SavingThrow = {
-        challengeRating: 12,
-        ability: 'телосложение'
+        challengeRating: attack.saveDc,
+        ability: dndTraitToInitialForm(attack.saveType)
       };
 
       const advantageSavingThrow = false
@@ -115,16 +125,34 @@ export const Statblock = () => {
         />
       );
 
-      dispatch(
-        creatureActions.updateCurrentHp({
-          id: selectedCreatureId || '', // ID выбранного существа
-          delta: damage ? -damage : 0, // Количество урона
-          //damageType: selectedDamageType, // Тип урона
+      if (attack.damage) {
+
+        const damageDicesRolls = rollDamageLLM(attack, criticalSavingThrow);
+
+        const damage = damageDicesRolls.total
+
+        const finalDamage = calculateDndDamage(damage, { 
+          modifier: 'vulnerability', 
+          flatReduction: 3 
         })
-      );
-    } else {
+    
+          toast(
+              <DamageRollToast damageRolls={damageDicesRolls} />
+          ); 
+          
+          dispatch(
+            creatureActions.updateCurrentHp({
+              id: selectedCreatureId || '', // ID выбранного существа
+              delta: damage ? -damage : 0, // Количество урона
+              //damageType: selectedDamageType, // Тип урона
+            })
+          );
+
+      }
 
     }
+
+
   };
 
   if (!selectedCreature)
@@ -217,7 +245,7 @@ export const Statblock = () => {
                   : fallbackBreathAttack 
                     ? monsterAttackIcons[fallbackBreathAttack.value] 
                     : null;
-                    
+
                 return (
                     <button
                         className={s.creaturePanel__actionsList__element}

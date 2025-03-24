@@ -27,7 +27,6 @@ export function rollDamageLLM(
     if (attack.additionalEffects) {
       attack.additionalEffects.forEach(effect => {
           if (effect.damage) {
-              console.log("aaaaaaaaaaaaaaaaaaaaaaaaaa")
               const extraDamage = calculateDamage(effect.damage, isCriticalHit);
               dices.push(extraDamage);
               totalDamage += extraDamage.total;
