@@ -12,7 +12,9 @@ export type {
   CreaturesStore,
   Attack,
   Damage,
-  SavingThrow
+  SavingThrow,
+  AttackLLM,
+  DamageLLM
 } from './types';
 
 export { DiceType} from './types';

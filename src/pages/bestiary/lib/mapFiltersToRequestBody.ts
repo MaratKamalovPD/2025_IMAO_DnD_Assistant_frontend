@@ -30,7 +30,7 @@ export const mapFiltersToRequestBody = (
     },
     order: [
       {
-        field: 'exp', // поле для сортировки
+        field: 'experience', // поле для сортировки
         direction: 'asc', // направление сортировки
       },
       {

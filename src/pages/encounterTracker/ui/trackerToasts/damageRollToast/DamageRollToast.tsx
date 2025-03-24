@@ -20,10 +20,10 @@ export const DamageRollToast: React.FC<CustomToastProps> = ({ damageRolls }) => 
                             </div>
                             <div className={s.dicesDetails}>
                                 {damageRolls.dices.map((dice, index) => (
-                                    <span key={index} className={s.diceRoll}>
+                                    <div key={index} className={s.diceRoll}>
                                         {dice.total} ({dice.damage.count}{dice.damage.dice})
-                                        {index < damageRolls.dices.length - 1 && ', '} + {damageRolls.bonus} [{mapDamageType(dice.damage.damageType)}]
-                                    </span>
+                                        {index === 0 && damageRolls.bonus > 0 && ` + ${damageRolls.bonus}`} [{dice.damage.type}]
+                                    </div>
                                 ))}
                             </div>
                         </div>

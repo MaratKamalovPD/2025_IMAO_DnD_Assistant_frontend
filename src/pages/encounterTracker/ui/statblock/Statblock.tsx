@@ -1,12 +1,12 @@
 import clsx from 'clsx';
 import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
 import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
-import { weapons, weaponIcons, conditions,conditionIcons} from 'pages/encounterTracker/lib';
+import { weapons, weaponIcons, conditions,conditionIcons, monsterAttacks, monsterAttackIcons} from 'pages/encounterTracker/lib';
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
-import { Creature, Attack, creatureActions } from 'entities/creature/model';
+import { Creature, Attack, creatureActions, AttackLLM } from 'entities/creature/model';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { useDispatch, useSelector } from 'react-redux';
-import { normalizeString, rollToHit, rollDamage, rollSavingThrow, SavingThrow } from 'shared/lib';
+import { normalizeString, rollToHit, rollDamage, rollSavingThrow, SavingThrow, rollToHitLLM, rollDamageLLM } from 'shared/lib';
 import { toast } from 'react-toastify';
 import { D20AttackRollToast} from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast' 
 import { DamageRollToast} from 'pages/encounterTracker/ui/trackerToasts/damageRollToast' 
@@ -66,13 +66,13 @@ export const Statblock = () => {
     creatureSelectors.selectById(state, selectedCreatureId || ''),
   ) as Creature; // as Creature || undefined
 
-  const handleAttack = (index: number, attack: Attack) => {
+  const handleAttack = (index: number, attack: AttackLLM) => {
     // Ваша логика обработки атаки в зависимости от индекса и объекта атаки
 
     const advantage = true
     const disadvantage = false
 
-    const {hit, critical, d20Roll} = rollToHit(selectedCreature, selectedCreature, attack, true)
+    const {hit, critical, d20Roll} = rollToHitLLM(selectedCreature, selectedCreature, attack, true)
 
     toast(
       <D20AttackRollToast
@@ -86,7 +86,7 @@ export const Statblock = () => {
     );
 
     if (hit) {
-      const damageDicesRolls = rollDamage(attack, critical);
+      const damageDicesRolls = rollDamageLLM(attack, critical);
 
       const damage = damageDicesRolls.total
 
@@ -187,27 +187,49 @@ export const Statblock = () => {
             Действия
           </div >
           <div className={s.creaturePanel__actionsList}>
-            {selectedCreature.attacks?.map((attack, ind) => {
-               // Нормализуем название атаки
-              const normalizedAttackName = normalizeString(attack.name);
+          {selectedCreature.attacksLLM?.map((attack, ind) => {
+                // Нормализуем название атаки
+                const normalizedAttackName = normalizeString(attack.name);
 
-              // Находим оружие по нормализованному названию атаки
-              const weapon = weapons.find((w) => normalizeString(w.label.ru) === normalizedAttackName);
+                // Проверяем, является ли атака мультиатакой
+                const isMultiAttack = normalizedAttackName === "мултиатака";
 
-              // Получаем иконку из объекта weaponIcons
-              const icon = weapon ? weaponIcons[weapon.value] : null;
+                // Сначала ищем в оружии (weapons)
+                const weapon = weapons.find((w) => normalizeString(w.label.ru) === normalizedAttackName);
 
-              return (
-                <button
-                  className={s.creaturePanel__actionsList__element}
-                  key={ind}
-                  onClick={() => handleAttack(ind, attack)}
-                >
-                  {/* Отображаем иконку, если она найдена */}
-                  {icon && <img src={icon} alt={attack.name} className={s.attackIcon} />}
-                  {attack.name}
-                </button>
-              );
+                // Если оружие не найдено, ищем в атаках монстров (monsterAttacks)
+                const monsterAttack = !weapon 
+                  ? monsterAttacks.find((a) => normalizeString(a.label.ru) === normalizedAttackName) 
+                  : null;
+
+                // Если ничего не найдено, но в названии есть "дыхание" — берём случайное дыхание
+                const fallbackBreathAttack = !weapon && !monsterAttack && normalizedAttackName.includes("дыхание")
+                ? monsterAttacks.filter(a => a.value.includes("breath"))[
+                    Math.floor(Math.random() * monsterAttacks.filter(a => a.value.includes("breath")).length)
+                  ]
+                : null;
+
+                // Получаем иконку: сначала из weaponIcons, если нет — из monsterAttackIcons, если нет — из случайного дыхания
+                const icon = weapon 
+                ? weaponIcons[weapon.value] 
+                : monsterAttack 
+                  ? monsterAttackIcons[monsterAttack.value] 
+                  : fallbackBreathAttack 
+                    ? monsterAttackIcons[fallbackBreathAttack.value] 
+                    : null;
+                    
+                return (
+                    <button
+                        className={s.creaturePanel__actionsList__element}
+                        key={ind}
+                        disabled={isMultiAttack} // Делаем кнопку неактивной
+                        onClick={isMultiAttack ? undefined : () => handleAttack(ind, attack)} // Убираем обработчик для мультиатаки
+                    >
+                        {/* Отображаем иконку, если она найдена */}
+                        {icon && <img src={icon} alt={attack.name} className={s.attackIcon} />}
+                        {attack.name}
+                    </button>
+                );
             })}
 
             <button className={s.creaturePanel__actionsList__element} onClick={openModal}>
