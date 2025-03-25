@@ -68,7 +68,7 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
 
       toast.success(`${currentCreature.name} успешно добавлен!`);
     } else if (isError && !isUninitialized) {
-      toast.error(`Упс, ${isUninitialized} что-то пошло не так :(`);
+      toast.error(`Упс, что-то пошло не так :(`);
     }
   }, [creatureData, isLoading, isError, isUninitialized, requestId]);
 
@@ -83,7 +83,10 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
 
       <div className={s.infoContainer}>
         <div className={s.header}>
-          <div className={s.header__titleContainer} data-title={creature.name.rus}>
+          <div
+            className={s.header__titleContainer}
+            data-title={creature.name.rus}
+          >
             <div className={s.header__title}>{creature.name.rus}</div>
             <span className={s.tooltip}>{creature.name.rus}</span>
           </div>

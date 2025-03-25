@@ -7,7 +7,7 @@
   animation-fill-mode: both;
 }
 
-body {
+body[data-scroll='true'] {
   background-color: transparent;
   animation: body 1s linear;
   @include scrollAnimated();

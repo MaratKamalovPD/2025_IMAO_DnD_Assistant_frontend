@@ -9,6 +9,15 @@ export const Header = () => {
   const [lastScroll, setLastScroll] = useState(0);
 
   useEffect(() => {
+    if (location.pathname === '/encounter_tracker') {
+      setVisible(false);
+      return;
+    }
+
+    setVisible(true);
+  }, [location]);
+
+  useEffect(() => {
     const handleScroll = () => {
       if (location.pathname === '/encounter_tracker') {
         setVisible(false);
@@ -31,7 +40,7 @@ export const Header = () => {
     window.addEventListener('scroll', handleScroll);
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScroll, location]);
+  }, [lastScroll]);
 
   return (
     <>

@@ -5,7 +5,10 @@ import s from './Dice.module.scss';
 
 export const Dice = () => {
   useEffect(() => {
+    document.body.setAttribute('data-scroll', 'false');
+
     const scrollListener = () => {
+      document.body.setAttribute('data-scroll', 'true');
       document.body.style.setProperty(
         '--scroll',
         String(
@@ -19,6 +22,7 @@ export const Dice = () => {
 
     return () => {
       window.removeEventListener('scroll', scrollListener, false);
+      document.body.removeAttribute('data-scroll');
     };
   }, []);
 

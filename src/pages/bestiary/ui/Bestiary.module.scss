@@ -1,4 +1,4 @@
-@use "./bestiaryCard/BestiaryCard.module.scss" as card;
+@use './bestiaryCard/BestiaryCard.module.scss' as card;
 
 .bestiaryContainer {
   display: grid;
@@ -47,7 +47,6 @@
   }
 }
 
-
 /* FILTER OVERLAY */
 
 .modalOverlay {
@@ -60,7 +59,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; 
+  z-index: 1000;
 
   &__header {
     position: sticky;
@@ -93,12 +92,12 @@
     border: 1px solid #b9b9b9;
     border-radius: 8px;
     opacity: 1;
-  
+
     &:hover {
       opacity: 0.7;
     }
   }
-    
+
   &__content {
     background-color: var(--primary-bg-color);
     border-radius: 0.5rem;

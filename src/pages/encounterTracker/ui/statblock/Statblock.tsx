@@ -1,27 +1,48 @@
 import clsx from 'clsx';
-import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
-import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
-import { weapons, weaponIcons, conditions,conditionIcons} from 'pages/encounterTracker/lib';
-import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
-import { Creature, Attack, creatureActions } from 'entities/creature/model';
-import { EncounterState, EncounterStore, encounterActions } from 'entities/encounter/model';
-import { useDispatch, useSelector } from 'react-redux';
-import { normalizeString, rollToHit, rollDamage, rollSavingThrow, SavingThrow } from 'shared/lib';
-import { toast } from 'react-toastify';
-import { D20AttackRollToast} from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast' 
-import { DamageRollToast} from 'pages/encounterTracker/ui/trackerToasts/damageRollToast' 
-import { D20SavingThrowToast} from 'pages/encounterTracker/ui/trackerToasts/d20SavingThrow' 
+import {
+  Attack,
+  Creature,
+  creatureActions,
+  creatureSelectors,
+  CreaturesStore,
+} from 'entities/creature/model';
+import {
+  encounterActions,
+  EncounterState,
+  EncounterStore,
+} from 'entities/encounter/model';
 import {
   GetPromtRequest,
   useLazyGetPromtQuery,
 } from 'pages/encounterTracker/api';
-import { useEffect, useRef, useState } from 'react';
+import {
+  conditionIcons,
+  conditions,
+  weaponIcons,
+  weapons,
+} from 'pages/encounterTracker/lib';
+import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
+import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
+import { D20AttackRollToast } from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast';
+import { D20SavingThrowToast } from 'pages/encounterTracker/ui/trackerToasts/d20SavingThrow';
+import { DamageRollToast } from 'pages/encounterTracker/ui/trackerToasts/damageRollToast';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import {
+  normalizeString,
+  rollDamage,
+  rollSavingThrow,
+  rollToHit,
+  SavingThrow,
+} from 'shared/lib';
 import s from './Statblock.module.scss';
 
 export const Statblock = () => {
   const [promt, setPromt] = useState('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Состояние для управления модальным окном
-  const [isConditionModalOpen, setIsConditionModalOpen] = useState<boolean>(false);
+  const [isConditionModalOpen, setIsConditionModalOpen] =
+    useState<boolean>(false);
 
   const dispatch = useDispatch();
 
@@ -32,22 +53,18 @@ export const Statblock = () => {
     trigger(data);
   };
 
-  // Функция для открытия модального окна
   const openModal = () => {
     setIsModalOpen(true);
   };
 
-  // Функция для закрытия модального окна
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
-   // Функция для открытия модального окна
-   const openModalConditions = () => {
+  const openModalConditions = () => {
     setIsConditionModalOpen(true);
   };
 
-  // Функция для закрытия модального окна
   const closeModalConditions = () => {
     setIsConditionModalOpen(false);
   };
@@ -67,51 +84,58 @@ export const Statblock = () => {
   ) as Creature;
 
   const handleAttack = (index: number, attack: Attack) => {
-    const advantage = true
-    const disadvantage = false
+    const advantage = true;
+    const disadvantage = false;
 
-    const {hit, critical, d20Roll} = rollToHit(selectedCreature, selectedCreature, attack, true)
+    const { hit, critical, d20Roll } = rollToHit(
+      selectedCreature,
+      selectedCreature,
+      attack,
+      true,
+    );
 
     toast(
       <D20AttackRollToast
-          total={d20Roll[0].total}
-          rolls={d20Roll.map(roll => roll.roll)} // Передаем массив бросков
-          bonus={d20Roll[0].bonus}
-          hit={hit}
-          advantage={advantage} // Передаем флаг преимущества
-          disadvantage={disadvantage} // Передаем флаг помехи
-      />
+        total={d20Roll[0].total}
+        rolls={d20Roll.map((roll) => roll.roll)}
+        bonus={d20Roll[0].bonus}
+        hit={hit}
+        advantage={advantage}
+        disadvantage={disadvantage}
+      />,
     );
 
     if (hit) {
       const damageDicesRolls = rollDamage(attack, critical);
 
-      const damage = damageDicesRolls.total
+      const damage = damageDicesRolls.total;
 
-      toast(
-          <DamageRollToast damageRolls={damageDicesRolls} />
-      );  
+      toast(<DamageRollToast damageRolls={damageDicesRolls} />);
 
       const constitutionSavingThrow: SavingThrow = {
         challengeRating: 12,
-        ability: 'телосложение'
+        ability: 'телосложение',
       };
 
-      const advantageSavingThrow = false
-      const disadvantageSavingThrow = false
+      const advantageSavingThrow = false;
+      const disadvantageSavingThrow = false;
 
-      const {successSavingThrow, criticalSavingThrow, d20RollsSavingThrow}  = 
-        rollSavingThrow(selectedCreature, constitutionSavingThrow, advantageSavingThrow);
+      const { successSavingThrow, criticalSavingThrow, d20RollsSavingThrow } =
+        rollSavingThrow(
+          selectedCreature,
+          constitutionSavingThrow,
+          advantageSavingThrow,
+        );
 
       toast(
         <D20SavingThrowToast
-            total={d20RollsSavingThrow[0].total}
-            rolls={d20RollsSavingThrow.map(roll => roll.roll)} // Передаем массив бросков
-            bonus={d20RollsSavingThrow[0].bonus}
-            hit={successSavingThrow}
-            advantage={advantageSavingThrow} // Передаем флаг преимущества
-            disadvantage={disadvantageSavingThrow} // Передаем флаг помехи
-        />
+          total={d20RollsSavingThrow[0].total}
+          rolls={d20RollsSavingThrow.map((roll) => roll.roll)}
+          bonus={d20RollsSavingThrow[0].bonus}
+          hit={successSavingThrow}
+          advantage={advantageSavingThrow}
+          disadvantage={disadvantageSavingThrow}
+        />,
       );
 
       dispatch(
@@ -119,10 +143,9 @@ export const Statblock = () => {
           id: selectedCreatureId || '', // ID выбранного существа
           delta: damage ? -damage : 0, // Количество урона
           //damageType: selectedDamageType, // Тип урона
-        })
+        }),
       );
     } else {
-
     }
   };
 
@@ -131,8 +154,8 @@ export const Statblock = () => {
       creatureActions.updateCurrentHp({
         id: selectedCreatureId || '',
         newHp: 0,
-      })
-    )
+      }),
+    );
   };
 
   const initiativeInputRef = useRef<HTMLInputElement>(null);
@@ -145,10 +168,15 @@ export const Statblock = () => {
         creatureActions.updateInitiative({
           id: selectedCreatureId || '',
           newInitiative: newInitiative,
-        })
+        }),
       );
 
-      dispatch(encounterActions.sortByInitiative());
+      dispatch(
+        encounterActions.updateInitiative({
+          id: selectedCreatureId || '',
+          newInitiative: newInitiative,
+        }),
+      );
     }
   };
 
@@ -162,7 +190,7 @@ export const Statblock = () => {
         creatureActions.updateCurrentHp({
           id: selectedCreatureId || '',
           newHp: newHp,
-        })
+        }),
       );
     }
   };
@@ -177,14 +205,14 @@ export const Statblock = () => {
         creatureActions.updateAc({
           id: selectedCreatureId || '',
           newAc: newAc,
-        })
+        }),
       );
     }
   };
 
   const notesRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleNotesChange = () => {
+  const handleNotesChange = useCallback(() => {
     const text = notesRef.current?.value;
 
     if (text != undefined) {
@@ -192,10 +220,10 @@ export const Statblock = () => {
         creatureActions.updateNotes({
           id: selectedCreatureId || '',
           text: text,
-        })
+        }),
       );
     }
-  };
+  }, []);
 
   if (!selectedCreature)
     return (
@@ -228,6 +256,7 @@ export const Statblock = () => {
               ref={initiativeInputRef}
               onChange={handleInitiativeChange}
               disabled={!hasStarted}
+              maxLength={2}
             ></input>
           </div>
           <div className={s.creaturePanel__statsElement}>
@@ -244,7 +273,7 @@ export const Statblock = () => {
           <div className={s.creaturePanel__statsElement}>
             <div className={s.creaturePanel__statsElement__image}></div>
             <div className={s.creaturePanel__statsElement__text}>AC:</div>
-            <input 
+            <input
               type='text'
               value={selectedCreature.ac}
               ref={acInputRef}
@@ -258,7 +287,7 @@ export const Statblock = () => {
               s.creaturePanel__deadElement,
             )}
           >
-            <input 
+            <input
               type='checkbox'
               onClick={handleCreatureDeath}
               checked={selectedCreature.hp.current === 0}
@@ -270,14 +299,16 @@ export const Statblock = () => {
         <div className={s.creaturePanel__actionsContainer}>
           <div className={s.creaturePanel__actionsContainer__header}>
             Действия
-          </div >
+          </div>
           <div className={s.creaturePanel__actionsList}>
             {selectedCreature.attacks?.map((attack, ind) => {
-               // Нормализуем название атаки
+              // Нормализуем название атаки
               const normalizedAttackName = normalizeString(attack.name);
 
               // Находим оружие по нормализованному названию атаки
-              const weapon = weapons.find((w) => normalizeString(w.label.ru) === normalizedAttackName);
+              const weapon = weapons.find(
+                (w) => normalizeString(w.label.ru) === normalizedAttackName,
+              );
 
               // Получаем иконку из объекта weaponIcons
               const icon = weapon ? weaponIcons[weapon.value] : null;
@@ -290,23 +321,28 @@ export const Statblock = () => {
                   onClick={() => handleAttack(ind, attack)}
                 >
                   {/* Отображаем иконку, если она найдена */}
-                  {icon && <img src={icon} alt={attack.name} className={s.attackIcon} />}
+                  {icon && (
+                    <img
+                      src={icon}
+                      alt={attack.name}
+                      className={s.attackIcon}
+                    />
+                  )}
                   {attack.name}
                 </button>
               );
             })}
 
-            <button 
-              className={s.creaturePanel__actionsList__element} 
+            <button
+              className={s.creaturePanel__actionsList__element}
               onClick={openModal}
               data-variant='primary'
             >
               Нанести урон
             </button>
           </div>
-          
+
           <div className={s.creaturePanel__actionsList}>
-            
             {isModalOpen && (
               <div className={s.modalOverlay}>
                 <div className={s.modalContent}>
@@ -323,65 +359,75 @@ export const Statblock = () => {
           </div>
         </div>
         <div className={s.creaturePanel__actionsContainer}>
-            <div className={s.creaturePanel__actionsContainer__header}>
-              Состояния
-            </div >
+          <div className={s.creaturePanel__actionsContainer__header}>
+            Состояния
+          </div>
+          <div className={s.creaturePanel__actionsList}>
+            {selectedCreature.conditions?.map((condition, ind) => {
+              // Нормализуем название условия
+              const normalizedConditionName = normalizeString(condition);
+
+              const conditionInstanse = conditions.find(
+                (cnd) =>
+                  normalizeString(cnd.label.en) === normalizedConditionName,
+              );
+
+              // Находим иконку для условия по нормализованному названию
+              const icon = conditionInstanse
+                ? conditionIcons[conditionInstanse.value]
+                : null;
+
+              return (
+                <div
+                  className={s.creaturePanel__actionsList__element}
+                  key={ind}
+                >
+                  {/* Отображаем иконку, если она найдена */}
+                  {icon && (
+                    <img src={icon} alt={condition} className={s.attackIcon} />
+                  )}
+                  {conditionInstanse ? conditionInstanse.label.ru : condition}
+                </div>
+              );
+            })}
+
+            <button
+              className={s.creaturePanel__actionsList__element}
+              data-variant='primary'
+              onClick={openModalConditions}
+            >
+              Повесить состояние
+            </button>
+
             <div className={s.creaturePanel__actionsList}>
-              {selectedCreature.conditions?.map((condition, ind) => {
-                // Нормализуем название условия
-                const normalizedConditionName = normalizeString(condition);
+              {isConditionModalOpen && (
+                <div className={s.modalOverlay}>
+                  <div className={s.modalContent}>
+                    {/* Кнопка закрытия модального окна */}
+                    <button
+                      className={s.closeButton}
+                      onClick={closeModalConditions}
+                    >
+                      &times; {/* Символ "крестик" */}
+                    </button>
 
-                const conditionInstanse = conditions.find((cnd) => normalizeString(cnd.label.en) === normalizedConditionName);
-
-                // Находим иконку для условия по нормализованному названию
-                const icon = conditionInstanse ? conditionIcons[conditionInstanse.value] : null;
-
-                return (
-                  <div
-                    className={s.creaturePanel__actionsList__element}
-                    key={ind}
-                  >
-                    {/* Отображаем иконку, если она найдена */}
-                    {icon && <img src={icon} alt={condition} className={s.attackIcon} />}
-                    {conditionInstanse ? conditionInstanse.label.ru : condition}
+                    <ApplyConditionModal />
                   </div>
-                );
-              })}
-
-              <button 
-                className={s.creaturePanel__actionsList__element} 
-                data-variant='primary'
-                onClick={openModalConditions}
-              >
-                Повесить состояние
-              </button>
-
-              <div className={s.creaturePanel__actionsList}>
-                {isConditionModalOpen && (
-                  <div className={s.modalOverlay}>
-                    <div className={s.modalContent}>
-                      {/* Кнопка закрытия модального окна */}
-                      <button className={s.closeButton} onClick={closeModalConditions}>
-                        &times; {/* Символ "крестик" */}
-                      </button>
-
-                      <ApplyConditionModal />
-                    </div>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
+          </div>
         </div>
 
         <div className={s.creaturePanel__actionsContainer}>
           <div className={s.creaturePanel__actionsContainer__header}>
-              Эффекты
-            </div >
+            Эффекты
+          </div>
         </div>
-        
+
         <div className={s.creaturePanel__notesContainer}>
           <div className={s.creaturePanel__notesContainer__title}>Заметки</div>
-          <textarea 
+          <textarea
             placeholder='Введите заметки...'
             value={selectedCreature.notes}
             ref={notesRef}
