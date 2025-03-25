@@ -76,7 +76,6 @@ button,
 a[data-role='btn'] {
   font-family: 'Roboto-Medium', 'OpenSans', sans-serif;
   border-radius: 8px;
-  border: none;
   text-decoration: none;
   padding: 0.6em 0.9em;
   font-size: 1em;
@@ -84,6 +83,8 @@ a[data-role='btn'] {
   cursor: pointer;
   transition: border-color 0.25s;
   border: 2px solid transparent;
+  text-align: center;
+  line-height: 1;
 
   &[data-variant='primary'] {
     background-color: var(--primary-btn-color);
@@ -124,11 +125,6 @@ a[data-role='btn'] {
       border-color: #594a14;
       color: #3d340f;
     }
-  }
-
-  &:focus,
-  &:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
   }
 }
 

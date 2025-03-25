@@ -1,7 +1,10 @@
+@use "./bestiaryCard/BestiaryCard.module.scss" as card;
+
 .bestiaryContainer {
   display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, clamp(129px, 50vw, card.$card-width));
+  justify-content: space-evenly;
   width: 80vw;
   padding: 16px;
   box-sizing: border-box;
@@ -21,6 +24,29 @@
   }
 }
 
+.searchContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem;
+  box-sizing: border-box;
+
+  &__input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #9b9b9b;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      border-color: #007bff;
+    }
+  }
+}
+
 
 /* FILTER OVERLAY */
 
@@ -30,84 +56,59 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный чёрный фон */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Убедитесь, что модальное окно поверх других элементов */
-}
+  z-index: 1000; 
 
-.modalContent {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: relative;
-  max-width: 90%; /* Ограничение ширины для мобильных устройств */
-  width: 500px; /* Фиксированная ширина для десктопов */
-  max-height: 90vh; /* Ограничение высоты */
-  overflow-y: auto; /* Добавляем скролл, если контент слишком большой */
-}
-
-.closeButton {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #666;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: #000; /* Изменение цвета при наведении */
+  &__header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    padding: 1rem;
+    text-align: center;
+    box-sizing: border-box;
+    background-color: var(--secondary-bg-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-}
 
-/* SEARCH INPUT */
+  &__title {
+    display: flex;
+    width: 30%;
+    font-size: 20px;
+    font-weight: bolder;
+  }
 
-.searchContainer {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* Расстояние между элементами */
-  max-width: 600px; /* Максимальная ширина контейнера */
-  margin: 0 auto; /* Центрирование контейнера */
-  padding: 10px;
-  background-color: #f5f5f5; /* Фон контейнера */
-  border-radius: 8px; /* Скругление углов */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Тень */
-}
-
-.searchInput {
-  flex: 1; /* Растягиваем поле ввода на всё доступное пространство */
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc; /* Граница поля ввода */
-  border-radius: 4px; /* Скругление углов */
-  outline: none; /* Убираем обводку при фокусе */
-  transition: border-color 0.3s ease; /* Плавное изменение цвета границы */
-}
-
-.searchInput:focus {
-  border-color: #007bff; /* Цвет границы при фокусе */
-}
-
-.filterButton {
-  padding: 10px 20px;
-  font-size: 16px;
-  color: #fff; /* Цвет текста */
-  background-color: #007bff; /* Цвет фона кнопки */
-  border: none;
-  border-radius: 4px; /* Скругление углов */
-  cursor: pointer; /* Курсор в виде указателя */
-  transition: background-color 0.3s ease; /* Плавное изменение цвета фона */
-}
-
-.filterButton:hover {
-  background-color: #0056b3; /* Цвет фона при наведении */
-}
-
-.filterButton:active {
-  background-color: #004080; /* Цвет фона при нажатии */
+  &__closeBtn {
+    cursor: pointer;
+    background-color: var(--secondary-bg-color);
+    filter: brightness(130%);
+    padding: 0.5rem;
+    transition: color 0.2s ease;
+    border: 1px solid #b9b9b9;
+    border-radius: 8px;
+    opacity: 1;
+  
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+    
+  &__content {
+    background-color: var(--primary-bg-color);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 90%;
+    width: 700px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
 }

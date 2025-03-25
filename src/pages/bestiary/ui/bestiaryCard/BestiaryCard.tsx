@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router';
 import { toast } from 'react-toastify';
 import uniqid from 'uniqid';
 
@@ -75,54 +74,43 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
 
   return (
     <div className={s.card}>
-      <div className={s.cardContainer}>
-        <div className={s.imageWrapper}>
-          <img
-            src={creature.images[2] || creature.images[1] || placeholderImage}
-            alt={creature.name.eng}
-            className={s.creatureImage}
-          />
+      <div className={s.imageContainer}>
+        <img
+          src={creature.images[2] || creature.images[1] || placeholderImage}
+          alt={creature.name.eng}
+        />
+      </div>
+
+      <div className={s.infoContainer}>
+        <div className={s.header}>
+          <div className={s.header__titleContainer} data-title={creature.name.rus}>
+            <div className={s.header__title}>{creature.name.rus}</div>
+            <span className={s.tooltip}>{creature.name.rus}</span>
+          </div>
+          <div className={s.header__tags}>
+            <span className={s.header__typeTag}>{creature.type.name}</span>
+            {creature.type?.tags &&
+              creature.type?.tags.map((tag, index) => (
+                <span key={index} className={s.header__subTag}>
+                  {tag}
+                </span>
+              ))}
+          </div>
         </div>
 
-        <div className={s.content}>
-          <div className={s.header}>
-            <h2 className={s.title}>
-              {creature.name.rus}
-              {/* <span className={s.titleExtra}>({creature.name.rus})</span> */}
-            </h2>
-            <div className={s.tags}>
-              <span className={s.typeTag}>{creature.type.name}</span>
-              {creature.type?.tags &&
-                creature.type?.tags.map((tag, index) => (
-                  <span key={index} className={s.subTag}>
-                    {tag}
-                  </span>
-                ))}
-            </div>
+        <div className={s.statsContainer}>
+          <div className={s.statsContainer__item}>
+            Класс опасности: {creature.challengeRating}
           </div>
+          <div className={s.statsContainer__item}>
+            Источник: {creature.source.group.shortName}
+          </div>
+        </div>
 
-          <div className={s.stats}>
-            <div className={s.statItem}>
-              <label className={s.statLabel}>Уровень сложности</label>
-              <p className={s.statValue}>{creature.challengeRating}</p>
-            </div>
-            <div className={s.statItem}>
-              <label className={s.statLabel}>Источник</label>
-              <p className={s.statValue}>
-                {creature.source.shortName} ({creature.source.group.shortName})
-              </p>
-            </div>
-          </div>
-
-          <div className={s.linkWrapper}>
-            <button onClick={() => handleSearchClick()} className={s.link}>
-              Добавить в трекер
-            </button>
-            <Link to={'/encounter_tracker'} className={s.link}>
-              Перейти в трекер
-              <span className={s.linkIcon}></span>
-            </Link>
-          </div>
+        <div className={s.btnsContainer}>
+          <button onClick={() => handleSearchClick()} data-variant='primary'>
+            Добавить в трекер
+          </button>
         </div>
       </div>
     </div>

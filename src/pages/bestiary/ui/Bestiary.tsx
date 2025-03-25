@@ -4,6 +4,7 @@ import { mapFiltersToRequestBody } from 'pages/bestiary/lib';
 import { Filters } from 'pages/bestiary/model';
 import { useCallback, useEffect, useState } from 'react';
 import { throttle, useDebounce } from 'shared/lib';
+import { Icon20Cancel } from '@vkontakte/icons';
 import s from './Bestiary.module.scss';
 import { BestiaryCard } from './bestiaryCard';
 import { FilterModalWindow } from './filterModalWindow';
@@ -111,9 +112,9 @@ export const Bestiary = () => {
           placeholder='Поиск по названию...'
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          className={s.searchInput}
+          className={s.searchContainer__input}
         />
-        <button onClick={() => setIsModalOpen(true)} className={s.filterButton}>
+        <button onClick={() => setIsModalOpen(true)} data-variant='secondary'>
           Открыть фильтр
         </button>
       </div>
@@ -121,16 +122,19 @@ export const Bestiary = () => {
       {/* Модальное окно */}
       {isModalOpen && (
         <div className={s.modalOverlay} onClick={() => setIsModalOpen(false)}>
-          <div className={s.modalContent} onClick={(e) => e.stopPropagation()}>
-            <button
-              className={s.closeButton}
-              onClick={() => setIsModalOpen(false)}
-            >
-              ✖
-            </button>
+          <div className={s.modalOverlay__content} onClick={(e) => e.stopPropagation()}>
+            <div className={s.modalOverlay__header}>
+              <div className={s.modalOverlay__title}>Фильтры</div>
+              <div
+                className={s.modalOverlay__closeBtn}
+                onClick={() => setIsModalOpen(false)}
+              >
+                <Icon20Cancel />
+              </div>
+            </div>
             <FilterModalWindow
               onFilterChange={handleFilterChange}
-              selectedFilters={filters} // Передаем текущие фильтры
+              selectedFilters={filters}
             />
           </div>
         </div>
