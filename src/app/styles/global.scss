@@ -1,10 +1,15 @@
 @font-face {
+  font-family: 'Roboto-Medium';
+  src: url('../../shared/assets/fonts/Roboto-Medium.ttf'), format('ttf');
+}
+
+@font-face {
   font-family: 'OpenSans';
   src: url('../../shared/assets/fonts/OpenSans.ttf'), format('ttf');
 }
 
 :root {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Roboto-Medium', 'OpenSans', sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -17,11 +22,17 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --primary-bg-color: #2A2A40;
-  --secondary-bg-color: #3A3A50;
-  --primary-btn-color: #FF6F61;
-  --secondary-btn-color: #EC9DED;
-  --accent-btn-color: #E2C044;
+  --primary-bg-color: #2a2a40;
+  --secondary-bg-color: #3a3a50;
+
+  --primary-btn-color: #ff6f61;
+  --secondary-btn-color: #ec9ded;
+  --accent-btn-color: #e2c044;
+
+  // for dice rotation
+  --scroll: 0;
+  --base-size: 10rem;
+  --base-height: 8.65rem;
 }
 
 #root {
@@ -35,6 +46,9 @@
 
 main {
   width: 80vw;
+  @media (max-width: 768px) {
+    width: 100vw;
+  }
 }
 
 a {
@@ -54,8 +68,13 @@ h1 {
   line-height: 1.1;
 }
 
-button, a[data-role=btn] {
-  font-family: 'Open Sans', sans-serif;
+button:hover {
+  transition: all 0.1s ease-in-out;
+}
+
+button,
+a[data-role='btn'] {
+  font-family: 'Roboto-Medium', 'OpenSans', sans-serif;
   border-radius: 8px;
   text-decoration: none;
   padding: 0.6em 0.9em;
@@ -67,11 +86,11 @@ button, a[data-role=btn] {
   text-align: center;
   line-height: 1;
 
-  &[data-variant=primary] {
+  &[data-variant='primary'] {
     background-color: var(--primary-btn-color);
-    color: #FFFFFF;
+    color: #ffffff;
     font-weight: bolder;
-    
+
     &:hover {
       filter: brightness(90%);
       box-shadow: 0 0 10px rgba(255, 111, 97, 0.6);
@@ -79,11 +98,11 @@ button, a[data-role=btn] {
     }
   }
 
-  &[data-variant=secondary] {
+  &[data-variant='secondary'] {
     background-color: var(--secondary-btn-color);
     color: #1e4d69;
     opacity: 1;
-    
+
     &:hover {
       filter: brightness(110%);
       border: 2px solid #1e4d69;
@@ -91,12 +110,15 @@ button, a[data-role=btn] {
     }
   }
 
-  &[data-variant=accent] {
+  &[data-variant='accent'] {
     background-color: var(--accent-btn-color);
     color: #594a14;
     font-weight: 500;
     border: 2px solid transparent;
-    transition: background-color 0.25s, border-color 0.25s, color 0.25s;
+    transition:
+      background-color 0.25s,
+      border-color 0.25s,
+      color 0.25s;
 
     &:hover {
       background-color: color-mix(in srgb, var(--accent-btn-color) 80%, black);
@@ -104,6 +126,13 @@ button, a[data-role=btn] {
       color: #3d340f;
     }
   }
+}
+
+footer {
+  text-align: center;
+  padding: 2rem 0;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 @media (prefers-color-scheme: light) {

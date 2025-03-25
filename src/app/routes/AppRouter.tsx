@@ -3,7 +3,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { Bestiary } from 'pages/bestiary';
 import { EncounterTracker } from 'pages/encounterTracker';
-import { Login } from 'pages/login/index';
+import { Login } from 'pages/login';
+import { Main } from 'pages/main';
 import { TestPage } from 'pages/test';
 
 const Test = () => {
@@ -26,7 +27,7 @@ const Test = () => {
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Test />,
+    element: <Main />,
   },
   {
     path: 'test',
