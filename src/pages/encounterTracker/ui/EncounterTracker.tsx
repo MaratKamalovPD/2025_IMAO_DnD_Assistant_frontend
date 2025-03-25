@@ -8,8 +8,10 @@ export const EncounterTracker = () => {
   return (
     <div className={s.encounterTrackerContainer}>
       <Statblock />
-      <TrackPanel />
-      <CardList />
+      <div className={s.stickyPanel}>
+        <TrackPanel />
+        <CardList />
+      </div>
     </div>
   );
 };

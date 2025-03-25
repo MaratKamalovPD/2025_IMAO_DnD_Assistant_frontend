@@ -115,7 +115,7 @@ export const Statblock = () => {
       );
 
       dispatch(
-        creatureActions.updateCurrentHp({
+        creatureActions.updateCurrentByDelta({
           id: selectedCreatureId || '', // ID выбранного существа
           delta: damage ? -damage : 0, // Количество урона
           //damageType: selectedDamageType, // Тип урона
@@ -128,7 +128,7 @@ export const Statblock = () => {
 
   const handleCreatureDeath = () => {
     dispatch(
-      creatureActions.updateHp({
+      creatureActions.updateCurrentHp({
         id: selectedCreatureId || '',
         newHp: 0,
       })
@@ -159,7 +159,7 @@ export const Statblock = () => {
 
     if (!isNaN(newHp)) {
       dispatch(
-        creatureActions.updateHp({
+        creatureActions.updateCurrentHp({
           id: selectedCreatureId || '',
           newHp: newHp,
         })
@@ -209,7 +209,7 @@ export const Statblock = () => {
             </div>
             <input
               type='text'
-              value={selectedCreature.initiative}
+              value={!hasStarted ? '?' : selectedCreature.initiative}
               ref={initiativeInputRef}
               onChange={handleInitiativeChange}
               disabled={!hasStarted}
@@ -247,7 +247,7 @@ export const Statblock = () => {
               type='checkbox'
               onClick={handleCreatureDeath}
               checked={selectedCreature.hp.current === 0}
-              disabled={selectedCreature.hp.current === 0 || !hasStarted}
+              disabled={!hasStarted}
             ></input>
             <div className={s.creaturePanel__statsElement__text}>Мертв</div>
           </div>
@@ -370,7 +370,7 @@ export const Statblock = () => {
         </div>
       </div>
       <div className={s.desciptionContainer}>{promt}</div>
-      <button
+      {/* <button
         onClick={() =>
           handleSearchClick({
             first_char_id: participants[currentTurnIndex]?.id,
@@ -381,7 +381,7 @@ export const Statblock = () => {
         data-variant='primary'
       >
         Сгенерировать красочное описание
-      </button>
+      </button> */}
     </div>
   );
 };

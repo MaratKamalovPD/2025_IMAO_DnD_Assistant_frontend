@@ -59,7 +59,7 @@ export const creatureSlice = createSlice({
     addCreatures: creatureAdapter.addMany,
     updateCreature: creatureAdapter.updateOne,
     removeCreature: creatureAdapter.removeOne,
-    updateCurrentHp: (
+    updateCurrentByDelta: (
       state,
       action: PayloadAction<{ id: string; delta: number }>,
     ) => {
@@ -217,7 +217,7 @@ export const creatureSlice = createSlice({
         });
       }
     },
-    updateHp: (
+    updateCurrentHp: (
       state,
       action: PayloadAction<{ id: string, newHp: number }>,
     ) => {
