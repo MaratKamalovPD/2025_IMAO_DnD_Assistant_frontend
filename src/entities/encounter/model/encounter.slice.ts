@@ -44,18 +44,30 @@ const encounterSlice = createSlice({
         state.currentTurnIndex--;
       }
     },
-    setInitiativeOrder: (state, action: PayloadAction<Participant[]>) => {
+    setInitiativeOrder: (
+      state, 
+      action: PayloadAction<Participant[]>
+    ) => {
       state.participants = action.payload;
     },
-    selectCreature: (state, action: PayloadAction<string>) => {
+    selectCreature: (
+      state, 
+      action: PayloadAction<string>
+    ) => {
       state.selectedCreatureId = action.payload;
     },
-    addParticipant: (state, action: PayloadAction<Participant>) => {
+    addParticipant: (
+      state, 
+      action: PayloadAction<Participant>
+    ) => {
       state.participants.push(action.payload);
 
       if (state.hasStarted) {
         state.participants.sort((a, b) => b.initiative - a.initiative);
       }
+    },
+    sortByInitiative: (state) => {
+      state.participants.sort((a, b) => b.initiative - a.initiative);
     },
   },
 });
