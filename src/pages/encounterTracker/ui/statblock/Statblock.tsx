@@ -182,6 +182,21 @@ export const Statblock = () => {
     }
   };
 
+  const notesRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleNotesChange = () => {
+    const text = notesRef.current?.value;
+
+    if (text != undefined) {
+      dispatch(
+        creatureActions.updateNotes({
+          id: selectedCreatureId || '',
+          text: text,
+        })
+      );
+    }
+  };
+
   if (!selectedCreature)
     return (
       <div className={s.statblockContainer}>
@@ -366,7 +381,12 @@ export const Statblock = () => {
         
         <div className={s.creaturePanel__notesContainer}>
           <div className={s.creaturePanel__notesContainer__title}>Заметки</div>
-          <textarea placeholder='Введите заметки...'></textarea>
+          <textarea 
+            placeholder='Введите заметки...'
+            value={selectedCreature.notes}
+            ref={notesRef}
+            onChange={handleNotesChange}
+          ></textarea>
         </div>
       </div>
       <div className={s.desciptionContainer}>{promt}</div>

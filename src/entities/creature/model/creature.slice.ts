@@ -237,6 +237,20 @@ export const creatureSlice = createSlice({
         });
       }
     },
+    updateNotes: (
+      state,
+      action: PayloadAction<{id: string, text: string}>,
+    ) => {
+      const { id, text } = action.payload;
+      const creature = state.entities[id];
+
+      if (creature) {
+        creatureAdapter.updateOne(state, {
+          id,
+          changes: { notes: text }
+        });
+      }
+    },
   },
 });
 
