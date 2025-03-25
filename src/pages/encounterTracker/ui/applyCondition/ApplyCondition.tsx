@@ -90,7 +90,7 @@ export const ApplyConditionModal: React.FC = () => {
         onClick={handleApplyCondition}
         className={s.dealDamageButton}
       >
-        Нанести урон
+        Наложить эффект
       </button>
     </div>
   );

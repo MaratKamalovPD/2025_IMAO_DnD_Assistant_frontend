@@ -4,18 +4,22 @@ import { Participant } from './types';
 
 export type EncounterState = {
   hasStarted: boolean;
+  attackHandleModeActive: boolean;
   currentRound: number;
   currentTurnIndex: number;
   participants: Participant[]; // IDs персонажей
   selectedCreatureId: string | null;
+  attackedCreatureId: string | null;
 };
 
 const initialState: EncounterState = {
   hasStarted: false,
+  attackHandleModeActive: false,
   currentRound: 1,
   currentTurnIndex: 0,
   participants: [],
   selectedCreatureId: null,
+  attackedCreatureId: null,
 };
 
 const encounterSlice = createSlice({
@@ -25,6 +29,12 @@ const encounterSlice = createSlice({
     start: (state) => {
       state.hasStarted = true;
       state.participants.sort((a, b) => b.initiative - a.initiative);
+    },
+    enableAttackHandleMode: (state) => {
+      state.hasStarted = true;
+    },
+    disableAttackHandleMode: (state) => {
+      state.hasStarted = false;
     },
     nextTurn: (state) => {
       if (state.currentTurnIndex >= state.participants.length - 1) {
@@ -49,6 +59,9 @@ const encounterSlice = createSlice({
     },
     selectCreature: (state, action: PayloadAction<string>) => {
       state.selectedCreatureId = action.payload;
+    },
+    selectAttackedCreature: (state, action: PayloadAction<string>) => {
+      state.attackedCreatureId = action.payload;
     },
     addParticipant: (state, action: PayloadAction<Participant>) => {
       state.participants.push(action.payload);

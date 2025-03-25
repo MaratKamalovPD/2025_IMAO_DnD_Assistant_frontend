@@ -1,0 +1,46 @@
+.attackForm {
+  font-family: Arial, sans-serif;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-top: 40px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.debugInfo {
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.attackControl {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.attackStatus {
+  width: 100px;
+  padding: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.attackButton {
+  margin-top: 15px;
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+}

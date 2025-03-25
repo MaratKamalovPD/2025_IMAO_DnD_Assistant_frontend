@@ -15,13 +15,16 @@ import {
   GetPromtRequest,
   useLazyGetPromtQuery,
 } from 'pages/encounterTracker/api';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import s from './Statblock.module.scss';
+import {AttackModal} from 'pages/encounterTracker/ui/attackModal'
+import {CustomCursor} from 'shared/ui/customCursor'
 
 export const Statblock = () => {
   const [promt, setPromt] = useState('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Состояние для управления модальным окном
   const [isConditionModalOpen, setIsConditionModalOpen] = useState<boolean>(false);
+  const [isAttackModalOpen, setIsAttackModalOpen] = useState<boolean>(false);
 
   const dispatch = useDispatch();
 
@@ -32,25 +35,14 @@ export const Statblock = () => {
     trigger(data);
   };
 
-  // Функция для открытия модального окна
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
+  const openModal = useCallback(() => setIsModalOpen(true), []);
+  const closeModal = useCallback(() => setIsModalOpen(false), []);
 
-  // Функция для закрытия модального окна
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  const openModalConditions = useCallback(() => setIsConditionModalOpen(true), []);
+  const closeModalConditions = useCallback(() => setIsConditionModalOpen(false), []);
 
-   // Функция для открытия модального окна
-   const openModalConditions = () => {
-    setIsConditionModalOpen(true);
-  };
-
-  // Функция для закрытия модального окна
-  const closeModalConditions = () => {
-    setIsConditionModalOpen(false);
-  };
+  const openAttackModal = useCallback(() => setIsAttackModalOpen(true), []);
+  const closeAttackModal = useCallback(() => setIsAttackModalOpen(false), []);
 
   useEffect(() => {
     if (promtData) {
@@ -171,6 +163,7 @@ export const Statblock = () => {
 
   return (
     <div className={s.statblockContainer}>
+      <CustomCursor />
       <div className={s.creaturePanel}>
         <div className={s.creaturePanel__titleContainer}>
           <div className={s.creaturePanel__title}>{selectedCreature.name}</div>
@@ -334,6 +327,25 @@ export const Statblock = () => {
           <div className={s.creaturePanel__actionsContainer__header}>
               Эффекты
             </div >
+
+            <button className={s.creaturePanel__actionsList__element} onClick={openAttackModal}>
+                Attack
+              </button>
+
+              <div className={s.creaturePanel__actionsList}>
+                {isAttackModalOpen && (
+                  <div className={s.modalOverlay}>
+                    <div className={s.modalContent}>
+                      {/* Кнопка закрытия модального окна */}
+                      <button className={s.closeButton} onClick={closeAttackModal}>
+                        &times; {/* Символ "крестик" */}
+                      </button>
+
+                      <AttackModal />
+                    </div>
+                  </div>
+                )}
+              </div>
         </div>
         
         <div className={s.creaturePanel__notesContainer}>
