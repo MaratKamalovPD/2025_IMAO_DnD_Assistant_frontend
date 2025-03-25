@@ -8,6 +8,7 @@ import { Icon20Cancel } from '@vkontakte/icons';
 import s from './Bestiary.module.scss';
 import { BestiaryCard } from './bestiaryCard';
 import { FilterModalWindow } from './filterModalWindow';
+import { Link } from 'react-router';
 
 const RESPONSE_SIZE = 50;
 const DEBOUNCE_TIME = 500;
@@ -118,6 +119,7 @@ export const Bestiary = () => {
           Открыть фильтр
         </button>
       </div>
+      <Link to='/encounter_tracker'>Перейти в трекер</Link>
 
       {/* Модальное окно */}
       {isModalOpen && (

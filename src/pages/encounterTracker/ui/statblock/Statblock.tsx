@@ -4,7 +4,7 @@ import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
 import { weapons, weaponIcons, conditions,conditionIcons} from 'pages/encounterTracker/lib';
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, Attack, creatureActions } from 'entities/creature/model';
-import { EncounterState, EncounterStore } from 'entities/encounter/model';
+import { EncounterState, EncounterStore, encounterActions } from 'entities/encounter/model';
 import { useDispatch, useSelector } from 'react-redux';
 import { normalizeString, rollToHit, rollDamage, rollSavingThrow, SavingThrow } from 'shared/lib';
 import { toast } from 'react-toastify';
@@ -15,7 +15,7 @@ import {
   GetPromtRequest,
   useLazyGetPromtQuery,
 } from 'pages/encounterTracker/api';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import s from './Statblock.module.scss';
 
 export const Statblock = () => {
@@ -59,16 +59,14 @@ export const Statblock = () => {
     }
   }, [promtData]);
 
-  const { selectedCreatureId, currentTurnIndex, participants } =
+  const { selectedCreatureId, currentTurnIndex, participants, hasStarted } =
     useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
-  ) as Creature; // as Creature || undefined
+  ) as Creature;
 
   const handleAttack = (index: number, attack: Attack) => {
-    // Ваша логика обработки атаки в зависимости от индекса и объекта атаки
-
     const advantage = true
     const disadvantage = false
 
@@ -102,7 +100,8 @@ export const Statblock = () => {
       const advantageSavingThrow = false
       const disadvantageSavingThrow = false
 
-      const {successSavingThrow, criticalSavingThrow, d20RollsSavingThrow}  = rollSavingThrow(selectedCreature, constitutionSavingThrow, advantageSavingThrow);
+      const {successSavingThrow, criticalSavingThrow, d20RollsSavingThrow}  = 
+        rollSavingThrow(selectedCreature, constitutionSavingThrow, advantageSavingThrow);
 
       toast(
         <D20SavingThrowToast
@@ -124,6 +123,62 @@ export const Statblock = () => {
       );
     } else {
 
+    }
+  };
+
+  const handleCreatureDeath = () => {
+    dispatch(
+      creatureActions.updateHp({
+        id: selectedCreatureId || '',
+        newHp: 0,
+      })
+    )
+  };
+
+  const initiativeInputRef = useRef<HTMLInputElement>(null);
+
+  const handleInitiativeChange = () => {
+    const newInitiative = Number(initiativeInputRef.current?.value);
+
+    if (!isNaN(newInitiative)) {
+      dispatch(
+        creatureActions.updateInitiative({
+          id: selectedCreatureId || '',
+          newInitiative: newInitiative,
+        })
+      );
+
+      dispatch(encounterActions.sortByInitiative());
+    }
+  };
+
+  const hpInputRef = useRef<HTMLInputElement>(null);
+
+  const handleHpChange = () => {
+    const newHp = Number(hpInputRef.current?.value);
+
+    if (!isNaN(newHp)) {
+      dispatch(
+        creatureActions.updateHp({
+          id: selectedCreatureId || '',
+          newHp: newHp,
+        })
+      );
+    }
+  };
+
+  const acInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAcChange = () => {
+    const newAc = Number(acInputRef.current?.value);
+
+    if (!isNaN(newAc)) {
+      dispatch(
+        creatureActions.updateAc({
+          id: selectedCreatureId || '',
+          newAc: newAc,
+        })
+      );
     }
   };
 
@@ -154,8 +209,10 @@ export const Statblock = () => {
             </div>
             <input
               type='text'
-              disabled
               value={selectedCreature.initiative}
+              ref={initiativeInputRef}
+              onChange={handleInitiativeChange}
+              disabled={!hasStarted}
             ></input>
           </div>
           <div className={s.creaturePanel__statsElement}>
@@ -163,14 +220,22 @@ export const Statblock = () => {
             <div className={s.creaturePanel__statsElement__text}>HP:</div>
             <input
               type='text'
-              disabled
               value={selectedCreature.hp.current}
+              ref={hpInputRef}
+              onChange={handleHpChange}
+              disabled={!hasStarted}
             ></input>
           </div>
           <div className={s.creaturePanel__statsElement}>
             <div className={s.creaturePanel__statsElement__image}></div>
             <div className={s.creaturePanel__statsElement__text}>AC:</div>
-            <input type='text' disabled value={selectedCreature.ac}></input>
+            <input 
+              type='text'
+              value={selectedCreature.ac}
+              ref={acInputRef}
+              onChange={handleAcChange}
+              disabled={!hasStarted}
+            ></input>
           </div>
           <div
             className={clsx(
@@ -178,7 +243,12 @@ export const Statblock = () => {
               s.creaturePanel__deadElement,
             )}
           >
-            <input type='checkbox'></input>
+            <input 
+              type='checkbox'
+              onClick={handleCreatureDeath}
+              checked={selectedCreature.hp.current === 0}
+              disabled={selectedCreature.hp.current === 0 || !hasStarted}
+            ></input>
             <div className={s.creaturePanel__statsElement__text}>Мертв</div>
           </div>
         </div>
