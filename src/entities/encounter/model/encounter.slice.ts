@@ -71,6 +71,22 @@ const encounterSlice = createSlice({
         state.participants.sort((a, b) => b.initiative - a.initiative);
       }
     },
+    sortByInitiative: (state) => {
+      state.participants.sort((a, b) => b.initiative - a.initiative);
+    },
+    updateInitiative: (
+      state,
+      action: PayloadAction<{ id: string; newInitiative: number }>,
+    ) => {
+      const { id, newInitiative } = action.payload;
+      state.participants.forEach((creature) => {
+        if (creature.id === id) {
+          creature.initiative = newInitiative;
+        }
+      });
+
+      state.participants.sort((a, b) => b.initiative - a.initiative);
+    },
   },
 });
 

@@ -10,7 +10,7 @@
     padding: 15px;
     border-radius: 8px;
     border: none;
-    background-color: #3a3a50;
+    background-color: var(--secondary-bg-color);
     resize: none;
   }
 }
@@ -21,12 +21,13 @@
 }
 
 .creaturePanel {
-  border: 1px solid #2a2a40;
+  border: 1px solid var(--primary-bg-color);
   border-radius: 15px;
-  background-color: #2a2a40;
+  background-color: var(--primary-bg-color);
   display: flex;
   flex-direction: column;
   padding: 25px;
+  border: 3px solid black;
 
   &__titleContainer {
     display: flex;
@@ -36,7 +37,7 @@
   }
 
   &__title {
-    color: #ff6f61;
+    color: var(--primary-btn-color);
     font-weight: bold;
     font-size: 24px;
     display: flex;
@@ -46,6 +47,12 @@
     display: flex;
     flex-direction: row;
     margin-bottom: 20px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
   }
 
   &__deadElement {
@@ -57,9 +64,6 @@
     flex-direction: row;
     align-items: center;
     min-width: 30%;
-
-    &__image {
-    }
 
     &__text {
       font-size: 15px;
@@ -74,7 +78,7 @@
       color: white;
       border-radius: 8px;
       border: none;
-      background-color: #3a3a50;
+      background-color: var(--secondary-bg-color);
       width: 120px;
       margin-left: 10px;
     }
@@ -94,7 +98,7 @@
     &__header {
       font-size: 20px;
       font-weight: bold;
-      color: #ff6f61;
+      color: var(--primary-btn-color);
     }
   }
 
@@ -102,16 +106,16 @@
     display: flex;
     flex-direction: row;
     margin-top: 10px;
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
 
     &__element {
-      background-color: #ff6f61;
-      color: rgba(255, 255, 255, 0.829);
-      padding: 15px 10px;
-      border-radius: 8px;
-      border: none;
-      font-weight: bolder;
-      font-size: 13px;
-      margin-right: 15px;
+      padding: 10px 15px;
+      font-size: 14px;
     }
 
     button {
@@ -134,7 +138,7 @@
     &__title {
       font-size: 20px;
       font-weight: bold;
-      color: #ff6f61;
+      color: var(--primary-btn-color);
     }
     textarea {
       height: 150px;
@@ -143,32 +147,28 @@
 }
 
 //============ MODAL WINDOW ===============
-
-// Оверлей (фон модального окна)
 .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); // Полупрозрачный чёрный фон
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; // Убедимся, что модальное окно поверх других элементов
+  z-index: 1000;
 }
 
-// Контент модального окна
 .modalContent {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
   width: 90%;
-  max-width: 500px; // Ограничиваем максимальную ширину
+  max-width: 500px;
   position: relative;
 }
 
-// Кнопка закрытия модального окна
 .closeButton {
   position: absolute;
   top: 10px;
@@ -184,16 +184,16 @@
   }
 }
 
-//============++++++++++++++===============
 
+//============++++++++++++++===============
 
 .creaturePanel__actionsList__element {
   display: flex;
-  align-items: center; // Выравниваем иконку и текст по центру
-  gap: 8px; // Расстояние между иконкой и текстом
+  align-items: center;
+  gap: 8px;
 }
 
 .attackIcon {
-  width: 32px; // Размер иконки
+  width: 32px;
   height: 32px;
 }

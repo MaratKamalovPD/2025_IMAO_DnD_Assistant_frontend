@@ -1,17 +1,36 @@
 import clsx from 'clsx';
-import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
 import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
-import { weapons, weaponIcons, conditions,conditionIcons, monsterAttacks, monsterAttackIcons} from 'pages/encounterTracker/lib';
-import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
-import { Creature, Attack, creatureActions, AttackLLM, dndTraitToInitialForm } from 'entities/creature/model';
-import { EncounterState, EncounterStore, encounterActions } from 'entities/encounter/model';
+import { monsterAttacks, monsterAttackIcons} from 'pages/encounterTracker/lib';
 import { useDispatch, useSelector } from 'react-redux';
-import { normalizeString, rollToHit, rollDamage, rollSavingThrow, SavingThrow, rollToHitLLM, rollDamageLLM, calculateDndDamage } from 'shared/lib';
+import { normalizeString} from 'shared/lib';
+import {
+  Creature,
+  creatureSelectors,
+  CreaturesStore,
+  creatureActions,
+  AttackLLM,
+} from 'entities/creature/model';
+import {
+  encounterActions,
+  EncounterState,
+  EncounterStore,
+} from 'entities/encounter/model';
 import {
   GetPromtRequest,
   useLazyGetPromtQuery,
 } from 'pages/encounterTracker/api';
-import { useEffect, useState, useCallback } from 'react';
+
+import {
+  conditionIcons,
+  conditions,
+  weaponIcons,
+  weapons,
+} from 'pages/encounterTracker/lib';
+import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
+import { useCallback, useEffect, useState, useRef } from 'react';
+
+
+
 import s from './Statblock.module.scss';
 import {AttackModal} from 'pages/encounterTracker/ui/attackModal'
 import {CustomCursor} from 'shared/ui/customCursor'
@@ -49,12 +68,12 @@ export const Statblock = () => {
     }
   }, [promtData]);
 
-  const { selectedCreatureId, attackedCreatureId, currentTurnIndex, participants } =
+  const { selectedCreatureId, attackedCreatureId, currentTurnIndex, participants, hasStarted } =
     useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
-  ) as Creature; // as Creature || undefined
+  ) as Creature;
 
   const handleAttack = (index: number, attack: AttackLLM) => {
     
@@ -71,6 +90,82 @@ export const Statblock = () => {
       
     }
   }, [attackedCreatureId, dispatch]);
+
+  const handleCreatureDeath = () => {
+    dispatch(
+      creatureActions.updateCurrentHp({
+        id: selectedCreatureId || '',
+        newHp: 0,
+      }),
+    );
+  };
+
+  const initiativeInputRef = useRef<HTMLInputElement>(null);
+
+  const handleInitiativeChange = () => {
+    const newInitiative = Number(initiativeInputRef.current?.value);
+
+    if (!isNaN(newInitiative)) {
+      dispatch(
+        creatureActions.updateInitiative({
+          id: selectedCreatureId || '',
+          newInitiative: newInitiative,
+        }),
+      );
+
+      dispatch(
+        encounterActions.updateInitiative({
+          id: selectedCreatureId || '',
+          newInitiative: newInitiative,
+        }),
+      );
+    }
+  };
+
+  const hpInputRef = useRef<HTMLInputElement>(null);
+
+  const handleHpChange = () => {
+    const newHp = Number(hpInputRef.current?.value);
+
+    if (!isNaN(newHp)) {
+      dispatch(
+        creatureActions.updateCurrentHp({
+          id: selectedCreatureId || '',
+          newHp: newHp,
+        }),
+      );
+    }
+  };
+
+  const acInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAcChange = () => {
+    const newAc = Number(acInputRef.current?.value);
+
+    if (!isNaN(newAc)) {
+      dispatch(
+        creatureActions.updateAc({
+          id: selectedCreatureId || '',
+          newAc: newAc,
+        }),
+      );
+    }
+  };
+
+  const notesRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleNotesChange = useCallback(() => {
+    const text = notesRef.current?.value;
+
+    if (text != undefined) {
+      dispatch(
+        creatureActions.updateNotes({
+          id: selectedCreatureId || '',
+          text: text,
+        }),
+      );
+    }
+  }, []);
 
   if (!selectedCreature)
     return (
@@ -100,8 +195,11 @@ export const Statblock = () => {
             </div>
             <input
               type='text'
-              disabled
-              value={selectedCreature.initiative}
+              value={!hasStarted ? '?' : selectedCreature.initiative}
+              ref={initiativeInputRef}
+              onChange={handleInitiativeChange}
+              disabled={!hasStarted}
+              maxLength={2}
             ></input>
           </div>
           <div className={s.creaturePanel__statsElement}>
@@ -109,14 +207,22 @@ export const Statblock = () => {
             <div className={s.creaturePanel__statsElement__text}>HP:</div>
             <input
               type='text'
-              disabled
               value={selectedCreature.hp.current}
+              ref={hpInputRef}
+              onChange={handleHpChange}
+              disabled={!hasStarted}
             ></input>
           </div>
           <div className={s.creaturePanel__statsElement}>
             <div className={s.creaturePanel__statsElement__image}></div>
             <div className={s.creaturePanel__statsElement__text}>AC:</div>
-            <input type='text' disabled value={selectedCreature.ac}></input>
+            <input
+              type='text'
+              value={selectedCreature.ac}
+              ref={acInputRef}
+              onChange={handleAcChange}
+              disabled={!hasStarted}
+            ></input>
           </div>
           <div
             className={clsx(
@@ -124,14 +230,19 @@ export const Statblock = () => {
               s.creaturePanel__deadElement,
             )}
           >
-            <input type='checkbox'></input>
+            <input
+              type='checkbox'
+              onClick={handleCreatureDeath}
+              checked={selectedCreature.hp.current === 0}
+              disabled={!hasStarted}
+            ></input>
             <div className={s.creaturePanel__statsElement__text}>Мертв</div>
           </div>
         </div>
         <div className={s.creaturePanel__actionsContainer}>
           <div className={s.creaturePanel__actionsContainer__header}>
             Действия
-          </div >
+          </div>
           <div className={s.creaturePanel__actionsList}>
           {selectedCreature.attacksLLM?.map((attack, ind) => {
                 // Нормализуем название атаки
@@ -178,13 +289,16 @@ export const Statblock = () => {
                 );
             })}
 
-            <button className={s.creaturePanel__actionsList__element} onClick={openModal}>
+            <button
+              className={s.creaturePanel__actionsList__element}
+              onClick={openModal}
+              data-variant='primary'
+            >
               Нанести урон
             </button>
           </div>
-          
+
           <div className={s.creaturePanel__actionsList}>
-            
             {isModalOpen && (
               <div className={s.modalOverlay}>
                 <div className={s.modalContent}>
@@ -201,60 +315,70 @@ export const Statblock = () => {
           </div>
         </div>
         <div className={s.creaturePanel__actionsContainer}>
-            <div className={s.creaturePanel__actionsContainer__header}>
-              Состояния
-            </div >
+          <div className={s.creaturePanel__actionsContainer__header}>
+            Состояния
+          </div>
+          <div className={s.creaturePanel__actionsList}>
+            {selectedCreature.conditions?.map((condition, ind) => {
+              // Нормализуем название условия
+              const normalizedConditionName = normalizeString(condition);
+
+              const conditionInstanse = conditions.find(
+                (cnd) =>
+                  normalizeString(cnd.label.en) === normalizedConditionName,
+              );
+
+              // Находим иконку для условия по нормализованному названию
+              const icon = conditionInstanse
+                ? conditionIcons[conditionInstanse.value]
+                : null;
+
+              return (
+                <div
+                  className={s.creaturePanel__actionsList__element}
+                  key={ind}
+                >
+                  {/* Отображаем иконку, если она найдена */}
+                  {icon && (
+                    <img src={icon} alt={condition} className={s.attackIcon} />
+                  )}
+                  {conditionInstanse ? conditionInstanse.label.ru : condition}
+                </div>
+              );
+            })}
+
+            <button
+              className={s.creaturePanel__actionsList__element}
+              data-variant='primary'
+              onClick={openModalConditions}
+            >
+              Повесить состояние
+            </button>
+
             <div className={s.creaturePanel__actionsList}>
-              {selectedCreature.conditions?.map((condition, ind) => {
-                // Нормализуем название условия
-                const normalizedConditionName = normalizeString(condition);
+              {isConditionModalOpen && (
+                <div className={s.modalOverlay}>
+                  <div className={s.modalContent}>
+                    {/* Кнопка закрытия модального окна */}
+                    <button
+                      className={s.closeButton}
+                      onClick={closeModalConditions}
+                    >
+                      &times; {/* Символ "крестик" */}
+                    </button>
 
-                const conditionInstanse = conditions.find((cnd) => normalizeString(cnd.label.en) === normalizedConditionName);
-
-                // Находим иконку для условия по нормализованному названию
-                const icon = conditionInstanse ? conditionIcons[conditionInstanse.value] : null;
-
-                return (
-                  <div
-                    className={s.creaturePanel__actionsList__element}
-                    key={ind}
-                  >
-                    {/* Отображаем иконку, если она найдена */}
-                    {icon && <img src={icon} alt={condition} className={s.attackIcon} />}
-                    {conditionInstanse ? conditionInstanse.label.ru : condition}
+                    <ApplyConditionModal />
                   </div>
-                );
-              })}
-
-              <button className={s.creaturePanel__actionsList__element} onClick={openModalConditions}>
-                Повесить состояние
-              </button>
-
-              <div className={s.creaturePanel__actionsList}>
-                {isConditionModalOpen && (
-                  <div className={s.modalOverlay}>
-                    <div className={s.modalContent}>
-                      {/* Кнопка закрытия модального окна */}
-                      <button className={s.closeButton} onClick={closeModalConditions}>
-                        &times; {/* Символ "крестик" */}
-                      </button>
-
-                      <ApplyConditionModal />
-                    </div>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
+          </div>
         </div>
 
         <div className={s.creaturePanel__actionsContainer}>
           <div className={s.creaturePanel__actionsContainer__header}>
               Эффекты
             </div >
-
-            <button className={s.creaturePanel__actionsList__element} onClick={openAttackModal}>
-                Attack
-              </button>
 
               <div className={s.creaturePanel__actionsList}>
                 {isAttackModalOpen && (
@@ -274,14 +398,19 @@ export const Statblock = () => {
                 )}
               </div>
         </div>
-        
+
         <div className={s.creaturePanel__notesContainer}>
           <div className={s.creaturePanel__notesContainer__title}>Заметки</div>
-          <textarea placeholder='Введите заметки...'></textarea>
+          <textarea
+            placeholder='Введите заметки...'
+            value={selectedCreature.notes}
+            ref={notesRef}
+            onChange={handleNotesChange}
+          ></textarea>
         </div>
       </div>
       <div className={s.desciptionContainer}>{promt}</div>
-      <button
+      {/* <button
         onClick={() =>
           handleSearchClick({
             first_char_id: participants[currentTurnIndex]?.id,
@@ -289,9 +418,10 @@ export const Statblock = () => {
           })
         }
         className={s.creaturePanel__actionsList__element}
+        data-variant='primary'
       >
         Сгенерировать красочное описание
-      </button>
+      </button> */}
     </div>
   );
 };

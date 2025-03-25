@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { CATEGORIES } from 'pages/bestiary/lib';
 import { Filters } from 'pages/bestiary/model';
 import { useEffect, useState } from 'react';
+import { Icon20ChevronUp } from '@vkontakte/icons';
 import s from './FilterModalWindow.module.scss';
 
 type FilterModalWindowProps = {
@@ -27,44 +28,51 @@ export const FilterModalWindow = ({
 
       const newSelected = { ...prev, [category]: updatedCategory };
 
-      // Обновляем родительский компонент после изменения состояния
       onFilterChange(newSelected);
 
       return newSelected;
     });
   };
 
+  const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
+
+  const toggleCollapse = (category: string) => {
+    setCollapsedCategories((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
+  };
+
   return (
-    <div
-      className={clsx(s.padding4, s.backgroundColorGray100, s.borderRadiusLg)}
-    >
+    <div className={s.categoriesList}>
       {Object.entries(CATEGORIES).map(([category, items]) => (
-        <div key={category} className={s.marginBottom4}>
-          <h2
-            className={clsx(
-              s.fontSizeLg,
-              s.fontWeightSemibold,
-              s.marginBottom2,
-              s.textColorDark,
-            )}
+        <div key={category} className={s.filtersContainer}>
+          <div className={s.filtersContainer__header} onClick={() => toggleCollapse(category)}>
+            <h2 className={s.filtersContainer__title}>{category}</h2>
+            <button className={s.dropdownBtn}>
+              <Icon20ChevronUp
+                className={clsx(
+                  s.dropdownIcon, 
+                  {[s.dropdownIcon__rotated]: !collapsedCategories[category]}
+                )}
+              />
+            </button>
+          </div>
+          <div
+            className={s.filtersContainer__btns}
+            style={{
+              display: collapsedCategories[category] ? "none" : "flex",
+            }}
           >
-            {category}
-          </h2>
-          <div className={clsx(s.flexWrap, s.gap2)}>
             {items.map((item) => (
               <button
                 key={item}
                 onClick={() => toggleSelection(category, item)}
                 className={clsx(
-                  s.buttonPadding,
-                  s.buttonBorder,
-                  s.buttonBorderRadius,
-                  s.buttonFontSize,
-                  s.buttonTransition,
-                  s.textColorDark,
+                  s.filtersContainer__btn,
                   selected[category]?.includes(item)
-                    ? s.selectedCategoryCheckbox
-                    : s.buttonBackgroundGray200,
+                    ? s.filtersContainer__btnChecked
+                    : s.filtersContainer__btnUnchecked
                 )}
               >
                 {item}

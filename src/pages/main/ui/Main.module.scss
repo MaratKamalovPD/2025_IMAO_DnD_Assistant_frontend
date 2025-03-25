@@ -1,0 +1,15 @@
+.mainPage {
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+:root {
+  background-color: #242424;
+}

@@ -5,9 +5,13 @@
   margin: 1rem 0;
   padding: 1rem; /* Чтобы контент не прилипал к краям */
   max-width: 80vw;
-  background-color: #2A2A40;
+  background-color: var(--primary-bg-color);
   border-radius: 15px;
   border: 3px solid black;
+
+  @media (max-width: 768px) {
+    max-width: 100vw;
+  }
 
   &__inside {
     display: flex;
@@ -16,7 +20,7 @@
     padding: 1rem;
     border-radius: 15px;
     border: 3px solid black;
-    background-color: #3A3A50;
+    background-color: var(--secondary-bg-color);
     overflow-x: auto;
     scroll-behavior: smooth;
     width: 100%;

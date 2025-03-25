@@ -1,32 +1,16 @@
-import { Link } from 'react-router';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+import { HeaderProviders } from 'app/providers';
 import { Bestiary } from 'pages/bestiary';
 import { EncounterTracker } from 'pages/encounterTracker';
-import { Login } from 'pages/login/index';
+import { Login } from 'pages/login';
+import { Main } from 'pages/main';
 import { TestPage } from 'pages/test';
-
-const Test = () => {
-  return (
-    <>
-      <div>Hello, world!</div>
-      <div>
-        <Link to='encounter_tracker'>EncounterTracker</Link>
-      </div>
-      <div>
-        <Link to='bestiary'>Bestiary</Link>
-      </div>
-      <div>
-        <Link to='login'>Login</Link>
-      </div>
-    </>
-  );
-};
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Test />,
+    element: <Main />,
   },
   {
     path: 'test',
@@ -34,18 +18,30 @@ const router = createBrowserRouter([
   },
   {
     path: 'encounter_tracker',
-    element: <EncounterTracker />,
+    element: (
+      <HeaderProviders>
+        <EncounterTracker />
+      </HeaderProviders>
+    ),
   },
   {
     path: 'bestiary',
-    element: <Bestiary />,
+    element: (
+      <HeaderProviders>
+        <Bestiary />
+      </HeaderProviders>
+    ),
   },
   {
     path: 'login',
-    element: <Login />,
+    element: (
+      <HeaderProviders>
+        <Login />
+      </HeaderProviders>
+    ),
   },
 ]);
 
-export function AppRouter() {
+export const AppRouter = () => {
   return <RouterProvider router={router} />;
-}
+};

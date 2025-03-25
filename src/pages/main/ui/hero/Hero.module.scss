@@ -1,0 +1,104 @@
+@mixin startOpacity {
+  opacity: 0;
+  transform: translateY(50px);
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
+}
+
+.hero {
+  text-align: center;
+  padding: 3rem 0 3rem 0;
+
+  .styledList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+
+    li {
+      font-size: 2rem;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      margin-bottom: 1rem;
+      position: relative;
+      padding-left: 2rem;
+      border-radius: 1rem;
+      background-color: rgba(236, 157, 237, 0.5);
+      @include startOpacity();
+
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+
+      &:nth-child(1)::before {
+        content: '🔮';
+      }
+
+      &:nth-child(2)::before {
+        content: '🧙‍♂️';
+      }
+
+      &:nth-child(3)::before {
+        content: '⚔️';
+      }
+
+      &:nth-child(4)::before {
+        content: '👑';
+      }
+
+      &::before {
+        font-size: 2rem;
+        position: absolute;
+        left: -5%;
+        top: 50%;
+        transform: translateY(-50%);
+
+        @media (min-width: 768px) {
+          left: 5%;
+        }
+      }
+
+      @media (max-width: 768px) {
+        font-size: 1.2rem; // Уменьшаем шрифт на мобилках
+        padding-left: 1.5rem;
+
+        &::before {
+          font-size: 1.5rem; // Уменьшаем маркер на мобилках
+        }
+      }
+    }
+  }
+
+  p {
+    font-size: 1.5rem;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    margin-bottom: 2rem;
+  }
+
+  .logo {
+    width: clamp(200px, 80%, 600px);
+    margin-top: 2rem;
+    @include startOpacity();
+
+    @media (min-width: 768px) {
+      margin-bottom: 16rem;
+    }
+  }
+
+  .dndLogo {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    width: 40%;
+    @include startOpacity();
+
+    @media (max-width: 768px) {
+      width: 60%;
+    }
+  }
+
+  button {
+    @include startOpacity();
+  }
+}
