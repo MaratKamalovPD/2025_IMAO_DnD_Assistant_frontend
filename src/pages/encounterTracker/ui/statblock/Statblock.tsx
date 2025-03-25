@@ -132,9 +132,10 @@ export const Statblock = () => {
         const damage = damageDicesRolls.total
 
         const finalDamage = calculateDndDamage(damage, { 
-          modifier: 'vulnerability', 
-          flatReduction: 3 
+          saveEffect: successSavingThrow ? 'half' : 'full'
         })
+
+        damageDicesRolls.total = finalDamage;
     
           toast(
               <DamageRollToast damageRolls={damageDicesRolls} />
