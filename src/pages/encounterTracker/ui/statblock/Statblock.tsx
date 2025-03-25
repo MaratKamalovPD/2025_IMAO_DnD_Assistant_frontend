@@ -1,10 +1,14 @@
 import clsx from 'clsx';
+import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
+import { monsterAttacks, monsterAttackIcons} from 'pages/encounterTracker/lib';
+import { useDispatch, useSelector } from 'react-redux';
+import { normalizeString} from 'shared/lib';
 import {
-  Attack,
   Creature,
-  creatureActions,
   creatureSelectors,
   CreaturesStore,
+  creatureActions,
+  AttackLLM,
 } from 'entities/creature/model';
 import {
   encounterActions,
@@ -15,34 +19,29 @@ import {
   GetPromtRequest,
   useLazyGetPromtQuery,
 } from 'pages/encounterTracker/api';
+
 import {
   conditionIcons,
   conditions,
   weaponIcons,
   weapons,
 } from 'pages/encounterTracker/lib';
-import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
 import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
-import { D20AttackRollToast } from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast';
-import { D20SavingThrowToast } from 'pages/encounterTracker/ui/trackerToasts/d20SavingThrow';
-import { DamageRollToast } from 'pages/encounterTracker/ui/trackerToasts/damageRollToast';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
-import {
-  normalizeString,
-  rollDamage,
-  rollSavingThrow,
-  rollToHit,
-  SavingThrow,
-} from 'shared/lib';
+import { useCallback, useEffect, useState, useRef } from 'react';
+
+
+
 import s from './Statblock.module.scss';
+import {AttackModal} from 'pages/encounterTracker/ui/attackModal'
+import {CustomCursor} from 'shared/ui/customCursor'
 
 export const Statblock = () => {
   const [promt, setPromt] = useState('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Состояние для управления модальным окном
-  const [isConditionModalOpen, setIsConditionModalOpen] =
-    useState<boolean>(false);
+  const [isConditionModalOpen, setIsConditionModalOpen] = useState<boolean>(false);
+  const [isAttackModalOpen, setIsAttackModalOpen] = useState<boolean>(false);
+  const [currentAttackIndex, setCurrentAttackIndex] = useState<number | undefined>();
+  const [currentAttackData, setCurrentAttackData] = useState<AttackLLM | undefined>(undefined);
 
   const dispatch = useDispatch();
 
@@ -53,21 +52,14 @@ export const Statblock = () => {
     trigger(data);
   };
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
+  const openModal = useCallback(() => setIsModalOpen(true), []);
+  const closeModal = useCallback(() => setIsModalOpen(false), []);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  const openModalConditions = useCallback(() => setIsConditionModalOpen(true), []);
+  const closeModalConditions = useCallback(() => setIsConditionModalOpen(false), []);
 
-  const openModalConditions = () => {
-    setIsConditionModalOpen(true);
-  };
-
-  const closeModalConditions = () => {
-    setIsConditionModalOpen(false);
-  };
+  const openAttackModal = useCallback(() => setIsAttackModalOpen(true), []);
+  const closeAttackModal = useCallback(() => setIsAttackModalOpen(false), []);
 
   useEffect(() => {
     if (promtData) {
@@ -76,78 +68,28 @@ export const Statblock = () => {
     }
   }, [promtData]);
 
-  const { selectedCreatureId, currentTurnIndex, participants, hasStarted } =
+  const { selectedCreatureId, attackedCreatureId, currentTurnIndex, participants, hasStarted } =
     useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
   ) as Creature;
 
-  const handleAttack = (index: number, attack: Attack) => {
-    const advantage = true;
-    const disadvantage = false;
-
-    const { hit, critical, d20Roll } = rollToHit(
-      selectedCreature,
-      selectedCreature,
-      attack,
-      true,
-    );
-
-    toast(
-      <D20AttackRollToast
-        total={d20Roll[0].total}
-        rolls={d20Roll.map((roll) => roll.roll)}
-        bonus={d20Roll[0].bonus}
-        hit={hit}
-        advantage={advantage}
-        disadvantage={disadvantage}
-      />,
-    );
-
-    if (hit) {
-      const damageDicesRolls = rollDamage(attack, critical);
-
-      const damage = damageDicesRolls.total;
-
-      toast(<DamageRollToast damageRolls={damageDicesRolls} />);
-
-      const constitutionSavingThrow: SavingThrow = {
-        challengeRating: 12,
-        ability: 'телосложение',
-      };
-
-      const advantageSavingThrow = false;
-      const disadvantageSavingThrow = false;
-
-      const { successSavingThrow, criticalSavingThrow, d20RollsSavingThrow } =
-        rollSavingThrow(
-          selectedCreature,
-          constitutionSavingThrow,
-          advantageSavingThrow,
-        );
-
-      toast(
-        <D20SavingThrowToast
-          total={d20RollsSavingThrow[0].total}
-          rolls={d20RollsSavingThrow.map((roll) => roll.roll)}
-          bonus={d20RollsSavingThrow[0].bonus}
-          hit={successSavingThrow}
-          advantage={advantageSavingThrow}
-          disadvantage={disadvantageSavingThrow}
-        />,
-      );
-
-      dispatch(
-        creatureActions.updateCurrentByDelta({
-          id: selectedCreatureId || '', // ID выбранного существа
-          delta: damage ? -damage : 0, // Количество урона
-          //damageType: selectedDamageType, // Тип урона
-        }),
-      );
-    } else {
-    }
+  const handleAttack = (index: number, attack: AttackLLM) => {
+    
+    setCurrentAttackIndex(index);
+    setCurrentAttackData(attack);
+    dispatch(encounterActions.enableAttackHandleMode())
+    
   };
+
+  useEffect(() => {
+    if (attackedCreatureId !== null) {
+      openAttackModal()
+      dispatch(encounterActions.disableAttackHandleMode())
+      
+    }
+  }, [attackedCreatureId, dispatch]);
 
   const handleCreatureDeath = () => {
     dispatch(
@@ -240,6 +182,7 @@ export const Statblock = () => {
 
   return (
     <div className={s.statblockContainer}>
+      <CustomCursor />
       <div className={s.creaturePanel}>
         <div className={s.creaturePanel__titleContainer}>
           <div className={s.creaturePanel__title}>{selectedCreature.name}</div>
@@ -301,36 +244,49 @@ export const Statblock = () => {
             Действия
           </div>
           <div className={s.creaturePanel__actionsList}>
-            {selectedCreature.attacks?.map((attack, ind) => {
-              // Нормализуем название атаки
-              const normalizedAttackName = normalizeString(attack.name);
+          {selectedCreature.attacksLLM?.map((attack, ind) => {
+                // Нормализуем название атаки
+                const normalizedAttackName = normalizeString(attack.name);
 
-              // Находим оружие по нормализованному названию атаки
-              const weapon = weapons.find(
-                (w) => normalizeString(w.label.ru) === normalizedAttackName,
-              );
+                // Проверяем, является ли атака мультиатакой
+                const isMultiAttack = normalizedAttackName === "мултиатака";
 
-              // Получаем иконку из объекта weaponIcons
-              const icon = weapon ? weaponIcons[weapon.value] : null;
+                // Сначала ищем в оружии (weapons)
+                const weapon = weapons.find((w) => normalizeString(w.label.ru) === normalizedAttackName);
 
-              return (
-                <button
-                  className={s.creaturePanel__actionsList__element}
-                  data-variant='primary'
-                  key={ind}
-                  onClick={() => handleAttack(ind, attack)}
-                >
-                  {/* Отображаем иконку, если она найдена */}
-                  {icon && (
-                    <img
-                      src={icon}
-                      alt={attack.name}
-                      className={s.attackIcon}
-                    />
-                  )}
-                  {attack.name}
-                </button>
-              );
+                // Если оружие не найдено, ищем в атаках монстров (monsterAttacks)
+                const monsterAttack = !weapon 
+                  ? monsterAttacks.find((a) => normalizeString(a.label.ru) === normalizedAttackName) 
+                  : null;
+
+                // Если ничего не найдено, но в названии есть "дыхание" — берём случайное дыхание
+                const fallbackBreathAttack = !weapon && !monsterAttack && normalizedAttackName.includes("дыхание")
+                ? monsterAttacks.filter(a => a.value.includes("breath"))[
+                    Math.floor(Math.random() * monsterAttacks.filter(a => a.value.includes("breath")).length)
+                  ]
+                : null;
+
+                // Получаем иконку: сначала из weaponIcons, если нет — из monsterAttackIcons, если нет — из случайного дыхания
+                const icon = weapon 
+                ? weaponIcons[weapon.value] 
+                : monsterAttack 
+                  ? monsterAttackIcons[monsterAttack.value] 
+                  : fallbackBreathAttack 
+                    ? monsterAttackIcons[fallbackBreathAttack.value] 
+                    : null;
+
+                return (
+                    <button
+                        className={s.creaturePanel__actionsList__element}
+                        key={ind}
+                        disabled={isMultiAttack} 
+                        onClick={isMultiAttack ? undefined : () => handleAttack(ind, attack)} 
+                    >
+                        {/* Отображаем иконку, если она найдена */}
+                        {icon && <img src={icon} alt={attack.name} className={s.attackIcon} />}
+                        {attack.name}
+                    </button>
+                );
             })}
 
             <button
@@ -421,8 +377,26 @@ export const Statblock = () => {
 
         <div className={s.creaturePanel__actionsContainer}>
           <div className={s.creaturePanel__actionsContainer__header}>
-            Эффекты
-          </div>
+              Эффекты
+            </div >
+
+              <div className={s.creaturePanel__actionsList}>
+                {isAttackModalOpen && (
+                  <div className={s.modalOverlay}>
+                    <div className={s.modalContent}>
+                      {/* Кнопка закрытия модального окна */}
+                      <button className={s.closeButton} onClick={closeAttackModal}>
+                        &times; {/* Символ "крестик" */}
+                      </button>
+
+                      <AttackModal 
+                        attackIndex={currentAttackIndex}
+                        attackData={currentAttackData}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
         </div>
 
         <div className={s.creaturePanel__notesContainer}>

@@ -5,6 +5,7 @@ export {
 } from './creature.slice';
 
 export type { AbilityValueRu} from './abilityTypes';
+export {dndTraitToInitialForm} from './abilityTypes';
 export type { Creature } from './creature.slice';
 export type {
   CreatureClippedData,
@@ -12,7 +13,9 @@ export type {
   CreaturesStore,
   Attack,
   Damage,
-  SavingThrow
+  SavingThrow,
+  AttackLLM,
+  DamageLLM
 } from './types';
 
 export { DiceType} from './types';

@@ -28,10 +28,15 @@
 
 .dicesDetails {
     margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
 }
 
 .diceRoll {
-    margin-right: 5px;
+    margin-bottom: 3px; // Add some space between lines
+    &:last-child {
+        margin-bottom: 0; // Remove margin from last item
+    }
 }
 
 .bonusDetails {

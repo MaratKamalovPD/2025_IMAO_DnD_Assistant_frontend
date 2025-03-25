@@ -55,6 +55,7 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
         image: creatureData.images[2] || placeholderImage,
         notes: '',
         attacks: creatureData.attacks,
+        attacksLLM: creatureData.attacksLLM,
       };
 
       dispatch(

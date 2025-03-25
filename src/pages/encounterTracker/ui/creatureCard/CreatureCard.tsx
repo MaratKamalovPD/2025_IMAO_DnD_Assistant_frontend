@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
-import { Creature } from 'entities/creature/model/creature.slice';
+import { Creature } from 'entities/creature/model';
 import {
   encounterActions,
   EncounterState,
@@ -24,7 +24,7 @@ export const CreatureCard = ({ id, ind }: CreatureCardProps) => {
   ) as Creature;
 
   // Текущий выбранный персонаж
-  const { hasStarted, selectedCreatureId, currentTurnIndex, participants } =
+  const { hasStarted, attackHandleModeActive, selectedCreatureId, currentTurnIndex, participants } =
     useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
 
   if (!creature) return null;
@@ -35,7 +35,11 @@ export const CreatureCard = ({ id, ind }: CreatureCardProps) => {
   );
 
   const handleClick = () => {
-    dispatch(encounterActions.selectCreature(id));
+    if (!attackHandleModeActive) {
+      dispatch(encounterActions.selectCreature(id));
+    } else {
+      dispatch(encounterActions.selectAttackedCreature(id))
+    }
   };
 
   // Определяем классы для стилизации

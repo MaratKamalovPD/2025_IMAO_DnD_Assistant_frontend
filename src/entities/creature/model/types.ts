@@ -45,7 +45,8 @@ export type CreatureFullData = {
   tags: Tag[];
   images: string[];
   attacks?: Attack[]; 
-  environment?: string[]; 
+  environment?: string[];
+  attacksLLM?: AttackLLM[]; 
 };
 
 type Reaction = {
@@ -158,6 +159,52 @@ type Tag = {
   description: string;
 };
 
+export interface DamageLLM {
+  dice: DiceType;
+  count: number;
+  type: string;
+  bonus: number;
+}
+
+interface AdditionalEffectLLM {
+  damage?: DamageLLM;
+  condition?: string;
+  escapeDc?: number;
+}
+
+interface MultiAttackLLM {
+  type: string;
+  count: number;
+}
+
+interface AreaAttackLLM {
+  shape?: string;
+  recharge?: string;
+  saveDc?: number;
+  saveType?: string;
+  onFail?: string;
+  onSuccess?: string;
+}
+
+export interface AttackLLM {
+  name: string;
+  type?: string; // melee, ranged, area и т.д.
+  attackBonus?: string;
+  reach?: string; // для ближних атак
+  range?: string; // для дальних атак
+  target?: string;
+  damage?: DamageLLM;
+  attacks?: MultiAttackLLM[]; // для мультиатак
+  additionalEffects?: AdditionalEffectLLM[];
+  area?: AreaAttackLLM; // для зональных атак
+  shape?: string; // альтернативный вариант для area (можно использовать Area.Shape)
+  recharge?: string;
+  saveDc?: number;
+  saveType?: string;
+  onFail?: string;
+  onSuccess?: string;
+}
+
 enum AttackTypeEn {
   MeleeWeaponAttack = "MeleeWeaponAttack",
   RangedWeaponAttack = "RangedWeaponAttack",
@@ -262,7 +309,7 @@ export enum DiceType {
 export interface Damage {
   dice: DiceType;       // Тип кости (например, "d10")
   count: number;       // Количество костей (например, 1)
-  damageType: number; // Тип урона (в виде числа, потому что в GO пречисляемый тип только в виде числа)
+  type: string; 
 }
 
 export type CreaturesStore = ReturnType<
