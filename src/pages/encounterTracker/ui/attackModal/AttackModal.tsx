@@ -66,7 +66,7 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
                 ); 
                 
                 dispatch(
-                    creatureActions.updateCurrentHp({
+                    creatureActions.updateCurrentByDelta({
                     id: attackedCreatureId || '', // ID выбранного существа
                     delta: damage ? -damage : 0, // Количество урона
                     //damageType: selectedDamageType, // Тип урона
@@ -114,7 +114,7 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
                 ); 
                 
                 dispatch(
-                    creatureActions.updateCurrentHp({
+                    creatureActions.updateCurrentByDelta({
                     id: attackedCreatureId || '', // ID выбранного существа
                     delta: damage ? -damage : 0, // Количество урона
                     //damageType: selectedDamageType, // Тип урона
