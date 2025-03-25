@@ -56,7 +56,7 @@ export const Header = () => {
           </ul>
         </div>
         <div className={s.leftSection}>
-          <button data-variant='secondary'>Зарегитрироваться</button>
+          <button data-variant='secondary'>Зарегистрироваться</button>
           <button data-variant='secondary'>Войти</button>
         </div>
       </nav>
