@@ -43,7 +43,7 @@ export const CustomCursor = () => {
         fontSize: '14px',
       }}
     >
-      {selectedCreatureId ? `Атакуем: ${selectedCreatureId}` : 'Выберите цель'}
+      Выберите цель атаки
     </div>
   );
 };

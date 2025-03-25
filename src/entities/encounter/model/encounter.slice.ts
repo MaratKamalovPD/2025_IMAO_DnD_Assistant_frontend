@@ -31,10 +31,11 @@ const encounterSlice = createSlice({
       state.participants.sort((a, b) => b.initiative - a.initiative);
     },
     enableAttackHandleMode: (state) => {
-      state.hasStarted = true;
+      state.attackHandleModeActive = true;
+      console.log()
     },
     disableAttackHandleMode: (state) => {
-      state.hasStarted = false;
+      state.attackHandleModeActive = false;
     },
     nextTurn: (state) => {
       if (state.currentTurnIndex >= state.participants.length - 1) {

@@ -4,13 +4,9 @@ import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
 import { weapons, weaponIcons, conditions,conditionIcons, monsterAttacks, monsterAttackIcons} from 'pages/encounterTracker/lib';
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, Attack, creatureActions, AttackLLM, dndTraitToInitialForm } from 'entities/creature/model';
-import { EncounterState, EncounterStore } from 'entities/encounter/model';
+import { EncounterState, EncounterStore, encounterActions } from 'entities/encounter/model';
 import { useDispatch, useSelector } from 'react-redux';
 import { normalizeString, rollToHit, rollDamage, rollSavingThrow, SavingThrow, rollToHitLLM, rollDamageLLM, calculateDndDamage } from 'shared/lib';
-import { toast } from 'react-toastify';
-import { D20AttackRollToast} from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast' 
-import { DamageRollToast} from 'pages/encounterTracker/ui/trackerToasts/damageRollToast' 
-import { D20SavingThrowToast} from 'pages/encounterTracker/ui/trackerToasts/d20SavingThrow' 
 import {
   GetPromtRequest,
   useLazyGetPromtQuery,
@@ -25,6 +21,8 @@ export const Statblock = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Состояние для управления модальным окном
   const [isConditionModalOpen, setIsConditionModalOpen] = useState<boolean>(false);
   const [isAttackModalOpen, setIsAttackModalOpen] = useState<boolean>(false);
+  const [currentAttackIndex, setCurrentAttackIndex] = useState<number | undefined>();
+  const [currentAttackData, setCurrentAttackData] = useState<AttackLLM | undefined>(undefined);
 
   const dispatch = useDispatch();
 
@@ -51,7 +49,7 @@ export const Statblock = () => {
     }
   }, [promtData]);
 
-  const { selectedCreatureId, currentTurnIndex, participants } =
+  const { selectedCreatureId, attackedCreatureId, currentTurnIndex, participants } =
     useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
@@ -59,94 +57,23 @@ export const Statblock = () => {
   ) as Creature; // as Creature || undefined
 
   const handleAttack = (index: number, attack: AttackLLM) => {
-    // Ваша логика обработки атаки в зависимости от индекса и объекта атаки
-
-    const advantage = true
-    const disadvantage = false
-
-    if (attack.attackBonus) {
-        const {hit, critical, d20Roll} = rollToHitLLM(selectedCreature, selectedCreature, attack, true)
-
-        toast(
-          <D20AttackRollToast
-              total={d20Roll[0].total}
-              rolls={d20Roll.map(roll => roll.roll)} // Передаем массив бросков
-              bonus={d20Roll[0].bonus}
-              hit={hit}
-              advantage={advantage} // Передаем флаг преимущества
-              disadvantage={disadvantage} // Передаем флаг помехи
-          />
-        );
-
-        if (hit) {
-          const damageDicesRolls = rollDamageLLM(attack, critical);
     
-          const damage = damageDicesRolls.total
+    setCurrentAttackIndex(index);
+    setCurrentAttackData(attack);
+    dispatch(encounterActions.enableAttackHandleMode())
     
-          toast(
-              <DamageRollToast damageRolls={damageDicesRolls} />
-          ); 
-          
-          dispatch(
-            creatureActions.updateCurrentHp({
-              id: selectedCreatureId || '', // ID выбранного существа
-              delta: damage ? -damage : 0, // Количество урона
-              //damageType: selectedDamageType, // Тип урона
-            })
-          );
-        }
-    } else if (attack.saveDc && attack.saveType) {
-      const constitutionSavingThrow: SavingThrow = {
-        challengeRating: attack.saveDc,
-        ability: dndTraitToInitialForm(attack.saveType)
-      };
-
-      const advantageSavingThrow = false
-      const disadvantageSavingThrow = false
-
-      const {successSavingThrow, criticalSavingThrow, d20RollsSavingThrow}  = rollSavingThrow(selectedCreature, constitutionSavingThrow, advantageSavingThrow);
-
-      toast(
-        <D20SavingThrowToast
-            total={d20RollsSavingThrow[0].total}
-            rolls={d20RollsSavingThrow.map(roll => roll.roll)} // Передаем массив бросков
-            bonus={d20RollsSavingThrow[0].bonus}
-            hit={successSavingThrow}
-            advantage={advantageSavingThrow} // Передаем флаг преимущества
-            disadvantage={disadvantageSavingThrow} // Передаем флаг помехи
-        />
-      );
-
-      if (attack.damage) {
-
-        const damageDicesRolls = rollDamageLLM(attack, criticalSavingThrow);
-
-        const damage = damageDicesRolls.total
-
-        const finalDamage = calculateDndDamage(damage, { 
-          saveEffect: successSavingThrow ? 'half' : 'full'
-        })
-
-        damageDicesRolls.total = finalDamage;
-    
-          toast(
-              <DamageRollToast damageRolls={damageDicesRolls} />
-          ); 
-          
-          dispatch(
-            creatureActions.updateCurrentHp({
-              id: selectedCreatureId || '', // ID выбранного существа
-              delta: damage ? -damage : 0, // Количество урона
-              //damageType: selectedDamageType, // Тип урона
-            })
-          );
-
-      }
-
-    }
-
-
   };
+
+  useEffect(() => {
+    if (attackedCreatureId !== null) {
+      openAttackModal()
+      
+      // Если нужно сбросить после закрытия модалки:
+      // return () => {
+      //   dispatch(encounterActions.setAttackedCreatureId(null));
+      // };
+    }
+  }, [attackedCreatureId, dispatch]);
 
   if (!selectedCreature)
     return (
@@ -244,8 +171,8 @@ export const Statblock = () => {
                     <button
                         className={s.creaturePanel__actionsList__element}
                         key={ind}
-                        disabled={isMultiAttack} // Делаем кнопку неактивной
-                        onClick={isMultiAttack ? undefined : () => handleAttack(ind, attack)} // Убираем обработчик для мультиатаки
+                        disabled={isMultiAttack} 
+                        onClick={isMultiAttack ? undefined : () => handleAttack(ind, attack)} 
                     >
                         {/* Отображаем иконку, если она найдена */}
                         {icon && <img src={icon} alt={attack.name} className={s.attackIcon} />}
@@ -341,7 +268,10 @@ export const Statblock = () => {
                         &times; {/* Символ "крестик" */}
                       </button>
 
-                      <AttackModal />
+                      <AttackModal 
+                        attackIndex={currentAttackIndex}
+                        attackData={currentAttackData}
+                      />
                     </div>
                   </div>
                 )}
