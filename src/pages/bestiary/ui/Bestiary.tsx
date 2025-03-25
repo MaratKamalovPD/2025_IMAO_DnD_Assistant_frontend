@@ -1,14 +1,13 @@
+import { Icon20Cancel } from '@vkontakte/icons';
 import { CreatureClippedData } from 'entities/creature/model/types';
 import { GetCreaturesRequest, useGetCreaturesQuery } from 'pages/bestiary/api';
 import { mapFiltersToRequestBody } from 'pages/bestiary/lib';
 import { Filters } from 'pages/bestiary/model';
 import { useCallback, useEffect, useState } from 'react';
 import { throttle, useDebounce } from 'shared/lib';
-import { Icon20Cancel } from '@vkontakte/icons';
 import s from './Bestiary.module.scss';
 import { BestiaryCard } from './bestiaryCard';
 import { FilterModalWindow } from './filterModalWindow';
-import { Link } from 'react-router';
 
 const RESPONSE_SIZE = 50;
 const DEBOUNCE_TIME = 500;
@@ -119,12 +118,14 @@ export const Bestiary = () => {
           Открыть фильтр
         </button>
       </div>
-      <Link to='/encounter_tracker'>Перейти в трекер</Link>
 
       {/* Модальное окно */}
       {isModalOpen && (
         <div className={s.modalOverlay} onClick={() => setIsModalOpen(false)}>
-          <div className={s.modalOverlay__content} onClick={(e) => e.stopPropagation()}>
+          <div
+            className={s.modalOverlay__content}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className={s.modalOverlay__header}>
               <div className={s.modalOverlay__title}>Фильтры</div>
               <div
