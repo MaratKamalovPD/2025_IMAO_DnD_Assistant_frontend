@@ -1,78 +1,99 @@
-/* FilterModalWindow.module.scss*/
-
-.textColorDark {
-  color: black;
-}
-
-.selectedCategoryCheckbox {
-  background-color: #c98d8d;
-  border-color: black;
-}
-
-/* Padding */
-.padding4 {
-  padding: 1rem; /* 4 * 0.25rem = 1rem */
-}
-
-/* Background color */
-.backgroundColorGray100 {
-  background-color: #f3f4f6; /* Пример цвета для bg-gray-100 */
-}
-
-/* Border radius */
-.borderRadiusLg {
-  border-radius: 0.5rem; /* Пример для rounded-lg */
-}
-
-/* Margin bottom */
-.marginBottom4 {
-  margin-bottom: 1rem; /* 4 * 0.25rem = 1rem */
-}
-
-/* Font size and weight */
-.fontSizeLg {
-  font-size: 1.125rem; /* Пример для text-lg */
-}
-
-.fontWeightSemibold {
-  font-weight: 600; /* Пример для font-semibold */
-}
-
-/* Flexbox and gap */
-.flexWrap {
+.categoriesList {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  padding-top: 0;
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
-.gap2 {
-  gap: 0.5rem; /* 2 * 0.25rem = 0.5rem */
+.filtersContainer {
+  border: 1px solid #b9b9b9;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  &:first-of-type {
+    margin-top: 1rem;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 8px 8px 0 0;
+    align-items: center;
+    transition: background-color 0.4s ease;
+
+    &:hover {
+      cursor: pointer;
+
+      .filtersContainer__title { 
+        background-color: #0000005b;
+      }
+
+      .dropdownBtn {
+        background-color: #0000005b;
+      }
+    }
+  }
+
+  &__title {
+    padding: 1rem;
+    margin: 0;
+    font-size: 16px;
+    align-self: start;
+    width: 90%;
+  }
+
+  &__btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem;
+    padding-top: 0.5rem;
+  }
+
+  &__btn {
+    color: black;
+    padding: 0.75rem 1rem;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+  }
+
+  &__btnChecked {
+    background-color: var(--primary-btn-color);
+    color: #FFFFFF;
+  }
+
+  &__btnUnchecked {
+    background-color: #e5e7eb;
+
+    &:hover {
+      background-color: #d1d5db;
+      opacity: 0.8;
+    }
+  }
 }
 
-/* Button styles */
-.buttonPadding {
-  padding: 0.75rem 1rem; /* Пример для px-3 py-1 */
+.dropdownBtn {
+  width: 10%;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  padding: calc(1rem + 2px) 0;
+  background-color: var(--primary-bg-color);
+  border-radius: 0 8px 0 0;
+  box-sizing: border-box;
 }
 
-.buttonBorder {
-  border: 1px solid #e5e7eb; /* Пример для border */
-}
+.dropdownIcon {
+  transition: transform 0.3s ease;
 
-.buttonBorderRadius {
-  border-radius: 0.5rem; /* Пример для rounded-lg */
-}
-
-.buttonFontSize {
-  font-size: 0.875rem; /* Пример для text-sm */
-}
-
-.buttonTransition {
-  transition: background-color 0.2s ease; /* Пример для transition-colors */
-}
-
-.buttonBackgroundGray200 {
-  background-color: #e5e7eb; /* Пример для bg-gray-200 */
-}
-
-.buttonBackgroundGray200:hover {
-  background-color: #d1d5db; /* Пример для hover:bg-gray-300 */
+  &__rotated {
+    transform: rotate(180deg);
+  }
 }

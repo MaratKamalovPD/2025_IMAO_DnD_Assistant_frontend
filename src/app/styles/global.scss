@@ -104,10 +104,6 @@ button, a[data-role=btn] {
       color: #3d340f;
     }
   }
-
-  &:focus, &:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
-  }
 }
 
 @media (prefers-color-scheme: light) {
