@@ -31,12 +31,19 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
   ) as Creature;
 
     const handleAttack = (index: number, attack: AttackLLM) => {
+
+        let advantage = false
+        let disadvantage = false
      
-        const advantage = true
-        const disadvantage = false
+        if (attackStatus === 'Преимущество') {
+            advantage = true
+        } else if (attackStatus === 'Помеха') {
+            disadvantage = true
+        }
+        
 
         if (attack.attackBonus) {
-            const {hit, critical, d20Roll} = rollToHitLLM(selectedCreature, attackedCreature, attack, true)
+            const {hit, critical, d20Roll} = rollToHitLLM(selectedCreature, attackedCreature, attack, advantage, disadvantage)
 
             toast(
             <D20AttackRollToast
@@ -118,16 +125,15 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
 
         }
 
-        dispatch(encounterActions.disableAttackHandleMode())
     };
 
     
 
-  const [attackStatus, setAttackStatus] = useState<'Помеха' | 'Преимущество' | ''>('');
+  const [attackStatus, setAttackStatus] = useState<'Помеха' | 'Преимущество' | 'Атака без преимущества или помехи'>('Атака без преимущества или помехи');
 
   const handleCheckboxChange = (state: 'unchecked' | 'indeterminate' | 'checked') => {
     const status = state === 'unchecked' ? 'Помеха' : 
-                  state === 'checked' ? 'Преимущество' : '';
+                  state === 'checked' ? 'Преимущество' : 'Атака без преимущества или помехи';
     setAttackStatus(status);
   };
 

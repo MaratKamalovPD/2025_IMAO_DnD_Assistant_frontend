@@ -67,11 +67,8 @@ export const Statblock = () => {
   useEffect(() => {
     if (attackedCreatureId !== null) {
       openAttackModal()
+      dispatch(encounterActions.disableAttackHandleMode())
       
-      // Если нужно сбросить после закрытия модалки:
-      // return () => {
-      //   dispatch(encounterActions.setAttackedCreatureId(null));
-      // };
     }
   }, [attackedCreatureId, dispatch]);
 
