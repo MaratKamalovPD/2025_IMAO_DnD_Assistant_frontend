@@ -2,28 +2,28 @@
   width: 75px;
   height: 30px;
   border-radius: 15px;
-  background: #f0f0f0; // Фон по умолчанию (серый)
+  background: var(--accent-btn-color);
   position: relative;
   cursor: pointer;
   transition: background 0.3s ease;
 
   &.unchecked {
-    background: #ff3b30; // Красный цвет для unchecked
+    background: #ff3b30;
   }
 
   &.indeterminate {
-    background: #f0f0f0; // Серый/нейтральный для indeterminate
+    background: var(--accent-btn-color);
   }
 
   &.checked {
-    background: #34c759; // Зеленый для checked
+    background: #34c759;
   }
 }
 
 .checkboxInner {
   width: 26px;
   height: 26px;
-  background: white;
+  background: #e2e0e3;
   border-radius: 13px;
   position: absolute;
   top: 2px;

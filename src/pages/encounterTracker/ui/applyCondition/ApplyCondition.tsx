@@ -3,10 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
-import {
-  Creature,
-  creatureActions,
-} from 'entities/creature/model/creature.slice';
+import { Creature, creatureActions } from 'entities/creature/model/creature.slice';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import {
   conditionIcons,
@@ -19,20 +16,20 @@ import { SingleValueWithIcon } from 'pages/encounterTracker/ui/applyCondition/si
 
 import s from './ApplyCondition.module.scss';
 
-// Преобразуем damageTypes в формат, подходящий для react-select
 const conditionOptions: ConditionOption[] = conditions.map((condition) => ({
   value: condition.value,
-  label: condition.label.en, // Используем английский язык по умолчанию
+  label: condition.label.en,
   icon: conditionIcons[condition.value],
 }));
 
 export const ApplyConditionModal: React.FC = () => {
-  const [selectedCondition, setSelectedCondition] =  useState<ConditionValue>('blinded');
+  const [selectedCondition, setSelectedCondition] = useState<ConditionValue>('blinded');
 
   const dispatch = useDispatch();
 
-  const { selectedCreatureId, currentTurnIndex, participants } =
-    useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
+  const { selectedCreatureId } = useSelector<EncounterStore>(
+    (state) => state.encounter,
+  ) as EncounterState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
@@ -45,14 +42,10 @@ export const ApplyConditionModal: React.FC = () => {
   };
 
   const handleApplyCondition = () => {
-    // Выводим в консоль тип урона и его количество
-    console.log(`Condition applied: ${selectedCondition})`);
-
-    // Обновляем текущее здоровье существа
     dispatch(
       creatureActions.addCondition({
-        id: selectedCreatureId || '', // ID выбранного существа
-        condition: selectedCondition, 
+        id: selectedCreatureId || '',
+        condition: selectedCondition,
       }),
     );
   };
@@ -65,13 +58,11 @@ export const ApplyConditionModal: React.FC = () => {
             id='damageTypesInput'
             className={s.damageTypesSelect}
             options={conditionOptions}
-            value={conditionOptions.find(
-              (option) => option.value === selectedCondition,
-            )}
+            value={conditionOptions.find((option) => option.value === selectedCondition)}
             onChange={handleConditionChange}
             components={{
-              Option: OptionWithIcon, // Кастомный компонент для опций
-              SingleValue: SingleValueWithIcon, // Кастомный компонент для выбранного значения
+              Option: OptionWithIcon,
+              SingleValue: SingleValueWithIcon,
             }}
             getOptionLabel={(option) => option.label}
             getOptionValue={(option) => option.value}
@@ -85,11 +76,7 @@ export const ApplyConditionModal: React.FC = () => {
       </div>
 
       {/* Кнопка "Нанести урон" */}
-      <button
-        type='button'
-        onClick={handleApplyCondition}
-        className={s.dealDamageButton}
-      >
+      <button type='button' onClick={handleApplyCondition} data-variant='primary'>
         Наложить эффект
       </button>
     </div>

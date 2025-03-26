@@ -14,11 +14,13 @@ export interface ConditionOption {
 export const conditions: Condition[] = [
   { value: 'blinded', label: { en: 'Blinded', ru: 'Ослеплён' } },
   { value: 'charmed', label: { en: 'Charmed', ru: 'Очарован' } },
-  { value: 'deafened', label: { en: 'Deafened', ru: 'Оглох' } },
   { value: 'exhaustion', label: { en: 'Exhaustion', ru: 'Истощение' } },
   { value: 'frightened', label: { en: 'Frightened', ru: 'Испуган' } },
   { value: 'grappled', label: { en: 'Grappled', ru: 'Схвачен' } },
-  { value: 'incapacitated', label: { en: 'Incapacitated', ru: 'Недееспособен' } },
+  {
+    value: 'incapacitated',
+    label: { en: 'Incapacitated', ru: 'Недееспособен' },
+  },
   { value: 'invisible', label: { en: 'Invisible', ru: 'Невидим' } },
   { value: 'paralyzed', label: { en: 'Paralyzed', ru: 'Парализован' } },
   { value: 'petrified', label: { en: 'Petrified', ru: 'Окаменел' } },
@@ -27,9 +29,10 @@ export const conditions: Condition[] = [
   { value: 'restrained', label: { en: 'Restrained', ru: 'Скован' } },
   { value: 'stunned', label: { en: 'Stunned', ru: 'Оглушён' } },
   { value: 'unconscious', label: { en: 'Unconscious', ru: 'Без сознания' } },
+  { value: 'deafened', label: { en: 'Deafened', ru: 'Оглох' } },
 ];
 
-export type ConditionValue = 
+export type ConditionValue =
   | 'blinded'
   | 'charmed'
   | 'deafened'

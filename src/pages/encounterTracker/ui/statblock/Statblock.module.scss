@@ -21,7 +21,6 @@
 }
 
 .creaturePanel {
-  border: 1px solid var(--primary-bg-color);
   border-radius: 15px;
   background-color: var(--primary-bg-color);
   display: flex;
@@ -153,7 +152,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -161,12 +159,14 @@
 }
 
 .modalContent {
-  background-color: white;
+  background-color: var(--primary-bg-color);
   padding: 20px;
   border-radius: 8px;
   width: 90%;
   max-width: 500px;
   position: relative;
+  border: 3px solid black;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
 }
 
 .closeButton {
@@ -177,13 +177,12 @@
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #333;
+  color: #f1eded;
 
   &:hover {
-    color: #000;
+    color: var(--primary-btn-color) !important;
   }
 }
-
 
 //============++++++++++++++===============
 

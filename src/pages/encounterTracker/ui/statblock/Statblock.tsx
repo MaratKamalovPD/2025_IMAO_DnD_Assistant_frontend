@@ -1,14 +1,10 @@
 import clsx from 'clsx';
-import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
-import { monsterAttacks, monsterAttackIcons} from 'pages/encounterTracker/lib';
-import { useDispatch, useSelector } from 'react-redux';
-import { normalizeString} from 'shared/lib';
 import {
+  AttackLLM,
   Creature,
+  creatureActions,
   creatureSelectors,
   CreaturesStore,
-  creatureActions,
-  AttackLLM,
 } from 'entities/creature/model';
 import {
   encounterActions,
@@ -19,6 +15,10 @@ import {
   GetPromtRequest,
   useLazyGetPromtQuery,
 } from 'pages/encounterTracker/api';
+import { monsterAttackIcons, monsterAttacks } from 'pages/encounterTracker/lib';
+import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
+import { useDispatch, useSelector } from 'react-redux';
+import { normalizeString } from 'shared/lib';
 
 import {
   conditionIcons,
@@ -27,21 +27,24 @@ import {
   weapons,
 } from 'pages/encounterTracker/lib';
 import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-
-
+import { AttackModal } from 'pages/encounterTracker/ui/attackModal';
+import { CustomCursor } from 'shared/ui/customCursor';
 import s from './Statblock.module.scss';
-import {AttackModal} from 'pages/encounterTracker/ui/attackModal'
-import {CustomCursor} from 'shared/ui/customCursor'
 
 export const Statblock = () => {
   const [promt, setPromt] = useState('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Состояние для управления модальным окном
-  const [isConditionModalOpen, setIsConditionModalOpen] = useState<boolean>(false);
+  const [isConditionModalOpen, setIsConditionModalOpen] =
+    useState<boolean>(false);
   const [isAttackModalOpen, setIsAttackModalOpen] = useState<boolean>(false);
-  const [currentAttackIndex, setCurrentAttackIndex] = useState<number | undefined>();
-  const [currentAttackData, setCurrentAttackData] = useState<AttackLLM | undefined>(undefined);
+  const [currentAttackIndex, setCurrentAttackIndex] = useState<
+    number | undefined
+  >();
+  const [currentAttackData, setCurrentAttackData] = useState<
+    AttackLLM | undefined
+  >(undefined);
 
   const dispatch = useDispatch();
 
@@ -55,8 +58,14 @@ export const Statblock = () => {
   const openModal = useCallback(() => setIsModalOpen(true), []);
   const closeModal = useCallback(() => setIsModalOpen(false), []);
 
-  const openModalConditions = useCallback(() => setIsConditionModalOpen(true), []);
-  const closeModalConditions = useCallback(() => setIsConditionModalOpen(false), []);
+  const openModalConditions = useCallback(
+    () => setIsConditionModalOpen(true),
+    [],
+  );
+  const closeModalConditions = useCallback(
+    () => setIsConditionModalOpen(false),
+    [],
+  );
 
   const openAttackModal = useCallback(() => setIsAttackModalOpen(true), []);
   const closeAttackModal = useCallback(() => setIsAttackModalOpen(false), []);
@@ -68,26 +77,28 @@ export const Statblock = () => {
     }
   }, [promtData]);
 
-  const { selectedCreatureId, attackedCreatureId, currentTurnIndex, participants, hasStarted } =
-    useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
+  const {
+    selectedCreatureId,
+    attackedCreatureId,
+    currentTurnIndex,
+    participants,
+    hasStarted,
+  } = useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
   ) as Creature;
 
   const handleAttack = (index: number, attack: AttackLLM) => {
-    
     setCurrentAttackIndex(index);
     setCurrentAttackData(attack);
-    dispatch(encounterActions.enableAttackHandleMode())
-    
+    dispatch(encounterActions.enableAttackHandleMode());
   };
 
   useEffect(() => {
     if (attackedCreatureId !== null) {
-      openAttackModal()
-      dispatch(encounterActions.disableAttackHandleMode())
-      
+      openAttackModal();
+      dispatch(encounterActions.disableAttackHandleMode());
     }
   }, [attackedCreatureId, dispatch]);
 
@@ -244,49 +255,61 @@ export const Statblock = () => {
             Действия
           </div>
           <div className={s.creaturePanel__actionsList}>
-          {selectedCreature.attacksLLM?.map((attack, ind) => {
-                // Нормализуем название атаки
-                const normalizedAttackName = normalizeString(attack.name);
-
-                // Проверяем, является ли атака мультиатакой
-                const isMultiAttack = normalizedAttackName === "мултиатака";
-
-                // Сначала ищем в оружии (weapons)
-                const weapon = weapons.find((w) => normalizeString(w.label.ru) === normalizedAttackName);
-
-                // Если оружие не найдено, ищем в атаках монстров (monsterAttacks)
-                const monsterAttack = !weapon 
-                  ? monsterAttacks.find((a) => normalizeString(a.label.ru) === normalizedAttackName) 
-                  : null;
-
-                // Если ничего не найдено, но в названии есть "дыхание" — берём случайное дыхание
-                const fallbackBreathAttack = !weapon && !monsterAttack && normalizedAttackName.includes("дыхание")
-                ? monsterAttacks.filter(a => a.value.includes("breath"))[
-                    Math.floor(Math.random() * monsterAttacks.filter(a => a.value.includes("breath")).length)
-                  ]
+            {selectedCreature.attacksLLM?.map((attack, ind) => {
+              const normalizedAttackName = normalizeString(attack.name);
+              const isMultiAttack = normalizedAttackName === 'мултиатака';
+              const weapon = weapons.find(
+                (w) => normalizeString(w.label.ru) === normalizedAttackName,
+              );
+              const monsterAttack = !weapon
+                ? monsterAttacks.find(
+                    (a) => normalizeString(a.label.ru) === normalizedAttackName,
+                  )
                 : null;
 
-                // Получаем иконку: сначала из weaponIcons, если нет — из monsterAttackIcons, если нет — из случайного дыхания
-                const icon = weapon 
-                ? weaponIcons[weapon.value] 
-                : monsterAttack 
-                  ? monsterAttackIcons[monsterAttack.value] 
-                  : fallbackBreathAttack 
-                    ? monsterAttackIcons[fallbackBreathAttack.value] 
+              // Если ничего не найдено, но в названии есть "дыхание" — берём случайное дыхание
+              const fallbackBreathAttack =
+                !weapon &&
+                !monsterAttack &&
+                normalizedAttackName.includes('дыхание')
+                  ? monsterAttacks.filter((a) => a.value.includes('breath'))[
+                      Math.floor(
+                        Math.random() *
+                          monsterAttacks.filter((a) =>
+                            a.value.includes('breath'),
+                          ).length,
+                      )
+                    ]
+                  : null;
+
+              const icon = weapon
+                ? weaponIcons[weapon.value]
+                : monsterAttack
+                  ? monsterAttackIcons[monsterAttack.value]
+                  : fallbackBreathAttack
+                    ? monsterAttackIcons[fallbackBreathAttack.value]
                     : null;
 
-                return (
-                    <button
-                        className={s.creaturePanel__actionsList__element}
-                        key={ind}
-                        disabled={isMultiAttack} 
-                        onClick={isMultiAttack ? undefined : () => handleAttack(ind, attack)} 
-                    >
-                        {/* Отображаем иконку, если она найдена */}
-                        {icon && <img src={icon} alt={attack.name} className={s.attackIcon} />}
-                        {attack.name}
-                    </button>
-                );
+              return (
+                <button
+                  className={s.creaturePanel__actionsList__element}
+                  key={ind}
+                  disabled={isMultiAttack}
+                  onClick={
+                    isMultiAttack ? undefined : () => handleAttack(ind, attack)
+                  }
+                >
+                  {/* Отображаем иконку, если она найдена */}
+                  {icon && (
+                    <img
+                      src={icon}
+                      alt={attack.name}
+                      className={s.attackIcon}
+                    />
+                  )}
+                  {attack.name}
+                </button>
+              );
             })}
 
             <button
@@ -377,26 +400,26 @@ export const Statblock = () => {
 
         <div className={s.creaturePanel__actionsContainer}>
           <div className={s.creaturePanel__actionsContainer__header}>
-              Эффекты
-            </div >
+            Эффекты
+          </div>
 
-              <div className={s.creaturePanel__actionsList}>
-                {isAttackModalOpen && (
-                  <div className={s.modalOverlay}>
-                    <div className={s.modalContent}>
-                      {/* Кнопка закрытия модального окна */}
-                      <button className={s.closeButton} onClick={closeAttackModal}>
-                        &times; {/* Символ "крестик" */}
-                      </button>
+          <div className={s.creaturePanel__actionsList}>
+            {isAttackModalOpen && (
+              <div className={s.modalOverlay}>
+                <div className={s.modalContent}>
+                  {/* Кнопка закрытия модального окна */}
+                  <button className={s.closeButton} onClick={closeAttackModal}>
+                    &times; {/* Символ "крестик" */}
+                  </button>
 
-                      <AttackModal 
-                        attackIndex={currentAttackIndex}
-                        attackData={currentAttackData}
-                      />
-                    </div>
-                  </div>
-                )}
+                  <AttackModal
+                    attackIndex={currentAttackIndex}
+                    attackData={currentAttackData}
+                  />
+                </div>
               </div>
+            )}
+          </div>
         </div>
 
         <div className={s.creaturePanel__notesContainer}>

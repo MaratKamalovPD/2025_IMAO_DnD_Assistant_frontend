@@ -1,13 +1,14 @@
 .optionContainer {
-    display: flex;
-    align-items: center;
-  }
-  
-  .damageTypeIcon {
-    margin-right: 10px;
-  }
+  display: flex;
+  align-items: center;
+  color: black;
+}
 
-  .damageTypesSelect {
-    width: 100%;
-    font-size: 14px;
-  }
+.damageTypeIcon {
+  margin-right: 10px;
+}
+
+.damageTypesSelect {
+  width: 100%;
+  font-size: 14px;
+}
