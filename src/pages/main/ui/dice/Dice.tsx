@@ -11,10 +11,7 @@ export const Dice = () => {
       document.body.setAttribute('data-scroll', 'true');
       document.body.style.setProperty(
         '--scroll',
-        String(
-          window.pageYOffset /
-            (document.body.offsetHeight - window.innerHeight),
-        ),
+        String(window.pageYOffset / (document.body.offsetHeight - window.innerHeight)),
       );
     };
 
@@ -25,8 +22,6 @@ export const Dice = () => {
       document.body.removeAttribute('data-scroll');
     };
   }, []);
-
-  console.log('aaaaaaaa');
 
   return (
     <>

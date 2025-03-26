@@ -53,10 +53,6 @@ export const DamageTypesForm: React.FC = () => {
   };
 
   const handleDealDamage = () => {
-    // Выводим в консоль тип урона и его количество
-    console.log(`Нанесён урон: ${damageAmount} (тип: ${selectedDamageType})`);
-
-    // Обновляем текущее здоровье существа
     dispatch(
       creatureActions.updateCurrentByDelta({
         id: selectedCreatureId || '', // ID выбранного существа

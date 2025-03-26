@@ -12,8 +12,6 @@ export const Main = () => {
         `.${sh.logo}, .${sh.dndLogo}, .${sf.featureCard}, footer, li, button`,
       );
 
-      console.log(sections);
-
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {

@@ -2,26 +2,11 @@
 
 .bestiaryContainer {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, clamp(129px, 50vw, card.$card-width));
-  justify-content: space-evenly;
-  width: 80vw;
+  justify-items: center;
   padding: 16px;
   box-sizing: border-box;
-}
-
-@media (max-width: 768px) {
-  .bestiaryContainer {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .bestiaryContainer {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 8px;
-  }
 }
 
 .searchContainer {

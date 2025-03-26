@@ -5,7 +5,7 @@ import {
   PayloadAction,
   Reducer,
 } from '@reduxjs/toolkit';
-import { Attack, SavingThrow,  AttackLLM} from './types';
+import { Attack, AttackLLM, SavingThrow } from './types';
 
 export type Creature = {
   _id: string;
@@ -34,7 +34,7 @@ export type Creature = {
     name: string;
   }[];
   attacks?: Attack[];
-  attacksLLM?: AttackLLM[]; 
+  attacksLLM?: AttackLLM[];
 };
 
 const creatureAdapter = createEntityAdapter<Creature>({
@@ -60,19 +60,16 @@ export const creatureSlice = createSlice({
     addCreatures: creatureAdapter.addMany,
     updateCreature: creatureAdapter.updateOne,
     removeCreature: creatureAdapter.removeOne,
-    updateCurrentByDelta: (
-      state,
-      action: PayloadAction<{ id: string; delta: number }>,
-    ) => {
+    updateCurrentByDelta: (state, action: PayloadAction<{ id: string; delta: number }>) => {
       const { id, delta } = action.payload;
       const creature = state.entities[id];
       let hpCurrent = creature.hp.current;
-    
+
       if (!creature) {
         console.warn(`Creature with id ${id} not found.`);
         return;
       }
-    
+
       // Если текущие HP отрицательные, лечение устанавливает HP равным значению current
       if (hpCurrent <= 0) {
         hpCurrent = Math.max(delta, 0); // Гарантируем, что HP не станет отрицательным после лечения
@@ -81,7 +78,7 @@ export const creatureSlice = createSlice({
       else {
         hpCurrent += delta;
       }
-    
+
       // Гарантируем, что текущие HP не превышают максимальные
       hpCurrent = Math.min(hpCurrent, creature.hp.max);
 
@@ -89,33 +86,28 @@ export const creatureSlice = createSlice({
         id,
         changes: { hp: { ...creature.hp, current: hpCurrent } },
       });
-
-      console.log(creature.hp.current, hpCurrent)
     },
-    updateMaxHp: (
-      state,
-      action: PayloadAction<{ id: string; max: number }>,
-    ) => {
+    updateMaxHp: (state, action: PayloadAction<{ id: string; max: number }>) => {
       const { id, max } = action.payload;
       const creature = state.entities[id];
-    
+
       if (!creature) {
         console.warn(`Creature with id ${id} not found.`);
         return;
       }
-    
+
       const oldMax = creature.hp.max;
       const newMax = max;
-    
+
       // Разница между новым и старым максимальным HP
       const difference = newMax - oldMax;
-    
+
       // Обновляем максимальное HP
       creatureAdapter.updateOne(state, {
         id,
         changes: { hp: { ...creature.hp, max: newMax } },
       });
-    
+
       // Если максимальное HP увеличилось, увеличиваем текущее HP на ту же величину
       if (difference > 0) {
         const newHp = creature.hp.current + difference;
@@ -131,33 +123,28 @@ export const creatureSlice = createSlice({
           changes: { hp: { ...creature.hp, current: newMax } },
         });
       }
-    
+
       // Проверка на мгновенную смерть
       if (creature.hp.current <= -creature.hp.max) {
-        console.log(`Creature ${id} has died instantly!`);
-
         creatureAdapter.updateOne(state, {
           id,
           changes: { hp: { ...creature.hp, current: -creature.hp.max } },
         });
       }
     },
-    updateTemporaryHp: (
-      state,
-      action: PayloadAction<{ id: string; temporary: number }>,
-    ) => {
+    updateTemporaryHp: (state, action: PayloadAction<{ id: string; temporary: number }>) => {
       const { id, temporary } = action.payload;
       const creature = state.entities[id];
-    
+
       if (!creature) {
         console.warn(`Creature with id ${id} not found.`);
 
         return;
       }
-    
+
       // Гарантируем, что temporary не отрицательное
       const newTemporary = Math.max(temporary, 0);
-    
+
       // Если новое значение временных хитов больше текущего, заменяем его
       if (newTemporary > creature.hp.temporary) {
         creatureAdapter.updateOne(state, {
@@ -166,10 +153,7 @@ export const creatureSlice = createSlice({
         });
       }
     },
-    addCondition: (
-      state,
-      action: PayloadAction<{ id: string; condition: string }>,
-    ) => {
+    addCondition: (state, action: PayloadAction<{ id: string; condition: string }>) => {
       const { id, condition } = action.payload;
       const creature = state.entities[id];
 
@@ -177,51 +161,37 @@ export const creatureSlice = createSlice({
         creature.conditions.push(condition);
       }
     },
-    removeCondition: (
-      state,
-      action: PayloadAction<{ id: string; condition: string }>,
-    ) => {
+    removeCondition: (state, action: PayloadAction<{ id: string; condition: string }>) => {
       const { id, condition } = action.payload;
       const creature = state.entities[id];
 
       if (creature) {
-        creature.conditions = creature.conditions.filter(
-          (c) => c !== condition,
-        );
+        creature.conditions = creature.conditions.filter((c) => c !== condition);
       }
     },
-    updateAc: (
-      state,
-      action: PayloadAction<{ id: string, newAc: number }>,
-    ) => {
+    updateAc: (state, action: PayloadAction<{ id: string; newAc: number }>) => {
       const { id, newAc } = action.payload;
       const creature = state.entities[id];
 
       if (creature) {
         creatureAdapter.updateOne(state, {
           id,
-          changes: { ac: newAc }
+          changes: { ac: newAc },
         });
       }
     },
-    updateInitiative: (
-      state,
-      action: PayloadAction<{ id: string, newInitiative: number }>,
-    ) => {
+    updateInitiative: (state, action: PayloadAction<{ id: string; newInitiative: number }>) => {
       const { id, newInitiative } = action.payload;
       const creature = state.entities[id];
 
       if (creature) {
         creatureAdapter.updateOne(state, {
           id,
-          changes: { initiative: newInitiative }
+          changes: { initiative: newInitiative },
         });
       }
     },
-    updateCurrentHp: (
-      state,
-      action: PayloadAction<{ id: string, newHp: number }>,
-    ) => {
+    updateCurrentHp: (state, action: PayloadAction<{ id: string; newHp: number }>) => {
       const { id, newHp } = action.payload;
       const creature = state.entities[id];
 
@@ -238,17 +208,14 @@ export const creatureSlice = createSlice({
         });
       }
     },
-    updateNotes: (
-      state,
-      action: PayloadAction<{id: string, text: string}>,
-    ) => {
+    updateNotes: (state, action: PayloadAction<{ id: string; text: string }>) => {
       const { id, text } = action.payload;
       const creature = state.entities[id];
 
       if (creature) {
         creatureAdapter.updateOne(state, {
           id,
-          changes: { notes: text }
+          changes: { notes: text },
         });
       }
     },
@@ -257,9 +224,7 @@ export const creatureSlice = createSlice({
 
 export const creatureActions = creatureSlice.actions;
 
-type CreaturesStore = ReturnType<
-  Reducer<{ creatures: EntityState<Creature, string> }>
->;
+type CreaturesStore = ReturnType<Reducer<{ creatures: EntityState<Creature, string> }>>;
 
 export const creatureSelectors = creatureAdapter.getSelectors<CreaturesStore>(
   (state) => state.creatures,

@@ -33,11 +33,7 @@ export const Bestiary = () => {
     mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue),
   );
 
-  const {
-    data: creatures,
-    isLoading,
-    isError,
-  } = useGetCreaturesQuery(requestBody);
+  const { data: creatures, isLoading, isError } = useGetCreaturesQuery(requestBody);
 
   // Эффект для добавления новых данных к существующим
   useEffect(() => {
@@ -60,21 +56,12 @@ export const Bestiary = () => {
   useEffect(() => {
     setStart(0); // Сбрасываем смещение
     setHasMore(true); // Сбрасываем флаг наличия данных
-    setRequestBody(
-      mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue),
-    );
+    setRequestBody(mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue));
   }, [debouncedSearchValue, filters]);
 
   // Эффект для запроса при прокрутки страницы
   useEffect(() => {
-    setRequestBody(
-      mapFiltersToRequestBody(
-        filters,
-        start,
-        RESPONSE_SIZE,
-        debouncedSearchValue,
-      ),
-    );
+    setRequestBody(mapFiltersToRequestBody(filters, start, RESPONSE_SIZE, debouncedSearchValue));
   }, [start]);
 
   // Эффект для отслеживания прокрутки страницы
@@ -122,23 +109,14 @@ export const Bestiary = () => {
       {/* Модальное окно */}
       {isModalOpen && (
         <div className={s.modalOverlay} onClick={() => setIsModalOpen(false)}>
-          <div
-            className={s.modalOverlay__content}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className={s.modalOverlay__content} onClick={(e) => e.stopPropagation()}>
             <div className={s.modalOverlay__header}>
               <div className={s.modalOverlay__title}>Фильтры</div>
-              <div
-                className={s.modalOverlay__closeBtn}
-                onClick={() => setIsModalOpen(false)}
-              >
+              <div className={s.modalOverlay__closeBtn} onClick={() => setIsModalOpen(false)}>
                 <Icon20Cancel />
               </div>
             </div>
-            <FilterModalWindow
-              onFilterChange={handleFilterChange}
-              selectedFilters={filters}
-            />
+            <FilterModalWindow onFilterChange={handleFilterChange} selectedFilters={filters} />
           </div>
         </div>
       )}
@@ -146,8 +124,8 @@ export const Bestiary = () => {
       {/* Список существ */}
       <div className={s.bestiaryContainer}>
         {allCreatures.map((creature) => (
-          <div key={creature._id}>
-            <BestiaryCard creature={creature} />
+          <div>
+            <BestiaryCard key={creature._id} creature={creature} />
           </div>
         ))}
       </div>

@@ -6,26 +6,14 @@ import {
   creatureSelectors,
   CreaturesStore,
 } from 'entities/creature/model';
-import {
-  encounterActions,
-  EncounterState,
-  EncounterStore,
-} from 'entities/encounter/model';
-import {
-  GetPromtRequest,
-  useLazyGetPromtQuery,
-} from 'pages/encounterTracker/api';
+import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
+import { GetPromtRequest, useLazyGetPromtQuery } from 'pages/encounterTracker/api';
 import { monsterAttackIcons, monsterAttacks } from 'pages/encounterTracker/lib';
 import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
 import { useDispatch, useSelector } from 'react-redux';
 import { normalizeString } from 'shared/lib';
 
-import {
-  conditionIcons,
-  conditions,
-  weaponIcons,
-  weapons,
-} from 'pages/encounterTracker/lib';
+import { conditionIcons, conditions, weaponIcons, weapons } from 'pages/encounterTracker/lib';
 import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -36,20 +24,14 @@ import s from './Statblock.module.scss';
 export const Statblock = () => {
   const [promt, setPromt] = useState('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Состояние для управления модальным окном
-  const [isConditionModalOpen, setIsConditionModalOpen] =
-    useState<boolean>(false);
+  const [isConditionModalOpen, setIsConditionModalOpen] = useState<boolean>(false);
   const [isAttackModalOpen, setIsAttackModalOpen] = useState<boolean>(false);
-  const [currentAttackIndex, setCurrentAttackIndex] = useState<
-    number | undefined
-  >();
-  const [currentAttackData, setCurrentAttackData] = useState<
-    AttackLLM | undefined
-  >(undefined);
+  const [currentAttackIndex, setCurrentAttackIndex] = useState<number | undefined>();
+  const [currentAttackData, setCurrentAttackData] = useState<AttackLLM | undefined>(undefined);
 
   const dispatch = useDispatch();
 
-  const [trigger, { data: promtData, isLoading, isError }] =
-    useLazyGetPromtQuery();
+  const [trigger, { data: promtData, isLoading, isError }] = useLazyGetPromtQuery();
 
   const handleSearchClick = (data: GetPromtRequest) => {
     trigger(data);
@@ -58,14 +40,8 @@ export const Statblock = () => {
   const openModal = useCallback(() => setIsModalOpen(true), []);
   const closeModal = useCallback(() => setIsModalOpen(false), []);
 
-  const openModalConditions = useCallback(
-    () => setIsConditionModalOpen(true),
-    [],
-  );
-  const closeModalConditions = useCallback(
-    () => setIsConditionModalOpen(false),
-    [],
-  );
+  const openModalConditions = useCallback(() => setIsConditionModalOpen(true), []);
+  const closeModalConditions = useCallback(() => setIsConditionModalOpen(false), []);
 
   const openAttackModal = useCallback(() => setIsAttackModalOpen(true), []);
   const closeAttackModal = useCallback(() => setIsAttackModalOpen(false), []);
@@ -73,17 +49,11 @@ export const Statblock = () => {
   useEffect(() => {
     if (promtData) {
       setPromt(promtData.battle_description);
-      console.log(promtData.battle_description);
     }
   }, [promtData]);
 
-  const {
-    selectedCreatureId,
-    attackedCreatureId,
-    currentTurnIndex,
-    participants,
-    hasStarted,
-  } = useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
+  const { selectedCreatureId, attackedCreatureId, currentTurnIndex, participants, hasStarted } =
+    useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
@@ -183,9 +153,7 @@ export const Statblock = () => {
       <div className={s.statblockContainer}>
         <div className={s.creaturePanel}>
           <div className={s.creaturePanel__titleContainer}>
-            <div className={s.creaturePanel__title}>
-              Выберите карточку для отображения
-            </div>
+            <div className={s.creaturePanel__title}>Выберите карточку для отображения</div>
           </div>
         </div>
       </div>
@@ -201,9 +169,7 @@ export const Statblock = () => {
         <div className={s.creaturePanel__statsContainer}>
           <div className={s.creaturePanel__statsElement}>
             <div className={s.creaturePanel__statsElement__image}></div>
-            <div className={s.creaturePanel__statsElement__text}>
-              Инициатива:
-            </div>
+            <div className={s.creaturePanel__statsElement__text}>Инициатива:</div>
             <input
               type='text'
               value={!hasStarted ? '?' : selectedCreature.initiative}
@@ -235,12 +201,7 @@ export const Statblock = () => {
               disabled={!hasStarted}
             ></input>
           </div>
-          <div
-            className={clsx(
-              s.creaturePanel__statsElement,
-              s.creaturePanel__deadElement,
-            )}
-          >
+          <div className={clsx(s.creaturePanel__statsElement, s.creaturePanel__deadElement)}>
             <input
               type='checkbox'
               onClick={handleCreatureDeath}
@@ -251,9 +212,7 @@ export const Statblock = () => {
           </div>
         </div>
         <div className={s.creaturePanel__actionsContainer}>
-          <div className={s.creaturePanel__actionsContainer__header}>
-            Действия
-          </div>
+          <div className={s.creaturePanel__actionsContainer__header}>Действия</div>
           <div className={s.creaturePanel__actionsList}>
             {selectedCreature.attacksLLM?.map((attack, ind) => {
               const normalizedAttackName = normalizeString(attack.name);
@@ -262,22 +221,16 @@ export const Statblock = () => {
                 (w) => normalizeString(w.label.ru) === normalizedAttackName,
               );
               const monsterAttack = !weapon
-                ? monsterAttacks.find(
-                    (a) => normalizeString(a.label.ru) === normalizedAttackName,
-                  )
+                ? monsterAttacks.find((a) => normalizeString(a.label.ru) === normalizedAttackName)
                 : null;
 
               // Если ничего не найдено, но в названии есть "дыхание" — берём случайное дыхание
               const fallbackBreathAttack =
-                !weapon &&
-                !monsterAttack &&
-                normalizedAttackName.includes('дыхание')
+                !weapon && !monsterAttack && normalizedAttackName.includes('дыхание')
                   ? monsterAttacks.filter((a) => a.value.includes('breath'))[
                       Math.floor(
                         Math.random() *
-                          monsterAttacks.filter((a) =>
-                            a.value.includes('breath'),
-                          ).length,
+                          monsterAttacks.filter((a) => a.value.includes('breath')).length,
                       )
                     ]
                   : null;
@@ -295,18 +248,10 @@ export const Statblock = () => {
                   className={s.creaturePanel__actionsList__element}
                   key={ind}
                   disabled={isMultiAttack}
-                  onClick={
-                    isMultiAttack ? undefined : () => handleAttack(ind, attack)
-                  }
+                  onClick={isMultiAttack ? undefined : () => handleAttack(ind, attack)}
                 >
                   {/* Отображаем иконку, если она найдена */}
-                  {icon && (
-                    <img
-                      src={icon}
-                      alt={attack.name}
-                      className={s.attackIcon}
-                    />
-                  )}
+                  {icon && <img src={icon} alt={attack.name} className={s.attackIcon} />}
                   {attack.name}
                 </button>
               );
@@ -338,33 +283,23 @@ export const Statblock = () => {
           </div>
         </div>
         <div className={s.creaturePanel__actionsContainer}>
-          <div className={s.creaturePanel__actionsContainer__header}>
-            Состояния
-          </div>
+          <div className={s.creaturePanel__actionsContainer__header}>Состояния</div>
           <div className={s.creaturePanel__actionsList}>
             {selectedCreature.conditions?.map((condition, ind) => {
               // Нормализуем название условия
               const normalizedConditionName = normalizeString(condition);
 
               const conditionInstanse = conditions.find(
-                (cnd) =>
-                  normalizeString(cnd.label.en) === normalizedConditionName,
+                (cnd) => normalizeString(cnd.label.en) === normalizedConditionName,
               );
 
               // Находим иконку для условия по нормализованному названию
-              const icon = conditionInstanse
-                ? conditionIcons[conditionInstanse.value]
-                : null;
+              const icon = conditionInstanse ? conditionIcons[conditionInstanse.value] : null;
 
               return (
-                <div
-                  className={s.creaturePanel__actionsList__element}
-                  key={ind}
-                >
+                <div className={s.creaturePanel__actionsList__element} key={ind}>
                   {/* Отображаем иконку, если она найдена */}
-                  {icon && (
-                    <img src={icon} alt={condition} className={s.attackIcon} />
-                  )}
+                  {icon && <img src={icon} alt={condition} className={s.attackIcon} />}
                   {conditionInstanse ? conditionInstanse.label.ru : condition}
                 </div>
               );
@@ -383,10 +318,7 @@ export const Statblock = () => {
                 <div className={s.modalOverlay}>
                   <div className={s.modalContent}>
                     {/* Кнопка закрытия модального окна */}
-                    <button
-                      className={s.closeButton}
-                      onClick={closeModalConditions}
-                    >
+                    <button className={s.closeButton} onClick={closeModalConditions}>
                       &times; {/* Символ "крестик" */}
                     </button>
 
@@ -399,9 +331,7 @@ export const Statblock = () => {
         </div>
 
         <div className={s.creaturePanel__actionsContainer}>
-          <div className={s.creaturePanel__actionsContainer__header}>
-            Эффекты
-          </div>
+          <div className={s.creaturePanel__actionsContainer__header}>Эффекты</div>
 
           <div className={s.creaturePanel__actionsList}>
             {isAttackModalOpen && (
@@ -412,10 +342,7 @@ export const Statblock = () => {
                     &times; {/* Символ "крестик" */}
                   </button>
 
-                  <AttackModal
-                    attackIndex={currentAttackIndex}
-                    attackData={currentAttackData}
-                  />
+                  <AttackModal attackIndex={currentAttackIndex} attackData={currentAttackData} />
                 </div>
               </div>
             )}

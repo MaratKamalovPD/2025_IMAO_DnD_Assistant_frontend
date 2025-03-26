@@ -32,7 +32,6 @@ const encounterSlice = createSlice({
     },
     enableAttackHandleMode: (state) => {
       state.attackHandleModeActive = true;
-      console.log()
     },
     disableAttackHandleMode: (state) => {
       state.attackHandleModeActive = false;
@@ -74,10 +73,7 @@ const encounterSlice = createSlice({
     sortByInitiative: (state) => {
       state.participants.sort((a, b) => b.initiative - a.initiative);
     },
-    updateInitiative: (
-      state,
-      action: PayloadAction<{ id: string; newInitiative: number }>,
-    ) => {
+    updateInitiative: (state, action: PayloadAction<{ id: string; newInitiative: number }>) => {
       const { id, newInitiative } = action.payload;
       state.participants.forEach((creature) => {
         if (creature.id === id) {

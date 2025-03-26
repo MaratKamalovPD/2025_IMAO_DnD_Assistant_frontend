@@ -3,8 +3,8 @@ type SaveEffect = 'half' | 'none' | 'full'; // 'half' — стандартный
 
 interface DamageCalculationOptions {
   modifier?: DamageModifier; // Тип модификатора урона (сопротивление/уязвимость)
-  saveEffect?: SaveEffect;   // Эффект спасброска ('half', 'none', 'full')
-  flatReduction?: number;   // Абсолютное снижение урона (например, -2 за счёт способности)
+  saveEffect?: SaveEffect; // Эффект спасброска ('half', 'none', 'full')
+  flatReduction?: number; // Абсолютное снижение урона (например, -2 за счёт способности)
 }
 
 /**
@@ -13,16 +13,9 @@ interface DamageCalculationOptions {
  * @param options Параметры расчёта (все опциональны).
  * @returns Модифицированный урон (округляется по правилам D&D).
  */
-export function calculateDndDamage(
-  damage: number,
-  options: DamageCalculationOptions = {}
-): number {
+export function calculateDndDamage(damage: number, options: DamageCalculationOptions = {}): number {
   // Значения по умолчанию
-  const {
-    modifier = 'normal',
-    saveEffect = 'full',
-    flatReduction = 0,
-  } = options;
+  const { modifier = 'normal', saveEffect = 'full', flatReduction = 0 } = options;
 
   // Если урон <= 0 или иммунитет — сразу 0
   if (damage <= 0 || modifier === 'immunity') {
@@ -75,20 +68,20 @@ export function calculateDndDamage(
 // console.log(calculateDndDamage(10)); // 10
 
 // // 2. Сопротивление огню + спасбросок (half)
-// console.log(calculateDndDamage(10, { 
-//   modifier: 'resistance', 
-//   saveEffect: 'half' 
+// console.log(calculateDndDamage(10, {
+//   modifier: 'resistance',
+//   saveEffect: 'half'
 // })); // 3 (10 → 5 (half) → 2.5 (resistance) → округление до 3)
 
 // // 3. Дезинтеграция (saveEffect: 'none') — урон игнорируется
-// console.log(calculateDndDamage(30, { 
-//   saveEffect: 'none' 
+// console.log(calculateDndDamage(30, {
+//   saveEffect: 'none'
 // })); // 0
 
 // // 4. Уязвимость + абсолютное снижение урона (-3)
-// console.log(calculateDndDamage(8, { 
-//   modifier: 'vulnerability', 
-//   flatReduction: 3 
+// console.log(calculateDndDamage(8, {
+//   modifier: 'vulnerability',
+//   flatReduction: 3
 // })); // 13 (8 → 16 → 16-3=13)
 
 // // 5. Спасбросок (half) + сопротивление + снижение урона (-1)
