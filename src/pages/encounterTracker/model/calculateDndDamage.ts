@@ -1,11 +1,12 @@
 type DamageModifier = 'normal' | 'resistance' | 'vulnerability' | 'immunity';
-type SaveEffect = 'half' | 'none' | 'full'; // 'half' — стандартный спасбросок, 'none' — игнорирует урон (как у дезинтеграции), 'full' — без эффекта
+type SaveEffect = 'half' | 'none' | 'full';
+// 'half' — стандартный спасбросок, 'none' — игнорирует урон (как у дезинтеграции), 'full' — без эффекта
 
-interface DamageCalculationOptions {
+type DamageCalculationOptions = {
   modifier?: DamageModifier; // Тип модификатора урона (сопротивление/уязвимость)
   saveEffect?: SaveEffect; // Эффект спасброска ('half', 'none', 'full')
   flatReduction?: number; // Абсолютное снижение урона (например, -2 за счёт способности)
-}
+};
 
 /**
  * Рассчитывает итоговый урон с учётом всех правил D&D 5e.
@@ -31,7 +32,6 @@ export function calculateDndDamage(damage: number, options: DamageCalculationOpt
     case 'none':
       return 0; // Полный игнор урона (как у дезинтеграции)
     case 'full':
-      // Без изменений
       break;
   }
 
@@ -44,7 +44,6 @@ export function calculateDndDamage(damage: number, options: DamageCalculationOpt
       modifiedDamage *= 2;
       break;
     case 'normal':
-      // Без изменений
       break;
   }
 
@@ -57,7 +56,6 @@ export function calculateDndDamage(damage: number, options: DamageCalculationOpt
     modifiedDamage = 0;
   }
 
-  // Применение абсолютного снижения (но не ниже 0)
   modifiedDamage = Math.max(0, modifiedDamage - flatReduction);
 
   return modifiedDamage;

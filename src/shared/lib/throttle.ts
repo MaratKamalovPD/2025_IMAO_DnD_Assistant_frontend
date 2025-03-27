@@ -2,7 +2,7 @@ export const throttle = (
   func: (...args: any[]) => void,
   delay: number,
 ): ((...args: any[]) => void) => {
-  let isCalled: boolean = false; // Флаг, указывающий, была ли функция вызвана
+  let isCalled: boolean = false;
 
   return function (...args: any[]): void {
     if (isCalled) return;
@@ -12,7 +12,7 @@ export const throttle = (
     func(...args);
 
     setTimeout(() => {
-      isCalled = false; // Сбрасываем флаг
+      isCalled = false;
     }, delay);
   };
 };

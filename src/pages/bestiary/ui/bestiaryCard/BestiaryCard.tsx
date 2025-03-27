@@ -3,11 +3,7 @@ import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import uniqid from 'uniqid';
 
-import {
-  Creature,
-  creatureActions,
-  CreatureClippedData,
-} from 'entities/creature/model';
+import { Creature, creatureActions, CreatureClippedData } from 'entities/creature/model';
 import { encounterActions } from 'entities/encounter/model';
 import { useLazyGetCreatureByNameQuery } from 'pages/bestiary/api';
 
@@ -15,15 +11,11 @@ import { calculateInitiative } from 'pages/bestiary/model';
 import placeholderImage from 'shared/assets/images/placeholder.png';
 import s from './BestiaryCard.module.scss';
 
-export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
-  creature,
-}) => {
+export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({ creature }) => {
   const dispatch = useDispatch();
 
-  const [
-    trigger,
-    { data: creatureData, isLoading, isError, isUninitialized, requestId },
-  ] = useLazyGetCreatureByNameQuery();
+  const [trigger, { data: creatureData, isLoading, isError, isUninitialized, requestId }] =
+    useLazyGetCreatureByNameQuery();
 
   const handleSearchClick = useCallback(() => {
     trigger(`${creature.url}`);
@@ -54,7 +46,6 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
         savingThrows: creatureData.savingThrows || [],
         image: creatureData.images[2] || placeholderImage,
         notes: '',
-        attacks: creatureData.attacks,
         attacksLLM: creatureData.attacksLLM,
       };
 
@@ -84,10 +75,7 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
 
       <div className={s.infoContainer}>
         <div className={s.header}>
-          <div
-            className={s.header__titleContainer}
-            data-title={creature.name.rus}
-          >
+          <div className={s.header__titleContainer} data-title={creature.name.rus}>
             <div className={s.header__title}>{creature.name.rus}</div>
             <span className={s.tooltip}>{creature.name.rus}</span>
           </div>
@@ -103,12 +91,8 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({
         </div>
 
         <div className={s.statsContainer}>
-          <div className={s.statsContainer__item}>
-            Класс опасности: {creature.challengeRating}
-          </div>
-          <div className={s.statsContainer__item}>
-            Источник: {creature.source.group.shortName}
-          </div>
+          <div className={s.statsContainer__item}>Класс опасности: {creature.challengeRating}</div>
+          <div className={s.statsContainer__item}>Источник: {creature.source.group.shortName}</div>
         </div>
 
         <div className={s.btnsContainer}>

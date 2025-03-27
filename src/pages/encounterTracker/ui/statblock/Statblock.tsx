@@ -18,7 +18,7 @@ import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { AttackModal } from 'pages/encounterTracker/ui/attackModal';
-import { CustomCursor } from 'shared/ui/customCursor';
+import { CustomCursor } from 'pages/encounterTracker/ui/customCursor';
 import s from './Statblock.module.scss';
 
 export const Statblock = () => {

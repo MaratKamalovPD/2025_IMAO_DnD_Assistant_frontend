@@ -4,23 +4,23 @@ import {
   creatureActions,
   creatureSelectors,
   CreaturesStore,
-  dndTraitToInitialForm,
 } from 'entities/creature/model';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
-import { ThreeStateCheckbox } from 'pages/encounterTracker/ui/attackModal/threeStateCheckbox';
+import {
+  calculateDndDamage,
+  rollDamageLLM,
+  rollSavingThrow,
+  rollToHitLLM,
+} from 'pages/encounterTracker/model';
 import { D20AttackRollToast } from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast';
 import { D20SavingThrowToast } from 'pages/encounterTracker/ui/trackerToasts/d20SavingThrow';
 import { DamageRollToast } from 'pages/encounterTracker/ui/trackerToasts/damageRollToast';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import {
-  calculateDndDamage,
-  rollDamageLLM,
-  rollSavingThrow,
-  rollToHitLLM,
-  SavingThrow,
-} from 'shared/lib';
+import { ThreeStateCheckbox } from 'shared/ui/threeStateCheckbox';
+
+import { AbilitySavingThrow, dndTraitToInitialForm } from 'pages/encounterTracker/lib';
 
 import s from './AttackModal.module.scss';
 
@@ -43,7 +43,7 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
     creatureSelectors.selectById(state, attackedCreatureId || ''),
   ) as Creature;
 
-  const handleAttack = (index: number, attack: AttackLLM) => {
+  const handleAttack = (attack: AttackLLM) => {
     let advantage = false;
     let disadvantage = false;
 
@@ -55,7 +55,6 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
 
     if (attack.attackBonus) {
       const { hit, critical, d20Roll } = rollToHitLLM(
-        selectedCreature,
         attackedCreature,
         attack,
         advantage,
@@ -89,7 +88,7 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
         );
       }
     } else if (attack.saveDc && attack.saveType) {
-      const constitutionSavingThrow: SavingThrow = {
+      const constitutionSavingThrow: AbilitySavingThrow = {
         challengeRating: attack.saveDc,
         ability: dndTraitToInitialForm(attack.saveType),
       };
@@ -173,7 +172,7 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
         data-variant='primary'
         onClick={() => {
           if (attackIndex !== undefined && attackData) {
-            handleAttack(attackIndex, attackData);
+            handleAttack(attackData);
           }
         }}
       >

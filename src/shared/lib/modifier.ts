@@ -1,4 +1,4 @@
-export const ABILITY_MODIFIERS: Record<number, number> = {
+export const modifiers: Record<number, number> = {
   1: -5,
   2: -4,
   3: -4,

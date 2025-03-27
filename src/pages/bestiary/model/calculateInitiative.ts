@@ -1,6 +1,5 @@
-import { ABILITY_MODIFIERS } from 'pages/bestiary/lib';
-import { Dice20 } from 'shared/lib';
+import { Dice20, modifiers } from 'shared/lib';
 
 export const calculateInitiative = (dex: number) => {
-  return Dice20.roll() + ABILITY_MODIFIERS[dex];
+  return Dice20.roll() + modifiers[dex];
 };
