@@ -1,14 +1,12 @@
-import { Language } from 'shared/lib';
+import { Language, Option } from 'shared/lib';
 
-export interface MonsterAttack {
+export type MonsterAttack = {
   value: MonsterAttackValue;
   label: Record<Language, string>;
-}
+};
 
-export interface MonsterAttackOption {
+export interface MonsterAttackOption extends Option {
   value: MonsterAttackValue;
-  label: string;
-  icon: string;
 }
 
 export type MonsterAttackValue =

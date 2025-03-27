@@ -11,9 +11,7 @@ import {
   damageTypes,
   DamageTypeValue,
 } from 'pages/encounterTracker/lib';
-import { OptionWithIcon } from 'pages/encounterTracker/ui/dealDamage/optionWithIcon';
-import { SingleValueWithIcon } from 'pages/encounterTracker/ui/dealDamage/singleValueWithIcon';
-
+import { OptionWithIcon, SingleValueWithIcon } from 'shared/ui';
 import s from './DealDamage.module.scss';
 
 // Преобразуем damageTypes в формат, подходящий для react-select

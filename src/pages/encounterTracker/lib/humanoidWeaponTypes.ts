@@ -1,17 +1,15 @@
-import { Language } from 'shared/lib';
+import { Language, Option } from 'shared/lib';
 
-export interface Weapon {
+export type Weapon = {
   value: WeaponValue;
   label: Record<Language, string>;
   category: WeaponCategory;
   type: WeaponType;
   handedness: WeaponHandedness;
-}
+};
 
-export interface WeaponOption {
+export interface WeaponOption extends Option {
   value: WeaponValue;
-  label: string;
-  icon: string;
   category: WeaponCategory;
   type: WeaponType;
   handedness: WeaponHandedness;

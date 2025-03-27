@@ -11,8 +11,7 @@ import {
   conditions,
   ConditionValue,
 } from 'pages/encounterTracker/lib';
-import { OptionWithIcon } from 'pages/encounterTracker/ui/applyCondition/optionWithIcon';
-import { SingleValueWithIcon } from 'pages/encounterTracker/ui/applyCondition/singleValueWithIcon';
+import { OptionWithIcon, SingleValueWithIcon } from 'shared/ui';
 
 import s from './ApplyCondition.module.scss';
 

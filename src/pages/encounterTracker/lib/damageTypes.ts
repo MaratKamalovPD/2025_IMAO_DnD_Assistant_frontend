@@ -1,15 +1,13 @@
-import { Language } from 'shared/lib';
+import { Language, Option } from 'shared/lib';
 
 export type DamageType = {
   value: DamageTypeValue;
   label: Record<Language, string>;
 };
 
-export type DamageTypeOption = {
+export interface DamageTypeOption extends Option {
   value: DamageTypeValue;
-  label: string;
-  icon: string;
-};
+}
 
 export const damageTypes: DamageType[] = [
   { value: 'acid', label: { en: 'Acid', ru: 'Кислота' } },

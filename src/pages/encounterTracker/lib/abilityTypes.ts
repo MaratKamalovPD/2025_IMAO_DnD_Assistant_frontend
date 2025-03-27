@@ -1,15 +1,13 @@
-import { Language } from 'shared/lib';
+import { Language, Option } from 'shared/lib';
 
 export type Ability = {
   value: AbilityValue;
   label: Record<Language, string>;
 };
 
-export type AbilityOption = {
+export interface AbilityOption extends Option {
   value: AbilityValue;
-  label: string;
-  icon: string;
-};
+}
 
 export type SavingThrow = {
   challengeRating: number;

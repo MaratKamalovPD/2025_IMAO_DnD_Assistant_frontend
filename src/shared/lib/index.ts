@@ -1,6 +1,7 @@
 export { useDebounce } from './debounce';
 export { modifiers } from './modifier';
 export { normalizeString } from './normalizeString';
+export type { Option } from './option';
 export { rollDice } from './rollDice';
 export { throttle } from './throttle';
 export { DiceType } from './types';

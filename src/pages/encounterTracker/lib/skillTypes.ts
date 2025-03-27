@@ -1,4 +1,4 @@
-import { Language } from 'shared/lib';
+import { Language, Option } from 'shared/lib';
 import { AbilityValue } from './abilityTypes';
 
 export type Skill = {
@@ -7,12 +7,10 @@ export type Skill = {
   ability: AbilityValue; // Навык зависит от способности
 };
 
-export type SkillOption = {
+export interface SkillOption extends Option {
   value: SkillValue;
-  label: string;
-  icon: string;
   ability: AbilityValue; // Добавляем зависимость от способности
-};
+}
 
 export const skills: Skill[] = [
   { value: 'acrobatics', label: { en: 'Acrobatics', ru: 'Акробатика' }, ability: 'dexterity' },
