@@ -5,10 +5,10 @@ import clsx from 'clsx';
 export const Login = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [titleBlack, setTitle] = useState<string>('Вход в');
-    const [titleBlue, setTitleBlue] = useState<string>('Encounterium');
-    const [buttonText, setButtonText] = useState<string>('Войти');
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [titleBlack, _setTitle] = useState<string>('Вход в');
+    const [titleBlue, _setTitleBlue] = useState<string>('Encounterium');
+    const [buttonText, _setButtonText] = useState<string>('Войти');
+    const [isAuthenticated, _setIsAuthenticated] = useState<boolean>(false);
 
     useEffect(() => {
         const checkAuth = async () => {

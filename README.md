@@ -23,3 +23,15 @@ npm run lint
 ```
 npm run build
 ```
+
+## After build 
+```
+sudo mkdir -p /var/www/encounterium
+sudo chown -R $USER:$USER /var/www/encounterium
+rsync -avz ./dist/ /var/www/encounterium/dist/
+
+sudo mkdir -p /var/www/encounterium/static/src/shared/assets/images
+sudo chown -R $USER:$USER /var/www/encounterium/static
+rsync -avz ./src/shared/assets/images/ /var/www/encounterium/static/src/shared/assets/images/
+
+```
