@@ -10,7 +10,7 @@ const filterMapping: { [key: string]: keyof GetCreaturesRequest['filter'] } = {
   Перемещение: 'moving',
   'Размер существа': 'size',
   'Тип существа': 'type',
-  'Уровень опасности': 'challengeRating',
+  'Класс опасности': 'challengeRating',
   'Места обитания': 'environment',
   Умения: 'features',
 };

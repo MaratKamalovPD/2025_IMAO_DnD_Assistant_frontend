@@ -1,8 +1,8 @@
+import { Icon20ChevronUp } from '@vkontakte/icons';
 import clsx from 'clsx';
 import { CATEGORIES } from 'pages/bestiary/lib';
 import { Filters } from 'pages/bestiary/model';
 import { useEffect, useState } from 'react';
-import { Icon20ChevronUp } from '@vkontakte/icons';
 import s from './FilterModalWindow.module.scss';
 
 type FilterModalWindowProps = {
@@ -10,10 +10,7 @@ type FilterModalWindowProps = {
   selectedFilters: Filters;
 };
 
-export const FilterModalWindow = ({
-  onFilterChange,
-  selectedFilters,
-}: FilterModalWindowProps) => {
+export const FilterModalWindow = ({ onFilterChange, selectedFilters }: FilterModalWindowProps) => {
   const [selected, setSelected] = useState<Filters>(selectedFilters);
 
   useEffect(() => {
@@ -51,17 +48,16 @@ export const FilterModalWindow = ({
             <h2 className={s.filtersContainer__title}>{category}</h2>
             <button className={s.dropdownBtn}>
               <Icon20ChevronUp
-                className={clsx(
-                  s.dropdownIcon, 
-                  {[s.dropdownIcon__rotated]: !collapsedCategories[category]}
-                )}
+                className={clsx(s.dropdownIcon, {
+                  [s.dropdownIcon__rotated]: !collapsedCategories[category],
+                })}
               />
             </button>
           </div>
           <div
             className={s.filtersContainer__btns}
             style={{
-              display: collapsedCategories[category] ? "none" : "flex",
+              display: collapsedCategories[category] ? 'none' : 'flex',
             }}
           >
             {items.map((item) => (
@@ -72,10 +68,10 @@ export const FilterModalWindow = ({
                   s.filtersContainer__btn,
                   selected[category]?.includes(item)
                     ? s.filtersContainer__btnChecked
-                    : s.filtersContainer__btnUnchecked
+                    : s.filtersContainer__btnUnchecked,
                 )}
               >
-                {item}
+                {item === '—' ? 'не определен' : item}
               </button>
             ))}
           </div>
