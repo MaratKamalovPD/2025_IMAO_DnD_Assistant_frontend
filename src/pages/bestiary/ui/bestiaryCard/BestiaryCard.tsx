@@ -92,10 +92,7 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({ creature }
         </div>
 
         <div className={s.statsContainer}>
-          <div className={s.statsContainer__item}>
-            Класс опасности:{' '}
-            {creature.challengeRating === '—' ? 'не определен' : creature.challengeRating}
-          </div>
+          <div className={s.statsContainer__item}>Класс опасности: {creature.challengeRating}</div>
           <div className={s.statsContainer__item}>Источник: {creature.source.group.shortName}</div>
         </div>
 

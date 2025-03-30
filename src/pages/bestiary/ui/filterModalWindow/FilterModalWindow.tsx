@@ -71,7 +71,7 @@ export const FilterModalWindow = ({ onFilterChange, selectedFilters }: FilterMod
                     : s.filtersContainer__btnUnchecked,
                 )}
               >
-                {item === '—' ? 'не определен' : item}
+                {item}
               </button>
             ))}
           </div>
