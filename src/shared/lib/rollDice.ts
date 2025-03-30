@@ -1,7 +1,7 @@
 import { Dice10, Dice100, Dice12, Dice20, Dice4, Dice6, Dice8 } from './dice';
 import { DiceType } from './types';
 
-export function rollDice(diceType: DiceType): number {
+export const rollDice = (diceType: DiceType): number => {
   switch (diceType) {
     case DiceType.D4:
       return Dice4.roll();
@@ -20,4 +20,4 @@ export function rollDice(diceType: DiceType): number {
     default:
       throw new Error(`Unknown dice type: ${diceType}`);
   }
-}
+};

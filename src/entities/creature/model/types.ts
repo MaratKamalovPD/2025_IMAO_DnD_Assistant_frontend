@@ -157,34 +157,34 @@ type Tag = {
   description: string;
 };
 
-export interface DamageLLM {
+export type DamageLLM = {
   dice: DiceType;
   count: number;
   type: string;
   bonus: number;
-}
+};
 
-interface AdditionalEffectLLM {
+type AdditionalEffectLLM = {
   damage?: DamageLLM;
   condition?: string;
   escapeDc?: number;
-}
+};
 
-interface MultiAttackLLM {
+type MultiAttackLLM = {
   type: string;
   count: number;
-}
+};
 
-interface AreaAttackLLM {
+type AreaAttackLLM = {
   shape?: string;
   recharge?: string;
   saveDc?: number;
   saveType?: string;
   onFail?: string;
   onSuccess?: string;
-}
+};
 
-export interface AttackLLM {
+export type AttackLLM = {
   name: string;
   type?: string; // melee, ranged, area и т.д.
   attackBonus?: string;
@@ -201,7 +201,7 @@ export interface AttackLLM {
   saveType?: string;
   onFail?: string;
   onSuccess?: string;
-}
+};
 
 enum AttackTypeEn {
   MeleeWeaponAttack = 'MeleeWeaponAttack',
@@ -292,11 +292,10 @@ enum DamageType {
   Thunder = 'Громовой',
 }
 
-// Интерфейс для описания урона
-export interface Damage {
-  dice: DiceType; // Тип кости (например, "d10")
-  count: number; // Количество костей (например, 1)
+export type Damage = {
+  dice: DiceType;
+  count: number;
   type: string;
-}
+};
 
 export type CreaturesStore = ReturnType<Reducer<{ creatures: EntityState<Creature, string> }>>;

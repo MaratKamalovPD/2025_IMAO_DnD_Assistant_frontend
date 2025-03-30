@@ -5,9 +5,9 @@ export type Ability = {
   label: Record<Language, string>;
 };
 
-export interface AbilityOption extends Option {
+export type AbilityOption = {
   value: AbilityValue;
-}
+} & Option;
 
 export type SavingThrow = {
   challengeRating: number;

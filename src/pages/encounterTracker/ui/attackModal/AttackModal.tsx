@@ -15,19 +15,25 @@ import {
 import { D20AttackRollToast } from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast';
 import { D20SavingThrowToast } from 'pages/encounterTracker/ui/trackerToasts/d20SavingThrow';
 import { DamageRollToast } from 'pages/encounterTracker/ui/trackerToasts/damageRollToast';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { ThreeStateCheckbox } from 'shared/ui/threeStateCheckbox';
+import { CheckboxState, ThreeStateCheckbox } from 'shared/ui/threeStateCheckbox';
 
 import { AbilitySavingThrow, dndTraitToInitialForm } from 'pages/encounterTracker/lib';
 
 import s from './AttackModal.module.scss';
 
-interface AttackModalProps {
+enum AttackStatus {
+  Advantage = 'Преимущество',
+  Disadvantage = 'Помеха',
+  None = 'Атака без преимущества или помехи',
+}
+
+type AttackModalProps = {
   attackIndex?: number;
   attackData?: AttackLLM;
-}
+};
 
 export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackData }) => {
   const dispatch = useDispatch();
@@ -43,13 +49,28 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
     creatureSelectors.selectById(state, attackedCreatureId || ''),
   ) as Creature;
 
+  const [attackStatus, setAttackStatus] = useState<AttackStatus>(AttackStatus.None);
+
+  const handleCheckboxChange = useCallback(
+    (state: CheckboxState) => {
+      const status =
+        state === 'unchecked'
+          ? AttackStatus.Disadvantage
+          : state === 'checked'
+            ? AttackStatus.Advantage
+            : AttackStatus.None;
+      setAttackStatus(status);
+    },
+    [setAttackStatus],
+  );
+
   const handleAttack = (attack: AttackLLM) => {
     let advantage = false;
     let disadvantage = false;
 
-    if (attackStatus === 'Преимущество') {
+    if (attackStatus === AttackStatus.Advantage) {
       advantage = true;
-    } else if (attackStatus === 'Помеха') {
+    } else if (attackStatus === AttackStatus.Disadvantage) {
       disadvantage = true;
     }
 
@@ -64,11 +85,11 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
       toast(
         <D20AttackRollToast
           total={d20Roll[0].total}
-          rolls={d20Roll.map((roll) => roll.roll)} // Передаем массив бросков
+          rolls={d20Roll.map((roll) => roll.roll)}
           bonus={d20Roll[0].bonus}
           hit={hit}
-          advantage={advantage} // Передаем флаг преимущества
-          disadvantage={disadvantage} // Передаем флаг помехи
+          advantage={advantage}
+          disadvantage={disadvantage}
         />,
       );
 
@@ -81,9 +102,8 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
 
         dispatch(
           creatureActions.updateCurrentByDelta({
-            id: attackedCreatureId || '', // ID выбранного существа
-            delta: damage ? -damage : 0, // Количество урона
-            //damageType: selectedDamageType, // Тип урона
+            id: attackedCreatureId || '',
+            delta: damage ? -damage : 0,
           }),
         );
       }
@@ -105,11 +125,11 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
       toast(
         <D20SavingThrowToast
           total={d20RollsSavingThrow[0].total}
-          rolls={d20RollsSavingThrow.map((roll) => roll.roll)} // Передаем массив бросков
+          rolls={d20RollsSavingThrow.map((roll) => roll.roll)}
           bonus={d20RollsSavingThrow[0].bonus}
           hit={successSavingThrow}
-          advantage={advantageSavingThrow} // Передаем флаг преимущества
-          disadvantage={disadvantageSavingThrow} // Передаем флаг помехи
+          advantage={advantageSavingThrow}
+          disadvantage={disadvantageSavingThrow}
         />,
       );
 
@@ -128,27 +148,12 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
 
         dispatch(
           creatureActions.updateCurrentByDelta({
-            id: attackedCreatureId || '', // ID выбранного существа
-            delta: damage ? -damage : 0, // Количество урона
-            //damageType: selectedDamageType, // Тип урона
+            id: attackedCreatureId || '',
+            delta: damage ? -damage : 0,
           }),
         );
       }
     }
-  };
-
-  const [attackStatus, setAttackStatus] = useState<
-    'Помеха' | 'Преимущество' | 'Атака без преимущества или помехи'
-  >('Атака без преимущества или помехи');
-
-  const handleCheckboxChange = (state: 'unchecked' | 'indeterminate' | 'checked') => {
-    const status =
-      state === 'unchecked'
-        ? 'Помеха'
-        : state === 'checked'
-          ? 'Преимущество'
-          : 'Атака без преимущества или помехи';
-    setAttackStatus(status);
   };
 
   return (

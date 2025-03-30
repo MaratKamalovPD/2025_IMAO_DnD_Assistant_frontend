@@ -1,12 +1,12 @@
 import { AttackLLM, Creature } from 'entities/creature/model';
 import { D20Roll, DiceType, rollDice } from 'shared/lib';
 
-export function rollToHitLLM(
+export const rollToHitLLM = (
   defender: Creature,
   attack: AttackLLM,
   advantage: boolean = false,
   disadvantage: boolean = false,
-): { hit: boolean; critical: boolean; d20Roll: D20Roll[] } {
+): { hit: boolean; critical: boolean; d20Roll: D20Roll[] } => {
   // Бросок d20 с учетом преимущества или помехи
   let roll1 = rollDice(DiceType.D20);
   let roll2 = rollDice(DiceType.D20);
@@ -40,13 +40,11 @@ export function rollToHitLLM(
   const isCriticalMiss = roll === 1;
   const isCriticalHit = roll === 20;
 
-  // Если критический провал, атака автоматически промахивается
   if (isCriticalMiss) {
     return { hit: false, critical: false, d20Roll: d20Rolls };
   }
 
-  // Проверка на попадание
   const hit = totalToHit >= defender.ac || isCriticalHit;
 
   return { hit, critical: isCriticalHit, d20Roll: d20Rolls };
-}
+};

@@ -1,6 +1,6 @@
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { useRef, useEffect } from "react";
 import { CreatureCard } from '../creatureCard';
 
 import s from './CardList.module.scss';
@@ -16,9 +16,9 @@ export const CardList = () => {
   useEffect(() => {
     if (cardRefs.current[currentTurnIndex]) {
       cardRefs.current[currentTurnIndex]?.scrollIntoView({
-        behavior: "smooth",
-        inline: "center",
-        block: "nearest",
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
       });
     }
   }, [currentTurnIndex]);
@@ -27,8 +27,8 @@ export const CardList = () => {
     <div className={s.listContainer} ref={containerRef}>
       <div className={s.listContainer__inside}>
         {participants.map((participant, ind) => (
-          <div 
-            key={participant.id} 
+          <div
+            key={participant.id}
             ref={(el) => {
               cardRefs.current[ind] = el;
             }}

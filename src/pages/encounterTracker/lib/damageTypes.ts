@@ -5,9 +5,9 @@ export type DamageType = {
   label: Record<Language, string>;
 };
 
-export interface DamageTypeOption extends Option {
+export type DamageTypeOption = {
   value: DamageTypeValue;
-}
+} & Option;
 
 export const damageTypes: DamageType[] = [
   { value: 'acid', label: { en: 'Acid', ru: 'Кислота' } },

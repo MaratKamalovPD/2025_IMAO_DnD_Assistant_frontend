@@ -3,7 +3,6 @@ import { CreatureClippedData, CreatureFullData } from 'entities/creature/model';
 
 import type { FilterParams, OrderParams, SearchParams } from './types';
 
-// Новый тип для запроса
 export type GetCreaturesRequest = {
   start: number;
   size: number;
@@ -31,7 +30,6 @@ const bestiaryApi = createApi({
   }),
 });
 
-export const { useGetCreaturesQuery, useLazyGetCreatureByNameQuery } =
-  bestiaryApi;
+export const { useGetCreaturesQuery, useLazyGetCreatureByNameQuery } = bestiaryApi;
 
 export default bestiaryApi;

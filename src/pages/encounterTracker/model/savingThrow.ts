@@ -2,12 +2,16 @@ import { Creature } from 'entities/creature/model';
 import { AbilitySavingThrow, AbilityValueRu } from 'pages/encounterTracker/lib';
 import { D20Roll, DiceType, modifiers, normalizeString, rollDice } from 'shared/lib';
 
-export function rollSavingThrow(
+export const rollSavingThrow = (
   creature: Creature,
   savingThrow: AbilitySavingThrow,
   advantage: boolean = false,
   disadvantage: boolean = false,
-): { successSavingThrow: boolean; criticalSavingThrow: boolean; d20RollsSavingThrow: D20Roll[] } {
+): {
+  successSavingThrow: boolean;
+  criticalSavingThrow: boolean;
+  d20RollsSavingThrow: D20Roll[];
+} => {
   let roll1 = rollDice(DiceType.D20);
   let roll2 = rollDice(DiceType.D20);
   let roll: number;
@@ -65,9 +69,9 @@ export function rollSavingThrow(
     criticalSavingThrow: isCriticalSuccess,
     d20RollsSavingThrow: d20Rolls,
   };
-}
+};
 
-function getSavingThrowBonus(creature: Creature, ability: AbilityValueRu): number {
+const getSavingThrowBonus = (creature: Creature, ability: AbilityValueRu): number => {
   const normalizedAbility = normalizeString(ability);
   const savingThrow = creature.savingThrows.find(
     (st) => normalizeString(st.name) === normalizedAbility,
@@ -78,9 +82,9 @@ function getSavingThrowBonus(creature: Creature, ability: AbilityValueRu): numbe
   } else {
     return modifiers[creature.stats[getStatName(ability)]];
   }
-}
+};
 
-function getStatName(ability: AbilityValueRu): keyof Creature['stats'] {
+const getStatName = (ability: AbilityValueRu): keyof Creature['stats'] => {
   switch (ability) {
     case 'сила':
       return 'strength';
@@ -97,4 +101,4 @@ function getStatName(ability: AbilityValueRu): keyof Creature['stats'] {
     default:
       throw new Error(`Unknown ability: ${ability}`);
   }
-}
+};

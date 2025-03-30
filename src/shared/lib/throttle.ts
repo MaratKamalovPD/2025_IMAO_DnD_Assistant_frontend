@@ -4,7 +4,7 @@ export const throttle = (
 ): ((...args: any[]) => void) => {
   let isCalled: boolean = false;
 
-  return function (...args: any[]): void {
+  return (...args: any[]): void => {
     if (isCalled) return;
 
     isCalled = true;

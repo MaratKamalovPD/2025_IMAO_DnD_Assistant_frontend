@@ -8,12 +8,12 @@ export type Weapon = {
   handedness: WeaponHandedness;
 };
 
-export interface WeaponOption extends Option {
+export type WeaponOption = {
   value: WeaponValue;
   category: WeaponCategory;
   type: WeaponType;
   handedness: WeaponHandedness;
-}
+} & Option;
 
 export type WeaponCategory = 'martial' | 'simple';
 export type WeaponType = 'melee' | 'ranged';

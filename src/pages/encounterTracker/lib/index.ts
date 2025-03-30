@@ -26,4 +26,5 @@ export type { Condition, ConditionOption, ConditionValue } from './conditionsTyp
 export { monsterAttackIcons, monsterAttacks } from './monsterWeaponTypes';
 export type { MonsterAttack, MonsterAttackOption, MonsterAttackValue } from './monsterWeaponTypes';
 
+export { findAttackIcon, findConditionInstance } from './findInstance';
 export { mapDamageType } from './mapDamageType';

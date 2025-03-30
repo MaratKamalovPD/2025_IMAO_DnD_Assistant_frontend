@@ -5,9 +5,9 @@ export type MonsterAttack = {
   label: Record<Language, string>;
 };
 
-export interface MonsterAttackOption extends Option {
+export type MonsterAttackOption = {
   value: MonsterAttackValue;
-}
+} & Option;
 
 export type MonsterAttackValue =
   | 'bite' // Укус

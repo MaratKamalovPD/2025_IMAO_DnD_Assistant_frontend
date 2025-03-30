@@ -5,7 +5,7 @@ import { AppRouter } from './routes';
 
 import 'app/styles/global.scss';
 
-function App() {
+const App = () => {
   return (
     <main>
       <MainProviders>
@@ -27,6 +27,6 @@ function App() {
       </MainProviders>
     </main>
   );
-}
+};
 
 export default App;

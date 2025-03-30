@@ -15,25 +15,23 @@ const THROTTLE_TIME = 1000;
 
 export const Bestiary = () => {
   const [start, setStart] = useState(0);
+  const setStartThrottled = throttle(setStart, THROTTLE_TIME);
   const [allCreatures, setAllCreatures] = useState<CreatureClippedData[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
+  const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [filters, setFilters] = useState<Filters>({});
 
-  const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
-  const setStartThrottled = throttle(setStart, THROTTLE_TIME);
-
-  const handleFilterChange = useCallback((newFilters: Filters) => {
-    setFilters(newFilters);
-  }, []);
-
-  // Использование функции
   const [requestBody, setRequestBody] = useState<GetCreaturesRequest>(
     mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue),
   );
 
   const { data: creatures, isLoading, isError } = useGetCreaturesQuery(requestBody);
+
+  const handleFilterChange = useCallback((newFilters: Filters) => {
+    setFilters(newFilters);
+  }, []);
 
   // Эффект для добавления новых данных к существующим
   useEffect(() => {
@@ -54,8 +52,8 @@ export const Bestiary = () => {
 
   // Эффект для сброса данных при изменении поискового запроса/фильтра
   useEffect(() => {
-    setStart(0); // Сбрасываем смещение
-    setHasMore(true); // Сбрасываем флаг наличия данных
+    setStart(0);
+    setHasMore(true);
     setRequestBody(mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue));
   }, [debouncedSearchValue, filters]);
 

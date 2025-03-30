@@ -1,4 +1,4 @@
-export function mapDamageType(damageType: number): string {
+export const mapDamageType = (damageType: number): string => {
   switch (damageType) {
     case 0:
       return 'Кислотный';
@@ -29,4 +29,4 @@ export function mapDamageType(damageType: number): string {
     default:
       return 'Неизвестный тип урона';
   }
-}
+};

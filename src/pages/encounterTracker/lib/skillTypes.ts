@@ -4,13 +4,13 @@ import { AbilityValue } from './abilityTypes';
 export type Skill = {
   value: SkillValue;
   label: Record<Language, string>;
-  ability: AbilityValue; // Навык зависит от способности
+  ability: AbilityValue;
 };
 
-export interface SkillOption extends Option {
+export type SkillOption = {
   value: SkillValue;
-  ability: AbilityValue; // Добавляем зависимость от способности
-}
+  ability: AbilityValue;
+} & Option;
 
 export const skills: Skill[] = [
   { value: 'acrobatics', label: { en: 'Acrobatics', ru: 'Акробатика' }, ability: 'dexterity' },

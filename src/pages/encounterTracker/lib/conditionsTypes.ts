@@ -5,9 +5,9 @@ export type Condition = {
   label: Record<Language, string>;
 };
 
-export interface ConditionOption extends Option {
+export type ConditionOption = {
   value: ConditionValue;
-}
+} & Option;
 
 export const conditions: Condition[] = [
   { value: 'blinded', label: { en: 'Blinded', ru: 'Ослеплён' } },
