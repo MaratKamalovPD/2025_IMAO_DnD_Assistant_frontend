@@ -1,5 +1,22 @@
 import { Language, Option } from 'shared/lib';
 import { AbilityValue } from './abilityTypes';
+import acrobaticsIcon from 'shared/assets/images/skills/40px-Acrobatics_Icon.png';
+import arcanaIcon from 'shared/assets/images/skills/40px-Arcana_Icon.png';
+import athleticsIcon from 'shared/assets/images/skills/40px-Athletics_Icon.png';
+import deceptionIcon from 'shared/assets/images/skills/40px-Deception_Icon.png';
+import historyIcon from 'shared/assets/images/skills/40px-History_Icon.png';
+import insightIcon from 'shared/assets/images/skills/40px-Insight_Icon.png';
+import intimidationIcon from 'shared/assets/images/skills/40px-Intimidation_Icon.png';
+import investigationIcon from 'shared/assets/images/skills/40px-Investigation_Icon.png';
+import medicineIcon from 'shared/assets/images/skills/40px-Medicine_Icon.png';
+import natureIcon from 'shared/assets/images/skills/40px-Nature_Icon.png';
+import perceptionIcon from 'shared/assets/images/skills/40px-Perception_Icon.png';
+import performanceIcon from 'shared/assets/images/skills/40px-Performance_Icon.png';
+import persuasionIcon from 'shared/assets/images/skills/40px-Persuasion_Icon.png';
+import religionIcon from 'shared/assets/images/skills/40px-Religion_Icon.png';
+import sleightOfHandIcon from 'shared/assets/images/skills/40px-Sleight_of_Hand_Icon.png';
+import stealthIcon from 'shared/assets/images/skills/40px-Stealth_Icon.png';
+import survivalIcon from 'shared/assets/images/skills/40px-Survival_Icon.png';
 
 export type Skill = {
   value: SkillValue;
@@ -56,21 +73,21 @@ export type SkillValue =
   | 'survival';
 
 export const skillIcons: Record<SkillValue, string> = {
-  acrobatics: '/src/shared/assets/images/skills/40px-Acrobatics_Icon.png',
-  arcana: '/src/shared/assets/images/skills/40px-Arcana_Icon.png',
-  athletics: '/src/shared/assets/images/skills/40px-Athletics_Icon.png',
-  deception: '/src/shared/assets/images/skills/40px-Deception_Icon.png',
-  history: '/src/shared/assets/images/skills/40px-History_Icon.png',
-  insight: '/src/shared/assets/images/skills/40px-Insight_Icon.png',
-  intimidation: '/src/shared/assets/images/skills/40px-Intimidation_Icon.png',
-  investigation: '/src/shared/assets/images/skills/40px-Investigation_Icon.png',
-  medicine: '/src/shared/assets/images/skills/40px-Medicine_Icon.png',
-  nature: '/src/shared/assets/images/skills/40px-Nature_Icon.png',
-  perception: '/src/shared/assets/images/skills/40px-Perception_Icon.png',
-  performance: '/src/shared/assets/images/skills/40px-Performance_Icon.png',
-  persuasion: '/src/shared/assets/images/skills/40px-Persuasion_Icon.png',
-  religion: '/src/shared/assets/images/skills/40px-Religion_Icon.png',
-  sleight_of_hand: '/src/shared/assets/images/skills/40px-Sleight_of_Hand_Icon.png',
-  stealth: '/src/shared/assets/images/skills/40px-Stealth_Icon.png',
-  survival: '/src/shared/assets/images/skills/40px-Survival_Icon.png',
+  acrobatics: acrobaticsIcon,
+  arcana: arcanaIcon,
+  athletics: athleticsIcon,
+  deception: deceptionIcon,
+  history: historyIcon,
+  insight: insightIcon,
+  intimidation: intimidationIcon,
+  investigation: investigationIcon,
+  medicine: medicineIcon,
+  nature: natureIcon,
+  perception: perceptionIcon,
+  performance: performanceIcon,
+  persuasion: persuasionIcon,
+  religion: religionIcon,
+  sleight_of_hand: sleightOfHandIcon,
+  stealth: stealthIcon,
+  survival: survivalIcon,
 };
