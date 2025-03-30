@@ -9,29 +9,6 @@
   box-sizing: border-box;
 }
 
-.searchContainer {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  padding: 0.5rem;
-  box-sizing: border-box;
-
-  &__input {
-    flex: 1;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #9b9b9b;
-    border-radius: 8px;
-    outline: none;
-    transition: border-color 0.3s ease;
-
-    &:focus {
-      border-color: #007bff;
-    }
-  }
-}
-
 /* FILTER OVERLAY */
 
 .modalOverlay {
