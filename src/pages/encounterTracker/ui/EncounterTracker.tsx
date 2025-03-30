@@ -1,10 +1,10 @@
+import { useSelector } from 'react-redux';
+
+import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { CardList } from './cardList';
 import { Placeholder } from './placeholder';
 import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
-
-import { EncounterState, EncounterStore } from 'entities/encounter/model';
-import { useSelector } from 'react-redux';
 
 import s from './EncounterTracker.module.scss';
 

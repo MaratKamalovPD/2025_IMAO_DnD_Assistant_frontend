@@ -14,9 +14,7 @@ export const store = configureStore({
     promtApi: promtApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      .concat(bestiaryApi.middleware)
-      .concat(promtApi.middleware),
+    getDefaultMiddleware().concat(bestiaryApi.middleware).concat(promtApi.middleware),
 });
 
 setupListeners(store.dispatch);

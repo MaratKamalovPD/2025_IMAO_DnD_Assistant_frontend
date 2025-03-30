@@ -1,15 +1,13 @@
-export type Language = 'en' | 'ru';
+import { Language, Option } from 'shared/lib';
 
-export interface Condition {
+export type Condition = {
   value: ConditionValue;
   label: Record<Language, string>;
-}
+};
 
-export interface ConditionOption {
+export type ConditionOption = {
   value: ConditionValue;
-  label: string;
-  icon: string;
-}
+} & Option;
 
 export const conditions: Condition[] = [
   { value: 'blinded', label: { en: 'Blinded', ru: 'Ослеплён' } },

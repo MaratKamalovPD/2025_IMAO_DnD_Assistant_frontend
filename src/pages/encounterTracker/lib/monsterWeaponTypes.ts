@@ -1,24 +1,22 @@
-export type Language = 'en' | 'ru';
+import { Language, Option } from 'shared/lib';
 
-export interface MonsterAttack {
+export type MonsterAttack = {
   value: MonsterAttackValue;
   label: Record<Language, string>;
-}
+};
 
-export interface MonsterAttackOption {
+export type MonsterAttackOption = {
   value: MonsterAttackValue;
-  label: string;
-  icon: string;
-}
+} & Option;
 
 export type MonsterAttackValue =
-  | 'bite'          // Укус
-  | 'claw'          // Коготь
-  | 'claws'          // Коготь
-  | 'fire-breath'   // Огненное дыхание
+  | 'bite' // Укус
+  | 'claw' // Коготь
+  | 'claws' // Коготь
+  | 'fire-breath' // Огненное дыхание
   | 'poison-breath' // Ядовитое дыхание
-  | 'acid-breath'   // Кислотное дыхание
-  | 'cold-breath'   // Ледяное дыхание
+  | 'acid-breath' // Кислотное дыхание
+  | 'cold-breath' // Ледяное дыхание
   | 'lightning-breath'; // Дыхание молнией
 
 export const monsterAttacks: MonsterAttack[] = [
@@ -33,12 +31,13 @@ export const monsterAttacks: MonsterAttack[] = [
 ];
 
 export const monsterAttackIcons: Record<MonsterAttackValue, string> = {
-  'bite': '/src/shared/assets/images/monster_attacks/60px-Bite_Icon.webp.png',
-  'claw': '/src/shared/assets/images/monster_attacks/60px-Claws_Bear_Icon.webp.png',
-  'claws': '/src/shared/assets/images/monster_attacks/60px-Claws_Quasit_Icon.webp.png',
+  bite: '/src/shared/assets/images/monster_attacks/60px-Bite_Icon.webp.png',
+  claw: '/src/shared/assets/images/monster_attacks/60px-Claws_Bear_Icon.webp.png',
+  claws: '/src/shared/assets/images/monster_attacks/60px-Claws_Quasit_Icon.webp.png',
   'fire-breath': '/src/shared/assets/images/monster_attacks/80px-Fire_Breath_Line_Icon.webp.png',
   'poison-breath': '/src/shared/assets/images/monster_attacks/80px-Poison_Breath_Icon.webp.png',
   'acid-breath': '/src/shared/assets/images/monster_attacks/80px-Acid_Breath_Icon.webp.png',
   'cold-breath': '/src/shared/assets/images/monster_attacks/80px-Frost_Breath_Icon.webp.png',
-  'lightning-breath': '/src/shared/assets/images/monster_attacks/80px-Lightning_Breath_Icon.webp.png',
+  'lightning-breath':
+    '/src/shared/assets/images/monster_attacks/80px-Lightning_Breath_Icon.webp.png',
 };

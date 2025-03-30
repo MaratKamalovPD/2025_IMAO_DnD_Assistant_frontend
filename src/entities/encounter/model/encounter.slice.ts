@@ -7,7 +7,7 @@ export type EncounterState = {
   attackHandleModeActive: boolean;
   currentRound: number;
   currentTurnIndex: number;
-  participants: Participant[]; // IDs персонажей
+  participants: Participant[];
   selectedCreatureId: string | null;
   attackedCreatureId: string | null;
 };

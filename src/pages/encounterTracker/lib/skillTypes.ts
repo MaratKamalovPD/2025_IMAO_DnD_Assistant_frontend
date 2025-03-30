@@ -1,19 +1,16 @@
+import { Language, Option } from 'shared/lib';
 import { AbilityValue } from './abilityTypes';
 
-export type Language = 'en' | 'ru';
-
-export interface Skill {
+export type Skill = {
   value: SkillValue;
   label: Record<Language, string>;
-  ability: AbilityValue; // Навык зависит от способности
-}
+  ability: AbilityValue;
+};
 
-export interface SkillOption {
+export type SkillOption = {
   value: SkillValue;
-  label: string;
-  icon: string;
-  ability: AbilityValue; // Добавляем зависимость от способности
-}
+  ability: AbilityValue;
+} & Option;
 
 export const skills: Skill[] = [
   { value: 'acrobatics', label: { en: 'Acrobatics', ru: 'Акробатика' }, ability: 'dexterity' },
@@ -30,12 +27,16 @@ export const skills: Skill[] = [
   { value: 'performance', label: { en: 'Performance', ru: 'Выступление' }, ability: 'charisma' },
   { value: 'persuasion', label: { en: 'Persuasion', ru: 'Убеждение' }, ability: 'charisma' },
   { value: 'religion', label: { en: 'Religion', ru: 'Религия' }, ability: 'intelligence' },
-  { value: 'sleight_of_hand', label: { en: 'Sleight of Hand', ru: 'Ловкость рук' }, ability: 'dexterity' },
+  {
+    value: 'sleight_of_hand',
+    label: { en: 'Sleight of Hand', ru: 'Ловкость рук' },
+    ability: 'dexterity',
+  },
   { value: 'stealth', label: { en: 'Stealth', ru: 'Скрытность' }, ability: 'dexterity' },
   { value: 'survival', label: { en: 'Survival', ru: 'Выживание' }, ability: 'wisdom' },
 ];
 
-export type SkillValue = 
+export type SkillValue =
   | 'acrobatics'
   | 'arcana'
   | 'athletics'

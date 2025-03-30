@@ -1,1 +1,0 @@
-export { mockCreatures } from './mockCreatures';
