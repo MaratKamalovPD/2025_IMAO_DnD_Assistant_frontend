@@ -92,7 +92,6 @@ type Armor = {
   url: string | null;
 };
 
-// Вспомогательные интерфейсы
 type NameTranslations = {
   rus: string;
   eng: string;
@@ -202,95 +201,6 @@ export type AttackLLM = {
   onFail?: string;
   onSuccess?: string;
 };
-
-enum AttackTypeEn {
-  MeleeWeaponAttack = 'MeleeWeaponAttack',
-  RangedWeaponAttack = 'RangedWeaponAttack',
-  MeleeSpellAttack = 'MeleeSpellAttack',
-  RangedSpellAttack = 'RangedSpellAttack',
-  MeleeOrRangedWeaponAttack = 'MeleeOrRangedWeaponAttack',
-  MeleeOrRangedSpellAttack = 'MeleeOrRangedSpellAttack',
-}
-
-// Перечисление типов цели
-enum TargetTypeEn {
-  SingleTarget = 'SingleTarget',
-  Cone = 'Cone',
-  Cube = 'Cube',
-  Sphere = 'Sphere',
-  Cylinder = 'Cylinder',
-  Line = 'Line',
-  Self = 'Self',
-  Touch = 'Touch',
-  MultipleTargets = 'MultipleTargets',
-  Object = 'Object',
-  Point = 'Point',
-  AllCreaturesInRange = 'AllCreaturesInRange',
-  AllEnemiesInRange = 'AllEnemiesInRange',
-  AllAlliesInRange = 'AllAlliesInRange',
-}
-
-// Перечисление типов урона
-enum DamageTypeEn {
-  Acid = 'Acid',
-  Bludgeoning = 'Bludgeoning',
-  Cold = 'Cold',
-  Fire = 'Fire',
-  Force = 'Force',
-  Lightning = 'Lightning',
-  Necrotic = 'Necrotic',
-  Piercing = 'Piercing',
-  Poison = 'Poison',
-  Psychic = 'Psychic',
-  Radiant = 'Radiant',
-  Slashing = 'Slashing',
-  Thunder = 'Thunder',
-}
-
-// Перечисление типов атаки
-enum AttackType {
-  MeleeWeaponAttack = 'Рукопашная атака оружием',
-  RangedWeaponAttack = 'Дальнобойная атака оружием',
-  MeleeSpellAttack = 'Рукопашная атака заклинанием',
-  RangedSpellAttack = 'Дальнобойная атака заклинанием',
-  MeleeOrRangedWeaponAttack = 'Рукопашная или дальнобойная атака оружием',
-  MeleeOrRangedSpellAttack = 'Рукопашная или дальнобойная атака заклинанием',
-}
-
-// Перечисление типов цели
-enum TargetType {
-  SingleTarget = 'Одна цель',
-  Cone = 'Конус',
-  Cube = 'Куб',
-  Sphere = 'Сфера',
-  Cylinder = 'Цилиндр',
-  Line = 'Линия',
-  Self = 'Сам на себя',
-  Touch = 'Касание',
-  MultipleTargets = 'Несколько целей',
-  Object = 'Объект',
-  Point = 'Точка в пространстве',
-  AllCreaturesInRange = 'Все существа в радиусе',
-  AllEnemiesInRange = 'Все враги в радиусе',
-  AllAlliesInRange = 'Все союзники в радиусе',
-}
-
-// Перечисление типов урона
-enum DamageType {
-  Acid = 'Кислотный',
-  Bludgeoning = 'Дробящий',
-  Cold = 'Холод',
-  Fire = 'Огонь',
-  Force = 'Силовой',
-  Lightning = 'Молния',
-  Necrotic = 'Некротический',
-  Piercing = 'Колющий',
-  Poison = 'Ядовитый',
-  Psychic = 'Психический',
-  Radiant = 'Светящийся',
-  Slashing = 'Рубящий',
-  Thunder = 'Громовой',
-}
 
 export type Damage = {
   dice: DiceType;
