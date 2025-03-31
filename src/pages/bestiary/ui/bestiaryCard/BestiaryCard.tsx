@@ -9,15 +9,21 @@ import { useLazyGetCreatureByNameQuery } from 'pages/bestiary/api';
 
 import { calculateInitiative } from 'pages/bestiary/model';
 import placeholderImage from 'shared/assets/images/placeholder.png';
-import s from './BestiaryCard.module.scss';
+import { GridCard } from './gridCard';
+import { ListCard } from './listCard';
 
-export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({ creature }) => {
+type BestiaryCardProps = {
+  creature: CreatureClippedData;
+  viewMode: string;
+};
+
+export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode }) => {
   const dispatch = useDispatch();
 
   const [trigger, { data: creatureData, isLoading, isError, isUninitialized, requestId }] =
     useLazyGetCreatureByNameQuery();
 
-  const handleSearchClick = useCallback(() => {
+  const handleAddToTtackerClick = useCallback(() => {
     trigger(`${creature.url}`);
   }, [creature.url]);
 
@@ -65,43 +71,9 @@ export const BestiaryCard: FC<{ creature: CreatureClippedData }> = ({ creature }
     }
   }, [creatureData, isLoading, isError, isUninitialized, requestId]);
 
-  return (
-    <div className={s.card}>
-      <div className={s.imageContainer}>
-        <img
-          src={creature.images[2] || creature.images[1] || placeholderImage}
-          alt={creature.name.eng}
-        />
-      </div>
-
-      <div className={s.infoContainer}>
-        <div className={s.header}>
-          <div className={s.header__titleContainer} data-title={creature.name.rus}>
-            <div className={s.header__title}>{creature.name.rus}</div>
-            <span className={s.tooltip}>{creature.name.rus}</span>
-          </div>
-          <div className={s.header__tags}>
-            <span className={s.header__typeTag}>{creature.type.name}</span>
-            {creature.type?.tags &&
-              creature.type?.tags.map((tag, index) => (
-                <span key={index} className={s.header__subTag}>
-                  {tag}
-                </span>
-              ))}
-          </div>
-        </div>
-
-        <div className={s.statsContainer}>
-          <div className={s.statsContainer__item}>Класс опасности: {creature.challengeRating}</div>
-          <div className={s.statsContainer__item}>Источник: {creature.source.group.shortName}</div>
-        </div>
-
-        <div className={s.btnsContainer}>
-          <button onClick={() => handleSearchClick()} data-variant='primary'>
-            Добавить в трекер
-          </button>
-        </div>
-      </div>
-    </div>
+  return viewMode === 'grid' ? (
+    <GridCard creature={creature} handleAddToTtackerClick={handleAddToTtackerClick} />
+  ) : (
+    <ListCard creature={creature} />
   );
 };

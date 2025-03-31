@@ -21,6 +21,7 @@ export const Bestiary = () => {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [filters, setFilters] = useState<Filters>({});
+  const [viewMode, setViewMode] = useState<string>('grid');
 
   const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
   const setStartThrottled = throttle(setStart, THROTTLE_TIME);
@@ -88,6 +89,8 @@ export const Bestiary = () => {
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         setIsModalOpen={setIsModalOpen}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
       />
 
       {isModalOpen && (
@@ -107,7 +110,7 @@ export const Bestiary = () => {
       <div className={s.bestiaryContainer}>
         {allCreatures.map((creature) => (
           <div key={creature._id}>
-            <BestiaryCard creature={creature} />
+            <BestiaryCard creature={creature} viewMode={viewMode} />
           </div>
         ))}
       </div>
