@@ -1,3 +1,4 @@
+export { ContextMenu } from './contextMenu';
 export { Footer } from './footer';
 export { Header } from './header';
 export { OptionWithIcon } from './optionWithIcon';
