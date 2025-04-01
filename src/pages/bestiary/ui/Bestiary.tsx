@@ -5,12 +5,13 @@ import { mapFiltersToRequestBody, useViewSettings, ViewSettingsProvider } from '
 import { Filters, OrderParams } from 'pages/bestiary/model';
 import { useCallback, useEffect, useState } from 'react';
 import { throttle, useDebounce } from 'shared/lib';
+import { Spinner } from 'shared/ui/spinner';
 import s from './Bestiary.module.scss';
 import { BestiaryCard } from './bestiaryCard';
 import { FilterModalWindow } from './filterModalWindow';
 import { TopPanel } from './topPanel';
 
-const RESPONSE_SIZE = 50;
+const RESPONSE_SIZE = 24;
 const DEBOUNCE_TIME = 500;
 const THROTTLE_TIME = 1000;
 
@@ -54,7 +55,9 @@ const BestiaryContent = () => {
     mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue, orderParams),
   );
 
-  const { data: creatures, isLoading, isError } = useGetCreaturesQuery(requestBody);
+  const { data: creatures, isLoading, isError, status } = useGetCreaturesQuery(requestBody);
+
+  const isPending = status === 'pending';
 
   useEffect(() => {
     if (creatures) {
@@ -108,7 +111,13 @@ const BestiaryContent = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isLoading, hasMore]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div className={s.spinnerContainer}>
+        <Spinner size={100} />
+      </div>
+    );
+
   if (isError) return <div>Error loading creatures</div>;
 
   return (
@@ -143,9 +152,14 @@ const BestiaryContent = () => {
         ))}
       </div>
 
+      {isPending && (
+        <div className={s.spinnerContainer}>
+          <Spinner size={100} />
+        </div>
+      )}
+
       {isLoading && <div>Loading more creatures...</div>}
       {allCreatures.length === 0 && !isLoading && <div>Ничего не найдено</div>}
-      {!hasMore && <div>Все данные загружены</div>}
     </div>
   );
 };
