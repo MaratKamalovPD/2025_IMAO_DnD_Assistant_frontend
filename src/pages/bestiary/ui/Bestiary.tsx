@@ -1,8 +1,8 @@
 import { Icon20Cancel } from '@vkontakte/icons';
 import { CreatureClippedData } from 'entities/creature/model/types';
 import { GetCreaturesRequest, useGetCreaturesQuery } from 'pages/bestiary/api';
-import { mapFiltersToRequestBody } from 'pages/bestiary/lib';
-import { Filters } from 'pages/bestiary/model';
+import { mapFiltersToRequestBody, useViewSettings, ViewSettingsProvider } from 'pages/bestiary/lib';
+import { Filters, OrderParams } from 'pages/bestiary/model';
 import { useCallback, useEffect, useState } from 'react';
 import { throttle, useDebounce } from 'shared/lib';
 import s from './Bestiary.module.scss';
@@ -15,13 +15,20 @@ const DEBOUNCE_TIME = 500;
 const THROTTLE_TIME = 1000;
 
 export const Bestiary = () => {
+  return (
+    <ViewSettingsProvider>
+      <BestiaryContent />
+    </ViewSettingsProvider>
+  );
+};
+
+const BestiaryContent = () => {
   const [start, setStart] = useState(0);
   const [allCreatures, setAllCreatures] = useState<CreatureClippedData[]>([]);
-  const [searchValue, setSearchValue] = useState<string>('');
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>('');
   const [filters, setFilters] = useState<Filters>({});
-  const [viewMode, setViewMode] = useState<string>('grid');
 
   const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
   const setStartThrottled = throttle(setStart, THROTTLE_TIME);
@@ -30,8 +37,21 @@ export const Bestiary = () => {
     setFilters(newFilters);
   }, []);
 
+  const { viewMode, alphabetSort, ratingSort } = useViewSettings();
+
+  const orderParams: OrderParams[] = [
+    {
+      field: 'experience',
+      direction: ratingSort,
+    },
+    {
+      field: 'name',
+      direction: alphabetSort,
+    },
+  ];
+
   const [requestBody, setRequestBody] = useState<GetCreaturesRequest>(
-    mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue),
+    mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue, orderParams),
   );
 
   const { data: creatures, isLoading, isError } = useGetCreaturesQuery(requestBody);
@@ -55,12 +75,22 @@ export const Bestiary = () => {
   useEffect(() => {
     setStart(0);
     setHasMore(true);
-    setRequestBody(mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue));
+    setRequestBody(
+      mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue, orderParams),
+    );
   }, [debouncedSearchValue, filters]);
 
   useEffect(() => {
-    setRequestBody(mapFiltersToRequestBody(filters, start, RESPONSE_SIZE, debouncedSearchValue));
+    setRequestBody(
+      mapFiltersToRequestBody(filters, start, RESPONSE_SIZE, debouncedSearchValue, orderParams),
+    );
   }, [start]);
+
+  useEffect(() => {
+    setRequestBody(
+      mapFiltersToRequestBody(filters, start, RESPONSE_SIZE, debouncedSearchValue, orderParams),
+    );
+  }, [alphabetSort, ratingSort]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,8 +119,6 @@ export const Bestiary = () => {
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         setIsModalOpen={setIsModalOpen}
-        viewMode={viewMode}
-        setViewMode={setViewMode}
       />
 
       {isModalOpen && (
