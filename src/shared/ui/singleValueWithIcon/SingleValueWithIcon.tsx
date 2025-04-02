@@ -1,9 +1,11 @@
-import { ConditionOption } from 'pages/encounterTracker/lib';
 import React from 'react';
 import { components, SingleValueProps } from 'react-select';
+import { Option } from 'shared/lib';
+
 import s from './SingleValueWithIcon.module.scss';
 
-export const SingleValueWithIcon: React.FC<SingleValueProps<ConditionOption, false>> = (props) => {
+// any для совместимости. Ориентироваться на Option
+export const SingleValueWithIcon: React.FC<SingleValueProps<any | Option, false>> = (props) => {
   return (
     <components.SingleValue {...props}>
       <div className={s.optionContainer}>

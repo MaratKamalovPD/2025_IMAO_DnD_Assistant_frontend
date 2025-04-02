@@ -5,7 +5,7 @@ import {
   PayloadAction,
   Reducer,
 } from '@reduxjs/toolkit';
-import { Attack, AttackLLM, SavingThrow } from './types';
+import { AttackLLM, SavingThrow } from './types';
 
 export type Creature = {
   _id: string;
@@ -33,12 +33,10 @@ export type Creature = {
   actions?: {
     name: string;
   }[];
-  attacks?: Attack[];
   attacksLLM?: AttackLLM[];
 };
 
 const creatureAdapter = createEntityAdapter<Creature>({
-  // selectId: (creature) => creature.id,
   sortComparer: (a, b) => a.initiative - b.initiative,
 });
 
@@ -70,16 +68,12 @@ export const creatureSlice = createSlice({
         return;
       }
 
-      // Если текущие HP отрицательные, лечение устанавливает HP равным значению current
       if (hpCurrent <= 0) {
-        hpCurrent = Math.max(delta, 0); // Гарантируем, что HP не станет отрицательным после лечения
-      }
-      // Если текущие HP положительные, добавляем значение current
-      else {
+        hpCurrent = Math.max(delta, 0);
+      } else {
         hpCurrent += delta;
       }
 
-      // Гарантируем, что текущие HP не превышают максимальные
       hpCurrent = Math.min(hpCurrent, creature.hp.max);
 
       creatureAdapter.updateOne(state, {
@@ -99,32 +93,26 @@ export const creatureSlice = createSlice({
       const oldMax = creature.hp.max;
       const newMax = max;
 
-      // Разница между новым и старым максимальным HP
       const difference = newMax - oldMax;
 
-      // Обновляем максимальное HP
       creatureAdapter.updateOne(state, {
         id,
         changes: { hp: { ...creature.hp, max: newMax } },
       });
 
-      // Если максимальное HP увеличилось, увеличиваем текущее HP на ту же величину
       if (difference > 0) {
         const newHp = creature.hp.current + difference;
         creatureAdapter.updateOne(state, {
           id,
           changes: { hp: { ...creature.hp, current: newHp } },
         });
-      }
-      // Если максимальное HP уменьшилось, проверяем, не превышает ли текущее HP новое максимальное
-      else if (difference < 0 && creature.hp.current > newMax) {
+      } else if (difference < 0 && creature.hp.current > newMax) {
         creatureAdapter.updateOne(state, {
           id,
           changes: { hp: { ...creature.hp, current: newMax } },
         });
       }
 
-      // Проверка на мгновенную смерть
       if (creature.hp.current <= -creature.hp.max) {
         creatureAdapter.updateOne(state, {
           id,
@@ -142,10 +130,8 @@ export const creatureSlice = createSlice({
         return;
       }
 
-      // Гарантируем, что temporary не отрицательное
       const newTemporary = Math.max(temporary, 0);
 
-      // Если новое значение временных хитов больше текущего, заменяем его
       if (newTemporary > creature.hp.temporary) {
         creatureAdapter.updateOne(state, {
           id,

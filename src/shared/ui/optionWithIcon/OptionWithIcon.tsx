@@ -1,9 +1,11 @@
-import { ConditionOption } from 'pages/encounterTracker/lib';
 import React from 'react';
 import { components, OptionProps } from 'react-select';
+import { Option } from 'shared/lib';
+
 import s from './OptionWithIcon.module.scss';
 
-export const OptionWithIcon: React.FC<OptionProps<ConditionOption, false>> = (props) => {
+// any для совместимости. Ориентироваться на Option
+export const OptionWithIcon: React.FC<OptionProps<any | Option, false>> = (props) => {
   return (
     <components.Option {...props}>
       <div className={s.optionContainer}>

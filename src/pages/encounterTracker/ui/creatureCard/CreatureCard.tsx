@@ -1,48 +1,43 @@
 import clsx from 'clsx';
-import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
-import { Creature } from 'entities/creature/model';
-import {
-  encounterActions,
-  EncounterState,
-  EncounterStore,
-} from 'entities/encounter/model';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { Creature, creatureSelectors, CreaturesStore } from 'entities/creature/model';
+import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
+import { UUID } from 'shared/lib';
+
 import placeholderImage from 'shared/assets/images/placeholder.png';
+
 import s from './CreatureCard.module.scss';
 
-interface CreatureCardProps {
+type CreatureCardProps = {
   id: string;
   ind: number;
-}
+  handleContextMenu: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, id: UUID) => void;
+};
 
-export const CreatureCard = ({ id, ind }: CreatureCardProps) => {
+export const CreatureCard = ({ id, ind, handleContextMenu }: CreatureCardProps) => {
   const dispatch = useDispatch();
 
-  // Получаем данные персонажа
   const creature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, id),
   ) as Creature;
 
-  // Текущий выбранный персонаж
   const { hasStarted, attackHandleModeActive, selectedCreatureId, currentTurnIndex, participants } =
     useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
 
   if (!creature) return null;
 
-  // Рассчитываем процент HP для прогресс-бара
-  const hpPercentage = Math.floor(
-    (creature.hp.current / creature.hp.max) * 100,
-  );
+  const hpPercentage = Math.floor((creature.hp.current / creature.hp.max) * 100);
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (!attackHandleModeActive) {
       dispatch(encounterActions.selectCreature(id));
     } else {
-      dispatch(encounterActions.selectAttackedCreature(id))
+      dispatch(encounterActions.selectAttackedCreature(id));
     }
-  };
+  }, [attackHandleModeActive]);
 
-  // Определяем классы для стилизации
   const cardClasses = clsx(s.card, {
     [s.card__blue]: ind % 2 === 1,
     [s.card__red]: ind % 2 === 0,
@@ -60,6 +55,7 @@ export const CreatureCard = ({ id, ind }: CreatureCardProps) => {
     <div
       className={cardClasses}
       onClick={handleClick}
+      onContextMenu={(e) => handleContextMenu(e, id)}
       role='button'
       tabIndex={0}
       aria-label={`Выбрать ${creature.name}`}

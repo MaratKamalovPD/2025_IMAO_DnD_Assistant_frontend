@@ -23,11 +23,11 @@ export const mapFiltersToRequestBody = (
   orderParams: OrderParams[],
 ): GetCreaturesRequest => {
   const requestBody: GetCreaturesRequest = {
-    start: start, // начальная позиция (например, 0)
-    size: size, // количество элементов
+    start: start,
+    size: size,
     search: {
-      value: searchValue, // значение для поиска
-      exact: false, // точный поиск (true/false)
+      value: searchValue,
+      exact: false,
     },
     order: orderParams,
     filter: {
@@ -48,9 +48,6 @@ export const mapFiltersToRequestBody = (
     },
   };
 
-  // Маппинг ключей из filters в соответствующие поля в requestBody.filter
-
-  // Применяем фильтры
   Object.entries(filters).forEach(([key, values]) => {
     const mappedKey = filterMapping[key];
     if (mappedKey && requestBody.filter[mappedKey]) {

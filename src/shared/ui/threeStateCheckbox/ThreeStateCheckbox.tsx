@@ -1,14 +1,14 @@
+import clsx from 'clsx';
 import React, { useState } from 'react';
 import s from './ThreeStateCheckbox.module.scss';
-import clsx from 'clsx';
 
-type CheckboxState = 'unchecked' | 'indeterminate' | 'checked';
+export type CheckboxState = 'unchecked' | 'indeterminate' | 'checked';
 
-interface ThreeStateCheckboxProps {
+type ThreeStateCheckboxProps = {
   initialState?: CheckboxState;
   onChange?: (state: CheckboxState) => void;
   className?: string;
-}
+};
 
 export const ThreeStateCheckbox: React.FC<ThreeStateCheckboxProps> = ({
   initialState = 'unchecked',
@@ -58,18 +58,13 @@ export const ThreeStateCheckbox: React.FC<ThreeStateCheckboxProps> = ({
           [s.indeterminate]: state === 'indeterminate',
           [s.checked]: state === 'checked',
         },
-        className
+        className,
       )}
       onClick={handleClick}
-      role="checkbox"
-      aria-checked={
-        state === 'checked' ? 'true' : state === 'indeterminate' ? 'mixed' : 'false'
-      }
+      role='checkbox'
+      aria-checked={state === 'checked' ? 'true' : state === 'indeterminate' ? 'mixed' : 'false'}
     >
-      <div 
-        className={s.checkboxInner} 
-        style={getPositionStyle()}
-      >
+      <div className={s.checkboxInner} style={getPositionStyle()}>
         {state === 'indeterminate' && <div className={s.indeterminateLine} />}
         {state === 'checked' && <div className={s.checkmark}>✓</div>}
         {state === 'unchecked' && <div className={s.cross}>✕</div>}

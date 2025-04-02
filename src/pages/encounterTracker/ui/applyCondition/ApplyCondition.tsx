@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 
@@ -11,14 +11,13 @@ import {
   conditions,
   ConditionValue,
 } from 'pages/encounterTracker/lib';
-import { OptionWithIcon } from 'pages/encounterTracker/ui/applyCondition/optionWithIcon';
-import { SingleValueWithIcon } from 'pages/encounterTracker/ui/applyCondition/singleValueWithIcon';
+import { OptionWithIcon, SingleValueWithIcon } from 'shared/ui';
 
 import s from './ApplyCondition.module.scss';
 
 const conditionOptions: ConditionOption[] = conditions.map((condition) => ({
   value: condition.value,
-  label: condition.label.en,
+  label: condition.label.ru,
   icon: conditionIcons[condition.value],
 }));
 
@@ -35,20 +34,23 @@ export const ApplyConditionModal: React.FC = () => {
     creatureSelectors.selectById(state, selectedCreatureId || ''),
   ) as Creature | undefined;
 
-  const handleConditionChange = (option: ConditionOption | null) => {
-    if (option) {
-      setSelectedCondition(option.value);
-    }
-  };
+  const handleConditionChange = useCallback(
+    (option: ConditionOption | null) => {
+      if (option) {
+        setSelectedCondition(option.value);
+      }
+    },
+    [selectedCondition],
+  );
 
-  const handleApplyCondition = () => {
+  const handleApplyCondition = useCallback(() => {
     dispatch(
       creatureActions.addCondition({
         id: selectedCreatureId || '',
         condition: selectedCondition,
       }),
     );
-  };
+  }, [selectedCondition, selectedCreatureId]);
 
   return (
     <div className={s.damageTypesForm}>
@@ -70,12 +72,10 @@ export const ApplyConditionModal: React.FC = () => {
         </div>
       </label>
 
-      {/* Отображение значений participants[currentTurnIndex] и selectedCreatureId */}
       <div className={s.debugInfo}>
         <p>Выбранное существо: {selectedCreature?.name || 'Не выбрано'}</p>
       </div>
 
-      {/* Кнопка "Нанести урон" */}
       <button type='button' onClick={handleApplyCondition} data-variant='primary'>
         Наложить эффект
       </button>

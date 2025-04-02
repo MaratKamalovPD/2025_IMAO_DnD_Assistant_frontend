@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { UUID } from 'shared/lib';
 import { Participant } from './types';
 
 export type EncounterState = {
@@ -7,7 +8,7 @@ export type EncounterState = {
   attackHandleModeActive: boolean;
   currentRound: number;
   currentTurnIndex: number;
-  participants: Participant[]; // IDs персонажей
+  participants: Participant[];
   selectedCreatureId: string | null;
   attackedCreatureId: string | null;
 };
@@ -57,10 +58,10 @@ const encounterSlice = createSlice({
     setInitiativeOrder: (state, action: PayloadAction<Participant[]>) => {
       state.participants = action.payload;
     },
-    selectCreature: (state, action: PayloadAction<string>) => {
+    selectCreature: (state, action: PayloadAction<UUID>) => {
       state.selectedCreatureId = action.payload;
     },
-    selectAttackedCreature: (state, action: PayloadAction<string>) => {
+    selectAttackedCreature: (state, action: PayloadAction<UUID>) => {
       state.attackedCreatureId = action.payload;
     },
     addParticipant: (state, action: PayloadAction<Participant>) => {
@@ -70,10 +71,15 @@ const encounterSlice = createSlice({
         state.participants.sort((a, b) => b.initiative - a.initiative);
       }
     },
+    removeParticipant: (state, action: PayloadAction<UUID>) => {
+      state.participants = state.participants.filter(
+        (participant) => participant.id !== action.payload,
+      );
+    },
     sortByInitiative: (state) => {
       state.participants.sort((a, b) => b.initiative - a.initiative);
     },
-    updateInitiative: (state, action: PayloadAction<{ id: string; newInitiative: number }>) => {
+    updateInitiative: (state, action: PayloadAction<{ id: UUID; newInitiative: number }>) => {
       const { id, newInitiative } = action.payload;
       state.participants.forEach((creature) => {
         if (creature.id === id) {

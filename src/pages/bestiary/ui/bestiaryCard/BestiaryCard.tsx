@@ -52,7 +52,6 @@ export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode }) => {
         savingThrows: creatureData.savingThrows || [],
         image: creatureData.images[2] || placeholderImage,
         notes: '',
-        attacks: creatureData.attacks,
         attacksLLM: creatureData.attacksLLM,
       };
 

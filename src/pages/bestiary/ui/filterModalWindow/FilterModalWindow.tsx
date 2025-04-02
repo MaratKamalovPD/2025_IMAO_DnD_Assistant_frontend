@@ -2,7 +2,7 @@ import { Icon20ChevronUp } from '@vkontakte/icons';
 import clsx from 'clsx';
 import { CATEGORIES } from 'pages/bestiary/lib';
 import { Filters } from 'pages/bestiary/model';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import s from './FilterModalWindow.module.scss';
 
 type FilterModalWindowProps = {
@@ -17,28 +17,34 @@ export const FilterModalWindow = ({ onFilterChange, selectedFilters }: FilterMod
     setSelected(selectedFilters);
   }, [selectedFilters]);
 
-  const toggleSelection = (category: string, item: string) => {
-    setSelected((prev) => {
-      const updatedCategory = prev[category]?.includes(item)
-        ? prev[category].filter((i) => i !== item) // Удаляем, если уже выбран
-        : [...(prev[category] || []), item]; // Добавляем, если не выбран
+  const toggleSelection = useCallback(
+    (category: string, item: string) => {
+      setSelected((prev) => {
+        const updatedCategory = prev[category]?.includes(item)
+          ? prev[category].filter((i) => i !== item) // Удаляем, если уже выбран
+          : [...(prev[category] || []), item]; // Добавляем, если не выбран
 
-      const newSelected = { ...prev, [category]: updatedCategory };
+        const newSelected = { ...prev, [category]: updatedCategory };
 
-      onFilterChange(newSelected);
+        onFilterChange(newSelected);
 
-      return newSelected;
-    });
-  };
+        return newSelected;
+      });
+    },
+    [setSelected, onFilterChange],
+  );
 
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
 
-  const toggleCollapse = (category: string) => {
-    setCollapsedCategories((prev) => ({
-      ...prev,
-      [category]: !prev[category],
-    }));
-  };
+  const toggleCollapse = useCallback(
+    (category: string) => {
+      setCollapsedCategories((prev) => ({
+        ...prev,
+        [category]: !prev[category],
+      }));
+    },
+    [setCollapsedCategories],
+  );
 
   return (
     <div className={s.categoriesList}>

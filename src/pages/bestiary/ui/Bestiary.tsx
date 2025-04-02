@@ -26,9 +26,9 @@ export const Bestiary = () => {
 const BestiaryContent = () => {
   const [start, setStart] = useState(0);
   const [allCreatures, setAllCreatures] = useState<CreatureClippedData[]>([]);
+  const [searchValue, setSearchValue] = useState<string>('');
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<string>('');
   const [filters, setFilters] = useState<Filters>({});
 
   const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);

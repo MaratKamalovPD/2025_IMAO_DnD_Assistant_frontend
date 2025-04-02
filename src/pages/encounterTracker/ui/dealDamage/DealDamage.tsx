@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 
@@ -11,15 +11,13 @@ import {
   damageTypes,
   DamageTypeValue,
 } from 'pages/encounterTracker/lib';
-import { OptionWithIcon } from 'pages/encounterTracker/ui/dealDamage/optionWithIcon';
-import { SingleValueWithIcon } from 'pages/encounterTracker/ui/dealDamage/singleValueWithIcon';
-
+import { OptionWithIcon, SingleValueWithIcon } from 'shared/ui';
 import s from './DealDamage.module.scss';
 
 // Преобразуем damageTypes в формат, подходящий для react-select
 const damageTypeOptions: DamageTypeOption[] = damageTypes.map((damageType) => ({
   value: damageType.value,
-  label: damageType.label.en, // Используем английский язык по умолчанию
+  label: damageType.label.en,
   icon: damageTypeIcons[damageType.value],
 }));
 
@@ -41,26 +39,25 @@ export const DamageTypesForm: React.FC = () => {
     creatureSelectors.selectById(state, participants[currentTurnIndex]?.id || ''),
   ) as Creature | undefined;
 
-  const handleDamageTypeChange = (option: DamageTypeOption | null) => {
+  const handleDamageTypeChange = useCallback((option: DamageTypeOption | null) => {
     if (option) {
       setSelectedDamageType(option.value);
     }
-  };
+  }, []);
 
-  const handleDamageAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(event.target.value); // Преобразуем введённое значение в число
-    setDamageAmount(isNaN(value) ? 0 : value); // Если введено не число, устанавливаем 0
-  };
+  const handleDamageAmountChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(event.target.value);
+    setDamageAmount(isNaN(value) ? 0 : value);
+  }, []);
 
-  const handleDealDamage = () => {
+  const handleDealDamage = useCallback(() => {
     dispatch(
       creatureActions.updateCurrentByDelta({
-        id: selectedCreatureId || '', // ID выбранного существа
-        delta: damageAmount, // Количество урона
-        //damageType: selectedDamageType, // Тип урона
+        id: selectedCreatureId || '',
+        delta: damageAmount,
       }),
     );
-  };
+  }, [selectedCreatureId, damageAmount]);
 
   return (
     <div className={s.damageTypesForm}>
@@ -81,8 +78,8 @@ export const DamageTypesForm: React.FC = () => {
             value={damageTypeOptions.find((option) => option.value === selectedDamageType)}
             onChange={handleDamageTypeChange}
             components={{
-              Option: OptionWithIcon, // Кастомный компонент для опций
-              SingleValue: SingleValueWithIcon, // Кастомный компонент для выбранного значения
+              Option: OptionWithIcon,
+              SingleValue: SingleValueWithIcon,
             }}
             getOptionLabel={(option) => option.label}
             getOptionValue={(option) => option.value}
@@ -90,13 +87,11 @@ export const DamageTypesForm: React.FC = () => {
         </div>
       </label>
 
-      {/* Отображение значений participants[currentTurnIndex] и selectedCreatureId */}
       <div className={s.debugInfo}>
         <p>Текущий участник: {currentTurnCreature?.name || 'Не выбрано'}</p>
         <p>Выбранное существо: {selectedCreature?.name || 'Не выбрано'}</p>
       </div>
 
-      {/* Кнопка "Нанести урон" */}
       <button type='button' data-variant='primary' onClick={handleDealDamage}>
         Нанести урон
       </button>
