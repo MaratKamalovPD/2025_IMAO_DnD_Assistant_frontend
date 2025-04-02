@@ -113,8 +113,11 @@ const BestiaryContent = () => {
 
   if (isLoading)
     return (
-      <div className={s.spinnerContainer}>
-        <Spinner size={100} />
+      <div>
+        <h1>Бестиарий</h1>
+        <div className={s.spinnerContainer}>
+          <Spinner size={100} />
+        </div>
       </div>
     );
 
