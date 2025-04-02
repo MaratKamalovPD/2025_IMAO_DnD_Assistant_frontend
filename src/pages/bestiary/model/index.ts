@@ -1,3 +1,3 @@
-export type { Filters } from './types';
+export type { Filters, OrderParams } from './types';
 
 export { calculateInitiative } from './calculateInitiative';

@@ -1,39 +1,64 @@
 import { Icon20Cancel } from '@vkontakte/icons';
 import { CreatureClippedData } from 'entities/creature/model/types';
 import { GetCreaturesRequest, useGetCreaturesQuery } from 'pages/bestiary/api';
-import { mapFiltersToRequestBody } from 'pages/bestiary/lib';
-import { Filters } from 'pages/bestiary/model';
+import { mapFiltersToRequestBody, useViewSettings, ViewSettingsProvider } from 'pages/bestiary/lib';
+import { Filters, OrderParams } from 'pages/bestiary/model';
 import { useCallback, useEffect, useState } from 'react';
 import { throttle, useDebounce } from 'shared/lib';
+import { Spinner } from 'shared/ui/spinner';
 import s from './Bestiary.module.scss';
 import { BestiaryCard } from './bestiaryCard';
 import { FilterModalWindow } from './filterModalWindow';
+import { TopPanel } from './topPanel';
 
-const RESPONSE_SIZE = 50;
+const RESPONSE_SIZE = 24;
 const DEBOUNCE_TIME = 500;
 const THROTTLE_TIME = 1000;
 
 export const Bestiary = () => {
+  return (
+    <ViewSettingsProvider>
+      <BestiaryContent />
+    </ViewSettingsProvider>
+  );
+};
+
+const BestiaryContent = () => {
   const [start, setStart] = useState(0);
-  const setStartThrottled = throttle(setStart, THROTTLE_TIME);
   const [allCreatures, setAllCreatures] = useState<CreatureClippedData[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
-  const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [filters, setFilters] = useState<Filters>({});
 
-  const [requestBody, setRequestBody] = useState<GetCreaturesRequest>(
-    mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue),
-  );
-
-  const { data: creatures, isLoading, isError } = useGetCreaturesQuery(requestBody);
+  const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
+  const setStartThrottled = throttle(setStart, THROTTLE_TIME);
 
   const handleFilterChange = useCallback((newFilters: Filters) => {
     setFilters(newFilters);
   }, []);
 
-  // Эффект для добавления новых данных к существующим
+  const { viewMode, alphabetSort, ratingSort } = useViewSettings();
+
+  const orderParams: OrderParams[] = [
+    {
+      field: 'experience',
+      direction: ratingSort,
+    },
+    {
+      field: 'name',
+      direction: alphabetSort,
+    },
+  ];
+
+  const [requestBody, setRequestBody] = useState<GetCreaturesRequest>(
+    mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue, orderParams),
+  );
+
+  const { data: creatures, isLoading, isError, status } = useGetCreaturesQuery(requestBody);
+
+  const isPending = status === 'pending';
+
   useEffect(() => {
     if (creatures) {
       if (start === 0) {
@@ -50,22 +75,28 @@ export const Bestiary = () => {
     }
   }, [creatures]);
 
-  // Эффект для сброса данных при изменении поискового запроса/фильтра
   useEffect(() => {
     setStart(0);
     setHasMore(true);
-    setRequestBody(mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue));
+    setRequestBody(
+      mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue, orderParams),
+    );
   }, [debouncedSearchValue, filters]);
 
-  // Эффект для запроса при прокрутки страницы
   useEffect(() => {
-    setRequestBody(mapFiltersToRequestBody(filters, start, RESPONSE_SIZE, debouncedSearchValue));
+    setRequestBody(
+      mapFiltersToRequestBody(filters, start, RESPONSE_SIZE, debouncedSearchValue, orderParams),
+    );
   }, [start]);
 
-  // Эффект для отслеживания прокрутки страницы
+  useEffect(() => {
+    setRequestBody(
+      mapFiltersToRequestBody(filters, start, RESPONSE_SIZE, debouncedSearchValue, orderParams),
+    );
+  }, [alphabetSort, ratingSort]);
+
   useEffect(() => {
     const handleScroll = () => {
-      // Проверяем, достигли ли мы низа страницы и есть ли ещё данные для загрузки
       if (
         window.innerHeight + document.documentElement.scrollTop >=
           document.documentElement.offsetHeight - 100 &&
@@ -76,35 +107,32 @@ export const Bestiary = () => {
       }
     };
 
-    // Добавляем слушатель события прокрутки
     window.addEventListener('scroll', handleScroll);
-
-    // Убираем слушатель при размонтировании компонента
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isLoading, hasMore]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div>
+        <h1>Бестиарий</h1>
+        <div className={s.spinnerContainer}>
+          <Spinner size={100} />
+        </div>
+      </div>
+    );
+
   if (isError) return <div>Error loading creatures</div>;
 
   return (
     <div>
       <h1>Бестиарий</h1>
 
-      {/* Поисковая строка */}
-      <div className={s.searchContainer}>
-        <input
-          type='text'
-          placeholder='Поиск по названию...'
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          className={s.searchContainer__input}
-        />
-        <button onClick={() => setIsModalOpen(true)} data-variant='secondary'>
-          Открыть фильтр
-        </button>
-      </div>
+      <TopPanel
+        searchValue={searchValue}
+        setSearchValue={setSearchValue}
+        setIsModalOpen={setIsModalOpen}
+      />
 
-      {/* Модальное окно */}
       {isModalOpen && (
         <div className={s.modalOverlay} onClick={() => setIsModalOpen(false)}>
           <div className={s.modalOverlay__content} onClick={(e) => e.stopPropagation()}>
@@ -119,23 +147,22 @@ export const Bestiary = () => {
         </div>
       )}
 
-      {/* Список существ */}
       <div className={s.bestiaryContainer}>
         {allCreatures.map((creature) => (
-          <div>
-            <BestiaryCard key={creature._id} creature={creature} />
+          <div key={creature._id}>
+            <BestiaryCard creature={creature} viewMode={viewMode} />
           </div>
         ))}
       </div>
 
-      {/* Индикатор загрузки */}
+      {isPending && (
+        <div className={s.spinnerContainer}>
+          <Spinner size={100} />
+        </div>
+      )}
+
       {isLoading && <div>Loading more creatures...</div>}
-
-      {/* Сообщение, если ничего не найдено */}
       {allCreatures.length === 0 && !isLoading && <div>Ничего не найдено</div>}
-
-      {/* Сообщение, если данные закончились */}
-      {!hasMore && <div>Все данные загружены</div>}
     </div>
   );
 };
