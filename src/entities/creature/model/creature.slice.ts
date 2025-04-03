@@ -28,6 +28,10 @@ export type Creature = {
     charisma: number;
   };
   savingThrows: SavingThrow[];
+  damageImmunities: string[];
+  damageVulnerabilities: string[];
+  damageResistances: string[];
+  conditionImmunities: string[];
   image?: string;
   notes: string;
   actions?: {

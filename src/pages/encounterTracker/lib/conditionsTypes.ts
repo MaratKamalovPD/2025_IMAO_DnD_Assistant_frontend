@@ -79,3 +79,21 @@ export const conditionIcons: Record<ConditionValue, string> = {
   stunned: stunnedIcon,
   unconscious: unconsciousIcon,
 };
+
+export const conditionVariants: Record<ConditionValue, string[]> = {
+  'blinded': ['ослеплён', 'ослепление'],
+  'charmed': ['очарован', 'очарование'],
+  'deafened': ['оглох', 'глухота'],
+  'exhaustion': ['истощение'],
+  'frightened': ['испуган', 'испуг'],
+  'grappled': ['схвачен'],
+  'incapacitated': ['недееспособен'],
+  'invisible': ['невидим', 'невидимость'],
+  'paralyzed': ['парализован', 'паралич'],
+  'petrified': ['окаменел', 'окаменение'],
+  'poisoned': ['отравлен', 'отравление'],
+  'prone': ['лежит'],
+  'restrained': ['скован', 'сковывание'],
+  'stunned': ['оглушён', 'оглушение', 'ошеломление'],
+  'unconscious': ['без сознания']
+};
