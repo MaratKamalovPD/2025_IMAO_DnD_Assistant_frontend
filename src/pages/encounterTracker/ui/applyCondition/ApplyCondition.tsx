@@ -12,6 +12,9 @@ import {
   ConditionValue,
 } from 'pages/encounterTracker/lib';
 import { OptionWithIcon, SingleValueWithIcon } from 'shared/ui';
+import { ConditionImmunityToast } from 'pages/encounterTracker/ui/trackerToasts/conditionImmunityToast';
+import { toast } from 'react-toastify';
+import { hasConditionImmunity } from 'pages/encounterTracker/model';
 
 import s from './ApplyCondition.module.scss';
 
@@ -32,7 +35,7 @@ export const ApplyConditionModal: React.FC = () => {
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
-  ) as Creature | undefined;
+  ) as Creature;
 
   const handleConditionChange = useCallback(
     (option: ConditionOption | null) => {
@@ -44,12 +47,19 @@ export const ApplyConditionModal: React.FC = () => {
   );
 
   const handleApplyCondition = useCallback(() => {
-    dispatch(
-      creatureActions.addCondition({
-        id: selectedCreatureId || '',
-        condition: selectedCondition,
-      }),
-    );
+    const hasConditionImmunityFlag = hasConditionImmunity(selectedCreature, selectedCondition)
+
+    if (!hasConditionImmunityFlag) {
+      dispatch(
+        creatureActions.addCondition({
+          id: selectedCreatureId || '',
+          condition: selectedCondition,
+        }),
+      );
+    } else {
+      toast(<ConditionImmunityToast creature={selectedCreature} condition={selectedCondition} />);
+    }
+
   }, [selectedCondition, selectedCreatureId]);
 
   return (

@@ -1,12 +1,4 @@
-type DamageModifier = 'normal' | 'resistance' | 'vulnerability' | 'immunity';
-type SaveEffect = 'half' | 'none' | 'full';
-// 'half' — стандартный спасбросок, 'none' — игнорирует урон (как у дезинтеграции), 'full' — без эффекта
-
-type DamageCalculationOptions = {
-  modifier?: DamageModifier;
-  saveEffect?: SaveEffect;
-  flatReduction?: number;
-};
+import { DamageCalculationOptions } from './types';
 
 export const calculateDndDamage = (
   damage: number,
