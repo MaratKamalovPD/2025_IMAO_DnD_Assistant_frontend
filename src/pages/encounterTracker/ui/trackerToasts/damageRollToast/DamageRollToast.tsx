@@ -20,7 +20,7 @@ export const DamageRollToast: React.FC<CustomToastProps> = ({ damageRolls }) => 
               <div className={s.dicesDetails}>
                 {damageRolls.dices.map((dice, index) => (
                   <div key={index} className={s.diceRoll}>
-                    {dice.total} ({dice.damage.count}
+                    {dice.on_dice_damage} ({dice.damage.count}
                     {dice.damage.dice})
                     {index === 0 && damageRolls.bonus > 0 && ` + ${damageRolls.bonus}`} [
                     {dice.damage.type}]

@@ -1,9 +1,13 @@
 import { AttackLLM, DamageDicesRoll, DamageDicesRolls, DamageLLM } from 'entities/creature/model';
 import { rollDice } from 'shared/lib/rollDice';
+import { getDamageCalculationOptions } from './getDamageCalculationOptions'
+import { calculateDndDamage } from './calculateDndDamage'
+import { Creature } from 'entities/creature/model';
 
 export const rollDamageLLM = (
   attack: AttackLLM,
   isCriticalHit: boolean = false,
+  attackedCreature: Creature
 ): DamageDicesRolls => {
   let totalDamage = 0;
   const dices: DamageDicesRoll[] = [];
@@ -16,22 +20,21 @@ export const rollDamageLLM = (
     };
   }
 
-  const damageRoll = calculateDamage(attack.damage, isCriticalHit);
+  const damageRoll = calculateDamage(attack.damage, isCriticalHit, attackedCreature);
   dices.push(damageRoll);
-  totalDamage += damageRoll.total;
+  totalDamage += damageRoll.final_damage;
 
   if (attack.additionalEffects) {
     attack.additionalEffects.forEach((effect) => {
       if (effect.damage) {
-        const extraDamage = calculateDamage(effect.damage, isCriticalHit);
+        const extraDamage = calculateDamage(effect.damage, isCriticalHit, attackedCreature);
         dices.push(extraDamage);
-        totalDamage += extraDamage.total;
+        totalDamage += extraDamage.final_damage;
       }
     });
   }
 
   const bonus = attack.damage.bonus ?? 0;
-  totalDamage += bonus;
 
   return {
     total: totalDamage,
@@ -40,7 +43,7 @@ export const rollDamageLLM = (
   };
 };
 
-const calculateDamage = (damage: DamageLLM, isCriticalHit: boolean): DamageDicesRoll => {
+const calculateDamage = (damage: DamageLLM, isCriticalHit: boolean, attackedCreature: Creature): DamageDicesRoll => {
   let damageRoll = 0;
 
   const diceCount = isCriticalHit ? (damage.count ?? 1) * 2 : (damage.count ?? 1);
@@ -49,8 +52,15 @@ const calculateDamage = (damage: DamageLLM, isCriticalHit: boolean): DamageDices
     damageRoll += rollDice(damage.dice);
   }
 
+  const damageCalculationOptions = getDamageCalculationOptions(attackedCreature, damage.type)
+
+  const bonus = damage.bonus ?? 0;
+  
+  const calculatedDndDamage = calculateDndDamage(damageRoll + bonus, damageCalculationOptions)
+
   return {
-    total: damageRoll,
+    final_damage: calculatedDndDamage,
+    on_dice_damage: damageRoll,
     damage: {
       ...damage,
       count: diceCount,
