@@ -1,43 +1,9 @@
 import React, { useState } from 'react';
-import { Language } from 'shared/lib';
+import { MonsterSpeedLocalization } from 'pages/statblockGenerator/lib';
+import { MonsterSpeedFormProps, MonsterSpeedFormState } from 'pages/statblockGenerator/model';
+import { SpeedInput } from 'pages/statblockGenerator/ui/monsterSpeedForm/speedInput';
+import { ToggleSwitch } from 'pages/statblockGenerator/ui/monsterSpeedForm/toggleSwitch';
 import s from './MonsterSpeedForm.module.scss';
-
-interface MonsterSpeedFormProps {
-  initialSpeed?: number;
-  initialBurrowSpeed?: number;
-  initialClimbSpeed?: number;
-  initialFlySpeed?: number;
-  initialSwimSpeed?: number;
-  initialCustomSpeed?: string;
-  language?: Language;
-}
-
-const localization = {
-  en: {
-    title: 'Movement Speeds',
-    speed: 'Speed',
-    burrowSpeed: 'Burrow Speed',
-    climbSpeed: 'Climb Speed',
-    flySpeed: 'Fly Speed',
-    swimSpeed: 'Swim Speed',
-    hover: 'Hover',
-    customSpeed: 'Custom Speed',
-    units: 'ft.',
-    customSpeedPlaceholder: 'e.g. 30 ft., fly 60 ft.'
-  },
-  ru: {
-    title: 'Скорости передвижения',
-    speed: 'Скорость',
-    burrowSpeed: 'Скорость копания',
-    climbSpeed: 'Скорость лазания',
-    flySpeed: 'Скорость полёта',
-    swimSpeed: 'Скорость плавания',
-    hover: 'Парение',
-    customSpeed: 'Своя скорость',
-    units: 'фт.',
-    customSpeedPlaceholder: 'напр. 30 фт., полёт 60 фт.'
-  }
-};
 
 export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
   initialSpeed = 30,
@@ -48,16 +14,23 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
   initialCustomSpeed = '',
   language = 'en'
 }) => {
-  const [speed, setSpeed] = useState(initialSpeed);
-  const [burrowSpeed, setBurrowSpeed] = useState(initialBurrowSpeed);
-  const [climbSpeed, setClimbSpeed] = useState(initialClimbSpeed);
-  const [flySpeed, setFlySpeed] = useState(initialFlySpeed);
-  const [swimSpeed, setSwimSpeed] = useState(initialSwimSpeed);
-  const [customSpeed, setCustomSpeed] = useState(initialCustomSpeed);
-  const [useCustomSpeed, setUseCustomSpeed] = useState(false);
-  const [hover, setHover] = useState(false);
+  const [state, setState] = useState<MonsterSpeedFormState>({
+    speed: initialSpeed,
+    burrowSpeed: initialBurrowSpeed,
+    climbSpeed: initialClimbSpeed,
+    flySpeed: initialFlySpeed,
+    swimSpeed: initialSwimSpeed,
+    customSpeed: initialCustomSpeed,
+    useCustomSpeed: false,
+    hover: false
+  });
 
-  const t = localization[language];
+  const t = MonsterSpeedLocalization[language];
+
+  const handleChange = <K extends keyof MonsterSpeedFormState>(field: K) => 
+    (value: MonsterSpeedFormState[K]) => {
+      setState(prev => ({ ...prev, [field]: value }));
+    };
 
   return (
     <div className={s.movementPanel}>
@@ -66,26 +39,20 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
       </div>
 
       <div className={s.movementPanel__controls}>
-        <div className={s.movementPanel__toggle}>
-          <label className={s.movementPanel__toggleLabel}>
-            <input
-              type="checkbox"
-              checked={useCustomSpeed}
-              onChange={(e) => setUseCustomSpeed(e.target.checked)}
-              className={s.movementPanel__toggleInput}
-            />
-            {t.customSpeed}
-          </label>
-        </div>
+        <ToggleSwitch
+          label={t.customSpeed}
+          checked={state.useCustomSpeed}
+          onChange={handleChange('useCustomSpeed')}
+        />
 
-        {useCustomSpeed ? (
+        {state.useCustomSpeed ? (
           <div className={s.movementPanel__customSpeed}>
             <label className={s.movementPanel__label}>
               {t.speed}
               <input
                 type="text"
-                value={customSpeed}
-                onChange={(e) => setCustomSpeed(e.target.value)}
+                value={state.customSpeed}
+                onChange={(e) => handleChange('customSpeed')(e.target.value)}
                 className={s.movementPanel__textInput}
                 placeholder={t.customSpeedPlaceholder}
               />
@@ -93,79 +60,41 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
           </div>
         ) : (
           <div className={s.movementPanel__speedTypes}>
-            {/* Normal Speed */}
-            <div className={s.movementPanel__speedInput}>
-              <label className={s.movementPanel__label}>
-                {t.speed}
-                <input
-                  type="number"
-                  min="0"
-                  max="995"
-                  step="5"
-                  value={speed}
-                  onChange={(e) => setSpeed(parseInt(e.target.value) || 0)}
-                  className={s.movementPanel__numberInput}
-                />
-                {t.units}
-              </label>
-            </div>
+            <SpeedInput
+              label={t.speed}
+              value={state.speed}
+              onChange={handleChange('speed')}
+              units={t.units}
+            />
 
-            {/* Burrow Speed */}
-            <div className={s.movementPanel__speedInput}>
-              <label className={s.movementPanel__label}>
-                {t.burrowSpeed}
-                <input
-                  type="number"
-                  min="0"
-                  max="995"
-                  step="5"
-                  value={burrowSpeed}
-                  onChange={(e) => setBurrowSpeed(parseInt(e.target.value) || 0)}
-                  className={s.movementPanel__numberInput}
-                />
-                {t.units}
-              </label>
-            </div>
+            <SpeedInput
+              label={t.burrowSpeed}
+              value={state.burrowSpeed}
+              onChange={handleChange('burrowSpeed')}
+              units={t.units}
+            />
 
-            {/* Climb Speed */}
-            <div className={s.movementPanel__speedInput}>
-              <label className={s.movementPanel__label}>
-                {t.climbSpeed}
-                <input
-                  type="number"
-                  min="0"
-                  max="995"
-                  step="5"
-                  value={climbSpeed}
-                  onChange={(e) => setClimbSpeed(parseInt(e.target.value) || 0)}
-                  className={s.movementPanel__numberInput}
-                />
-                {t.units}
-              </label>
-            </div>
+            <SpeedInput
+              label={t.climbSpeed}
+              value={state.climbSpeed}
+              onChange={handleChange('climbSpeed')}
+              units={t.units}
+            />
 
-            {/* Fly Speed */}
             <div className={s.movementPanel__speedInput}>
-              <label className={s.movementPanel__label}>
-                {t.flySpeed}
-                <input
-                  type="number"
-                  min="0"
-                  max="995"
-                  step="5"
-                  value={flySpeed}
-                  onChange={(e) => setFlySpeed(parseInt(e.target.value) || 0)}
-                  className={s.movementPanel__numberInput}
-                />
-                {t.units}
-              </label>
-              {flySpeed > 0 && (
+              <SpeedInput
+                label={t.flySpeed}
+                value={state.flySpeed}
+                onChange={handleChange('flySpeed')}
+                units={t.units}
+              />
+              {state.flySpeed > 0 && (
                 <div className={s.movementPanel__hoverCheckbox}>
                   <label className={s.movementPanel__checkboxLabel}>
                     <input
                       type="checkbox"
-                      checked={hover}
-                      onChange={(e) => setHover(e.target.checked)}
+                      checked={state.hover}
+                      onChange={(e) => handleChange('hover')(e.target.checked)}
                       className={s.movementPanel__checkbox}
                     />
                     {t.hover}
@@ -174,22 +103,12 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
               )}
             </div>
 
-            {/* Swim Speed */}
-            <div className={s.movementPanel__speedInput}>
-              <label className={s.movementPanel__label}>
-                {t.swimSpeed}
-                <input
-                  type="number"
-                  min="0"
-                  max="995"
-                  step="5"
-                  value={swimSpeed}
-                  onChange={(e) => setSwimSpeed(parseInt(e.target.value) || 0)}
-                  className={s.movementPanel__numberInput}
-                />
-                {t.units}
-              </label>
-            </div>
+            <SpeedInput
+              label={t.swimSpeed}
+              value={state.swimSpeed}
+              onChange={handleChange('swimSpeed')}
+              units={t.units}
+            />
           </div>
         )}
       </div>

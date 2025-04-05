@@ -1,75 +1,9 @@
 import React, { useState } from 'react';
-import { Language } from 'shared/lib';
+import { ArmorHitDiceLocalization } from 'pages/statblockGenerator/lib';
+import { ArmorHitDiceFormProps, ArmorHitDiceFormState, ArmorOption } from 'pages/statblockGenerator/model';
+import { DefenseSection } from 'pages/statblockGenerator/ui/armorHitdiceForm/defenseSection';
+import { InputGroup } from 'pages/statblockGenerator/ui/armorHitdiceForm/inputGroup';
 import s from './ArmorHitdiceForm.module.scss';
-
-interface ArmorHitDiceFormProps {
-  initialHitDice?: number;
-  initialHpText?: string;
-  initialNatArmor?: number;
-  initialOtherArmor?: string;
-  language?: Language;
-}
-
-const localization = {
-  en: {
-    title: 'Defense Stats',
-    hitDice: 'Hit Dice',
-    hitPoints: 'Hit Points',
-    customHP: 'Custom HP',
-    armorType: 'Armor Type',
-    armorTypes: {
-      none: 'None',
-      natural: 'Natural Armor',
-      mage: 'Mage Armor',
-      padded: 'Padded',
-      leather: 'Leather',
-      studded: 'Studded Leather',
-      hide: 'Hide',
-      chainShirt: 'Chain Shirt',
-      scaleMail: 'Scale Mail',
-      breastplate: 'Breastplate',
-      halfPlate: 'Half Plate',
-      ringMail: 'Ring Mail',
-      chainMail: 'Chain Mail',
-      splint: 'Splint',
-      plate: 'Plate',
-      other: 'Other'
-    },
-    shield: 'Shield',
-    natArmorBonus: 'Natural Armor Bonus',
-    armorDescription: 'Description',
-    italicHint: 'Use _ to italicize'
-  },
-  ru: {
-    title: 'Параметры защиты',
-    hitDice: 'Кость хитов',
-    hitPoints: 'Очки здоровья',
-    customHP: 'Свои ОЖ',
-    armorType: 'Тип брони',
-    armorTypes: {
-      none: 'Нет',
-      natural: 'Природный доспех',
-      mage: 'Доспех мага',
-      padded: 'Стёганый',
-      leather: 'Кожаный',
-      studded: 'Клёпаный кожаный',
-      hide: 'Шкурный',
-      chainShirt: 'Кольчужная рубаха',
-      scaleMail: 'Чешуйчатый',
-      breastplate: 'Кираса',
-      halfPlate: 'Полулаты',
-      ringMail: 'Кольчужный',
-      chainMail: 'Кольчуга',
-      splint: 'Наборный',
-      plate: 'Латы',
-      other: 'Другой'
-    },
-    shield: 'Щит',
-    natArmorBonus: 'Бонус природного доспеха',
-    armorDescription: 'Описание',
-    italicHint: 'Используйте _ для курсива'
-  }
-};
 
 export const ArmorHitdiceForm: React.FC<ArmorHitDiceFormProps> = ({
   initialHitDice = 5,
@@ -78,19 +12,21 @@ export const ArmorHitdiceForm: React.FC<ArmorHitDiceFormProps> = ({
   initialOtherArmor = '10 (armor)',
   language = 'en'
 }) => {
-  const [hitDice, setHitDice] = useState(initialHitDice);
-  const [hpText, setHpText] = useState(initialHpText);
-  const [customHp, setCustomHp] = useState(false);
-  const [armorType, setArmorType] = useState<string>('none');
-  const [hasShield, setHasShield] = useState(false);
-  const [natArmor, setNatArmor] = useState(initialNatArmor);
-  const [otherArmor, setOtherArmor] = useState(initialOtherArmor);
+  const [state, setState] = useState<ArmorHitDiceFormState>({
+    hitDice: initialHitDice,
+    hpText: initialHpText,
+    customHp: false,
+    armorType: 'none',
+    hasShield: false,
+    natArmor: initialNatArmor,
+    otherArmor: initialOtherArmor
+  });
 
-  const t = localization[language];
-  const showNatArmor = armorType === 'natural armor';
-  const showOtherArmor = armorType === 'other';
+  const t = ArmorHitDiceLocalization[language];
+  const showNatArmor = state.armorType === 'natural armor';
+  const showOtherArmor = state.armorType === 'other';
 
-  const armorOptions = [
+  const armorOptions: ArmorOption[] = [
     { value: 'none', label: t.armorTypes.none },
     { value: 'natural armor', label: t.armorTypes.natural },
     { value: 'mage armor', label: t.armorTypes.mage },
@@ -109,6 +45,11 @@ export const ArmorHitdiceForm: React.FC<ArmorHitDiceFormProps> = ({
     { value: 'other', label: t.armorTypes.other }
   ];
 
+  const handleChange = <K extends keyof ArmorHitDiceFormState>(field: K) => 
+    (value: ArmorHitDiceFormState[K]) => {
+      setState(prev => ({ ...prev, [field]: value }));
+    };
+
   return (
     <div className={s.defensePanel}>
       <div className={s.defensePanel__titleContainer}>
@@ -116,116 +57,103 @@ export const ArmorHitdiceForm: React.FC<ArmorHitDiceFormProps> = ({
       </div>
 
       <div className={s.defensePanel__statsContainer}>
-        {/* Hit Dice Section */}
-        <div className={s.defensePanel__section}>
-          <div className={s.defensePanel__inputGroup}>
-            <label className={s.defensePanel__label}>
-              {t.hitDice}
-              <input
-                type="number"
-                min="1"
-                max="99"
-                value={hitDice}
-                onChange={(e) => setHitDice(parseInt(e.target.value) || 0)}
-                className={s.defensePanel__input}
-              />
-            </label>
-          </div>
+        {/* Hit Points Section */}
+        <DefenseSection>
+          <InputGroup label={t.hitDice}>
+            <input
+              type="number"
+              min="1"
+              max="99"
+              value={state.hitDice}
+              onChange={(e) => handleChange('hitDice')(parseInt(e.target.value) || 0)}
+              className={s.defensePanel__input}
+            />
+          </InputGroup>
 
-          <div className={s.defensePanel__inputGroup}>
-            <label className={s.defensePanel__label}>
-              {t.hitPoints}
-              <input
-                value={hpText}
-                onChange={(e) => setHpText(e.target.value)}
-                disabled={!customHp}
-                className={`${s.defensePanel__input} ${!customHp ? s.defensePanel__inputDisabled : ''}`}
-              />
-            </label>
-          </div>
+          <InputGroup label={t.hitPoints}>
+            <input
+              value={state.hpText}
+              onChange={(e) => handleChange('hpText')(e.target.value)}
+              disabled={!state.customHp}
+              className={`${s.defensePanel__input} ${
+                !state.customHp ? s.defensePanel__inputDisabled : ''
+              }`}
+            />
+          </InputGroup>
 
           <div className={s.defensePanel__checkboxGroup}>
             <label className={s.defensePanel__checkboxLabel}>
               <input
                 type="checkbox"
-                checked={customHp}
-                onChange={(e) => setCustomHp(e.target.checked)}
+                checked={state.customHp}
+                onChange={(e) => handleChange('customHp')(e.target.checked)}
                 className={s.defensePanel__checkbox}
               />
               {t.customHP}
             </label>
           </div>
-        </div>
+        </DefenseSection>
 
-        {/* Armor Section */}
-        <div className={s.defensePanel__section}>
-          <div className={s.defensePanel__inputGroup}>
-            <label className={s.defensePanel__label}>
-              {t.armorType}
-              <select
-                value={armorType}
-                onChange={(e) => setArmorType(e.target.value)}
-                className={s.defensePanel__select}
-              >
-                {armorOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
+        {/* Armor Type Section */}
+        <DefenseSection>
+          <InputGroup label={t.armorType}>
+            <select
+              value={state.armorType}
+              onChange={(e) => handleChange('armorType')(e.target.value)}
+              className={s.defensePanel__select}
+            >
+              {armorOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </InputGroup>
 
           <div className={s.defensePanel__checkboxGroup}>
             <label className={s.defensePanel__checkboxLabel}>
               <input
                 type="checkbox"
-                checked={hasShield}
-                onChange={(e) => setHasShield(e.target.checked)}
+                checked={state.hasShield}
+                onChange={(e) => handleChange('hasShield')(e.target.checked)}
                 className={s.defensePanel__checkbox}
               />
               {t.shield}
             </label>
           </div>
-        </div>
+        </DefenseSection>
 
         {/* Armor Details Section */}
-        <div className={s.defensePanel__section}>
-          {showNatArmor && (
-            <div className={s.defensePanel__inputGroup}>
-              <label className={s.defensePanel__label}>
-                {t.natArmorBonus}
-                <input
-                  type="number"
-                  min="1"
-                  max="99"
-                  value={natArmor}
-                  onChange={(e) => setNatArmor(parseInt(e.target.value) || 0)}
-                  className={s.defensePanel__input}
-                />
-              </label>
-            </div>
-          )}
+        {showNatArmor && (
+          <DefenseSection>
+            <InputGroup label={t.natArmorBonus}>
+              <input
+                type="number"
+                min="1"
+                max="99"
+                value={state.natArmor}
+                onChange={(e) => handleChange('natArmor')(parseInt(e.target.value) || 0)}
+                className={s.defensePanel__input}
+              />
+            </InputGroup>
+          </DefenseSection>
+        )}
 
-          {showOtherArmor && (
-            <>
-              <div className={s.defensePanel__inputGroup}>
-                <label className={s.defensePanel__label}>
-                  {t.armorDescription}
-                  <input
-                    type="text"
-                    value={otherArmor}
-                    onChange={(e) => setOtherArmor(e.target.value)}
-                    className={s.defensePanel__input}
-                  />
-                </label>
-              </div>
-              <div className={s.defensePanel__hint}>
-                <i>{t.italicHint}</i>
-              </div>
-            </>
-          )}
-        </div>
+        {showOtherArmor && (
+          <DefenseSection>
+            <InputGroup label={t.armorDescription}>
+              <input
+                type="text"
+                value={state.otherArmor}
+                onChange={(e) => handleChange('otherArmor')(e.target.value)}
+                className={s.defensePanel__input}
+              />
+            </InputGroup>
+            <div className={s.defensePanel__hint}>
+              <i>{t.italicHint}</i>
+            </div>
+          </DefenseSection>
+        )}
       </div>
     </div>
   );
