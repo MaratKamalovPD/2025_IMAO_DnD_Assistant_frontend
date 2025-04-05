@@ -1,49 +1,115 @@
-.monsterSpeedForm {
+.movementPanel {
+  border-radius: 15px;
+  background-color: var(--primary-bg-color);
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+  border: 3px solid black;
+  margin-bottom: 20px;
+
+  &__titleContainer {
+    display: flex;
+    justify-content: center;
     width: 100%;
-    border-collapse: collapse;
-    margin: 10px 0;
-  
-    td {
-      padding: 5px;
-      vertical-align: top;
-    }
-  
-    .normalSpeedCol {
-      width: 16%;
-    }
-  
-    .customSpeedCol {
-      width: 66%;
-    }
-  
-    label {
-      font-size: 12px;
-      font-weight: bold;
-      color: #333;
-      display: block;
-    }
-  
-    input[type="number"],
-    input[type="text"] {
-      width: 60px;
-      padding: 5px;
-      margin-top: 3px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      font-size: 13px;
-    }
-  
-    #custom-speed-prompt {
-      width: 200px;
-    }
-  
-    input[type="checkbox"] {
-      margin-left: 5px;
-    }
-  
-    .boxNote {
-      font-size: 11px;
-      color: #666;
-      margin-top: 3px;
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    color: var(--primary-btn-color);
+    font-weight: bold;
+    font-size: 24px;
+  }
+
+  &__controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__toggle {
+    margin-bottom: 10px;
+  }
+
+  &__toggleLabel {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+  }
+
+  &__toggleInput {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  &__speedTypes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 1rem;
     }
   }
+
+  &__speedInput {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  &__customSpeed {
+    width: 100%;
+  }
+
+  &__label {
+    font-size: 15px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  &__numberInput {
+    font-size: 15px;
+    padding: 8px;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    background-color: var(--secondary-bg-color);
+    width: 80px;
+    margin: 0 5px;
+
+    &:focus {
+      outline: 2px solid var(--primary-btn-color);
+    }
+  }
+
+  &__textInput {
+    @extend .movementPanel__numberInput;
+    width: 100%;
+    margin: 0;
+  }
+
+  &__hoverCheckbox {
+    margin-top: 8px;
+  }
+
+  &__checkboxLabel {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+  }
+
+  &__checkbox {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+}

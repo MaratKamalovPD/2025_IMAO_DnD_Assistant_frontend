@@ -1,16 +1,90 @@
 import React, { useState } from 'react';
+import { Language } from 'shared/lib';
 import s from './TypeForm.module.scss';
 
 interface TypeFormProps {
   initialName?: string;
   initialAlignment?: string;
   initialOtherType?: string;
+  language?: Language;
 }
+
+const localization = {
+  en: {
+    title: 'Creature Type',
+    name: 'Name',
+    size: 'Size',
+    type: 'Type',
+    tag: 'Tag',
+    alignment: 'Alignment',
+    otherTypePlaceholder: 'Specify type',
+    sizes: {
+      tiny: 'Tiny',
+      small: 'Small',
+      medium: 'Medium',
+      large: 'Large',
+      huge: 'Huge',
+      gargantuan: 'Gargantuan'
+    },
+    types: {
+      aberration: 'Aberration',
+      beast: 'Beast',
+      celestial: 'Celestial',
+      construct: 'Construct',
+      dragon: 'Dragon',
+      elemental: 'Elemental',
+      fey: 'Fey',
+      fiend: 'Fiend',
+      giant: 'Giant',
+      humanoid: 'Humanoid',
+      monstrosity: 'Monstrosity',
+      ooze: 'Ooze',
+      plant: 'Plant',
+      undead: 'Undead',
+      other: 'Other'
+    }
+  },
+  ru: {
+    title: 'Тип существа',
+    name: 'Имя',
+    size: 'Размер',
+    type: 'Тип',
+    tag: 'Тег',
+    alignment: 'Мировоззрение',
+    otherTypePlaceholder: 'Укажите тип',
+    sizes: {
+      tiny: 'Крошечный',
+      small: 'Маленький',
+      medium: 'Средний',
+      large: 'Большой',
+      huge: 'Огромный',
+      gargantuan: 'Громадный'
+    },
+    types: {
+      aberration: 'Аберрация',
+      beast: 'Зверь',
+      celestial: 'Небожитель',
+      construct: 'Конструкт',
+      dragon: 'Дракон',
+      elemental: 'Элементаль',
+      fey: 'Фейри',
+      fiend: 'Исчадие',
+      giant: 'Великан',
+      humanoid: 'Гуманоид',
+      monstrosity: 'Чудовище',
+      ooze: 'Слизь',
+      plant: 'Растение',
+      undead: 'Нежить',
+      other: 'Другое'
+    }
+  }
+};
 
 export const TypeForm: React.FC<TypeFormProps> = ({
   initialName = 'Monster',
   initialAlignment = 'any alignment',
   initialOtherType = 'swarm of Tiny beasts',
+  language = 'en'
 }) => {
   const [name, setName] = useState(initialName);
   const [size, setSize] = useState<'tiny' | 'small' | 'medium' | 'large' | 'huge' | 'gargantuan'>('medium');
@@ -20,6 +94,8 @@ export const TypeForm: React.FC<TypeFormProps> = ({
   const [otherType, setOtherType] = useState(initialOtherType);
   const [showOtherType, setShowOtherType] = useState(false);
 
+  const t = localization[language];
+
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedType = e.target.value;
     setType(selectedType);
@@ -27,97 +103,83 @@ export const TypeForm: React.FC<TypeFormProps> = ({
   };
 
   return (
-    <table id={s.typeForm} className={s.typeForm}>
-      <tbody>
-        <tr>
-          <td>
-            <label htmlFor="name-input">
-              Name: <br />
-              <input
-                id="name-input"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </label>
-          </td>
-          <td>
-            <label htmlFor="size-input">
-              Size: <br />
-              <select
-                id="size-input"
-                value={size}
-                onChange={(e) => setSize(e.target.value as any)}
-              >
-                <option value="tiny">Tiny</option>
-                <option value="small">Small</option>
-                <option value="medium">Medium</option>
-                <option value="large">Large</option>
-                <option value="huge">Huge</option>
-                <option value="gargantuan">Gargantuan</option>
-              </select>
-            </label>
-          </td>
-          <td>
-            <label htmlFor="type-input">
-              Type: <br />
-              <select
-                id="type-input"
-                value={type}
-                onChange={handleTypeChange}
-              >
-                <option value="aberration">Aberration</option>
-                <option value="beast">Beast</option>
-                <option value="celestial">Celestial</option>
-                <option value="construct">Construct</option>
-                <option value="dragon">Dragon</option>
-                <option value="elemental">Elemental</option>
-                <option value="fey">Fey</option>
-                <option value="fiend">Fiend</option>
-                <option value="giant">Giant</option>
-                <option value="humanoid">Humanoid</option>
-                <option value="monstrosity">Monstrosity</option>
-                <option value="ooze">Ooze</option>
-                <option value="plant">Plant</option>
-                <option value="undead">Undead</option>
-                <option value="*">Other</option>
-              </select>
-            </label>
-            {showOtherType && (
-              <div>
-                <input
-                  id="other-type-input"
-                  type="text"
-                  value={otherType}
-                  onChange={(e) => setOtherType(e.target.value)}
-                />
-              </div>
-            )}
-          </td>
-          <td>
-            <label htmlFor="tag-input">
-              Tag: <br />
-              <input
-                id="tag-input"
-                type="text"
-                value={tag}
-                onChange={(e) => setTag(e.target.value)}
-              />
-            </label>
-          </td>
-          <td>
-            <label htmlFor="alignment-input">
-              Alignment: <br />
-              <input
-                id="alignment-input"
-                type="text"
-                value={alignment}
-                onChange={(e) => setAlignment(e.target.value)}
-              />
-            </label>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div className={s.creaturePanel}>
+      <div className={s.creaturePanel__titleContainer}>
+        <h2 className={s.creaturePanel__title}>{t.title}</h2>
+      </div>
+      
+      <div className={s.creaturePanel__statsContainer}>
+        {/* Name Field */}
+        <div className={s.creaturePanel__statsElement}>
+          <span className={s.creaturePanel__statsElement__text}>{t.name}:</span>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={s.creaturePanel__statsElement__input}
+          />
+        </div>
+
+        {/* Size Selector */}
+        <div className={s.creaturePanel__statsElement}>
+          <span className={s.creaturePanel__statsElement__text}>{t.size}:</span>
+          <select
+            value={size}
+            onChange={(e) => setSize(e.target.value as any)}
+            className={s.creaturePanel__statsElement__select}
+          >
+            {Object.entries(t.sizes).map(([key, label]) => (
+              <option key={key} value={key}>{label}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Type Selector */}
+        <div className={s.creaturePanel__statsElement}>
+          <span className={s.creaturePanel__statsElement__text}>{t.type}:</span>
+          <select
+            value={type}
+            onChange={handleTypeChange}
+            className={s.creaturePanel__statsElement__select}
+          >
+            {Object.entries(t.types).map(([key, label]) => (
+              <option key={key} value={key}>{label}</option>
+            ))}
+            <option value="*">{t.types.other}</option>
+          </select>
+          {showOtherType && (
+            <input
+              type="text"
+              value={otherType}
+              onChange={(e) => setOtherType(e.target.value)}
+              className={s.creaturePanel__statsElement__input}
+              placeholder={t.otherTypePlaceholder}
+            />
+          )}
+        </div>
+
+        {/* Tag Field */}
+        <div className={s.creaturePanel__statsElement}>
+          <span className={s.creaturePanel__statsElement__text}>{t.tag}:</span>
+          <input
+            type="text"
+            value={tag}
+            onChange={(e) => setTag(e.target.value)}
+            className={s.creaturePanel__statsElement__input}
+          />
+        </div>
+
+        {/* Alignment Field */}
+        <div className={s.creaturePanel__statsElement}>
+          <span className={s.creaturePanel__statsElement__text}>{t.alignment}:</span>
+          <input
+            type="text"
+            value={alignment}
+            onChange={(e) => setAlignment(e.target.value)}
+            className={s.creaturePanel__statsElement__input}
+          />
+        </div>
+      </div>
+    </div>
   );
 };

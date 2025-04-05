@@ -1,77 +1,100 @@
 import React, { useState } from 'react';
+import { Language } from 'shared/lib';
 import s from './PropertiesListsForm.module.scss';
 
 interface PropertiesListsFormProps {
   initialSavingThrows?: string[];
   initialSkills?: string[];
   initialConditionImmunities?: string[];
+  language?: Language;
 }
+
+const localization = {
+  en: {
+    title: 'Special Properties',
+    savingThrows: 'Saving Throws',
+    skills: 'Skills',
+    conditionImmunities: 'Condition Immunities',
+    proficient: 'Proficient',
+    expert: 'Expert',
+    immune: 'Immune',
+    remove: 'Remove'
+  },
+  ru: {
+    title: 'Особые свойства',
+    savingThrows: 'Спасброски',
+    skills: 'Навыки',
+    conditionImmunities: 'Иммунитеты к состояниям',
+    proficient: 'Владение',
+    expert: 'Эксперт',
+    immune: 'Иммунитет',
+    remove: 'Удалить'
+  }
+};
 
 export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
   initialSavingThrows = [],
   initialSkills = [],
-  initialConditionImmunities = []
+  initialConditionImmunities = [],
+  language = 'en'
 }) => {
-  // State for selected values
   const [selectedSthrow, setSelectedSthrow] = useState<string>('str');
   const [selectedSkill, setSelectedSkill] = useState<string>('acrobatics');
   const [selectedCondition, setSelectedCondition] = useState<string>('blinded');
-
-  // State for lists
   const [savingThrows, setSavingThrows] = useState<string[]>(initialSavingThrows);
   const [skills, setSkills] = useState<string[]>(initialSkills);
   const [conditionImmunities, setConditionImmunities] = useState<string[]>(initialConditionImmunities);
 
-  // Options data
+  const t = localization[language];
+
   const savingThrowOptions = [
-    { value: 'str', label: 'Strength' },
-    { value: 'dex', label: 'Dexterity' },
-    { value: 'con', label: 'Constitution' },
-    { value: 'int', label: 'Intelligence' },
-    { value: 'wis', label: 'Wisdom' },
-    { value: 'cha', label: 'Charisma' }
+    { value: 'str', label: language === 'ru' ? 'Сила' : 'Strength' },
+    { value: 'dex', label: language === 'ru' ? 'Ловкость' : 'Dexterity' },
+    { value: 'con', label: language === 'ru' ? 'Телосложение' : 'Constitution' },
+    { value: 'int', label: language === 'ru' ? 'Интеллект' : 'Intelligence' },
+    { value: 'wis', label: language === 'ru' ? 'Мудрость' : 'Wisdom' },
+    { value: 'cha', label: language === 'ru' ? 'Харизма' : 'Charisma' }
   ];
 
   const skillOptions = [
-    { value: 'acrobatics', label: 'Acrobatics' },
-    { value: 'animal Handling', label: 'Animal Handling' },
-    { value: 'arcana', label: 'Arcana' },
-    { value: 'athletics', label: 'Athletics' },
-    { value: 'deception', label: 'Deception' },
-    { value: 'history', label: 'History' },
-    { value: 'insight', label: 'Insight' },
-    { value: 'intimidation', label: 'Intimidation' },
-    { value: 'investigation', label: 'Investigation' },
-    { value: 'medicine', label: 'Medicine' },
-    { value: 'nature', label: 'Nature' },
-    { value: 'perception', label: 'Perception' },
-    { value: 'performance', label: 'Performance' },
-    { value: 'persuasion', label: 'Persuasion' },
-    { value: 'religion', label: 'Religion' },
-    { value: 'sleight of Hand', label: 'Sleight of Hand' },
-    { value: 'stealth', label: 'Stealth' },
-    { value: 'survival', label: 'Survival' }
+    { value: 'acrobatics', label: language === 'ru' ? 'Акробатика' : 'Acrobatics' },
+    { value: 'animal Handling', label: language === 'ru' ? 'Уход за животными' : 'Animal Handling' },
+    { value: 'arcana', label: language === 'ru' ? 'Магия' : 'Arcana' },
+    { value: 'athletics', label: language === 'ru' ? 'Атлетика' : 'Athletics' },
+    { value: 'deception', label: language === 'ru' ? 'Обман' : 'Deception' },
+    { value: 'history', label: language === 'ru' ? 'История' : 'History' },
+    { value: 'insight', label: language === 'ru' ? 'Проницательность' : 'Insight' },
+    { value: 'intimidation', label: language === 'ru' ? 'Запугивание' : 'Intimidation' },
+    { value: 'investigation', label: language === 'ru' ? 'Анализ' : 'Investigation' },
+    { value: 'medicine', label: language === 'ru' ? 'Медицина' : 'Medicine' },
+    { value: 'nature', label: language === 'ru' ? 'Природа' : 'Nature' },
+    { value: 'perception', label: language === 'ru' ? 'Восприятие' : 'Perception' },
+    { value: 'performance', label: language === 'ru' ? 'Выступление' : 'Performance' },
+    { value: 'persuasion', label: language === 'ru' ? 'Убеждение' : 'Persuasion' },
+    { value: 'religion', label: language === 'ru' ? 'Религия' : 'Religion' },
+    { value: 'sleight of Hand', label: language === 'ru' ? 'Ловкость рук' : 'Sleight of Hand' },
+    { value: 'stealth', label: language === 'ru' ? 'Скрытность' : 'Stealth' },
+    { value: 'survival', label: language === 'ru' ? 'Выживание' : 'Survival' }
   ];
 
   const conditionOptions = [
-    { value: 'blinded', label: 'Blinded' },
-    { value: 'charmed', label: 'Charmed' },
-    { value: 'deafened', label: 'Deafened' },
-    { value: 'exhaustion', label: 'Exhaustion' },
-    { value: 'frightened', label: 'Frightened' },
-    { value: 'grappled', label: 'Grappled' },
-    { value: 'incapacitated', label: 'Incapacitated' },
-    { value: 'invisible', label: 'Invisible' },
-    { value: 'paralyzed', label: 'Paralyzed' },
-    { value: 'petrified', label: 'Petrified' },
-    { value: 'poisoned', label: 'Poisoned' },
-    { value: 'prone', label: 'Prone' },
-    { value: 'restrained', label: 'Restrained' },
-    { value: 'stunned', label: 'Stunned' },
-    { value: 'unconscious', label: 'Unconscious' }
+    { value: 'blinded', label: language === 'ru' ? 'Ослепление' : 'Blinded' },
+    { value: 'charmed', label: language === 'ru' ? 'Очарование' : 'Charmed' },
+    { value: 'deafened', label: language === 'ru' ? 'Глухота' : 'Deafened' },
+    { value: 'exhaustion', label: language === 'ru' ? 'Истощение' : 'Exhaustion' },
+    { value: 'frightened', label: language === 'ru' ? 'Испуг' : 'Frightened' },
+    { value: 'grappled', label: language === 'ru' ? 'Захват' : 'Grappled' },
+    { value: 'incapacitated', label: language === 'ru' ? 'Недееспособность' : 'Incapacitated' },
+    { value: 'invisible', label: language === 'ru' ? 'Невидимость' : 'Invisible' },
+    { value: 'paralyzed', label: language === 'ru' ? 'Паралич' : 'Paralyzed' },
+    { value: 'petrified', label: language === 'ru' ? 'Окаменение' : 'Petrified' },
+    { value: 'poisoned', label: language === 'ru' ? 'Отравление' : 'Poisoned' },
+    { value: 'prone', label: language === 'ru' ? 'Распластание' : 'Prone' },
+    { value: 'restrained', label: language === 'ru' ? 'Сковывание' : 'Restrained' },
+    { value: 'stunned', label: language === 'ru' ? 'Оглушение' : 'Stunned' },
+    { value: 'unconscious', label: language === 'ru' ? 'Бессознательное состояние' : 'Unconscious' }
   ];
 
-  // Handler functions
   const addSavingThrow = () => {
     const selected = savingThrowOptions.find(opt => opt.value === selectedSthrow);
     if (selected && !savingThrows.includes(selected.label)) {
@@ -83,7 +106,7 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
     const selected = skillOptions.find(opt => opt.value === selectedSkill);
     if (selected) {
       const skillText = proficiency === 'expert' 
-        ? `${selected.label} (ex)`
+        ? `${selected.label} (${language === 'ru' ? 'эксперт' : 'ex'})`
         : selected.label;
       if (!skills.includes(skillText)) {
         setSkills([...skills, skillText]);
@@ -109,16 +132,20 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
   };
 
   return (
-    <table id={s.propertiesListsForm} className={s.propertiesListsForm}>
-      <tbody>
-        <tr>
-          {/* Saving Throws Column */}
-          <td id={s.sthrowsForm}>
-            <label htmlFor="sthrows-input">Saving Throws:</label><br />
+    <div className={s.propertiesPanel}>
+      <div className={s.propertiesPanel__titleContainer}>
+        <h2 className={s.propertiesPanel__title}>{t.title}</h2>
+      </div>
+
+      <div className={s.propertiesPanel__sections}>
+        {/* Saving Throws Section */}
+        <div className={s.propertiesPanel__section}>
+          <h3 className={s.propertiesPanel__sectionTitle}>{t.savingThrows}</h3>
+          <div className={s.propertiesPanel__controls}>
             <select
-              id="sthrows-input"
               value={selectedSthrow}
               onChange={(e) => setSelectedSthrow(e.target.value)}
+              className={s.propertiesPanel__select}
             >
               {savingThrowOptions.map(option => (
                 <option key={option.value} value={option.value}>
@@ -126,32 +153,39 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
                 </option>
               ))}
             </select>
-            <button type="button" onClick={addSavingThrow}>Proficient</button>
-            <div id={s.sthrowsInputSection}>
-              <ul id={s.sthrowsInputList} className={s.statblockList}>
-                {savingThrows.map((throwItem, index) => (
-                  <li key={`${throwItem}-${index}`}>
-                    {throwItem}
-                    <button 
-                      type="button" 
-                      onClick={() => removeItem('savingThrows', index)}
-                      className={s.removeButton}
-                    >
-                      ×
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </td>
+            <button 
+              type="button" 
+              onClick={addSavingThrow}
+              className={s.propertiesPanel__button}
+            >
+              {t.proficient}
+            </button>
+          </div>
+          <ul className={s.propertiesPanel__list}>
+            {savingThrows.map((throwItem, index) => (
+              <li key={`${throwItem}-${index}`} className={s.propertiesPanel__listItem}>
+                <span>{throwItem}</span>
+                <button 
+                  type="button" 
+                  onClick={() => removeItem('savingThrows', index)}
+                  className={s.propertiesPanel__removeButton}
+                  aria-label={t.remove}
+                >
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-          {/* Skills Column */}
-          <td id={s.skillsForm}>
-            <label htmlFor="skills-input">Skills:</label><br />
+        {/* Skills Section */}
+        <div className={s.propertiesPanel__section}>
+          <h3 className={s.propertiesPanel__sectionTitle}>{t.skills}</h3>
+          <div className={s.propertiesPanel__controls}>
             <select
-              id="skills-input"
               value={selectedSkill}
               onChange={(e) => setSelectedSkill(e.target.value)}
+              className={s.propertiesPanel__select}
             >
               {skillOptions.map(option => (
                 <option key={option.value} value={option.value}>
@@ -159,33 +193,48 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
                 </option>
               ))}
             </select>
-            <button type="button" onClick={() => addSkill('proficient')}>Proficient</button>
-            <button type="button" onClick={() => addSkill('expert')}>Expert</button>
-            <div id={s.skillsInputSection}>
-              <ul id={s.skillsInputList} className={s.statblockList}>
-                {skills.map((skill, index) => (
-                  <li key={`${skill}-${index}`}>
-                    {skill}
-                    <button 
-                      type="button" 
-                      onClick={() => removeItem('skills', index)}
-                      className={s.removeButton}
-                    >
-                      ×
-                    </button>
-                  </li>
-                ))}
-              </ul>
+            <div className={s.propertiesPanel__buttonGroup}>
+              <button 
+                type="button" 
+                onClick={() => addSkill('proficient')}
+                className={s.propertiesPanel__button}
+              >
+                {t.proficient}
+              </button>
+              <button 
+                type="button" 
+                onClick={() => addSkill('expert')}
+                className={s.propertiesPanel__button}
+              >
+                {t.expert}
+              </button>
             </div>
-          </td>
+          </div>
+          <ul className={s.propertiesPanel__list}>
+            {skills.map((skill, index) => (
+              <li key={`${skill}-${index}`} className={s.propertiesPanel__listItem}>
+                <span>{skill}</span>
+                <button 
+                  type="button" 
+                  onClick={() => removeItem('skills', index)}
+                  className={s.propertiesPanel__removeButton}
+                  aria-label={t.remove}
+                >
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-          {/* Condition Immunities Column */}
-          <td id={s.conditionsForm}>
-            <label htmlFor="conditions-input">Condition Immunities:</label><br />
+        {/* Condition Immunities Section */}
+        <div className={s.propertiesPanel__section}>
+          <h3 className={s.propertiesPanel__sectionTitle}>{t.conditionImmunities}</h3>
+          <div className={s.propertiesPanel__controls}>
             <select
-              id="conditions-input"
               value={selectedCondition}
               onChange={(e) => setSelectedCondition(e.target.value)}
+              className={s.propertiesPanel__select}
             >
               {conditionOptions.map(option => (
                 <option key={option.value} value={option.value}>
@@ -193,26 +242,31 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
                 </option>
               ))}
             </select>
-            <button type="button" onClick={addConditionImmunity}>Immune</button>
-            <div id={s.conditionsInputSection}>
-              <ul id={s.conditionsInputList} className={s.statblockList}>
-                {conditionImmunities.map((condition, index) => (
-                  <li key={`${condition}-${index}`}>
-                    {condition}
-                    <button 
-                      type="button" 
-                      onClick={() => removeItem('conditionImmunities', index)}
-                      className={s.removeButton}
-                    >
-                      ×
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <button 
+              type="button" 
+              onClick={addConditionImmunity}
+              className={s.propertiesPanel__button}
+            >
+              {t.immune}
+            </button>
+          </div>
+          <ul className={s.propertiesPanel__list}>
+            {conditionImmunities.map((condition, index) => (
+              <li key={`${condition}-${index}`} className={s.propertiesPanel__listItem}>
+                <span>{condition}</span>
+                <button 
+                  type="button" 
+                  onClick={() => removeItem('conditionImmunities', index)}
+                  className={s.propertiesPanel__removeButton}
+                  aria-label={t.remove}
+                >
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 };
