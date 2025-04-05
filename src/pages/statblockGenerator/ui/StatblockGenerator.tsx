@@ -6,6 +6,7 @@ import { MonsterStatsForm } from './monsterStatsForm'
 import { PropertiesListsForm } from './propertiesListsForm'
 import { DamageLanguagesForm } from './damageLanguagesForm'
 import { SensesForm } from './sensesForm'
+import { PromptSection } from './promptSection'
 import s from './StatblockGenerator.module.scss';
 
 export const StatblockGenerator = () => {
@@ -13,6 +14,7 @@ export const StatblockGenerator = () => {
   return (
     <div className={s.statblockGeneratorContainer}>
       <div className={s.statblockGeneratorPanel}>
+        <PromptSection language="ru"/> 
         <ActualStatblock  /> 
         <TypeForm language="ru" />
         <ArmorHitdiceForm language="ru" />
