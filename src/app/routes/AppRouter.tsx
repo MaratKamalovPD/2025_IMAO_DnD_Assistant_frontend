@@ -6,6 +6,7 @@ import { EncounterTracker } from 'pages/encounterTracker';
 import { Login } from 'pages/login';
 import { Main } from 'pages/main';
 import { TestPage } from 'pages/test';
+import { StatblockGenerator} from 'pages/statblockGenerator';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,14 @@ const router = createBrowserRouter([
       </HeaderProviders>
     ),
   },
+  {
+    path: 'statblock_generator',
+    element: (
+      <HeaderProviders>
+        <StatblockGenerator />
+      </HeaderProviders>
+    ),
+  }
 ]);
 
 export const AppRouter = () => {

@@ -1,0 +1,49 @@
+.armorHitDiceForm {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+  
+    td {
+      padding: 5px;
+      vertical-align: top;
+    }
+  
+    label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #333;
+      display: block;
+    }
+  
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 5px;
+      margin-top: 3px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+  
+    input[type="checkbox"] {
+      margin-left: 5px;
+    }
+  
+    select {
+      min-width: 120px;
+    }
+  
+    .boxNote {
+      font-size: 11px;
+      color: #666;
+      margin-top: 3px;
+    }
+  
+    #hpTextInput {
+      &[disabled] {
+        background-color: #f0f0f0;
+        cursor: not-allowed;
+      }
+    }
+  }

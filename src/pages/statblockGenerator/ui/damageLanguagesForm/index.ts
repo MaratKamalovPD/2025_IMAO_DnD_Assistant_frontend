@@ -1,0 +1,1 @@
+export { DamageLanguagesForm } from './DamageLanguagesForm';

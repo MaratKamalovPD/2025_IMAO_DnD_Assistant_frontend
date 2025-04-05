@@ -1,0 +1,49 @@
+.monsterSpeedForm {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+  
+    td {
+      padding: 5px;
+      vertical-align: top;
+    }
+  
+    .normalSpeedCol {
+      width: 16%;
+    }
+  
+    .customSpeedCol {
+      width: 66%;
+    }
+  
+    label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #333;
+      display: block;
+    }
+  
+    input[type="number"],
+    input[type="text"] {
+      width: 60px;
+      padding: 5px;
+      margin-top: 3px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+  
+    #custom-speed-prompt {
+      width: 200px;
+    }
+  
+    input[type="checkbox"] {
+      margin-left: 5px;
+    }
+  
+    .boxNote {
+      font-size: 11px;
+      color: #666;
+      margin-top: 3px;
+    }
+  }

@@ -1,0 +1,28 @@
+.monsterStatsForm {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+  
+    td {
+      padding: 5px;
+      text-align: center;
+      vertical-align: top;
+    }
+  
+    label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #333;
+      display: block;
+    }
+  
+    input[type="number"] {
+      width: 40px;
+      padding: 5px;
+      margin: 3px 0;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 13px;
+      text-align: center;
+    }
+  }

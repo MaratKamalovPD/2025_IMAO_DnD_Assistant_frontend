@@ -1,0 +1,35 @@
+.typeForm {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+  
+    td {
+      padding: 5px;
+      vertical-align: top;
+    }
+  
+    label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #333;
+      display: block;
+    }
+  
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 5px;
+      margin-top: 3px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+  
+    select {
+      min-width: 120px;
+    }
+  
+    #otherTypeInput {
+      margin-top: 5px;
+    }
+  }
