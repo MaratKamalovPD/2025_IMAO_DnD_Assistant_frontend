@@ -30,12 +30,20 @@ const BestiaryContent = () => {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [filters, setFilters] = useState<Filters>({});
+  const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
 
   const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
   const setStartThrottled = throttle(setStart, THROTTLE_TIME);
 
   const handleFilterChange = useCallback((newFilters: Filters) => {
     setFilters(newFilters);
+  }, []);
+
+  const handleToggleCollapse = useCallback((category: string) => {
+    setCollapsedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
   }, []);
 
   const { viewMode, alphabetSort, ratingSort } = useViewSettings();
@@ -142,7 +150,12 @@ const BestiaryContent = () => {
                 <Icon20Cancel />
               </div>
             </div>
-            <FilterModalWindow onFilterChange={handleFilterChange} selectedFilters={filters} />
+            <FilterModalWindow 
+              onFilterChange={handleFilterChange} 
+              selectedFilters={filters}
+              collapsedCategories={collapsedCategories}
+              onToggleCollapse={handleToggleCollapse}
+            />
           </div>
         </div>
       )}

@@ -8,9 +8,16 @@ import s from './FilterModalWindow.module.scss';
 type FilterModalWindowProps = {
   onFilterChange: (filters: Filters) => void;
   selectedFilters: Filters;
+  collapsedCategories: Record<string, boolean>;
+  onToggleCollapse: (category: string) => void;
 };
 
-export const FilterModalWindow = ({ onFilterChange, selectedFilters }: FilterModalWindowProps) => {
+export const FilterModalWindow = ({
+  onFilterChange,
+  selectedFilters,
+  collapsedCategories,
+  onToggleCollapse,
+}: FilterModalWindowProps) => {
   const [selected, setSelected] = useState<Filters>(selectedFilters);
 
   useEffect(() => {
@@ -21,36 +28,22 @@ export const FilterModalWindow = ({ onFilterChange, selectedFilters }: FilterMod
     (category: string, item: string) => {
       setSelected((prev) => {
         const updatedCategory = prev[category]?.includes(item)
-          ? prev[category].filter((i) => i !== item) // Удаляем, если уже выбран
-          : [...(prev[category] || []), item]; // Добавляем, если не выбран
+          ? prev[category].filter((i) => i !== item)
+          : [...(prev[category] || []), item];
 
         const newSelected = { ...prev, [category]: updatedCategory };
-
         onFilterChange(newSelected);
-
         return newSelected;
       });
     },
     [setSelected, onFilterChange],
   );
 
-  const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
-
-  const toggleCollapse = useCallback(
-    (category: string) => {
-      setCollapsedCategories((prev) => ({
-        ...prev,
-        [category]: !prev[category],
-      }));
-    },
-    [setCollapsedCategories],
-  );
-
   return (
     <div className={s.categoriesList}>
       {Object.entries(CATEGORIES).map(([category, items]) => (
         <div key={category} className={s.filtersContainer}>
-          <div className={s.filtersContainer__header} onClick={() => toggleCollapse(category)}>
+          <div className={s.filtersContainer__header} onClick={() => onToggleCollapse(category)}>
             <h2 className={s.filtersContainer__title}>{category}</h2>
             <button className={s.dropdownBtn}>
               <Icon20ChevronUp
