@@ -4,7 +4,8 @@ import { PropertiesListsFormProps, ProficiencyType } from 'pages/statblockGenera
 import { 
   getSavingThrowOptions, 
   getSkillOptions, 
-  getConditionOptions 
+  getConditionOptions,
+  getExpertSuffix
 } from 'pages/statblockGenerator/lib';
 import { PropertySection } from 'pages/statblockGenerator/ui/propertiesListsForm/propertySection';
 import s from './PropertiesListsForm.module.scss';
@@ -34,16 +35,27 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
     }
   };
 
-  const addSkill = (proficiency: ProficiencyType = 'proficient') => {
+  const addSkill = (proficiency: ProficiencyType) => {
     const selected = skillOptions.find(opt => opt.value === selectedSkill);
-    if (selected) {
-      const skillText = proficiency === 'expert' 
-        ? `${selected.label} (${language === 'ru' ? 'эксперт' : 'ex'})`
-        : selected.label;
-      if (!skills.includes(skillText)) {
-        setSkills([...skills, skillText]);
-      }
+    if (!selected) return;
+
+    const expertSuffix = getExpertSuffix(language);
+    const expertText = `${selected.label}${expertSuffix}`;
+    const baseText = selected.label;
+
+    const existingIndex = skills.findIndex(skill => 
+      skill === baseText || skill === expertText
+    );
+
+    let newSkills = [...skills];
+    
+    if (existingIndex >= 0) {
+      newSkills[existingIndex] = proficiency === 'expert' ? expertText : baseText;
+    } else {
+      newSkills.push(proficiency === 'expert' ? expertText : baseText);
     }
+
+    setSkills(newSkills);
   };
 
   const addConditionImmunity = () => {
@@ -55,6 +67,28 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
 
   const removeItem = (list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, index: number) => {
     setList(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const getSelectedSkillLabel = () => {
+    return skillOptions.find(opt => opt.value === selectedSkill)?.label || '';
+  };
+
+  const isSkillExpert = (skillName: string) => {
+    const expertSuffix = getExpertSuffix(language);
+    return skillName.endsWith(expertSuffix);
+  };
+
+  const getCurrentProficiency = () => {
+    const selected = skillOptions.find(opt => opt.value === selectedSkill);
+    if (!selected) return null;
+
+    const skillText = selected.label;
+    const existingSkill = skills.find(skill => 
+      skill === skillText || skill.startsWith(`${skillText} (`)
+    );
+
+    if (!existingSkill) return null;
+    return isSkillExpert(existingSkill) ? 'expert' : 'proficient';
   };
 
   return (
@@ -81,7 +115,7 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
           selectedValue={selectedSkill}
           options={skillOptions}
           onSelectChange={setSelectedSkill}
-          onAddItem={() => addSkill('proficient')}
+          onAddItem={(prof) => addSkill(prof || 'proficient')}
           items={skills}
           onRemoveItem={(index) => removeItem(skills, setSkills, index)}
           buttonText={t.proficient}
@@ -90,6 +124,10 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
             text: t.expert,
             onClick: () => addSkill('expert')
           }}
+          language={language}
+          isSkillsSection={true}
+          selectedSkillLabel={getSelectedSkillLabel()}
+          currentProficiency={getCurrentProficiency()}
         />
 
         <PropertySection

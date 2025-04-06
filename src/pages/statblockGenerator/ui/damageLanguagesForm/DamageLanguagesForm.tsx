@@ -49,26 +49,44 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
   };
 
   const addDamageType = (type: DamageListType) => {
-    const damageType = selectedDamageType === '*' ? otherDamageType : 
-      damageTypeOptions.find(opt => opt.value === selectedDamageType)?.label || selectedDamageType;
+    const damageType = selectedDamageType === '*' 
+      ? otherDamageType 
+      : damageTypeOptions.find(opt => opt.value === selectedDamageType)?.label || selectedDamageType;
     
     if (!damageType) return;
-
-    const setterMap = {
-      vulnerabilities: setDamageVulnerabilities,
-      resistances: setDamageResistances,
-      immunities: setDamageImmunities
+  
+    const newVulnerabilities = [...damageVulnerabilities];
+    const newResistances = [...damageResistances];
+    const newImmunities = [...damageImmunities];
+  
+    const removeFromAllLists = () => {
+      const indexV = newVulnerabilities.indexOf(damageType);
+      if (indexV > -1) newVulnerabilities.splice(indexV, 1);
+      
+      const indexR = newResistances.indexOf(damageType);
+      if (indexR > -1) newResistances.splice(indexR, 1);
+      
+      const indexI = newImmunities.indexOf(damageType);
+      if (indexI > -1) newImmunities.splice(indexI, 1);
     };
-
-    const currentList = {
-      vulnerabilities: damageVulnerabilities,
-      resistances: damageResistances,
-      immunities: damageImmunities
-    }[type];
-
-    if (!currentList.includes(damageType)) {
-      setterMap[type](prev => [...prev, damageType]);
+  
+    removeFromAllLists();
+  
+    switch (type) {
+      case 'vulnerabilities':
+        newVulnerabilities.push(damageType);
+        break;
+      case 'resistances':
+        newResistances.push(damageType);
+        break;
+      case 'immunities':
+        newImmunities.push(damageType);
+        break;
     }
+  
+    setDamageVulnerabilities(newVulnerabilities);
+    setDamageResistances(newResistances);
+    setDamageImmunities(newImmunities);
   };
 
   const removeDamageType = (type: DamageListType, index: number) => {
@@ -142,21 +160,39 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
             <button 
               type="button" 
               onClick={() => addDamageType('vulnerabilities')}
-              className={s.damageLanguagesPanel__button}
+              className={`${s.damageLanguagesPanel__button} ${
+                damageVulnerabilities.includes(
+                  selectedDamageType === '*' 
+                    ? otherDamageType 
+                    : damageTypeOptions.find(opt => opt.value === selectedDamageType)?.label || selectedDamageType
+                ) ? s.damageLanguagesPanel__buttonActive : ''
+              }`}
             >
               {t.vulnerabilities}
             </button>
             <button 
               type="button" 
               onClick={() => addDamageType('resistances')}
-              className={s.damageLanguagesPanel__button}
+              className={`${s.damageLanguagesPanel__button} ${
+                damageResistances.includes(
+                  selectedDamageType === '*' 
+                    ? otherDamageType 
+                    : damageTypeOptions.find(opt => opt.value === selectedDamageType)?.label || selectedDamageType
+                ) ? s.damageLanguagesPanel__buttonActive : ''
+              }`}
             >
               {t.resistances}
             </button>
             <button 
               type="button" 
               onClick={() => addDamageType('immunities')}
-              className={s.damageLanguagesPanel__button}
+              className={`${s.damageLanguagesPanel__button} ${
+                damageImmunities.includes(
+                  selectedDamageType === '*' 
+                    ? otherDamageType 
+                    : damageTypeOptions.find(opt => opt.value === selectedDamageType)?.label || selectedDamageType
+                ) ? s.damageLanguagesPanel__buttonActive : ''
+              }`}
             >
               {t.immunities}
             </button>
