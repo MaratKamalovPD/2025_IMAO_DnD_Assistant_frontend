@@ -1,0 +1,1 @@
+export { DamageLanguageSection } from './DamageLanguageSection';

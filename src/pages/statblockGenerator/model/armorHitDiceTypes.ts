@@ -18,7 +18,3 @@ export interface ArmorHitDiceFormState {
   otherArmor: string;
 }
 
-export interface ArmorOption {
-  value: string;
-  label: string;
-}

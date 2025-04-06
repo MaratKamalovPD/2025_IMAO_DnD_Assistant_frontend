@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArmorHitDiceLocalization } from 'pages/statblockGenerator/lib';
-import { ArmorHitDiceFormProps, ArmorHitDiceFormState, ArmorOption } from 'pages/statblockGenerator/model';
+import { ArmorHitDiceFormProps, ArmorHitDiceFormState, SelectOption } from 'pages/statblockGenerator/model';
 import { DefenseSection } from 'pages/statblockGenerator/ui/armorHitdiceForm/defenseSection';
 import { InputGroup } from 'pages/statblockGenerator/ui/armorHitdiceForm/inputGroup';
 import s from './ArmorHitdiceForm.module.scss';
@@ -26,7 +26,7 @@ export const ArmorHitdiceForm: React.FC<ArmorHitDiceFormProps> = ({
   const showNatArmor = state.armorType === 'natural armor';
   const showOtherArmor = state.armorType === 'other';
 
-  const armorOptions: ArmorOption[] = [
+  const armorOptions: SelectOption[] = [
     { value: 'none', label: t.armorTypes.none },
     { value: 'natural armor', label: t.armorTypes.natural },
     { value: 'mage armor', label: t.armorTypes.mage },

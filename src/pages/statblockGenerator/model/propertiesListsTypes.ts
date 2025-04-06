@@ -7,9 +7,4 @@ export interface PropertiesListsFormProps {
   language?: Language;
 }
 
-export interface SelectOption {
-  value: string;
-  label: string;
-}
-
 export type ProficiencyType = 'proficient' | 'expert';

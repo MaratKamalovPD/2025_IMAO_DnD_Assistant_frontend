@@ -1,50 +1,17 @@
 import React, { useState } from 'react';
-import { Language } from 'shared/lib';
+import { DamageLanguagesLocalization } from 'pages/statblockGenerator/lib';
+import { 
+  DamageLanguagesFormProps, 
+  DamageListType 
+} from 'pages/statblockGenerator/model';
+import {
+  getDamageTypeOptions, 
+  getLanguageOptions,
+  getUnderstandsSuffix
+} from 'pages/statblockGenerator/lib';
+import { DamageLanguageSection } from 'pages/statblockGenerator/ui/damageLanguagesForm/damageLanguageSection';
+import { ListGroup } from 'pages/statblockGenerator/ui/damageLanguagesForm/listGroup';
 import s from './DamageLanguagesForm.module.scss';
-
-interface DamageLanguagesFormProps {
-  initialDamageVulnerabilities?: string[];
-  initialDamageResistances?: string[];
-  initialDamageImmunities?: string[];
-  initialLanguages?: string[];
-  initialTelepathy?: number;
-  language?: Language;
-}
-
-const localization = {
-  en: {
-    title: 'Damage & Languages',
-    damageTypes: 'Damage Types',
-    vulnerabilities: 'Vulnerable',
-    resistances: 'Resistant',
-    immunities: 'Immune',
-    customDamagePlaceholder: 'Enter damage type',
-    languages: 'Languages',
-    telepathy: 'Telepathy',
-    speaks: 'Speaks',
-    understands: 'Understands',
-    understandsBut: 'but cannot speak',
-    addLanguage: 'Add Language',
-    remove: 'Remove',
-    units: 'ft.'
-  },
-  ru: {
-    title: 'Уязвимости и языки',
-    damageTypes: 'Типы урона',
-    vulnerabilities: 'Уязвим',
-    resistances: 'Устойчив',
-    immunities: 'Иммунен',
-    customDamagePlaceholder: 'Введите тип урона',
-    languages: 'Языки',
-    telepathy: 'Телепатия',
-    speaks: 'Говорит',
-    understands: 'Понимает',
-    understandsBut: 'но не говорит',
-    addLanguage: 'Добавить язык',
-    remove: 'Удалить',
-    units: 'фт.'
-  }
-};
 
 export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
   initialDamageVulnerabilities = [],
@@ -54,7 +21,7 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
   initialTelepathy = 0,
   language = 'en'
 }) => {
-  const t = localization[language];
+  const t = DamageLanguagesLocalization[language];
   
   // Damage types state
   const [selectedDamageType, setSelectedDamageType] = useState<string>('acid');
@@ -72,61 +39,8 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
   const [understandsBut, setUnderstandsBut] = useState<string>(t.understandsBut);
   const [languages, setLanguages] = useState<string[]>(initialLanguages);
 
-  // Damage type options with localization
-  const damageTypeOptions = [
-    { value: 'acid', label: language === 'ru' ? 'Кислота' : 'Acid' },
-    { value: 'bludgeoning', label: language === 'ru' ? 'Дробящий' : 'Bludgeoning' },
-    { value: 'cold', label: language === 'ru' ? 'Холод' : 'Cold' },
-    { value: 'fire', label: language === 'ru' ? 'Огонь' : 'Fire' },
-    { value: 'force', label: language === 'ru' ? 'Силовое' : 'Force' },
-    { value: 'lightning', label: language === 'ru' ? 'Молния' : 'Lightning' },
-    { value: 'necrotic', label: language === 'ru' ? 'Некротический' : 'Necrotic' },
-    { value: 'piercing', label: language === 'ru' ? 'Колющий' : 'Piercing' },
-    { value: 'poison', label: language === 'ru' ? 'Яд' : 'Poison' },
-    { value: 'psychic', label: language === 'ru' ? 'Психический' : 'Psychic' },
-    { value: 'radiant', label: language === 'ru' ? 'Излучение' : 'Radiant' },
-    { value: 'slashing', label: language === 'ru' ? 'Режущий' : 'Slashing' },
-    { value: 'thunder', label: language === 'ru' ? 'Гром' : 'Thunder' },
-    { 
-      value: 'bludgeoning, piercing, and slashing from nonmagical attacks', 
-      label: language === 'ru' ? 'Немагические атаки' : 'Nonmagical Attacks' 
-    },
-    { 
-      value: "bludgeoning, piercing, and slashing from nonmagical attacks that aren't silvered", 
-      label: language === 'ru' ? 'Несеребряные атаки' : 'Non-Silvered Attacks' 
-    },
-    { 
-      value: "bludgeoning, piercing, and slashing from nonmagical attacks that aren't adamantine", 
-      label: language === 'ru' ? 'Неадамантиновые атаки' : 'Non-Adamantine Attacks' 
-    },
-    { value: '*', label: language === 'ru' ? 'Другое' : 'Other' }
-  ];
-
-  // Language options with localization
-  const languageOptions = [
-    { value: 'All', label: language === 'ru' ? 'Все' : 'All' },
-    { value: 'Abyssal', label: 'Abyssal' },
-    { value: 'Aquan', label: 'Aquan' },
-    { value: 'Auran', label: 'Auran' },
-    { value: 'Celestial', label: language === 'ru' ? 'Небесный' : 'Celestial' },
-    { value: 'Common', label: language === 'ru' ? 'Общий' : 'Common' },
-    { value: 'Deep Speech', label: language === 'ru' ? 'Глубокая речь' : 'Deep Speech' },
-    { value: 'Draconic', label: language === 'ru' ? 'Драконий' : 'Draconic' },
-    { value: 'Dwarvish', label: language === 'ru' ? 'Дварфийский' : 'Dwarvish' },
-    { value: 'Elvish', label: language === 'ru' ? 'Эльфийский' : 'Elvish' },
-    { value: 'Giant', label: language === 'ru' ? 'Великанский' : 'Giant' },
-    { value: 'Gnomish', label: language === 'ru' ? 'Гномий' : 'Gnomish' },
-    { value: 'Goblin', label: language === 'ru' ? 'Гоблинский' : 'Goblin' },
-    { value: 'Halfling', label: language === 'ru' ? 'Полуросликов' : 'Halfling' },
-    { value: 'Ignan', label: 'Ignan' },
-    { value: 'Infernal', label: language === 'ru' ? 'Инфернальный' : 'Infernal' },
-    { value: 'Orc', label: language === 'ru' ? 'Орочий' : 'Orc' },
-    { value: 'Primordial', label: language === 'ru' ? 'Первобытный' : 'Primordial' },
-    { value: 'Sylvan', label: language === 'ru' ? 'Лесной' : 'Sylvan' },
-    { value: 'Terran', label: 'Terran' },
-    { value: 'Undercommon', label: language === 'ru' ? 'Подземный' : 'Undercommon' },
-    { value: '*', label: language === 'ru' ? 'Другой' : 'Other' }
-  ];
+  const damageTypeOptions = getDamageTypeOptions(language);
+  const languageOptions = getLanguageOptions(language);
 
   const handleDamageTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
@@ -134,43 +48,36 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
     setShowOtherDamage(value === '*');
   };
 
-  const addDamageType = (type: 'v' | 'r' | 'i') => {
+  const addDamageType = (type: DamageListType) => {
     const damageType = selectedDamageType === '*' ? otherDamageType : 
       damageTypeOptions.find(opt => opt.value === selectedDamageType)?.label || selectedDamageType;
     
     if (!damageType) return;
 
-    switch (type) {
-      case 'v':
-        if (!damageVulnerabilities.includes(damageType)) {
-          setDamageVulnerabilities([...damageVulnerabilities, damageType]);
-        }
-        break;
-      case 'r':
-        if (!damageResistances.includes(damageType)) {
-          setDamageResistances([...damageResistances, damageType]);
-        }
-        break;
-      case 'i':
-        if (!damageImmunities.includes(damageType)) {
-          setDamageImmunities([...damageImmunities, damageType]);
-        }
-        break;
+    const setterMap = {
+      vulnerabilities: setDamageVulnerabilities,
+      resistances: setDamageResistances,
+      immunities: setDamageImmunities
+    };
+
+    const currentList = {
+      vulnerabilities: damageVulnerabilities,
+      resistances: damageResistances,
+      immunities: damageImmunities
+    }[type];
+
+    if (!currentList.includes(damageType)) {
+      setterMap[type](prev => [...prev, damageType]);
     }
   };
 
-  const removeDamageType = (list: 'vulnerabilities' | 'resistances' | 'immunities', index: number) => {
-    switch (list) {
-      case 'vulnerabilities':
-        setDamageVulnerabilities(damageVulnerabilities.filter((_, i) => i !== index));
-        break;
-      case 'resistances':
-        setDamageResistances(damageResistances.filter((_, i) => i !== index));
-        break;
-      case 'immunities':
-        setDamageImmunities(damageImmunities.filter((_, i) => i !== index));
-        break;
-    }
+  const removeDamageType = (type: DamageListType, index: number) => {
+    const setterMap = {
+      vulnerabilities: setDamageVulnerabilities,
+      resistances: setDamageResistances,
+      immunities: setDamageImmunities
+    };
+    setterMap[type](prev => prev.filter((_, i) => i !== index));
   };
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -186,7 +93,7 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
     if (!languageText) return;
 
     if (!speaks) {
-      languageText = `${languageText} (${language === 'ru' ? 'понимает, но' : 'understands but'} ${understandsBut})`;
+      languageText += getUnderstandsSuffix(language, understandsBut);
     }
 
     if (!languages.includes(languageText)) {
@@ -195,7 +102,7 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
   };
 
   const removeLanguage = (index: number) => {
-    setLanguages(languages.filter((_, i) => i !== index));
+    setLanguages(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -206,9 +113,7 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
 
       <div className={s.damageLanguagesPanel__sections}>
         {/* Damage Types Section */}
-        <div className={s.damageLanguagesPanel__section}>
-          <h3 className={s.damageLanguagesPanel__sectionTitle}>{t.damageTypes}</h3>
-          
+        <DamageLanguageSection title={t.damageTypes}>
           <div className={s.damageLanguagesPanel__controls}>
             <select
               value={selectedDamageType}
@@ -236,21 +141,21 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
           <div className={s.damageLanguagesPanel__buttons}>
             <button 
               type="button" 
-              onClick={() => addDamageType('v')}
+              onClick={() => addDamageType('vulnerabilities')}
               className={s.damageLanguagesPanel__button}
             >
               {t.vulnerabilities}
             </button>
             <button 
               type="button" 
-              onClick={() => addDamageType('r')}
+              onClick={() => addDamageType('resistances')}
               className={s.damageLanguagesPanel__button}
             >
               {t.resistances}
             </button>
             <button 
               type="button" 
-              onClick={() => addDamageType('i')}
+              onClick={() => addDamageType('immunities')}
               className={s.damageLanguagesPanel__button}
             >
               {t.immunities}
@@ -259,80 +164,36 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
 
           <div className={s.damageLanguagesPanel__lists}>
             {damageVulnerabilities.length > 0 && (
-              <div className={s.damageLanguagesPanel__listGroup}>
-                <h4 className={s.damageLanguagesPanel__listHeader}>
-                  {language === 'ru' ? 'Уязвимости' : 'Vulnerabilities'}
-                </h4>
-                <ul className={s.damageLanguagesPanel__list}>
-                  {damageVulnerabilities.map((item, index) => (
-                    <li key={`v-${index}`} className={s.damageLanguagesPanel__listItem}>
-                      <span>{item}</span>
-                      <button 
-                        type="button" 
-                        onClick={() => removeDamageType('vulnerabilities', index)}
-                        className={s.damageLanguagesPanel__removeButton}
-                        aria-label={t.remove}
-                      >
-                        ×
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ListGroup
+                title={t.vulnerabilitiesTitle}
+                items={damageVulnerabilities}
+                onRemove={(index) => removeDamageType('vulnerabilities', index)}
+                removeText={t.remove}
+              />
             )}
 
             {damageResistances.length > 0 && (
-              <div className={s.damageLanguagesPanel__listGroup}>
-                <h4 className={s.damageLanguagesPanel__listHeader}>
-                  {language === 'ru' ? 'Устойчивости' : 'Resistances'}
-                </h4>
-                <ul className={s.damageLanguagesPanel__list}>
-                  {damageResistances.map((item, index) => (
-                    <li key={`r-${index}`} className={s.damageLanguagesPanel__listItem}>
-                      <span>{item}</span>
-                      <button 
-                        type="button" 
-                        onClick={() => removeDamageType('resistances', index)}
-                        className={s.damageLanguagesPanel__removeButton}
-                        aria-label={t.remove}
-                      >
-                        ×
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ListGroup
+                title={t.resistancesTitle}
+                items={damageResistances}
+                onRemove={(index) => removeDamageType('resistances', index)}
+                removeText={t.remove}
+              />
             )}
 
             {damageImmunities.length > 0 && (
-              <div className={s.damageLanguagesPanel__listGroup}>
-                <h4 className={s.damageLanguagesPanel__listHeader}>
-                  {language === 'ru' ? 'Иммунитеты' : 'Immunities'}
-                </h4>
-                <ul className={s.damageLanguagesPanel__list}>
-                  {damageImmunities.map((item, index) => (
-                    <li key={`i-${index}`} className={s.damageLanguagesPanel__listItem}>
-                      <span>{item}</span>
-                      <button 
-                        type="button" 
-                        onClick={() => removeDamageType('immunities', index)}
-                        className={s.damageLanguagesPanel__removeButton}
-                        aria-label={t.remove}
-                      >
-                        ×
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ListGroup
+                title={t.immunitiesTitle}
+                items={damageImmunities}
+                onRemove={(index) => removeDamageType('immunities', index)}
+                removeText={t.remove}
+              />
             )}
           </div>
-        </div>
+        </DamageLanguageSection>
 
         {/* Languages Section */}
-        <div className={s.damageLanguagesPanel__section}>
-          <h3 className={s.damageLanguagesPanel__sectionTitle}>{t.languages}</h3>
-          
+        <DamageLanguageSection title={t.languages}>
           <div className={s.damageLanguagesPanel__controls}>
             <select
               value={selectedLanguage}
@@ -404,47 +265,23 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
 
           <div className={s.damageLanguagesPanel__lists}>
             {telepathy > 0 && (
-              <div className={s.damageLanguagesPanel__listGroup}>
-                <ul className={s.damageLanguagesPanel__list}>
-                  <li className={s.damageLanguagesPanel__listItem}>
-                    {t.telepathy} {telepathy} {t.units}
-                    <button 
-                      type="button" 
-                      onClick={() => setTelepathy(0)}
-                      className={s.damageLanguagesPanel__removeButton}
-                      aria-label={t.remove}
-                    >
-                      ×
-                    </button>
-                  </li>
-                </ul>
-              </div>
+              <ListGroup
+                items={[`${t.telepathy} ${telepathy} ${t.units}`]}
+                onRemove={() => setTelepathy(0)}
+                removeText={t.remove}
+              />
             )}
 
             {languages.length > 0 && (
-              <div className={s.damageLanguagesPanel__listGroup}>
-                <h4 className={s.damageLanguagesPanel__listHeader}>
-                  {language === 'ru' ? 'Известные языки' : 'Known Languages'}
-                </h4>
-                <ul className={s.damageLanguagesPanel__list}>
-                  {languages.map((item, index) => (
-                    <li key={`lang-${index}`} className={s.damageLanguagesPanel__listItem}>
-                      <span>{item}</span>
-                      <button 
-                        type="button" 
-                        onClick={() => removeLanguage(index)}
-                        className={s.damageLanguagesPanel__removeButton}
-                        aria-label={t.remove}
-                      >
-                        ×
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ListGroup
+                title={t.knownLanguages}
+                items={languages}
+                onRemove={removeLanguage}
+                removeText={t.remove}
+              />
             )}
           </div>
-        </div>
+        </DamageLanguageSection>
       </div>
     </div>
   );
