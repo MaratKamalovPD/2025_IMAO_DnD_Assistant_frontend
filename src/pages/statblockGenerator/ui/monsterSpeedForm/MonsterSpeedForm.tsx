@@ -3,6 +3,7 @@ import { MonsterSpeedLocalization } from 'pages/statblockGenerator/lib';
 import { MonsterSpeedFormProps, MonsterSpeedFormState } from 'pages/statblockGenerator/model';
 import { SpeedInput } from 'pages/statblockGenerator/ui/monsterSpeedForm/speedInput';
 import { ToggleSwitch } from 'pages/statblockGenerator/ui/monsterSpeedForm/toggleSwitch';
+import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel'
 import s from './MonsterSpeedForm.module.scss';
 
 export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
@@ -33,11 +34,7 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
     };
 
   return (
-    <div className={s.movementPanel}>
-      <div className={s.movementPanel__titleContainer}>
-        <h2 className={s.movementPanel__title}>{t.title}</h2>
-      </div>
-
+    <CollapsiblePanel title={t.title}>
       <div className={s.movementPanel__controls}>
         <ToggleSwitch
           label={t.customSpeed}
@@ -112,6 +109,6 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </CollapsiblePanel>
   );
 };

@@ -11,6 +11,7 @@ import {
 } from 'pages/statblockGenerator/lib';
 import { DamageLanguageSection } from 'pages/statblockGenerator/ui/damageLanguagesForm/damageLanguageSection';
 import { ListGroup } from 'pages/statblockGenerator/ui/damageLanguagesForm/listGroup';
+import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel'
 import s from './DamageLanguagesForm.module.scss';
 
 export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
@@ -124,11 +125,7 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
   };
 
   return (
-    <div className={s.damageLanguagesPanel}>
-      <div className={s.damageLanguagesPanel__titleContainer}>
-        <h2 className={s.damageLanguagesPanel__title}>{t.title}</h2>
-      </div>
-
+    <CollapsiblePanel title={t.title}>
       <div className={s.damageLanguagesPanel__sections}>
         {/* Damage Types Section */}
         <DamageLanguageSection title={t.damageTypes}>
@@ -319,6 +316,6 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
           </div>
         </DamageLanguageSection>
       </div>
-    </div>
+    </CollapsiblePanel>
   );
 };

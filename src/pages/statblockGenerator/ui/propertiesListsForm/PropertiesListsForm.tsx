@@ -8,6 +8,7 @@ import {
   getExpertSuffix
 } from 'pages/statblockGenerator/lib';
 import { PropertySection } from 'pages/statblockGenerator/ui/propertiesListsForm/propertySection';
+import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel'
 import s from './PropertiesListsForm.module.scss';
 
 export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
@@ -92,12 +93,8 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
   };
 
   return (
-    <div className={s.propertiesPanel}>
-      <div className={s.propertiesPanel__titleContainer}>
-        <h2 className={s.propertiesPanel__title}>{t.title}</h2>
-      </div>
-
-      <div className={s.propertiesPanel__sections}>
+    <CollapsiblePanel title={t.title}>
+    <div className={s.propertiesPanel__sections}>
         <PropertySection
           title={t.savingThrows}
           selectedValue={selectedSthrow}
@@ -142,6 +139,7 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
           removeText={t.remove}
         />
       </div>
-    </div>
+    </CollapsiblePanel>
+
   );
 };

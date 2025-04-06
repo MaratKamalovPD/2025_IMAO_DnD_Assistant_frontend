@@ -3,6 +3,7 @@ import { ArmorHitDiceLocalization } from 'pages/statblockGenerator/lib';
 import { ArmorHitDiceFormProps, ArmorHitDiceFormState, SelectOption } from 'pages/statblockGenerator/model';
 import { DefenseSection } from 'pages/statblockGenerator/ui/armorHitdiceForm/defenseSection';
 import { InputGroup } from 'pages/statblockGenerator/ui/armorHitdiceForm/inputGroup';
+import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel'
 import s from './ArmorHitdiceForm.module.scss';
 
 export const ArmorHitdiceForm: React.FC<ArmorHitDiceFormProps> = ({
@@ -51,11 +52,7 @@ export const ArmorHitdiceForm: React.FC<ArmorHitDiceFormProps> = ({
     };
 
   return (
-    <div className={s.defensePanel}>
-      <div className={s.defensePanel__titleContainer}>
-        <h2 className={s.defensePanel__title}>{t.title}</h2>
-      </div>
-
+    <CollapsiblePanel title={t.title}>
       <div className={s.defensePanel__statsContainer}>
         {/* Hit Points Section */}
         <DefenseSection>
@@ -155,6 +152,6 @@ export const ArmorHitdiceForm: React.FC<ArmorHitDiceFormProps> = ({
           </DefenseSection>
         )}
       </div>
-    </div>
+    </CollapsiblePanel>
   );
 };

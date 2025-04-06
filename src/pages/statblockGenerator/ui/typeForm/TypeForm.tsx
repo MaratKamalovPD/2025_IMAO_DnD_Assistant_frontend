@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TypeFormLocalization } from 'pages/statblockGenerator/lib';
 import { TypeFormProps, TypeFormState, CreatureSize } from 'pages/statblockGenerator/model';
 import { FormElement } from 'pages/statblockGenerator/ui/typeForm/formElement';
+import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import s from './TypeForm.module.scss';
 
 export const TypeForm: React.FC<TypeFormProps> = ({
@@ -37,11 +38,7 @@ export const TypeForm: React.FC<TypeFormProps> = ({
     };
 
   return (
-    <div className={s.creaturePanel}>
-      <div className={s.creaturePanel__titleContainer}>
-        <h2 className={s.creaturePanel__title}>{t.title}</h2>
-      </div>
-      
+    <CollapsiblePanel title={t.title}>
       <div className={s.creaturePanel__statsContainer}>
         <FormElement label={t.name}>
           <input
@@ -106,6 +103,7 @@ export const TypeForm: React.FC<TypeFormProps> = ({
           />
         </FormElement>
       </div>
-    </div>
+    </CollapsiblePanel>
+    
   );
 };

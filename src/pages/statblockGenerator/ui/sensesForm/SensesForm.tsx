@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SensesLocalization } from 'pages/statblockGenerator/lib';
 import { SensesFormProps, SensesFormState } from 'pages/statblockGenerator/model';
 import { SenseInput } from 'pages/statblockGenerator/ui/sensesForm/senseInput';
+import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel'
 import s from './SensesForm.module.scss';
 
 export const SensesForm: React.FC<SensesFormProps> = ({
@@ -28,45 +29,41 @@ export const SensesForm: React.FC<SensesFormProps> = ({
     };
 
   return (
-    <div className={s.sensesPanel}>
-      <div className={s.sensesPanel__titleContainer}>
-        <h2 className={s.sensesPanel__title}>{t.title}</h2>
-      </div>
-
+    <CollapsiblePanel title={t.title}>
       <div className={s.sensesPanel__senses}>
-        <SenseInput
-          label={t.blindsight}
-          value={state.blindsight}
-          onChange={handleChange('blindsight')}
-          units={t.units}
-          withCheckbox={{
-            checked: state.isBlindBeyond,
-            onChange: handleChange('isBlindBeyond'),
-            label: t.blindBeyond
-          }}
-        />
+          <SenseInput
+            label={t.blindsight}
+            value={state.blindsight}
+            onChange={handleChange('blindsight')}
+            units={t.units}
+            withCheckbox={{
+              checked: state.isBlindBeyond,
+              onChange: handleChange('isBlindBeyond'),
+              label: t.blindBeyond
+            }}
+          />
 
-        <SenseInput
-          label={t.darkvision}
-          value={state.darkvision}
-          onChange={handleChange('darkvision')}
-          units={t.units}
-        />
+          <SenseInput
+            label={t.darkvision}
+            value={state.darkvision}
+            onChange={handleChange('darkvision')}
+            units={t.units}
+          />
 
-        <SenseInput
-          label={t.tremorsense}
-          value={state.tremorsense}
-          onChange={handleChange('tremorsense')}
-          units={t.units}
-        />
+          <SenseInput
+            label={t.tremorsense}
+            value={state.tremorsense}
+            onChange={handleChange('tremorsense')}
+            units={t.units}
+          />
 
-        <SenseInput
-          label={t.truesight}
-          value={state.truesight}
-          onChange={handleChange('truesight')}
-          units={t.units}
-        />
+          <SenseInput
+            label={t.truesight}
+            value={state.truesight}
+            onChange={handleChange('truesight')}
+            units={t.units}
+          />
       </div>
-    </div>
+    </CollapsiblePanel>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MonsterStatsLocalization } from 'pages/statblockGenerator/lib';
 import { MonsterStatsFormProps, MonsterStats } from 'pages/statblockGenerator/model';
 import { StatInput } from 'pages/statblockGenerator/ui/monsterStatsForm/statInput';
+import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel'
 import s from './MonsterStatsForm.module.scss';
 
 export const MonsterStatsForm: React.FC<MonsterStatsFormProps> = ({
@@ -26,11 +27,7 @@ export const MonsterStatsForm: React.FC<MonsterStatsFormProps> = ({
   };
 
   return (
-    <div className={s.statsPanel}>
-      <div className={s.statsPanel__titleContainer}>
-        <h2 className={s.statsPanel__title}>{t.title}</h2>
-      </div>
-
+    <CollapsiblePanel title={t.title}>
       <div className={s.statsPanel__abilities}>
         {Object.entries(stats).map(([stat, value]) => (
           <StatInput
@@ -42,6 +39,6 @@ export const MonsterStatsForm: React.FC<MonsterStatsFormProps> = ({
           />
         ))}
       </div>
-    </div>
+    </CollapsiblePanel>
   );
 };
