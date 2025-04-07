@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TypeFormLocalization } from 'pages/statblockGenerator/lib';
-import { TypeFormProps, TypeFormState, CreatureSize } from 'pages/statblockGenerator/model';
+import { TypeFormProps, TypeFormState } from 'pages/statblockGenerator/model';
 import { FormElement } from 'pages/statblockGenerator/ui/typeForm/formElement';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import s from './TypeForm.module.scss';
@@ -23,14 +23,14 @@ export const TypeForm: React.FC<TypeFormProps> = ({
 
   const t = TypeFormLocalization[language];
 
-  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedType = e.target.value;
-    setState(prev => ({
-      ...prev,
-      type: selectedType,
-      showOtherType: selectedType === '*'
-    }));
-  };
+  // const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const selectedType = e.target.value;
+  //   setState(prev => ({
+  //     ...prev,
+  //     type: selectedType,
+  //     showOtherType: selectedType === '*'
+  //   }));
+  // };
 
   const handleChange = (field: keyof TypeFormState) => 
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

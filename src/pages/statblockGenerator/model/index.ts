@@ -5,4 +5,6 @@ export type { MonsterStats, MonsterStatsFormProps} from './monsterStatsTypes';
 export type { PropertiesListsFormProps, ProficiencyType } from './propertiesListsTypes';
 export type { DamageLanguagesFormProps, DamageListType } from './damageLanguagesTypes';
 export type { SensesFormProps, SensesFormState, SenseType } from './sensesTypes';
+export type { AttackFormAttack} from './attackFormTypes';
+export { initialDamage, initialAttack} from './attackFormTypes';
 export type { SelectOption } from './types';

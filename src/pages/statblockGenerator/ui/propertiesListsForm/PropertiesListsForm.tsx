@@ -66,7 +66,7 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
     }
   };
 
-  const removeItem = (list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, index: number) => {
+  const removeItem = (_list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, index: number) => {
     setList(prev => prev.filter((_, i) => i !== index));
   };
 
