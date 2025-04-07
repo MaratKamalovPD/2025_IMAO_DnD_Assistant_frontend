@@ -2,11 +2,10 @@ import { defineConfig } from 'vite';
 
 import react from '@vitejs/plugin-react';
 import dotenv from 'dotenv';
-import path from 'path';
 
 dotenv.config();
-const domain = process.env.VITE_DOMAIN || '127.0.0.1'
-const port = parseInt(process.env.VITE_PORT || '5173') 
+const domain = process.env.VITE_DOMAIN || '127.0.0.1';
+const port = parseInt(process.env.VITE_PORT || '5173');
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -36,6 +35,7 @@ export default defineConfig({
       entities: '/src/entities',
       pages: '/src/pages',
       shared: '/src/shared',
+      widgets: '/src/widgets',
     },
   },
 });
