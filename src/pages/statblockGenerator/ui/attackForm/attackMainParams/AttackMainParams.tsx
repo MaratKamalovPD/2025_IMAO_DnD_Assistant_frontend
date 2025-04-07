@@ -37,7 +37,7 @@ export const AttackMainParams = ({ attack, onInputChange, onRangeChange }: Attac
     return (
       <>
         <div className={s.attackForm__titleContainer}>
-          <h2 className={s.attackForm__title}>Добавить атаку</h2>
+          <h2 className={s.attackForm__title}>Общие параметры</h2>
         </div>
   
         <div className={s.attackForm__statsContainer}>

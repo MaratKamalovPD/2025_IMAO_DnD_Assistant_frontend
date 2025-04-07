@@ -8,6 +8,7 @@ import { DamageLanguagesForm } from './damageLanguagesForm'
 import { SensesForm } from './sensesForm'
 import { PromptSection } from './promptSection'
 import { AttackForm } from './attackForm'
+import { CreatureSaveSection } from './creatureSaveSection'
 import s from './StatblockGenerator.module.scss';
 
 export const StatblockGenerator = () => {
@@ -16,6 +17,7 @@ export const StatblockGenerator = () => {
     <div className={s.statblockGeneratorContainer}>
       <div className={s.statblockGeneratorPanel}>
         <PromptSection language="ru"/> 
+        <CreatureSaveSection language="ru"/> 
         {/* <ActualStatblock  />  */}
         <TypeForm language="ru" />
         <ArmorHitdiceForm language="ru" />
