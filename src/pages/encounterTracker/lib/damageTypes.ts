@@ -1,4 +1,21 @@
 import { Language, Option } from 'shared/lib';
+import acidIcon from 'shared/assets/images/damage_types/40px-Acid_Damage_Icon.png';
+import bludgeoningIcon from 'shared/assets/images/damage_types/40px-Bludgeoning_Damage_Icon.png';
+import coldIcon from 'shared/assets/images/damage_types/40px-Cold_Damage_Icon.png';
+import fireIcon from 'shared/assets/images/damage_types/40px-Fire_Damage_Icon.png';
+import forceIcon from 'shared/assets/images/damage_types/40px-Force_Damage_Icon.png';
+import lightningIcon from 'shared/assets/images/damage_types/40px-Lightning_Damage_Icon.png';
+import necroticIcon from 'shared/assets/images/damage_types/40px-Necrotic_Damage_Icon.png';
+import piercingIcon from 'shared/assets/images/damage_types/40px-Piercing_Damage_Icon.png';
+import poisonIcon from 'shared/assets/images/damage_types/40px-Poison_Damage_Icon.png';
+import psychicIcon from 'shared/assets/images/damage_types/40px-Psychic_Damage_Icon.png';
+import radiantIcon from 'shared/assets/images/damage_types/40px-Radiant_Damage_Icon.png';
+import slashingIcon from 'shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png';
+import thunderIcon from 'shared/assets/images/damage_types/40px-Thunder_Damage_Icon.png';
+import nonmagicalIcon from 'shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png';
+import nonsilveredIcon from 'shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png';
+import nonadamantineIcon from 'shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png';
+import otherIcon from 'shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png';
 
 export type DamageType = {
   value: DamageTypeValue;
@@ -58,21 +75,21 @@ export type DamageTypeValue =
   | 'other';
 
 export const damageTypeIcons: Record<DamageTypeValue, string> = {
-  acid: '/src/shared/assets/images/damage_types/40px-Acid_Damage_Icon.png',
-  bludgeoning: '/src/shared/assets/images/damage_types/40px-Bludgeoning_Damage_Icon.png',
-  cold: '/src/shared/assets/images/damage_types/40px-Cold_Damage_Icon.png',
-  fire: '/src/shared/assets/images/damage_types/40px-Fire_Damage_Icon.png',
-  force: '/src/shared/assets/images/damage_types/40px-Force_Damage_Icon.png',
-  lightning: '/src/shared/assets/images/damage_types/40px-Lightning_Damage_Icon.png',
-  necrotic: '/src/shared/assets/images/damage_types/40px-Necrotic_Damage_Icon.png',
-  piercing: '/src/shared/assets/images/damage_types/40px-Piercing_Damage_Icon.png',
-  poison: '/src/shared/assets/images/damage_types/40px-Poison_Damage_Icon.png',
-  psychic: '/src/shared/assets/images/damage_types/40px-Psychic_Damage_Icon.png',
-  radiant: '/src/shared/assets/images/damage_types/40px-Radiant_Damage_Icon.png',
-  slashing: '/src/shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png',
-  thunder: '/src/shared/assets/images/damage_types/40px-Thunder_Damage_Icon.png',
-  nonmagical: '/src/shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png',
-  nonsilvered: '/src/shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png',
-  nonadamantine: '/src/shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png',
-  other: '/src/shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png',
+  acid: acidIcon,
+  bludgeoning: bludgeoningIcon,
+  cold: coldIcon,
+  fire: fireIcon,
+  force: forceIcon,
+  lightning: lightningIcon,
+  necrotic: necroticIcon,
+  piercing: piercingIcon,
+  poison: poisonIcon,
+  psychic: psychicIcon,
+  radiant: radiantIcon,
+  slashing: slashingIcon,
+  thunder: thunderIcon,
+  nonmagical: nonmagicalIcon,
+  nonsilvered: nonsilveredIcon,
+  nonadamantine: nonadamantineIcon,
+  other: otherIcon,
 };

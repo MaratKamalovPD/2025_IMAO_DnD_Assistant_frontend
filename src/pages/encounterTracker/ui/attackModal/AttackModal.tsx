@@ -111,7 +111,7 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
       );
 
       if (hit) {
-        const damageDicesRolls = rollDamageLLM(attack, critical);
+        const damageDicesRolls = rollDamageLLM(attack, critical, attackedCreature);
 
         const damage = damageDicesRolls.total;
 
@@ -161,7 +161,7 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
       );
 
       if (attack.damage) {
-        const damageDicesRolls = rollDamageLLM(attack, criticalSavingThrow);
+        const damageDicesRolls = rollDamageLLM(attack, criticalSavingThrow, attackedCreature);
 
         const damage = damageDicesRolls.total;
 

@@ -20,7 +20,7 @@ export type {
   AbilityValueRu,
 } from './abilityTypes';
 
-export { conditionIcons, conditions } from './conditionsTypes';
+export { conditionIcons, conditions, conditionVariants } from './conditionsTypes';
 export type { Condition, ConditionOption, ConditionValue } from './conditionsTypes';
 
 export { monsterAttackIcons, monsterAttacks } from './monsterWeaponTypes';

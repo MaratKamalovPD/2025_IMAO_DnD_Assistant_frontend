@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
+import { toast } from 'react-toastify';
 
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, creatureActions } from 'entities/creature/model/creature.slice';
@@ -11,6 +12,8 @@ import {
   conditions,
   ConditionValue,
 } from 'pages/encounterTracker/lib';
+import { hasConditionImmunity } from 'pages/encounterTracker/model';
+import { ConditionImmunityToast } from 'pages/encounterTracker/ui/trackerToasts/conditionImmunityToast';
 import { OptionWithIcon, SingleValueWithIcon } from 'shared/ui';
 import { loggerActions } from 'widgets/chatbot/model';
 
@@ -33,7 +36,7 @@ export const ApplyConditionModal: React.FC = () => {
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
-  ) as Creature | undefined;
+  ) as Creature;
 
   const handleConditionChange = useCallback(
     (option: ConditionOption | null) => {
@@ -45,16 +48,23 @@ export const ApplyConditionModal: React.FC = () => {
   );
 
   const handleApplyCondition = useCallback(() => {
-    dispatch(
-      creatureActions.addCondition({
-        id: selectedCreatureId || '',
-        condition: selectedCondition,
-      }),
-    );
+    const hasConditionImmunityFlag = hasConditionImmunity(selectedCreature, selectedCondition);
+
+    if (!hasConditionImmunityFlag) {
+      dispatch(
+        creatureActions.addCondition({
+          id: selectedCreatureId || '',
+          condition: selectedCondition,
+        }),
+      );
+    } else {
+      toast(<ConditionImmunityToast creature={selectedCreature} condition={selectedCondition} />);
+    }
 
     dispatch(
       loggerActions.addLog(
-        `ПОВЕШЕНО СОСТОЯНИЕ: ${selectedCreature?.name} >> ${conditionOptions.find((option) => option.value === selectedCondition)?.label}`,
+        `${hasConditionImmunityFlag ? 'ИММУНИТЕТ К СОСТОЯНИЮ' : 'ПОВЕШЕНО СОСТОЯНИЕ'}: 
+        ${selectedCreature?.name} >> ${conditionOptions.find((option) => option.value === selectedCondition)?.label}`,
       ),
     );
   }, [selectedCondition, selectedCreatureId]);

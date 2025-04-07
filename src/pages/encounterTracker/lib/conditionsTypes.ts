@@ -1,4 +1,19 @@
 import { Language, Option } from 'shared/lib';
+import blindedIcon from 'shared/assets/images/conditions/50px-Blinded_Condition_Icon.webp.png';
+import charmedIcon from 'shared/assets/images/conditions/50px-Charmed_Condition_Icon.webp.png'
+import deafenedIcon from 'shared/assets/images/conditions/50px-Deafened_Icon.png'
+import exhaustionIcon from 'shared/assets/images/conditions/60px-Exhausted_Condition_Icon.webp.png'
+import frightenedIcon from 'shared/assets/images/conditions/50px-Frightened_Condition_Icon.webp.png'
+import grappledIcon from 'shared/assets/images/conditions/60px-Grappled_Condition_Icon.webp.png'
+import incapacitatedIcon from 'shared/assets/images/conditions/50px-Incapacitated_Condition_Icon.webp.png'
+import invisibleIcon from 'shared/assets/images/conditions/60px-Invisible_Condition_Icon.webp.png'
+import paralyzedIcon from 'shared/assets/images/conditions/60px-Paralysed_Condition_Icon.webp.png'
+import petrifiedIcon from 'shared/assets/images/conditions/60px-Petrified_Condition_Icon.webp.png'
+import poisonedIcon from 'shared/assets/images/conditions/50px-Poisoned_Condition_Icon.webp.png'
+import proneIcon from 'shared/assets/images/conditions/50px-Prone_Condition_Icon.webp.png'
+import restrainedIcon from 'shared/assets/images/conditions/60px-Restrained_Condition_Icon.webp.png'
+import stunnedIcon from 'shared/assets/images/conditions/60px-Stunned_Condition_Icon.webp.png'
+import unconsciousIcon from 'shared/assets/images/conditions/64px-Unconscious_Condition_Icon.webp.png'
 
 export type Condition = {
   value: ConditionValue;
@@ -48,19 +63,37 @@ export type ConditionValue =
   | 'unconscious';
 
 export const conditionIcons: Record<ConditionValue, string> = {
-  blinded: '/src/shared/assets/images/conditions/50px-Blinded_Condition_Icon.webp.png',
-  charmed: '/src/shared/assets/images/conditions/50px-Charmed_Condition_Icon.webp.png',
-  deafened: '/src/shared/assets/images/conditions/40px-Deafened_Icon.png',
-  exhaustion: '/src/shared/assets/images/conditions/60px-Exhausted_Condition_Icon.webp.png',
-  frightened: '/src/shared/assets/images/conditions/50px-Frightened_Condition_Icon.webp.png',
-  grappled: '/src/shared/assets/images/conditions/60px-Grappled_Condition_Icon.webp.png',
-  incapacitated: '/src/shared/assets/images/conditions/50px-Incapacitated_Condition_Icon.webp.png',
-  invisible: '/src/shared/assets/images/conditions/60px-Invisible_Condition_Icon.webp.png',
-  paralyzed: '/src/shared/assets/images/conditions/60px-Paralysed_Condition_Icon.webp.png',
-  petrified: '/src/shared/assets/images/conditions/60px-Petrified_Condition_Icon.webp.png',
-  poisoned: '/src/shared/assets/images/conditions/50px-Poisoned_Condition_Icon.webp.png',
-  prone: '/src/shared/assets/images/conditions/50px-Prone_Condition_Icon.webp.png',
-  restrained: '/src/shared/assets/images/conditions/60px-Restrained_Condition_Icon.webp.png',
-  stunned: '/src/shared/assets/images/conditions/60px-Stunned_Condition_Icon.webp.png',
-  unconscious: '/src/shared/assets/images/conditions/64px-Unconscious_Condition_Icon.webp.png',
+  blinded: blindedIcon,
+  charmed: charmedIcon,
+  deafened: deafenedIcon,
+  exhaustion: exhaustionIcon,
+  frightened: frightenedIcon,
+  grappled: grappledIcon,
+  incapacitated: incapacitatedIcon,
+  invisible: invisibleIcon,
+  paralyzed: paralyzedIcon,
+  petrified: petrifiedIcon,
+  poisoned: poisonedIcon,
+  prone: proneIcon,
+  restrained: restrainedIcon,
+  stunned: stunnedIcon,
+  unconscious: unconsciousIcon,
+};
+
+export const conditionVariants: Record<ConditionValue, string[]> = {
+  'blinded': ['ослеплён', 'ослепление'],
+  'charmed': ['очарован', 'очарование'],
+  'deafened': ['оглох', 'глухота'],
+  'exhaustion': ['истощение'],
+  'frightened': ['испуган', 'испуг'],
+  'grappled': ['схвачен'],
+  'incapacitated': ['недееспособен'],
+  'invisible': ['невидим', 'невидимость'],
+  'paralyzed': ['парализован', 'паралич'],
+  'petrified': ['окаменел', 'окаменение'],
+  'poisoned': ['отравлен', 'отравление'],
+  'prone': ['лежит'],
+  'restrained': ['скован', 'сковывание'],
+  'stunned': ['оглушён', 'оглушение', 'ошеломление'],
+  'unconscious': ['без сознания']
 };
