@@ -28,3 +28,4 @@ export type { MonsterAttack, MonsterAttackOption, MonsterAttackValue } from './m
 
 export { findAttackIcon, findConditionInstance } from './findInstance';
 export { mapDamageType } from './mapDamageType';
+export { parseD20Roll, parseDamageRolls } from './parseRoll';

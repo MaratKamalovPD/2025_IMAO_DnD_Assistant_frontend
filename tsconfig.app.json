@@ -6,6 +6,7 @@
       "app/*": ["app/*"],
       "entities/*": ["entities/*"],
       "pages/*": ["pages/*"],
+      "widgets/*": ["widgets/*"],
       "shared/*": ["shared/*"]
     },
 
