@@ -12,6 +12,7 @@ import {
   ConditionValue,
 } from 'pages/encounterTracker/lib';
 import { OptionWithIcon, SingleValueWithIcon } from 'shared/ui';
+import { loggerActions } from 'widgets/chatbot/model';
 
 import s from './ApplyCondition.module.scss';
 
@@ -49,6 +50,12 @@ export const ApplyConditionModal: React.FC = () => {
         id: selectedCreatureId || '',
         condition: selectedCondition,
       }),
+    );
+
+    dispatch(
+      loggerActions.addLog(
+        `ПОВЕШЕНО СОСТОЯНИЕ: ${selectedCreature?.name} >> ${conditionOptions.find((option) => option.value === selectedCondition)?.label}`,
+      ),
     );
   }, [selectedCondition, selectedCreatureId]);
 
