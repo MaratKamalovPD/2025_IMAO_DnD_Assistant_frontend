@@ -1,6 +1,8 @@
 $main-text-color: #FFFFFF;
 $additional-text-color:  #DFDFDF;
 $dice-text-color: #4A87FF;
+$main-border-color: #DFDFDF;
+$additional-border-color: #cfcfcf62;
 
 .statblock {
   width: calc(65% - 1rem);
@@ -9,7 +11,11 @@ $dice-text-color: #4A87FF;
   position: sticky;
   top: 28px;
   left: 0;
+  max-height: calc(100vh - 56px);
   height: fit-content;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
@@ -55,15 +61,19 @@ $dice-text-color: #4A87FF;
 }
 
 .statblockBody {
-  overflow-y: auto;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   padding: 0 1rem;
   font-size: 15px;
   gap: 1rem;
 
-  &:last-child {
+  > *:last-child {
     margin-bottom: 1rem;
+  }
+
+  > *:not(:first-child) {
+    margin-bottom: 0.5rem;
   }
 }
 
@@ -87,13 +97,12 @@ $dice-text-color: #4A87FF;
 }
 
 .mainContainer {
+  position: relative;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
 
   &__description {
     width: auto;
-    gap: 1rem;
     display: flex;
     flex-direction: column;
   }
@@ -105,6 +114,10 @@ $dice-text-color: #4A87FF;
     border-radius: 50%;
     overflow: hidden;
     border: 4px solid #FFD700;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0 0 1rem 1rem;
     min-width: 210px;
   
     img {
@@ -112,6 +125,34 @@ $dice-text-color: #4A87FF;
       height: 280px;
       object-fit: cover;
       object-position: top;
+    }
+  }
+}
+
+.creatureDescriptionContainer {
+  display: flex;
+  flex-direction: column;
+
+  &__title {
+    font-size: 28px;
+    font-weight: bold;
+    color: $main-text-color;
+    border-bottom: 1px solid $main-border-color;
+    margin-bottom: 1rem;
+    padding-bottom: 0.25rem;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+
+    p {
+      margin: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    blockquote {
+      margin: 0;
     }
   }
 }

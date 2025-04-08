@@ -7,6 +7,7 @@ import { Link, useNavigate, useParams } from 'react-router';
 import { modifiers } from 'shared/lib';
 import { AbilitiesSection } from './abilitiesSection';
 import s from './CreatureStatblock.module.scss';
+import { DescriptionSection } from './descriptionSection';
 import { FightStatsSection } from './fightStatsSection';
 import { SkillsAndSensesSection } from './skillsAndSensesSection';
 
@@ -51,16 +52,44 @@ export const CreatureStatblock = () => {
           </div>
         </div>
         <div className={s.mainContainer}>
+          <div className={s.mainContainer__image}>
+            <img src={creature.images[1]}></img>
+          </div>
           <div className={s.mainContainer__description}>
             <FightStatsSection creature={creature} conModifier={modifiers[creature.ability.con]} />
             <AbilitiesSection creature={creature} />
             <SkillsAndSensesSection creature={creature} />
             <div className={s.mainContainer__infoSection}></div>
           </div>
-          <div className={s.mainContainer__image}>
-            <img src={creature.images[1]}></img>
-          </div>
         </div>
+        {creature.description && (
+          <div className={s.creatureDescriptionContainer}>
+            <div className={s.creatureDescriptionContainer__title}>Описание</div>
+            <div
+              className={s.creatureDescriptionContainer__content}
+              dangerouslySetInnerHTML={{ __html: creature.description }}
+            ></div>
+          </div>
+        )}
+        {creature.feats && (
+          <DescriptionSection sectionTitle={'Подвиги'} elements={creature.feats} />
+        )}
+        {creature.actions && (
+          <DescriptionSection sectionTitle={'Действия'} elements={creature.actions} />
+        )}
+        {creature.bonusActions && (
+          <DescriptionSection sectionTitle={'Бонусные действия'} elements={creature.bonusActions} />
+        )}
+        {creature.legendary && creature.legendary.list && (
+          <DescriptionSection
+            sectionTitle={'Легендарные действия'}
+            elements={creature.legendary.list}
+          />
+        )}
+        {creature.reactions && (
+          <DescriptionSection sectionTitle={'Реакции'} elements={creature.reactions} />
+        )}
+        {creature.tags && <DescriptionSection sectionTitle={'Теги'} elements={creature.tags} />}
       </div>
     </div>
   );

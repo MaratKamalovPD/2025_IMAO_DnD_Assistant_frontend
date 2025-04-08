@@ -41,7 +41,8 @@ export type CreatureFullData = {
   languages: string[];
   feats?: Feat[];
   actions: Action[];
-  legendary?: Legendary[];
+  bonusActions?: Action[];
+  legendary?: Legendary;
   reactions: Reaction[];
   description: string;
   tags: Tag[];

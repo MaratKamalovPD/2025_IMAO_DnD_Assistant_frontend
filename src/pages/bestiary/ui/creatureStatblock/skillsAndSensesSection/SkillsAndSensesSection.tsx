@@ -65,17 +65,17 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature }) => {
 
       {creature.skills && (
         <div className={s.skillsContainer__line}>
-          <span className={s.skillsContainer__title}>Навыки:&nbsp;</span>
+          <span className={s.skillsContainer__title}>Навыки&nbsp;</span>
           <div className={s.skillsContainer__text}>
             {Object.entries(creature.skills).map(([_, skill], index, arr) => (
               <div key={skill.name} className={s.skillsContainer__listElement}>
-                <span>{skill.name}</span>{' '}
+                <span>{skill.name}</span>&nbsp;
                 <Tippy content={'Нажмите для броска 1к20'}>
                   <span
                     className={s.skillsContainer__formula}
                     onClick={() => handleSkillRoll(skill.name.toUpperCase(), skill.value)}
                   >
-                    &nbsp;+{skill.value}
+                    +{skill.value}
                   </span>
                 </Tippy>
                 {index < arr.length - 1 && ','}&nbsp;
@@ -87,7 +87,7 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature }) => {
 
       {creature.damageResistances && (
         <div className={s.skillsContainer__line}>
-          <span className={s.skillsContainer__title}>Сопротивление к урону:&nbsp;</span>
+          <span className={s.skillsContainer__title}>Сопротивление к урону&nbsp;</span>
           <div className={s.skillsContainer__text}>
             {Object.entries(creature.damageResistances).map(([_, dmg], index, arr) => (
               <div key={dmg} className={s.skillsContainer__listElement}>
@@ -100,7 +100,7 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature }) => {
 
       {creature.damageImmunities && (
         <div className={s.skillsContainer__line}>
-          <span className={s.skillsContainer__title}>Иммунитет к урону:&nbsp;</span>
+          <span className={s.skillsContainer__title}>Иммунитет к урону&nbsp;</span>
           <div className={s.skillsContainer__text}>
             {Object.entries(creature.damageImmunities).map(([_, dmg], index, arr) => (
               <div key={dmg} className={s.skillsContainer__listElement}>
@@ -113,7 +113,7 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature }) => {
 
       {creature.conditionImmunities && (
         <div className={s.skillsContainer__line}>
-          <span className={s.skillsContainer__title}>Иммунитет к состояниям:&nbsp;</span>
+          <span className={s.skillsContainer__title}>Иммунитет к состояниям&nbsp;</span>
           <div className={s.skillsContainer__text}>
             {Object.entries(creature.conditionImmunities).map(([_, cond], index, arr) => (
               <div key={cond} className={s.skillsContainer__listElement}>
@@ -125,7 +125,7 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature }) => {
       )}
 
       <div className={s.skillsContainer__line}>
-        <span className={s.skillsContainer__title}>Чувства:&nbsp;</span>
+        <span className={s.skillsContainer__title}>Чувства&nbsp;</span>
         <div className={s.skillsContainer__text}>
           <div className={s.skillsContainer__listElement}>
             пассивная внимательность {creature.senses.passivePerception}
@@ -141,7 +141,7 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature }) => {
       </div>
 
       <div className={s.skillsContainer__line}>
-        <span className={s.skillsContainer__title}>Языки:&nbsp;</span>
+        <span className={s.skillsContainer__title}>Языки&nbsp;</span>
         <div className={s.skillsContainer__text}>
           {creature.languages && Object.entries(creature.languages).length > 0 ? (
             Object.entries(creature.languages).map(([_, lang], index, arr) => (
@@ -157,11 +157,11 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature }) => {
       </div>
 
       <div className={s.skillsContainer__line}>
-        <span className={s.skillsContainer__title}>Уровень опасности:&nbsp;</span>
+        <span className={s.skillsContainer__title}>Уровень опасности&nbsp;</span>
         <div className={s.skillsContainer__text}>{creature.challengeRating}</div>
       </div>
       <div className={s.skillsContainer__line}>
-        <span className={s.skillsContainer__title}>Бонус мастерства:&nbsp;</span>
+        <span className={s.skillsContainer__title}>Бонус мастерства&nbsp;</span>
         <div className={s.skillsContainer__text}>{creature.proficiencyBonus}</div>
       </div>
     </div>

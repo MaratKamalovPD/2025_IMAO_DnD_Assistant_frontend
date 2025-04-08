@@ -3,23 +3,31 @@
 .skillsContainer {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
 
   &__line {
     display: inline-flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: flex-start;
+    padding-top: 0.6rem;
+
+    &:not(:last-of-type) {
+      border-bottom: 1px solid $additional-border-color;
+      padding-bottom: 0.5rem;
+    }
   }
 
   &__title {
     color: $main-text-color;
     font-weight: bold;
     white-space: nowrap;
+    width: 28%;
+    display: flex;
   }
 
   &__text {
     display: flex;
+    width: 72%;
     flex-direction: row;
     color: $additional-text-color;
     white-space: normal;
