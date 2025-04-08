@@ -80,6 +80,7 @@ export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSele
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();
+        e.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
         navigate(creature.url);
       }}
       className={s.cardLink}
