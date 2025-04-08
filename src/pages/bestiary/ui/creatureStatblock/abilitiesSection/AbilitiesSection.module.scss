@@ -1,0 +1,33 @@
+@use '/src/pages/bestiary/ui/creatureStatblock/CreatureStatblock.module.scss' as *;
+
+.abilitiesContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+
+  &__title {
+    padding: 0.5rem 1rem;
+    border-radius: 8px 8px 0 0;
+    background-color: var(--secondary-bg-color);
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    filter: brightness(110%);
+  }
+
+  &__value {
+    padding: 0.5rem 1rem;
+    border-radius: 0 0 8px 8px;
+    background-color: var(--secondary-bg-color);
+    display: flex;
+    justify-content: center;
+    filter: brightness(90%);
+    color: $dice-text-color;
+    cursor: pointer;
+    font-weight: bold;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

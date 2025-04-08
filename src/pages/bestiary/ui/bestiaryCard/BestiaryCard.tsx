@@ -8,16 +8,19 @@ import { encounterActions } from 'entities/encounter/model';
 import { useLazyGetCreatureByNameQuery } from 'pages/bestiary/api';
 
 import { calculateInitiative } from 'pages/bestiary/model';
+import { useNavigate } from 'react-router';
 import placeholderImage from 'shared/assets/images/placeholder.png';
+import s from './BestiaryCard.module.scss';
 import { GridCard } from './gridCard';
 import { ListCard } from './listCard';
 
 type BestiaryCardProps = {
   creature: CreatureClippedData;
   viewMode: string;
+  isSelected: boolean;
 };
 
-export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode }) => {
+export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSelected }) => {
   const dispatch = useDispatch();
 
   const [trigger, { data: creatureData, isLoading, isError, isUninitialized, requestId }] =
@@ -70,9 +73,26 @@ export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode }) => {
     }
   }, [creatureData, isLoading, isError, isUninitialized, requestId]);
 
-  return viewMode === 'grid' ? (
-    <GridCard creature={creature} handleAddToTtackerClick={handleAddToTtackerClick} />
-  ) : (
-    <ListCard creature={creature} />
+  const navigate = useNavigate();
+
+  return (
+    <div
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        navigate(creature.url);
+      }}
+      className={s.cardLink}
+    >
+      {viewMode === 'grid' ? (
+        <GridCard
+          creature={creature}
+          handleAddToTtackerClick={handleAddToTtackerClick}
+          isSelected={isSelected}
+        />
+      ) : (
+        <ListCard creature={creature} isSelected={isSelected} />
+      )}
+    </div>
   );
 };

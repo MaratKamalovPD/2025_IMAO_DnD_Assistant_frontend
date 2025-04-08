@@ -1,11 +1,24 @@
-@use './bestiaryCard/BestiaryCard.module.scss' as card;
+.pageContent {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-top: 2rem;
+}
 
 .bestiaryContainer {
+  width: 100%;
+
+  &__outlet {
+    width: 35%;
+  }
+}
+
+.bestiaryContent {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   gap: 1rem;
   justify-items: center;
-  padding: 16px;
+  padding: 1rem 0;
   box-sizing: border-box;
 }
 

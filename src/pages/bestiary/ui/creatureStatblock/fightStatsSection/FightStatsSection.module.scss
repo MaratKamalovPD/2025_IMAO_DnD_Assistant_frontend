@@ -1,0 +1,35 @@
+@use '/src/pages/bestiary/ui/creatureStatblock/CreatureStatblock.module.scss' as *;
+
+.fightStatsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  &__line {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    flex-direction: row;
+  }
+
+  &__title {
+    color: $main-text-color;
+    font-weight: bold;
+    white-space: nowrap;
+  }
+
+  &__text {
+    color: $additional-text-color;
+    white-space: normal;
+  }
+
+  &__formula {
+    color: $dice-text-color;
+    cursor: pointer;
+    font-weight: bold;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

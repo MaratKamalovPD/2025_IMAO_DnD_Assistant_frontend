@@ -1,0 +1,38 @@
+.toastContainer {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--toast-bg-color);
+  max-width: 280px;
+  gap: 1rem;
+
+  &__leftSection {
+    width: fit-content;
+    font-size: 32px;
+    font-weight: bold;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__rightSection {
+    color: #FFFFFF;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  &__diceRolls {
+    display: flex;
+    flex-direction: row;
+  }
+
+  &__diceGreen {
+    color: green;
+  }
+
+  &__diceRed {
+    color: red;
+  }
+}

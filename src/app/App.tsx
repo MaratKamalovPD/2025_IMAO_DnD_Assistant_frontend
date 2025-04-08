@@ -10,6 +10,7 @@ const App = () => {
     <main>
       <MainProviders>
         <AppRouter />
+        <div id='tooltip-root' />
         <ToastContainer
           position='top-right'
           autoClose={2000}
