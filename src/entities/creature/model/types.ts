@@ -69,7 +69,8 @@ export type DamageDicesRolls = {
 };
 
 export type DamageDicesRoll = {
-  total: number;
+  final_damage: number;
+  on_dice_damage: number;
   damage: Damage;
 };
 

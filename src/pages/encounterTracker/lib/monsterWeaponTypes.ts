@@ -1,4 +1,12 @@
 import { Language, Option } from 'shared/lib';
+import biteIcon from 'shared/assets/images/monster_attacks/60px-Bite_Icon.webp.png';
+import clawBearIcon from 'shared/assets/images/monster_attacks/60px-Claws_Bear_Icon.webp.png';
+import clawQuasitIcon from 'shared/assets/images/monster_attacks/60px-Claws_Quasit_Icon.webp.png';
+import fireBreathIcon from 'shared/assets/images/monster_attacks/80px-Fire_Breath_Line_Icon.webp.png';
+import poisonBreathIcon from 'shared/assets/images/monster_attacks/80px-Poison_Breath_Icon.webp.png';
+import acidBreathIcon from 'shared/assets/images/monster_attacks/80px-Acid_Breath_Icon.webp.png';
+import coldBreathIcon from 'shared/assets/images/monster_attacks/80px-Frost_Breath_Icon.webp.png';
+import lightningBreathIcon from 'shared/assets/images/monster_attacks/80px-Lightning_Breath_Icon.webp.png';
 
 export type MonsterAttack = {
   value: MonsterAttackValue;
@@ -12,7 +20,7 @@ export type MonsterAttackOption = {
 export type MonsterAttackValue =
   | 'bite' // Укус
   | 'claw' // Коготь
-  | 'claws' // Коготь
+  | 'claws' // Когти
   | 'fire-breath' // Огненное дыхание
   | 'poison-breath' // Ядовитое дыхание
   | 'acid-breath' // Кислотное дыхание
@@ -31,13 +39,12 @@ export const monsterAttacks: MonsterAttack[] = [
 ];
 
 export const monsterAttackIcons: Record<MonsterAttackValue, string> = {
-  bite: '/src/shared/assets/images/monster_attacks/60px-Bite_Icon.webp.png',
-  claw: '/src/shared/assets/images/monster_attacks/60px-Claws_Bear_Icon.webp.png',
-  claws: '/src/shared/assets/images/monster_attacks/60px-Claws_Quasit_Icon.webp.png',
-  'fire-breath': '/src/shared/assets/images/monster_attacks/80px-Fire_Breath_Line_Icon.webp.png',
-  'poison-breath': '/src/shared/assets/images/monster_attacks/80px-Poison_Breath_Icon.webp.png',
-  'acid-breath': '/src/shared/assets/images/monster_attacks/80px-Acid_Breath_Icon.webp.png',
-  'cold-breath': '/src/shared/assets/images/monster_attacks/80px-Frost_Breath_Icon.webp.png',
-  'lightning-breath':
-    '/src/shared/assets/images/monster_attacks/80px-Lightning_Breath_Icon.webp.png',
+  'bite': biteIcon,
+  'claw': clawBearIcon,
+  'claws': clawQuasitIcon,
+  'fire-breath': fireBreathIcon,
+  'poison-breath': poisonBreathIcon,
+  'acid-breath': acidBreathIcon,
+  'cold-breath': coldBreathIcon,
+  'lightning-breath': lightningBreathIcon,
 };

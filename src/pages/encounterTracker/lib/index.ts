@@ -20,7 +20,7 @@ export type {
   AbilityValueRu,
 } from './abilityTypes';
 
-export { conditionIcons, conditions } from './conditionsTypes';
+export { conditionIcons, conditions, conditionVariants } from './conditionsTypes';
 export type { Condition, ConditionOption, ConditionValue } from './conditionsTypes';
 
 export { monsterAttackIcons, monsterAttacks } from './monsterWeaponTypes';
@@ -28,3 +28,4 @@ export type { MonsterAttack, MonsterAttackOption, MonsterAttackValue } from './m
 
 export { findAttackIcon, findConditionInstance } from './findInstance';
 export { mapDamageType } from './mapDamageType';
+export { parseD20Roll, parseDamageRolls } from './parseRoll';

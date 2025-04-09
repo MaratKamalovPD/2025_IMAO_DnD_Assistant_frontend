@@ -1,3 +1,7 @@
+import React, { useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+
 import {
   AttackLLM,
   Creature,
@@ -7,6 +11,12 @@ import {
 } from 'entities/creature/model';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import {
+  AbilitySavingThrow,
+  dndTraitToInitialForm,
+  parseD20Roll,
+  parseDamageRolls,
+} from 'pages/encounterTracker/lib';
+import {
   calculateDndDamage,
   rollDamageLLM,
   rollSavingThrow,
@@ -15,12 +25,8 @@ import {
 import { D20AttackRollToast } from 'pages/encounterTracker/ui/trackerToasts/d20AttackRollToast';
 import { D20SavingThrowToast } from 'pages/encounterTracker/ui/trackerToasts/d20SavingThrow';
 import { DamageRollToast } from 'pages/encounterTracker/ui/trackerToasts/damageRollToast';
-import React, { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 import { CheckboxState, ThreeStateCheckbox } from 'shared/ui/threeStateCheckbox';
-
-import { AbilitySavingThrow, dndTraitToInitialForm } from 'pages/encounterTracker/lib';
+import { loggerActions } from 'widgets/chatbot/model';
 
 import s from './AttackModal.module.scss';
 
@@ -37,6 +43,7 @@ type AttackModalProps = {
 
 export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackData }) => {
   const dispatch = useDispatch();
+
   const { selectedCreatureId, attackedCreatureId } = useSelector<EncounterStore>(
     (state) => state.encounter,
   ) as EncounterState;
@@ -67,6 +74,10 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
   const handleAttack = (attack: AttackLLM) => {
     let advantage = false;
     let disadvantage = false;
+    let attackLog = `
+      АТАКА: (${selectedCreature?.name || 'Не выбрано'} ->
+      ${attackedCreature?.name || 'Не выбрано'}
+    `;
 
     if (attackStatus === AttackStatus.Advantage) {
       advantage = true;
@@ -81,11 +92,17 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
         advantage,
         disadvantage,
       );
+      const rolls = d20Roll.map((roll) => roll.roll);
+
+      attackLog = attackLog.concat(`
+        ${advantage ? '(с Преимуществом))' : disadvantage ? '(с Помехой))' : ')'}
+        ${hit ? 'ПОПАДАНИЕ' : 'ПРОМАХ'}: ${parseD20Roll(rolls, d20Roll[0].bonus)}
+      `);
 
       toast(
         <D20AttackRollToast
           total={d20Roll[0].total}
-          rolls={d20Roll.map((roll) => roll.roll)}
+          rolls={rolls}
           bonus={d20Roll[0].bonus}
           hit={hit}
           advantage={advantage}
@@ -94,9 +111,13 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
       );
 
       if (hit) {
-        const damageDicesRolls = rollDamageLLM(attack, critical);
+        const damageDicesRolls = rollDamageLLM(attack, critical, attackedCreature);
 
         const damage = damageDicesRolls.total;
+
+        attackLog = attackLog.concat(`
+          ; БРОСОК УРОНА: ${parseDamageRolls(damageDicesRolls)}
+        `);
 
         toast(<DamageRollToast damageRolls={damageDicesRolls} />);
 
@@ -122,10 +143,16 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
         advantageSavingThrow,
       );
 
+      const rolls = d20RollsSavingThrow.map((roll) => roll.roll);
+
+      attackLog = attackLog.concat(`
+        ; ${successSavingThrow ? 'ПРОЙДЕН' : 'ПРОВАЛЕН'}: ${parseD20Roll(rolls, d20RollsSavingThrow[0].bonus)}
+      `);
+
       toast(
         <D20SavingThrowToast
           total={d20RollsSavingThrow[0].total}
-          rolls={d20RollsSavingThrow.map((roll) => roll.roll)}
+          rolls={rolls}
           bonus={d20RollsSavingThrow[0].bonus}
           hit={successSavingThrow}
           advantage={advantageSavingThrow}
@@ -134,7 +161,7 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
       );
 
       if (attack.damage) {
-        const damageDicesRolls = rollDamageLLM(attack, criticalSavingThrow);
+        const damageDicesRolls = rollDamageLLM(attack, criticalSavingThrow, attackedCreature);
 
         const damage = damageDicesRolls.total;
 
@@ -143,6 +170,10 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
         });
 
         damageDicesRolls.total = finalDamage;
+
+        attackLog = attackLog.concat(`
+          ; БРОСОК УРОНА: ${parseDamageRolls(damageDicesRolls)}
+        `);
 
         toast(<DamageRollToast damageRolls={damageDicesRolls} />);
 
@@ -154,6 +185,8 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
         );
       }
     }
+
+    dispatch(loggerActions.addLog(attackLog));
   };
 
   return (
