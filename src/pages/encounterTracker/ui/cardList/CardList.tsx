@@ -68,7 +68,7 @@ export const CardList = () => {
                 cardRefs.current[ind] = el;
               }}
             >
-              <CreatureCard id={participant.id} ind={ind} handleContextMenu={handleContextMenu} />
+              <CreatureCard id={participant.id} handleContextMenu={handleContextMenu} />
             </div>
           ))}
         </div>

@@ -31,6 +31,7 @@ export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode }) => {
     if (!isLoading && !isError && creatureData) {
       const currentCreature: Creature = {
         _id: creatureData._id,
+        type: 'creature',
         id: uniqid(),
         name: creatureData.name.rus,
         hp: {

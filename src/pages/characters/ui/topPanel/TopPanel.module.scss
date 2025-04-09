@@ -1,0 +1,143 @@
+$border-color: #9b9b9b;
+
+.topPanel {
+  display: flex;
+  flex-direction: row;
+  padding: 0.5rem;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.searchContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-sizing: border-box;
+  flex-grow: 1;
+  min-width: 0;
+
+  &__input {
+    flex-grow: 1;
+    padding: 0.6em 0.9em;
+    font-size: 16px;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      border-color: #007bff;
+    }
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.9rem;
+  }
+}
+
+.additionsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}
+
+.viewModeContainer {
+  display: flex;
+  align-items: center;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  height: 100%;
+  box-sizing: border-box;
+
+  &__btn {
+    display: flex;
+    width: 50%;
+    padding: 0 0.25rem;
+    background-color: black;
+    height: 100%;
+    align-items: center;
+    transition: all 0.7s ease;
+
+    &:first-of-type {
+      border-radius: 8px 0 0 8px;
+    }
+
+    &:last-of-type {
+      border-radius: 0 8px 8px 0;
+    }
+
+    &:hover {
+      opacity: 0.6;
+    }
+  }
+}
+
+.dropdownContainer {
+  position: relative;
+
+  &__btn {
+    display: flex;
+    flex-direction: row;
+  }
+
+  &__menu {
+    position: absolute;
+    top: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 5;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--secondary-bg-color);
+  }
+
+  &__menuSection {
+    display: flex;
+    flex-direction: column;
+
+    &:first-child {
+      border-bottom: 1px solid black;
+    }
+  }
+
+  &__menuBtn {
+    padding: 0.5rem 1rem;
+    background-color: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &[data-order="first"] {
+      border-radius: 8px 8px 0 0;
+    }
+
+    &[data-order="last"] {
+      border-radius: 0 0 8px 8px;
+    }
+
+    &:hover {
+      background-color: #0000005b;
+    }
+
+    input[type='radio'] {
+      margin-right: 10px;
+    }
+  }
+}
+
+.dropdownIcon {
+  transition: transform 0.3s ease;
+
+  &__rotated {
+    transform: rotate(180deg);
+  }
+}

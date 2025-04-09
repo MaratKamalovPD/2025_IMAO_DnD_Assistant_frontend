@@ -75,7 +75,8 @@ button:hover {
 }
 
 button,
-a[data-role='btn'] {
+a[data-role='btn'],
+span[data-role='btn'] {
   font-family: 'Roboto-Medium', 'OpenSans', sans-serif;
   border-radius: 8px;
   text-decoration: none;
