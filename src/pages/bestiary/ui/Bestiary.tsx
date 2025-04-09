@@ -1,9 +1,17 @@
 import { Icon20Cancel } from '@vkontakte/icons';
+import clsx from 'clsx';
 import { CreatureClippedData } from 'entities/creature/model/types';
 import { GetCreaturesRequest, useGetCreaturesQuery } from 'pages/bestiary/api';
-import { mapFiltersToRequestBody, useViewSettings, ViewSettingsProvider } from 'pages/bestiary/lib';
+import {
+  mapFiltersToRequestBody,
+  OutletProvider,
+  useOutletContext,
+  useViewSettings,
+  ViewSettingsProvider,
+} from 'pages/bestiary/lib';
 import { Filters, OrderParams } from 'pages/bestiary/model';
 import { useCallback, useEffect, useState } from 'react';
+import { Outlet, useParams } from 'react-router';
 import { throttle, useDebounce } from 'shared/lib';
 import { Spinner } from 'shared/ui/spinner';
 import s from './Bestiary.module.scss';
@@ -16,14 +24,23 @@ const DEBOUNCE_TIME = 500;
 const THROTTLE_TIME = 1000;
 
 export const Bestiary = () => {
+  const { creatureName } = useParams();
+  const hasOutlet = creatureName !== undefined;
+
   return (
-    <ViewSettingsProvider>
-      <BestiaryContent />
-    </ViewSettingsProvider>
+    <div className={s.pageContent}>
+      <ViewSettingsProvider>
+        <OutletProvider hasOutlet={hasOutlet}>
+          <BestiaryContent />
+        </OutletProvider>
+      </ViewSettingsProvider>
+      <Outlet />
+    </div>
   );
 };
 
 const BestiaryContent = () => {
+  const { creatureName } = useParams();
   const [start, setStart] = useState(0);
   const [allCreatures, setAllCreatures] = useState<CreatureClippedData[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
@@ -39,6 +56,7 @@ const BestiaryContent = () => {
   }, []);
 
   const { viewMode, alphabetSort, ratingSort } = useViewSettings();
+  const hasOutlet = useOutletContext();
 
   const orderParams: OrderParams[] = [
     {
@@ -113,20 +131,20 @@ const BestiaryContent = () => {
 
   if (isLoading)
     return (
-      <div>
-        <h1>Бестиарий</h1>
-        <div className={s.spinnerContainer}>
-          <Spinner size={100} />
-        </div>
+      <div className={s.spinnerContainer}>
+        <Spinner size={100} />
       </div>
     );
 
   if (isError) return <div>Error loading creatures</div>;
 
   return (
-    <div>
-      <h1>Бестиарий</h1>
-
+    <div
+      className={clsx({
+        [s.bestiaryContainer]: !hasOutlet,
+        [s.bestiaryContainer__outlet]: hasOutlet,
+      })}
+    >
       <TopPanel
         searchValue={searchValue}
         setSearchValue={setSearchValue}
@@ -147,12 +165,17 @@ const BestiaryContent = () => {
         </div>
       )}
 
-      <div className={s.bestiaryContainer}>
-        {allCreatures.map((creature) => (
-          <div key={creature._id}>
-            <BestiaryCard creature={creature} viewMode={viewMode} />
-          </div>
-        ))}
+      <div className={s.bestiaryContent}>
+        {allCreatures.map((creature, ind) => {
+          const lastPart = creature.url.split('/').pop();
+          const isSelected = lastPart === creatureName;
+
+          return (
+            <div key={ind} className={clsx({ [s.selectedCard]: isSelected })}>
+              <BestiaryCard creature={creature} viewMode={viewMode} isSelected={isSelected} />
+            </div>
+          );
+        })}
       </div>
 
       {isPending && (

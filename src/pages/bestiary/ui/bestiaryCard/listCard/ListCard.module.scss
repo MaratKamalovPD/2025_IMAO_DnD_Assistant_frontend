@@ -4,8 +4,20 @@
   display: flex;
   flex-direction: row;
   border-radius: 12px;
-  border: 2px solid black;
   box-sizing: border-box;
+  transition: background-color 0.3s ease;
+
+  &__notSelected:hover {
+    opacity: 0.7;
+  }
+
+  &__selected {
+    background-color: #2552a5;
+
+    .sourceSection {
+      
+    }
+  }
 }
 
 .challengeRatingContainer {
@@ -32,48 +44,12 @@
   gap: 0.25rem;
   font-size: 14px;
 
-  &__title {
-    position: relative;
-
-    .tooltip {
-      position: absolute;
-      bottom: 60%;
-      left: 0%;
-      transform: translateY(-50%);
-      background-color: #000c;
-      color: #fff;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 13px;
-      white-space: nowrap;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity .2s ease-in-out, visibility .2s ease-in-out;
-
-      &::after {
-        content: " ";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: black transparent transparent transparent;
-      }
-    }
-  
-    &:hover .tooltip {
-      visibility: visible;
-      opacity: 1;
-    }
-  }
-
   &__name {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+    width: fit-content;
   }
 
   &__type {
@@ -92,5 +68,6 @@
     border: 0.5px solid #a3a3a3ad;
     padding: 0.4rem;
     height: fit-content;
+    background-color: var(--primary-bg-color);
   }
 }

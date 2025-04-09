@@ -1,0 +1,1 @@
+export { FightStatsSection } from './FightStatsSection' 

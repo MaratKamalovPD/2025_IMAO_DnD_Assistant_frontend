@@ -28,6 +28,7 @@ export type CreatureFullData = {
   proficiencyBonus: string;
   alignment: string;
   armorClass: number;
+  armorText?: string;
   armors?: Armor[];
   hits: HitPoints;
   speed: Speed[];
@@ -42,7 +43,8 @@ export type CreatureFullData = {
   languages: string[];
   feats?: Feat[];
   actions: Action[];
-  legendary?: Legendary[];
+  bonusActions?: Action[];
+  legendary?: Legendary;
   reactions: Reaction[];
   description: string;
   tags: Tag[];
@@ -147,7 +149,13 @@ type Skill = {
 
 type Senses = {
   passivePerception: string;
+  senses: Sense[];
 };
+
+type Sense = {
+  name: string;
+  value: number;
+}
 
 type Action = {
   name: string;
