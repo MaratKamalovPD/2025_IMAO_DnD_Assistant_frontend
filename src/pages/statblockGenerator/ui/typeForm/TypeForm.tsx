@@ -1,8 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TypeFormLocalization } from 'pages/statblockGenerator/lib';
-import { TypeFormProps, TypeFormState } from 'pages/statblockGenerator/model';
+import { TypeFormProps, TypeFormState, CreatureSize} from 'pages/statblockGenerator/model';
 import { FormElement } from 'pages/statblockGenerator/ui/typeForm/formElement';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
+
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  SINGLE_CREATURE_ID,
+  generatedCreatureActions,
+  generatedCreatureSelectors,
+  GeneratedCreatureStore,
+  
+} from 'entities/generatedCreature/model';
+
+import type {
+  CreatureFullData
+} from 'entities/creature/model';
+
 import s from './TypeForm.module.scss';
 
 export const TypeForm: React.FC<TypeFormProps> = ({
@@ -11,6 +25,11 @@ export const TypeForm: React.FC<TypeFormProps> = ({
   initialOtherType = 'swarm of Tiny beasts',
   language = 'en'
 }) => {
+ 
+  // const generatedCreature = useSelector((state: GeneratedCreatureStore) => 
+  //   generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)
+  // );
+
   const [state, setState] = useState<TypeFormState>({
     name: initialName,
     size: 'medium',
@@ -20,6 +39,18 @@ export const TypeForm: React.FC<TypeFormProps> = ({
     otherType: initialOtherType,
     showOtherType: false
   });
+
+  // const [state, setState] = useState<TypeFormState>({
+  //   name: generatedCreature?.name?.rus || 'Monster',
+  //   size: (['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan'].includes(generatedCreature?.size?.eng) 
+  //          ? generatedCreature.size.eng 
+  //          : 'medium') as CreatureSize,
+  //   type: generatedCreature?.type?.name || 'humanoid',
+  //   tag: generatedCreature?.tags?.[0]?.name || '',
+  //   alignment: generatedCreature?.alignment || 'any alignment',
+  //   otherType: '*', // или другое значение по умолчанию
+  //   showOtherType: generatedCreature?.type?.name === '*'
+  // });
 
   const t = TypeFormLocalization[language];
 
@@ -32,9 +63,82 @@ export const TypeForm: React.FC<TypeFormProps> = ({
   //   }));
   // };
 
+  const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   if (generatedCreature) {
+  //     setState(prev => ({
+  //       ...prev,
+  //       name: generatedCreature.name?.eng || prev.name,
+  //       size: (['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan'].includes(generatedCreature?.size?.eng) 
+  //          ? generatedCreature.size.eng 
+  //          : 'medium') as CreatureSize,
+  //       type: generatedCreature.type?.name || prev.type,
+  //       tag: generatedCreature.tags?.[0]?.name || prev.tag,
+  //       alignment: generatedCreature.alignment || prev.alignment,
+  //       showOtherType: generatedCreature.type?.name === '*'
+  //     }));
+  //   }
+  // }, [generatedCreature]);
+
   const handleChange = (field: keyof TypeFormState) => 
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      setState(prev => ({ ...prev, [field]: e.target.value }));
+      const newValue = e.target.value;
+      setState(prev => ({ ...prev, [field]: newValue }));
+
+      switch(field) {
+        case 'name':
+          dispatch(generatedCreatureActions.updateCreatureName({
+            id: SINGLE_CREATURE_ID, 
+            name: {
+              rus: newValue,
+              eng: newValue,
+            }
+          }));
+          break;
+        case 'size':
+          dispatch(generatedCreatureActions.updateCreatureSize({
+            id: SINGLE_CREATURE_ID, 
+            size: {
+              rus: newValue,
+              eng: newValue,
+              cell: '1'
+            }
+          }));
+          break;
+        case 'type':
+          dispatch(generatedCreatureActions.updateCreatureType({
+            id: SINGLE_CREATURE_ID, 
+            type: {
+              name: newValue,
+              tags: []
+            }
+          }));
+          if (newValue === '*') {
+            setState(prev => ({ ...prev, showOtherType: true }));
+          } else {
+            setState(prev => ({ ...prev, showOtherType: false }));
+          }
+          break;
+        case 'tag':
+          dispatch(generatedCreatureActions.updateTags({
+            id: SINGLE_CREATURE_ID, 
+            tags: [{
+              name: newValue,
+              description: `Description for ${newValue}`
+            }]
+          }));
+          break;
+        case 'alignment':
+          dispatch(generatedCreatureActions.updateAlignment({
+            id: SINGLE_CREATURE_ID,
+            alignment: newValue
+          }));
+          break;
+        // case 'otherType':
+        //   dispatch(generatedCreatureActions.setOtherType(newValue));
+        //   break;
+        }
     };
 
   return (

@@ -1,0 +1,1 @@
+export { generatedCreatureReduser } from './model';

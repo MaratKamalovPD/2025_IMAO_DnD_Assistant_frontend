@@ -12,3 +12,26 @@ export type {
   DamageLLM,
   SavingThrow,
 } from './types';
+
+export type {
+  Reaction,
+  Feat,
+  LegendaryAction,
+  Legendary,
+  Armor,
+  NameTranslations,
+  SizeTranslations,
+  CreatureType,
+  Source,
+  SourceGroup,
+  HitPoints,
+  Speed,
+  AbilityScores,
+  Skill,
+  Senses,
+  Action,
+  Tag,
+  AdditionalEffectLLM,
+  MultiAttackLLM,
+  AreaAttackLLM
+} from './types';
