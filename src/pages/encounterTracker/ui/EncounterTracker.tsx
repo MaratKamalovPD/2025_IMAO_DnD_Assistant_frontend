@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { createChatBotMessage } from 'react-chatbot-kit';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { EncounterState, EncounterStore } from 'entities/encounter/model';
+import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
 import { loggerActions, LoggerState, LoggerStore } from 'widgets/chatbot/model';
 import { Chatbot } from 'widgets/chatbot/ui/Chatbot';
 import { CardList } from './cardList';
@@ -16,9 +16,13 @@ export const EncounterTracker = () => {
   const dispatch = useDispatch();
 
   const { lastLog } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
-  const { participants } = useSelector<EncounterStore>(
+  const { participants, currentTurnIndex } = useSelector<EncounterStore>(
     (state) => state.encounter,
   ) as EncounterState;
+
+  useEffect(() => {
+    dispatch(encounterActions.selectCreature(participants[currentTurnIndex].id));
+  }, [currentTurnIndex, participants]);
 
   useEffect(() => {
     if (lastLog) {
