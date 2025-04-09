@@ -21,6 +21,7 @@ export const EncounterTracker = () => {
   ) as EncounterState;
 
   useEffect(() => {
+    if (!participants.length) return;
     dispatch(encounterActions.selectCreature(participants[currentTurnIndex].id));
   }, [currentTurnIndex, participants]);
 
