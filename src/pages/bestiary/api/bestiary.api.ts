@@ -30,6 +30,6 @@ const bestiaryApi = createApi({
   }),
 });
 
-export const { useGetCreaturesQuery, useLazyGetCreatureByNameQuery } = bestiaryApi;
+export const { useGetCreaturesQuery, useLazyGetCreatureByNameQuery, useGetCreatureByNameQuery } = bestiaryApi;
 
 export default bestiaryApi;

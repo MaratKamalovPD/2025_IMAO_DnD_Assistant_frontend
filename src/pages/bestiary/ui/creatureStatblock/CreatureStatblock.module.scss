@@ -1,0 +1,158 @@
+$main-text-color: #FFFFFF;
+$additional-text-color:  #DFDFDF;
+$dice-text-color: #4A87FF;
+$main-border-color: #DFDFDF;
+$additional-border-color: #cfcfcf62;
+
+.statblock {
+  width: calc(65% - 1rem);
+  background-color: var(--primary-bg-color);
+  border-radius: 12px;
+  position: sticky;
+  top: 28px;
+  left: 0;
+  max-height: calc(100vh - 56px);
+  height: fit-content;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-radius: 12px 12px 0 0;
+
+  &__nameSection {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__nameRus {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  &__nameEng {
+    color: $additional-text-color;
+    font-size: 16px;
+  }
+
+  &__closeBtn {
+    background-color: var(--secondary-bg-color);
+    filter: brightness(130%);
+    padding: 0.5rem;
+    transition: color 0.2s ease;
+    border: 1px solid #b9b9b9;
+    border-radius: 8px;
+    opacity: 1;
+    color: white;
+    height: fit-content;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+.statblockBody {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+  font-size: 15px;
+  gap: 1rem;
+
+  > *:last-child {
+    margin-bottom: 1rem;
+  }
+
+  > *:not(:first-child) {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.commonContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: var(--secondary-bg-color);
+  border-radius: 8px;
+  padding: 0.75rem;
+
+  &__typeContainer {
+    color: $additional-text-color
+  }
+
+  &__sourceContainer {
+    color: $additional-text-color;
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+.mainContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &__description {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__image {
+    width: 210px;
+    height: 210px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #FFD700;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0 0 1rem 1rem;
+    min-width: 210px;
+  
+    img {
+      width: 210px;
+      height: 280px;
+      object-fit: cover;
+      object-position: top;
+    }
+  }
+}
+
+.creatureDescriptionContainer {
+  display: flex;
+  flex-direction: column;
+
+  &__title {
+    font-size: 28px;
+    font-weight: bold;
+    color: $main-text-color;
+    border-bottom: 1px solid $main-border-color;
+    margin-bottom: 1rem;
+    padding-bottom: 0.25rem;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+
+    p {
+      margin: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    blockquote {
+      margin: 0;
+    }
+  }
+}

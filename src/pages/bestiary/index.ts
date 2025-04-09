@@ -1,1 +1,1 @@
-export { Bestiary } from './ui';
+export { Bestiary, CreatureStatblock } from './ui';

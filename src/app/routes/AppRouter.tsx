@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { HeaderProviders } from 'app/providers';
-import { Bestiary } from 'pages/bestiary';
+import { Bestiary, CreatureStatblock } from 'pages/bestiary';
 import { EncounterTracker } from 'pages/encounterTracker';
 import { Login } from 'pages/login';
 import { Main } from 'pages/main';
@@ -31,6 +31,12 @@ const router = createBrowserRouter([
         <Bestiary />
       </HeaderProviders>
     ),
+    children: [
+      {
+        path: ':creatureName',
+        element: <CreatureStatblock />,
+      },
+    ],
   },
   {
     path: 'login',
