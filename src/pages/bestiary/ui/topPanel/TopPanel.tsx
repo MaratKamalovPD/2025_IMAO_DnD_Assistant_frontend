@@ -1,24 +1,31 @@
+import Tippy from '@tippyjs/react';
 import {
   Icon20ChevronUp,
+  Icon20EraserOutline,
   Icon20LinesGrid2x3Square,
   Icon24Sort,
   Icon28ListOutline,
 } from '@vkontakte/icons';
 import clsx from 'clsx';
 import { useOutletContext, useViewSettings } from 'pages/bestiary/lib';
+import { Filters } from 'pages/characters/model';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import s from './TopPanel.module.scss';
 
 type TopPanelProps = {
   searchValue: string;
+  isAnyFilterSet: boolean;
   setSearchValue: (value: string) => void;
   setIsModalOpen: (isOpen: boolean) => void;
+  setFilters: (filters: Filters) => void;
 };
 
 export const TopPanel: React.FC<TopPanelProps> = ({
   searchValue,
+  isAnyFilterSet,
   setSearchValue,
   setIsModalOpen,
+  setFilters,
 }) => {
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,14 +70,27 @@ export const TopPanel: React.FC<TopPanelProps> = ({
             [s.additionsContainer__outlet]: hasOutlet,
           })}
         >
-          <button
-            onClick={() => setIsModalOpen(true)}
-            data-variant='secondary'
-            className={s.additionsContainer__btn}
-          >
-            <Icon24Sort width={19} height={19} />
-            <span></span>
-          </button>
+          <Tippy content={'Показать фильтры существ'}>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              data-variant={isAnyFilterSet ? 'accent' : 'secondary'}
+              className={s.additionsContainer__btn}
+            >
+              <Icon24Sort width={19} height={19} />
+              <span>Фильтры</span>
+            </button>
+          </Tippy>
+          {isAnyFilterSet && (
+            <Tippy content='Очистить фильтры'>
+              <button
+                className={s.additionsContainer__btn}
+                data-variant='accent'
+                onClick={() => setFilters({})}
+              >
+                <Icon20EraserOutline width={19} height={19} />
+              </button>
+            </Tippy>
+          )}
           <div className={s.viewModeContainer}>
             <button
               className={s.viewModeContainer__btn}

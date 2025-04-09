@@ -54,10 +54,7 @@ $medium-screen: 900px;
     display: flex;
     align-items: center;
     padding: 0.5rem 0.9rem;
-
-    span::after {
-      content: "Открыть фильтр";
-    }
+    transition: background-color 0.3s ease;
   }
 }
 
@@ -67,8 +64,8 @@ $medium-screen: 900px;
     width: 100%;
 
     &__btn {
-      span::after {
-        content: "Фильтры";
+      span {
+        display: none;
       }
     }
   }
