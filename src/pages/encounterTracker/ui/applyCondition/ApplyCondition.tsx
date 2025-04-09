@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
+import { toast } from 'react-toastify';
 
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, creatureActions } from 'entities/creature/model/creature.slice';
@@ -11,10 +12,10 @@ import {
   conditions,
   ConditionValue,
 } from 'pages/encounterTracker/lib';
-import { OptionWithIcon, SingleValueWithIcon } from 'shared/ui';
-import { ConditionImmunityToast } from 'pages/encounterTracker/ui/trackerToasts/conditionImmunityToast';
-import { toast } from 'react-toastify';
 import { hasConditionImmunity } from 'pages/encounterTracker/model';
+import { ConditionImmunityToast } from 'pages/encounterTracker/ui/trackerToasts/conditionImmunityToast';
+import { OptionWithIcon, SingleValueWithIcon } from 'shared/ui';
+import { loggerActions } from 'widgets/chatbot/model';
 
 import s from './ApplyCondition.module.scss';
 
@@ -47,7 +48,7 @@ export const ApplyConditionModal: React.FC = () => {
   );
 
   const handleApplyCondition = useCallback(() => {
-    const hasConditionImmunityFlag = hasConditionImmunity(selectedCreature, selectedCondition)
+    const hasConditionImmunityFlag = hasConditionImmunity(selectedCreature, selectedCondition);
 
     if (!hasConditionImmunityFlag) {
       dispatch(
@@ -60,6 +61,12 @@ export const ApplyConditionModal: React.FC = () => {
       toast(<ConditionImmunityToast creature={selectedCreature} condition={selectedCondition} />);
     }
 
+    dispatch(
+      loggerActions.addLog(
+        `${hasConditionImmunityFlag ? 'ИММУНИТЕТ К СОСТОЯНИЮ' : 'ПОВЕШЕНО СОСТОЯНИЕ'}: 
+        ${selectedCreature?.name} >> ${conditionOptions.find((option) => option.value === selectedCondition)?.label}`,
+      ),
+    );
   }, [selectedCondition, selectedCreatureId]);
 
   return (

@@ -1,17 +1,25 @@
 $border-color: #9b9b9b;
+$medium-screen: 900px;
 
 .topPanel {
-  display: flex;
-  flex-direction: row;
-  padding: 0.5rem;
-  justify-content: space-between;
-  gap: 1rem;
+  &__title {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  &__settings {
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem 0;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
 }
 
 .searchContainer {
   display: flex;
   align-items: center;
-  gap: 1rem;
   box-sizing: border-box;
   flex-grow: 1;
   min-width: 0;
@@ -29,12 +37,6 @@ $border-color: #9b9b9b;
       border-color: #007bff;
     }
   }
-
-  &__btn {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 0.9rem;
-  }
 }
 
 .additionsContainer {
@@ -42,6 +44,34 @@ $border-color: #9b9b9b;
   flex-direction: row;
   gap: 1rem;
   align-items: center;
+
+  &__outlet {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.9rem;
+
+    span::after {
+      content: "Открыть фильтр";
+    }
+  }
+}
+
+@media(max-width: $medium-screen) {
+  .additionsContainer {
+    justify-content: space-between;
+    width: 100%;
+
+    &__btn {
+      span::after {
+        content: "Фильтры";
+      }
+    }
+  }
 }
 
 .viewModeContainer {

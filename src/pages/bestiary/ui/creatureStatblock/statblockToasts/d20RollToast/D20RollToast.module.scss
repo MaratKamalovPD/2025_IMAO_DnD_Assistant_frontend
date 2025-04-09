@@ -1,0 +1,37 @@
+.toastContainer {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--toast-bg-color);
+  max-width: 380px;
+  gap: 1rem;
+  align-items: center;
+
+  &__leftSection {
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 32px;
+    font-weight: bold;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__totalGreen {
+    color: green;
+  }
+
+  &__totalRed {
+    color: red;
+  }
+
+  &__rightSection {
+    color: #FFFFFF;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1; 
+    min-width: 0;
+  }
+}

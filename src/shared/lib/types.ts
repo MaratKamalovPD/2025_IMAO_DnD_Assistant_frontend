@@ -17,3 +17,9 @@ export type D20Roll = {
   bonus: number;
   total: number;
 };
+
+export type Dice = {
+  count: number;
+  type: DiceType;
+  edgesNum: number;
+}

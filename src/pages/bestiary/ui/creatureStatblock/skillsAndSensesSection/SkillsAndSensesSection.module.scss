@@ -1,0 +1,51 @@
+@use '/src/pages/bestiary/ui/creatureStatblock/CreatureStatblock.module.scss' as *;
+
+.skillsContainer {
+  display: flex;
+  flex-direction: column;
+
+  &__line {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    padding-top: 0.6rem;
+
+    &:not(:last-of-type) {
+      border-bottom: 1px solid $additional-border-color;
+      padding-bottom: 0.5rem;
+    }
+  }
+
+  &__title {
+    color: $main-text-color;
+    font-weight: bold;
+    white-space: nowrap;
+    width: 28%;
+    display: flex;
+  }
+
+  &__text {
+    display: flex;
+    width: 72%;
+    flex-direction: row;
+    color: $additional-text-color;
+    white-space: normal;
+    flex-wrap: wrap;
+  }
+
+  &__formula {
+    color: $dice-text-color;
+    cursor: pointer;
+    font-weight: bold;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__listElement {
+    display: flex;
+    flex-direction: row;
+  }
+}

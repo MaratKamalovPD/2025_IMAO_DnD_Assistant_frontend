@@ -1,0 +1,81 @@
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  // max-width: 500px;
+  flex-grow: 1;
+  padding: 1rem 7rem;
+  overflow-y: auto;
+
+  .addCharacterForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 2rem;
+
+    .lssContainer {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      align-items: center;
+      padding: 0.5rem;
+      font-size: 1.1rem;
+      color: var(--accent-btn-color);
+    }
+
+    .inputContainer {
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .inputLabel {
+        margin-bottom: 5px;
+        position: relative;
+        display: inline-block;
+
+        .buttonAdd {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        input[type='file'] {
+          position: absolute;
+          z-index: -1;
+          opacity: 0;
+          display: block;
+          width: 0;
+          height: 0;
+        }
+      }
+
+      .fileNamePreview {
+        margin-top: 5px;
+      }
+    }
+  }
+
+  .errorLabel {
+    color: red;
+    margin-bottom: 15px;
+  }
+
+  .successLabel {
+    color: green;
+    margin-bottom: 15px;
+  }
+
+  .previewContainer {
+    .preview {
+      background-color: var(--secondary-bg-color);
+      padding: 10px;
+      border-radius: 4px;
+      max-height: 300px;
+      overflow: auto;
+      margin-bottom: 2rem;
+    }
+  }
+}

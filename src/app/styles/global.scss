@@ -1,3 +1,5 @@
+@import url('../../widgets/chatbot/ui/Chatbot.global.scss');
+
 @font-face {
   font-family: 'Roboto-Medium';
   src: url('../../shared/assets/fonts/Roboto-Medium.ttf'), format('ttf');
@@ -27,6 +29,8 @@
   --primary-btn-color: #ff6f61;
   --secondary-btn-color: #ec9ded;
   --accent-btn-color: #e2c044;
+  
+  --toast-bg-color: #121212;
 
   // for dice rotation
   --scroll: 0;
@@ -73,7 +77,8 @@ button:hover {
 }
 
 button,
-a[data-role='btn'] {
+a[data-role='btn'],
+span[data-role='btn'] {
   font-family: 'Roboto-Medium', 'OpenSans', sans-serif;
   border-radius: 8px;
   text-decoration: none;

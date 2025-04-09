@@ -3,6 +3,8 @@ import { EntityState, Reducer } from '@reduxjs/toolkit';
 import { DiceType } from 'shared/lib';
 import { Creature } from './creature.slice';
 
+export type EntityType = 'creature' | 'character';
+
 export type CreatureClippedData = {
   _id: string;
   name: NameTranslations;
@@ -26,6 +28,7 @@ export type CreatureFullData = {
   proficiencyBonus: string;
   alignment: string;
   armorClass: number;
+  armorText?: string;
   armors?: Armor[];
   hits: HitPoints;
   speed: Speed[];
@@ -40,7 +43,8 @@ export type CreatureFullData = {
   languages: string[];
   feats?: Feat[];
   actions: Action[];
-  legendary?: Legendary[];
+  bonusActions?: Action[];
+  legendary?: Legendary;
   reactions: Reaction[];
   description: string;
   tags: Tag[];
@@ -145,7 +149,14 @@ export type Skill = {
 
 export type Senses = {
   passivePerception: string;
+  senses: Sense[];
 };
+
+
+type Sense = {
+  name: string;
+  value: number;
+}
 
 export type Action = {
   name: string;
