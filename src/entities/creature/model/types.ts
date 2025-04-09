@@ -3,6 +3,8 @@ import { EntityState, Reducer } from '@reduxjs/toolkit';
 import { DiceType } from 'shared/lib';
 import { Creature } from './creature.slice';
 
+export type EntityType = 'creature' | 'character';
+
 export type CreatureClippedData = {
   _id: string;
   name: NameTranslations;

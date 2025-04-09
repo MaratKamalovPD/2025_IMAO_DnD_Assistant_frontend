@@ -12,11 +12,10 @@ import s from './CreatureCard.module.scss';
 
 type CreatureCardProps = {
   id: string;
-  ind: number;
   handleContextMenu: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, id: UUID) => void;
 };
 
-export const CreatureCard = ({ id, ind, handleContextMenu }: CreatureCardProps) => {
+export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
   const dispatch = useDispatch();
 
   const creature = useSelector<CreaturesStore>((state) =>
@@ -39,16 +38,16 @@ export const CreatureCard = ({ id, ind, handleContextMenu }: CreatureCardProps) 
   }, [attackHandleModeActive]);
 
   const cardClasses = clsx(s.card, {
-    [s.card__blue]: ind % 2 === 1,
-    [s.card__red]: ind % 2 === 0,
+    [s.card__blue]: creature.type === 'character',
+    [s.card__red]: creature.type === 'creature',
     [s.selected]: selectedCreatureId === id,
     [s.dead]: creature.hp.current <= 0,
     [s.currentTurn]: participants[currentTurnIndex].id === id,
   });
 
   const infoClasses = clsx(s.info, {
-    [s.info__blue]: ind % 2 === 1,
-    [s.info__red]: ind % 2 === 0,
+    [s.info__blue]: creature.type === 'character',
+    [s.info__red]: creature.type === 'creature',
   });
 
   return (

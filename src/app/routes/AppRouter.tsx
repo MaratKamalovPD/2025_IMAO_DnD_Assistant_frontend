@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { HeaderProviders } from 'app/providers';
 import { Bestiary, CreatureStatblock } from 'pages/bestiary';
+import { Characters } from 'pages/characters';
 import { EncounterTracker } from 'pages/encounterTracker';
 import { Login } from 'pages/login';
 import { Main } from 'pages/main';
@@ -37,6 +38,14 @@ const router = createBrowserRouter([
         element: <CreatureStatblock />,
       },
     ],
+  },
+  {
+    path: 'characters',
+    element: (
+      <HeaderProviders>
+        <Characters />
+      </HeaderProviders>
+    ),
   },
   {
     path: 'login',
