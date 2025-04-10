@@ -7,7 +7,7 @@
 
   &__leftSection {
     width: fit-content;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: bold;
     color: #FFFFFF;
     display: flex;
@@ -17,15 +17,17 @@
 
   &__rightSection {
     color: #FFFFFF;
-    font-size: 16px;
+    font-size: 14px;
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
+    flex: 1;
   }
 
   &__diceRolls {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
   }
 
   &__diceGreen {
