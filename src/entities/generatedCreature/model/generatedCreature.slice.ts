@@ -10,17 +10,17 @@ import {
     CreatureFullData,
     Reaction,
     SavingThrow,
-    DamageDicesRolls,
-    DamageDicesRoll,
+    //DamageDicesRolls,
+    //DamageDicesRoll,
     Feat,
-    LegendaryAction,
+    //LegendaryAction,
     Legendary,
     Armor,
     NameTranslations,
     SizeTranslations,
     CreatureType,
     Source,
-    SourceGroup,
+    //SourceGroup,
     HitPoints,
     Speed,
     AbilityScores,
@@ -28,12 +28,12 @@ import {
     Senses,
     Action,
     Tag,
-    DamageLLM,
-    AdditionalEffectLLM,
-    MultiAttackLLM,
-    AreaAttackLLM,
+    //DamageLLM,
+    //AdditionalEffectLLM,
+    //MultiAttackLLM,
+    //AreaAttackLLM,
     AttackLLM,
-    Damage
+    //Damage
   } from 'entities/creature/model';
 
   export const SINGLE_CREATURE_ID = 'current';
@@ -94,6 +94,7 @@ import {
     damageImmunities: [],
     senses: {
       passivePerception: '10',
+      senses: []
     },
     languages: ['Common'],
     feats: [],
@@ -274,7 +275,7 @@ import {
         });
       },
       
-      updateLegendaryActions: (state, action: PayloadAction<{id: string; legendary: Legendary[]}>) => {
+      updateLegendaryActions: (state, action: PayloadAction<{id: string; legendary: Legendary}>) => {
         generatedCreatureAdapter.updateOne(state, {
           id: action.payload.id,
           changes: { legendary: action.payload.legendary }

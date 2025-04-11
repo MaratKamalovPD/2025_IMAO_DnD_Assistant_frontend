@@ -19,6 +19,7 @@ type CharacterCardProps = {
 };
 
 export const CharacterCard: FC<CharacterCardProps> = ({ character, viewMode }) => {
+  void viewMode
   const dispatch = useDispatch();
 
   const [trigger, { data: characterData, isLoading, isError, isUninitialized, requestId }] =

@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { TypeFormLocalization } from 'pages/statblockGenerator/lib';
-import { TypeFormProps, TypeFormState, CreatureSize} from 'pages/statblockGenerator/model';
+import { TypeFormProps, TypeFormState} from 'pages/statblockGenerator/model';
 import { FormElement } from 'pages/statblockGenerator/ui/typeForm/formElement';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch  } from 'react-redux';
 import {
   SINGLE_CREATURE_ID,
   generatedCreatureActions,
-  generatedCreatureSelectors,
-  GeneratedCreatureStore,
+  //generatedCreatureSelectors,
+  //GeneratedCreatureStore,
   
 } from 'entities/generatedCreature/model';
 
-import type {
-  CreatureFullData
-} from 'entities/creature/model';
+// import type {
+//   CreatureFullData
+// } from 'entities/creature/model';
 
 import s from './TypeForm.module.scss';
 
