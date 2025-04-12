@@ -68,12 +68,13 @@ $additional-border-color: #cfcfcf62;
   font-size: 15px;
   gap: 1rem;
 
-  > *:last-child {
-    margin-bottom: 1rem;
-  }
-
   > *:not(:first-child) {
     margin-bottom: 0.5rem;
+  }
+
+
+  > *:last-child {
+    margin-bottom: 1.5rem;
   }
 }
 

@@ -64,11 +64,6 @@
     transition: background-color 0.2s ease;
   }
 
-  &__btnChecked {
-    background-color: var(--primary-btn-color);
-    color: #FFFFFF;
-  }
-
   &__btnUnchecked {
     background-color: #e5e7eb;
 

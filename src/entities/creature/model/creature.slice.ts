@@ -34,6 +34,7 @@ export type Creature = {
   damageResistances: string[];
   conditionImmunities: string[];
   image?: string;
+  imageToken?: string;
   notes: string;
   actions?: {
     name: string;

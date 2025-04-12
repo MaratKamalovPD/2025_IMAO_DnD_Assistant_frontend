@@ -58,6 +58,8 @@ const BestiaryContent = () => {
   const { viewMode, alphabetSort, ratingSort } = useViewSettings();
   const hasOutlet = useOutletContext();
 
+  const isAnyFilterSet = Object.values(filters).some((arr) => Array.isArray(arr) && arr.length > 0);
+
   const orderParams: OrderParams[] = [
     {
       field: 'experience',
@@ -147,6 +149,8 @@ const BestiaryContent = () => {
     >
       <TopPanel
         searchValue={searchValue}
+        isAnyFilterSet={isAnyFilterSet}
+        setFilters={setFilters}
         setSearchValue={setSearchValue}
         setIsModalOpen={setIsModalOpen}
       />
