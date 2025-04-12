@@ -7,9 +7,7 @@
   background-color: var(--primary-btn-color);
   border: none;
   position: fixed;
-  bottom: 25px;
   z-index: 9999;
-  right: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -26,9 +24,9 @@
   display: flex;
   justify-content: center;
   position: fixed;
-  right: 40px;
+  right: 70px;
 
-  bottom: 55px;
+  bottom: -110px;
   z-index: 9999;
   box-shadow: 5px 5px 13px rgba(91, 81, 81, 0.4);
   border-radius: 5px;

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createChatBotMessage } from 'react-chatbot-kit';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -9,6 +9,8 @@ import { CardList } from './cardList';
 import { Placeholder } from './placeholder';
 import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
+import { PopupMenu, MenuItem} from './popupMenu';
+import { Rnd } from "react-rnd";
 
 import s from './EncounterTracker.module.scss';
 
@@ -29,16 +31,66 @@ export const EncounterTracker = () => {
     }
   }, [lastLog]);
 
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [size, setSize] = useState({ width: 850, height: 600 });
+
+  const toggleWindow = () => {
+    if (isMinimized) {
+      setSize({ width: 850, height: 600 });
+    } else {
+      setSize({ width: 350, height: 40 }); // или вообще height: 0
+    }
+    setIsMinimized(!isMinimized);
+  };
+
+  const menuItems: MenuItem[] = [
+    {
+      content: { 
+        type: 'component', 
+        component: <Chatbot />
+      },
+      color: s.red
+    },
+    {
+      content: { type: 'component', component: <span>🚀</span> },
+      color: s.green,
+      href: '#rocket'
+    },
+  ];
+
   return (
     <div className={s.encounterTrackerContainer}>
       {participants.length !== 0 ? (
         <>
-          <Statblock />
+          <PopupMenu items={menuItems} />
+          <Rnd
+            style={{ zIndex: 10 }}
+            default={{
+              x: 100,
+              y: 100,
+              width: size.width,
+              height: size.height,
+            }}
+            enableResizing={true}
+            size={size}
+            onResizeStop={(e, direction, ref, delta, position) => {
+              setSize({
+                width: ref.offsetWidth,
+                height: ref.offsetHeight,
+              });
+            }}
+          >
+            {/* Передаём управление внутрь Statblock */}
+            <Statblock
+              isMinimized={isMinimized}
+              toggleWindow={toggleWindow}
+            />
+          </Rnd>
+          
           <div className={s.stickyPanel}>
             <TrackPanel />
             <CardList />
           </div>
-          <Chatbot />
         </>
       ) : (
         <Placeholder />
