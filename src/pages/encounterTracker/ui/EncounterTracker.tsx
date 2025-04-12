@@ -8,7 +8,7 @@ import { createChatBotMessage } from 'react-chatbot-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { Rnd } from 'react-rnd';
 
-import { EncounterState, EncounterStore } from 'entities/encounter/model';
+import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
 import { loggerActions, LoggerState, LoggerStore } from 'widgets/chatbot/model';
 import { Chatbot } from 'widgets/chatbot/ui/Chatbot';
 import { BattleMap } from './battleMap';
@@ -33,9 +33,14 @@ export const EncounterTracker = () => {
   const [mapImage, setMapImage] = useState(DANGEON_MAP_IMAGE);
 
   const { lastLog } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
-  const { participants } = useSelector<EncounterStore>(
+  const { participants, currentTurnIndex } = useSelector<EncounterStore>(
     (state) => state.encounter,
   ) as EncounterState;
+
+  useEffect(() => {
+    if (!participants.length) return;
+    dispatch(encounterActions.selectCreature(participants[currentTurnIndex].id));
+  }, [currentTurnIndex, participants]);
 
   useEffect(() => {
     if (lastLog) {
