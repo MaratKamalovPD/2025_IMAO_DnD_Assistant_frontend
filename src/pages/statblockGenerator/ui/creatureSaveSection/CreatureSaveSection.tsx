@@ -6,9 +6,11 @@ interface CreatureSaveSectionProps {
   onUsePreset?: () => void;
   onImageUpload?: (file: File) => void;
   onTextChange?: (text: string) => void;
-  presetOptions?: string[];
+  onTriggerPreset?: (name: string) => void;  
+  presetOptions?: Array<{ label: string; value: string }>;
   selectedPreset?: string;
   language?: 'en' | 'ru';
+  isLoading?: boolean; 
 }
 
 export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
@@ -16,6 +18,7 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
   onUsePreset,
   onImageUpload,
   onTextChange,
+  onTriggerPreset,
   presetOptions = [],
   selectedPreset = '',
   language = 'ru'
@@ -24,7 +27,7 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
     ru: {
       save: 'Сохранить существо',
       uploadImage: 'Загрузить изображение',
-      presets: 'Пресеты запросов:',
+      presets: 'Пресеты существ:',
       select: 'Выбрать из списка',
       usePreset: 'Использовать пресет'
     },
@@ -61,14 +64,17 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
           >
             <option value="">{t.select}</option>
             {presetOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
+              <option key={option.value} value={option.value}>
+                {option.label}
               </option>
             ))}
           </select>
         </div>
 
-        <button className={s.creatureSaveSection__button} onClick={onUsePreset}>
+        <button 
+          className={s.creatureSaveSection__button} 
+          onClick={() => selectedPreset && onTriggerPreset?.(selectedPreset)}
+        >
           {t.usePreset}
         </button>
       </div>

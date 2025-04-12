@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TypeFormLocalization } from 'pages/statblockGenerator/lib';
-import { TypeFormProps, TypeFormState} from 'pages/statblockGenerator/model';
+import { TypeFormProps, TypeFormState, CreatureSize} from 'pages/statblockGenerator/model';
 import { FormElement } from 'pages/statblockGenerator/ui/typeForm/formElement';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import { RootState } from 'app/store';
 
-import { useDispatch  } from 'react-redux';
+import { useDispatch, useSelector  } from 'react-redux';
 import {
   SINGLE_CREATURE_ID,
   generatedCreatureActions,
-  //generatedCreatureSelectors,
-  //GeneratedCreatureStore,
-  
+  generatedCreatureSelectors,
+  GeneratedCreatureStore,
+
 } from 'entities/generatedCreature/model';
 
 // import type {
@@ -20,37 +21,24 @@ import {
 import s from './TypeForm.module.scss';
 
 export const TypeForm: React.FC<TypeFormProps> = ({
-  initialName = 'Monster',
-  initialAlignment = 'any alignment',
-  initialOtherType = 'swarm of Tiny beasts',
   language = 'en'
 }) => {
- 
-  // const generatedCreature = useSelector((state: GeneratedCreatureStore) => 
-  //   generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)
-  // );
+
+  const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
+    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)
+  );
 
   const [state, setState] = useState<TypeFormState>({
-    name: initialName,
-    size: 'medium',
-    type: 'humanoid',
-    tag: '',
-    alignment: initialAlignment,
-    otherType: initialOtherType,
-    showOtherType: false
+    name: generatedCreature?.name?.rus || 'Monster',
+    size: (['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan'].includes(generatedCreature?.size?.eng) 
+           ? generatedCreature.size.eng 
+           : 'medium') as CreatureSize,
+    type: generatedCreature?.type?.name || 'beast',
+    tag: generatedCreature?.tags?.[0]?.name || '',
+    alignment: generatedCreature?.alignment || 'any alignment',
+    otherType: '*', // или другое значение по умолчанию
+    showOtherType: generatedCreature?.type?.name === '*'
   });
-
-  // const [state, setState] = useState<TypeFormState>({
-  //   name: generatedCreature?.name?.rus || 'Monster',
-  //   size: (['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan'].includes(generatedCreature?.size?.eng) 
-  //          ? generatedCreature.size.eng 
-  //          : 'medium') as CreatureSize,
-  //   type: generatedCreature?.type?.name || 'humanoid',
-  //   tag: generatedCreature?.tags?.[0]?.name || '',
-  //   alignment: generatedCreature?.alignment || 'any alignment',
-  //   otherType: '*', // или другое значение по умолчанию
-  //   showOtherType: generatedCreature?.type?.name === '*'
-  // });
 
   const t = TypeFormLocalization[language];
 
@@ -65,21 +53,21 @@ export const TypeForm: React.FC<TypeFormProps> = ({
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   if (generatedCreature) {
-  //     setState(prev => ({
-  //       ...prev,
-  //       name: generatedCreature.name?.eng || prev.name,
-  //       size: (['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan'].includes(generatedCreature?.size?.eng) 
-  //          ? generatedCreature.size.eng 
-  //          : 'medium') as CreatureSize,
-  //       type: generatedCreature.type?.name || prev.type,
-  //       tag: generatedCreature.tags?.[0]?.name || prev.tag,
-  //       alignment: generatedCreature.alignment || prev.alignment,
-  //       showOtherType: generatedCreature.type?.name === '*'
-  //     }));
-  //   }
-  // }, [generatedCreature]);
+  useEffect(() => {
+    if (generatedCreature) {
+      setState(prev => ({
+        ...prev,
+        name: generatedCreature.name?.eng || prev.name,
+        size: (['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan'].includes(generatedCreature?.size?.eng) 
+           ? generatedCreature.size.eng 
+           : 'medium') as CreatureSize,
+        type: generatedCreature.type?.name || prev.type,
+        tag: generatedCreature.tags?.[0]?.name || prev.tag,
+        alignment: generatedCreature.alignment || prev.alignment,
+        showOtherType: generatedCreature.type?.name === '*'
+      }));
+    }
+  }, [generatedCreature]);
 
   const handleChange = (field: keyof TypeFormState) => 
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

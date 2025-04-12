@@ -3,6 +3,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 
 import { creaturesReduser } from 'entities/creature';
 import { encounterReduser } from 'entities/encounter';
+import { generatedCreatureReduser } from 'entities/generatedCreature';
 import { bestiaryApi } from 'pages/bestiary/api';
 import { characterApi } from 'pages/characters/api';
 import { promtApi } from 'pages/encounterTracker/api';
@@ -13,6 +14,7 @@ export const store = configureStore({
     encounter: encounterReduser,
     creatures: creaturesReduser,
     logger: loggerReduser,
+    generatedCreature: generatedCreatureReduser,
     bestiaryApi: bestiaryApi.reducer,
     promtApi: promtApi.reducer,
     characterApi: characterApi.reducer,
@@ -25,3 +27,5 @@ export const store = configureStore({
 });
 
 setupListeners(store.dispatch);
+
+export type RootState = ReturnType<typeof store.getState>;

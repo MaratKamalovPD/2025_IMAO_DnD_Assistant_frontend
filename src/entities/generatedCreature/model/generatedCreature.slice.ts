@@ -39,7 +39,7 @@ import {
   export const SINGLE_CREATURE_ID = 'current';
 
   const initialCreature: CreatureFullData = {
-    _id: 'current',
+    _id: SINGLE_CREATURE_ID,
     id: 0,
     name: {
       rus: 'Существо',
@@ -51,7 +51,7 @@ import {
       cell: '1',
     },
     type: {
-      name: 'Зверь',
+      name: 'beast',
       tags: [],
     },
     challengeRating: '1',
@@ -66,7 +66,7 @@ import {
       },
     },
     experience: 200,
-    alignment: 'neutral',
+    alignment: 'any alignment',
     armorClass: 10,
     armors: [],
     hits: {
@@ -110,13 +110,13 @@ import {
   
   
   const generatedCreatureAdapter = createEntityAdapter<CreatureFullData, string>({
-    selectId: () => SINGLE_CREATURE_ID, // Всегда один и тот же ID
+    selectId: (creature) => creature._id,
   });
   
-  //interface GeneratedCreaturesState extends EntityState<CreatureFullData, string> {}
-  
-  const initialState = generatedCreatureAdapter.getInitialState();
-  generatedCreatureAdapter.addOne(initialState, initialCreature);
+  const initialState = generatedCreatureAdapter.getInitialState({
+    ids: [initialCreature._id],   // Массив ID
+    entities: { [initialCreature._id]: initialCreature }, // Объект с сущностями
+  });
   
   const generatedCreatureSlice = createSlice({
     name: 'generatedCreature',
@@ -126,6 +126,15 @@ import {
       creatureUpdated: generatedCreatureAdapter.updateOne,
       creatureRemoved: generatedCreatureAdapter.removeOne,
       creaturesReceived: generatedCreatureAdapter.setAll,
+
+      replaceCreature: (state, action: PayloadAction<CreatureFullData>) => {
+        generatedCreatureAdapter.setOne(state, action.payload);
+      },
+      
+      replaceAllCreatures: (state, action: PayloadAction<CreatureFullData[]>) => {
+        generatedCreatureAdapter.setAll(state, action.payload);
+      },
+      
       
       // Специфичные редьюсеры для обновления отдельных полей
       updateCreatureName: (state, action: PayloadAction<{id: string; name: NameTranslations}>) => {
