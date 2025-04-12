@@ -7,10 +7,10 @@ import { loggerActions, LoggerState, LoggerStore } from 'widgets/chatbot/model';
 import { Chatbot } from 'widgets/chatbot/ui/Chatbot';
 import { CardList } from './cardList';
 import { Placeholder } from './placeholder';
-import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
 
 import s from './EncounterTracker.module.scss';
+import { BattleMap } from './battleMap';
 
 export const EncounterTracker = () => {
   const dispatch = useDispatch();
@@ -33,7 +33,8 @@ export const EncounterTracker = () => {
     <div className={s.encounterTrackerContainer}>
       {participants.length !== 0 ? (
         <>
-          <Statblock />
+          {/* <Statblock /> */}
+          <BattleMap />
           <div className={s.stickyPanel}>
             <TrackPanel />
             <CardList />
