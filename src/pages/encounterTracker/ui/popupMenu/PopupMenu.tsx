@@ -2,21 +2,24 @@ import React, { useState } from 'react';
 import s from './PopupMenu.module.scss';
 import clsx from 'clsx';
 
-interface MenuItem {
-  icon: string;
+// Типы для элементов меню
+export type MenuItemContent = 
+  | { type: 'icon'; icon: string } // Для FontAwesome иконок
+  | { type: 'component'; component: React.ReactNode }; // Для React компонентов
+
+export interface MenuItem {
+  content: MenuItemContent;
   color: string;
-  href: string;
+  href?: string;
+  onClick?: () => void;
 }
 
-export const PopupMenu: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface PopupMenuProps {
+  items: MenuItem[];
+}
 
-  const menuItems: MenuItem[] = [
-    { icon: 'fa fa-anchor', color: s.blue, href: '#' },
-    { icon: 'fa fa-coffee', color: s.green, href: '#' },
-    { icon: 'fa fa-heart', color: s.red, href: '#' },
-    { icon: 'fa fa-microphone', color: s.purple, href: '#' },
-  ];
+export const PopupMenu: React.FC<PopupMenuProps> = ({ items }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -34,19 +37,31 @@ export const PopupMenu: React.FC = () => {
         <span className={clsx(s.lines, s.line3)}></span>
       </button>
 
-      {menuItems.map((item, index) => (
-        <a
-          key={index}
-          href={item.href}
-          className={clsx(s.menuItem, item.color, { [s.open]: isOpen })}
-          style={{
-            transitionDuration: `${180 + index * 100}ms`,
-            transform: isOpen ? `translate3d(0, -${104.99997 + index * 100}px, 0)` : 'none'
-          }}
-        >
-          <i className={item.icon}></i>
-        </a>
-      ))}
+      {items.map((item, index) => {
+        const content = item.content.type === 'icon' 
+          ? <i className={item.content.icon}></i>
+          : item.content.component;
+
+        return (
+          <a
+            key={index}
+            href={item.href || '#'}
+            className={clsx(s.menuItem, item.color, { [s.open]: isOpen })}
+            onClick={(e) => {
+              if (item.onClick) {
+                e.preventDefault();
+                item.onClick();
+              }
+            }}
+            style={{
+              transitionDuration: `${180 + index * 100}ms`,
+              transform: isOpen ? `translate3d(0, -${75 + index * 75}px, 0)` : 'none'
+            }}
+          >
+            {content}
+          </a>
+        );
+      })}
     </nav>
   );
 };

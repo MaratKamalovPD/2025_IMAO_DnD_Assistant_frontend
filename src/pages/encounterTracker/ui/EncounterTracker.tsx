@@ -9,7 +9,7 @@ import { CardList } from './cardList';
 import { Placeholder } from './placeholder';
 import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
-import { PopupMenu } from './popupMenu';
+import { PopupMenu, MenuItem} from './popupMenu';
 import { Rnd } from "react-rnd";
 
 import s from './EncounterTracker.module.scss';
@@ -43,18 +43,35 @@ export const EncounterTracker = () => {
     setIsMinimized(!isMinimized);
   };
 
+  const menuItems: MenuItem[] = [
+    {
+      content: { 
+        type: 'component', 
+        component: <Chatbot />
+      },
+      color: s.red
+    },
+    {
+      content: { type: 'component', component: <span>🚀</span> },
+      color: s.green,
+      href: '#rocket'
+    },
+  ];
+
   return (
     <div className={s.encounterTrackerContainer}>
       {participants.length !== 0 ? (
         <>
-          <PopupMenu />
+          <PopupMenu items={menuItems} />
           <Rnd
+            style={{ zIndex: 10 }}
             default={{
               x: 100,
               y: 100,
               width: size.width,
               height: size.height,
             }}
+            enableResizing={true}
             size={size}
             onResizeStop={(e, direction, ref, delta, position) => {
               setSize({
@@ -74,7 +91,6 @@ export const EncounterTracker = () => {
             <TrackPanel />
             <CardList />
           </div>
-          <Chatbot />
         </>
       ) : (
         <Placeholder />
