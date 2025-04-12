@@ -9,6 +9,7 @@ import { CardList } from './cardList';
 import { Placeholder } from './placeholder';
 import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
+import { PopupMenu } from './popupMenu';
 import { Rnd } from "react-rnd";
 
 import s from './EncounterTracker.module.scss';
@@ -46,6 +47,7 @@ export const EncounterTracker = () => {
     <div className={s.encounterTrackerContainer}>
       {participants.length !== 0 ? (
         <>
+          <PopupMenu />
           <Rnd
             default={{
               x: 100,
