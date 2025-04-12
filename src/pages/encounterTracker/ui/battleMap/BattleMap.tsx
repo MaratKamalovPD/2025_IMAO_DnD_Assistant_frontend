@@ -1,18 +1,18 @@
 import { select as dselect, zoom as dzoom } from 'd3';
 import { useEffect, useRef, useState } from 'react';
-
-import { GridLayout } from './gridLayout';
+import { useSelector } from 'react-redux';
 
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
-import { useSelector } from 'react-redux';
-import s from './BattleMap.module.scss';
 import { CreatureToken } from './creatureToken';
+import { GridLayout } from './gridLayout';
+
+import s from './BattleMap.module.scss';
 
 const cols = 26;
 const rows = 18;
 const cellSize = 50;
 
-export const BattleMap = () => {
+export const BattleMap = ({ image }: { image: string }) => {
   const [mapSize, setMapSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -52,11 +52,7 @@ export const BattleMap = () => {
     >
       <svg ref={svgRef} className={s.map}>
         <g transform={`translate(${transform.x}, ${transform.y}) scale(${transform.k})`}>
-          <image
-            href='https://encounterium.ru/map-images/plug-maps/cropped-map-1.png'
-            height={rows * cellSize}
-            width={cols * cellSize}
-          />
+          <image href={image} height={rows * cellSize} width={cols * cellSize} />
           <GridLayout cols={cols} rows={rows} cellSize={cellSize} />
           {participants.map((value, index) => (
             <CreatureToken

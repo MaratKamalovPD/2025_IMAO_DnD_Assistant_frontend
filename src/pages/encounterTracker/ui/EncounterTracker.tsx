@@ -1,21 +1,37 @@
+import {
+  Icon28DiamondOutline,
+  Icon28DocumentListOutline,
+  Icon28HomeOutline,
+} from '@vkontakte/icons';
 import { useEffect, useState } from 'react';
 import { createChatBotMessage } from 'react-chatbot-kit';
 import { useDispatch, useSelector } from 'react-redux';
+import { Rnd } from 'react-rnd';
 
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
-import { Rnd } from 'react-rnd';
 import { loggerActions, LoggerState, LoggerStore } from 'widgets/chatbot/model';
 import { Chatbot } from 'widgets/chatbot/ui/Chatbot';
+import { BattleMap } from './battleMap';
 import { CardList } from './cardList';
+import { CustomCursor } from './customCursor';
 import { Placeholder } from './placeholder';
 import { MenuItem, PopupMenu } from './popupMenu';
+import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
 
 import s from './EncounterTracker.module.scss';
-import { BattleMap } from './battleMap';
+
+const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
+const VILLAGE_MAP_IMAGE =
+  'https://encounterium.ru/map-images/plug-maps/Fantasy_Forest_Village_Battlemap_simple_compose_01.png';
 
 export const EncounterTracker = () => {
   const dispatch = useDispatch();
+
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [size, setSize] = useState({ width: 850, height: 600 });
+  const [toggleStatblock, setToggleStatblock] = useState(false);
+  const [mapImage, setMapImage] = useState(DANGEON_MAP_IMAGE);
 
   const { lastLog } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
   const { participants } = useSelector<EncounterStore>(
@@ -31,9 +47,6 @@ export const EncounterTracker = () => {
     }
   }, [lastLog]);
 
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [size, setSize] = useState({ width: 850, height: 600 });
-
   const toggleWindow = () => {
     if (isMinimized) {
       setSize({ width: 850, height: 600 });
@@ -41,6 +54,14 @@ export const EncounterTracker = () => {
       setSize({ width: 350, height: 40 }); // или вообще height: 0
     }
     setIsMinimized(!isMinimized);
+  };
+
+  const ToggleStatblock = () => {
+    return (
+      <div className={s.toggleStatblock} onClick={() => setToggleStatblock((prev) => !prev)}>
+        <Icon28DocumentListOutline fill='white' />
+      </div>
+    );
   };
 
   const menuItems: MenuItem[] = [
@@ -52,7 +73,31 @@ export const EncounterTracker = () => {
       color: s.red,
     },
     {
-      content: { type: 'component', component: <span>🚀</span> },
+      content: { type: 'component', component: <ToggleStatblock /> },
+      color: s.green,
+      href: '#rocket',
+    },
+    {
+      content: {
+        type: 'component',
+        component: (
+          <div className={s.toggle} onClick={() => setMapImage(DANGEON_MAP_IMAGE)}>
+            <Icon28DiamondOutline fill='white' />
+          </div>
+        ),
+      },
+      color: s.green,
+      href: '#rocket',
+    },
+    {
+      content: {
+        type: 'component',
+        component: (
+          <div className={s.toggle} onClick={() => setMapImage(VILLAGE_MAP_IMAGE)}>
+            <Icon28HomeOutline fill='white' />
+          </div>
+        ),
+      },
       color: s.green,
       href: '#rocket',
     },
@@ -60,30 +105,33 @@ export const EncounterTracker = () => {
 
   return (
     <div className={s.encounterTrackerContainer}>
+      <CustomCursor />
       {participants.length !== 0 ? (
         <>
-          <BattleMap />
+          <BattleMap image={mapImage} />
           <PopupMenu items={menuItems} />
-          <Rnd
-            style={{ zIndex: 10 }}
-            default={{
-              x: 100,
-              y: 100,
-              width: size.width,
-              height: size.height,
-            }}
-            enableResizing={true}
-            size={size}
-            onResizeStop={(e, direction, ref, delta, position) => {
-              setSize({
-                width: ref.offsetWidth,
-                height: ref.offsetHeight,
-              });
-            }}
-          >
-            {/* Передаём управление внутрь Statblock */}
-            <Statblock isMinimized={isMinimized} toggleWindow={toggleWindow} />
-          </Rnd>
+          {toggleStatblock && (
+            <Rnd
+              style={{ zIndex: 10 }}
+              default={{
+                x: 100,
+                y: 100,
+                width: size.width,
+                height: size.height,
+              }}
+              enableResizing={true}
+              size={size}
+              onResizeStop={(_e, _direction, ref) => {
+                setSize({
+                  width: ref.offsetWidth,
+                  height: ref.offsetHeight,
+                });
+              }}
+            >
+              {/* Передаём управление внутрь Statblock */}
+              <Statblock isMinimized={isMinimized} toggleWindow={toggleWindow} />
+            </Rnd>
+          )}
 
           <div className={s.stickyPanel}>
             <TrackPanel />

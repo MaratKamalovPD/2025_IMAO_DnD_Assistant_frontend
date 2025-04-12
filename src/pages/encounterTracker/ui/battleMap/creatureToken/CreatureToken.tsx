@@ -1,7 +1,8 @@
 import { drag as ddrag, select as dselect } from 'd3';
-import { Creature, creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { useRef } from 'react';
 import { useSelector } from 'react-redux';
+
+import { Creature, creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { UUID } from 'shared/lib';
 
 type CreatureTokenProps = {
@@ -52,7 +53,7 @@ export const CreatureToken = ({ id, x, y, cellSize }: CreatureTokenProps) => {
         cy={y}
         r={cellSize / 2}
         fill={`url(#image${id})`}
-        stroke='black'
+        stroke='gold'
         strokeWidth='2'
       />
     </>
