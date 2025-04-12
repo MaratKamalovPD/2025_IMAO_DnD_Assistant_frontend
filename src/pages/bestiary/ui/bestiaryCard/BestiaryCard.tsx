@@ -59,6 +59,7 @@ export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSele
         damageVulnerabilities: creatureData.damageVulnerabilities || [],
         conditionImmunities: creatureData.conditionImmunities || [],
         image: creatureData.images[2] || placeholderImage,
+        imageToken: creatureData.images[0] || placeholderImage,
         notes: '',
         attacksLLM: creatureData.attacksLLM,
       };

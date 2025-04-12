@@ -13,7 +13,6 @@ import { encounterActions, EncounterState, EncounterStore } from 'entities/encou
 import { findAttackIcon, findConditionInstance } from 'pages/encounterTracker/lib';
 import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
 import { AttackModal } from 'pages/encounterTracker/ui/attackModal';
-import { CustomCursor } from 'pages/encounterTracker/ui/customCursor';
 import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
 import { normalizeString } from 'shared/lib';
 
@@ -29,7 +28,6 @@ interface StatblockProps {
   isMinimized: boolean;
   toggleWindow: () => void;
 }
-
 
 export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow }) => {
   const dispatch = useDispatch();
@@ -136,14 +134,12 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
 
   return (
     <div className={s.statblockContainer}>
-      <CustomCursor />
-
       <div className={s.minimizeContainer}>
         <button onClick={toggleWindow} className={s.minimizeButton}>
-          {isMinimized ? "⯆ Развернуть" : "⯅ Свернуть"}
+          {isMinimized ? '⯆ Развернуть' : '⯅ Свернуть'}
         </button>
       </div>
-      
+
       {!isMinimized && (
         <div className={s.creaturePanel}>
           <div className={s.creaturePanel__titleContainer}>
@@ -278,8 +274,6 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
           </div>
         )}
       </div>
-
-      
     </div>
   );
 };
