@@ -63,12 +63,10 @@ export const FilterModalWindow = ({
               <button
                 key={item}
                 onClick={() => toggleSelection(category, item)}
-                className={clsx(
-                  s.filtersContainer__btn,
-                  selected[category]?.includes(item)
-                    ? s.filtersContainer__btnChecked
-                    : s.filtersContainer__btnUnchecked,
-                )}
+                className={clsx(s.filtersContainer__btn, {
+                  [s.filtersContainer__btnUnchecked]: !selected[category]?.includes(item),
+                })}
+                {...(selected[category]?.includes(item) ? { 'data-variant': 'secondary' } : {})}
               >
                 {item}
               </button>
