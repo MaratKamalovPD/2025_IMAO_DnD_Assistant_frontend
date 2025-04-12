@@ -138,10 +138,12 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
     <div className={s.statblockContainer}>
       <CustomCursor />
 
-      <button onClick={toggleWindow} className="minimizeButton">
-        {isMinimized ? "⯆ Развернуть" : "⯅ Свернуть"}
-      </button>
-
+      <div className={s.minimizeContainer}>
+        <button onClick={toggleWindow} className={s.minimizeButton}>
+          {isMinimized ? "⯆ Развернуть" : "⯅ Свернуть"}
+        </button>
+      </div>
+      
       {!isMinimized && (
         <div className={s.creaturePanel}>
           <div className={s.creaturePanel__titleContainer}>

@@ -37,7 +37,7 @@ export const EncounterTracker = () => {
     if (isMinimized) {
       setSize({ width: 850, height: 600 });
     } else {
-      setSize({ width: 200, height: 40 }); // или вообще height: 0
+      setSize({ width: 350, height: 40 }); // или вообще height: 0
     }
     setIsMinimized(!isMinimized);
   };

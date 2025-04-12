@@ -16,6 +16,24 @@
   }
 }
 
+.minimizeContainer {
+  border-radius: 15px;
+  background-color: var(--primary-bg-color);
+  display: flex;
+  justify-content: center; 
+  align-items: center;   
+  flex-direction: column;
+  padding: 5px;
+  border: 3px solid black;
+  margin-bottom: 5px;
+}
+
+.minimizeButton {
+  background-color: var(--primary-btn-color);
+  color: white;
+  width: 50%;
+}
+
 .desciptionContainer {
   display: flex;
   margin-top: 30px;
