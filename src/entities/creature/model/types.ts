@@ -138,7 +138,7 @@ export type AbilityScores = {
   dex: number;
   con: number;
   int: number;
-  wiz: number;
+  wis: number;
   cha: number;
 };
 

@@ -15,7 +15,7 @@ interface CreatureSaveSectionProps {
 
 export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
   onSave,
-  onUsePreset,
+  //onUsePreset,
   onImageUpload,
   onTextChange,
   onTriggerPreset,

@@ -1,4 +1,9 @@
-export { TypeFormLocalization } from './typeFormLocalization';
+export { TypeFormLocalization,
+    mapCreatureType,
+    getKeyByLocalizedValue,
+    mapCreatureSize,
+    getCellSizeDescription }
+from './typeFormLocalization';
 export { ArmorHitDiceLocalization } from './armorHitDiceLocalization';
 export { MonsterSpeedLocalization } from './monsterSpeedLocalization';
 export { MonsterStatsLocalization } from './monsterStatsLocalization';

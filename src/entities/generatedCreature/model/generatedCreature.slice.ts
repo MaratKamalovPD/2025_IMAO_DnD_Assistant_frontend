@@ -83,7 +83,7 @@ import {
       dex: 10,
       con: 10,
       int: 10,
-      wiz: 10,
+      wis: 10,
       cha: 10,
     },
     savingThrows: [],
@@ -213,6 +213,25 @@ import {
           changes: { ability: action.payload.ability }
         });
       },
+
+      updateAbilityScore: (
+        state,
+        action: PayloadAction<{ id: string; abilityKey: keyof AbilityScores; value: number }>
+      ) => {
+        const existing = state.entities[action.payload.id];
+        if (existing) {
+          generatedCreatureAdapter.updateOne(state, {
+            id: action.payload.id,
+            changes: {
+              ability: {
+                ...existing.ability,
+                [action.payload.abilityKey]: action.payload.value,
+              },
+            },
+          });
+        }
+      },
+      
       
       updateSavingThrows: (state, action: PayloadAction<{id: string; savingThrows: SavingThrow[]}>) => {
         generatedCreatureAdapter.updateOne(state, {

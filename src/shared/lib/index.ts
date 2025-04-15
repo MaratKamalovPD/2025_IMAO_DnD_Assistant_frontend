@@ -8,5 +8,7 @@ export { calculateStatModifier } from './calcStatMod'
 export { parseDice } from './parseDice';
 export { DiceType } from './types';
 export type { D20Roll, Language, UUID, Dice } from './types';
+export { capitalizeFirstLetter } from './capitalizeFirstLetter';
+export { lowercaseFirstLetter } from './lowercaseFirstLetter'
 
 export { Dice10, Dice100, Dice12, Dice20, Dice4, Dice6, Dice8 } from './dice';

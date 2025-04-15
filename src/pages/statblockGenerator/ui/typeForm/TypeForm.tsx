@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { TypeFormLocalization } from 'pages/statblockGenerator/lib';
+import { TypeFormLocalization,
+  getKeyByLocalizedValue,
+  mapCreatureType,
+  mapCreatureSize,
+  getCellSizeDescription } from 'pages/statblockGenerator/lib';
 import { TypeFormProps, TypeFormState, CreatureSize} from 'pages/statblockGenerator/model';
 import { FormElement } from 'pages/statblockGenerator/ui/typeForm/formElement';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
-import { RootState } from 'app/store';
+import { Language, lowercaseFirstLetter, capitalizeFirstLetter } from 'shared/lib';
+//import { RootState } from 'app/store';
 
 import { useDispatch, useSelector  } from 'react-redux';
 import {
@@ -57,11 +62,11 @@ export const TypeForm: React.FC<TypeFormProps> = ({
     if (generatedCreature) {
       setState(prev => ({
         ...prev,
-        name: generatedCreature.name?.eng || prev.name,
+        name: generatedCreature.name?.rus || prev.name,
         size: (['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan'].includes(generatedCreature?.size?.eng) 
            ? generatedCreature.size.eng 
            : 'medium') as CreatureSize,
-        type: generatedCreature.type?.name || prev.type,
+        type: getKeyByLocalizedValue(generatedCreature.type?.name, 'types') || prev.type,
         tag: generatedCreature.tags?.[0]?.name || prev.tag,
         alignment: generatedCreature.alignment || prev.alignment,
         showOtherType: generatedCreature.type?.name === '*'
@@ -88,9 +93,9 @@ export const TypeForm: React.FC<TypeFormProps> = ({
           dispatch(generatedCreatureActions.updateCreatureSize({
             id: SINGLE_CREATURE_ID, 
             size: {
-              rus: newValue,
+              rus: (mapCreatureSize(capitalizeFirstLetter(newValue), 'en', 'ru') || ''),
               eng: newValue,
-              cell: '1'
+              cell: getCellSizeDescription(newValue) || '1 клетка',
             }
           }));
           break;
@@ -98,7 +103,7 @@ export const TypeForm: React.FC<TypeFormProps> = ({
           dispatch(generatedCreatureActions.updateCreatureType({
             id: SINGLE_CREATURE_ID, 
             type: {
-              name: newValue,
+              name: lowercaseFirstLetter(mapCreatureType(capitalizeFirstLetter(newValue), 'en', 'ru') || ''),
               tags: []
             }
           }));

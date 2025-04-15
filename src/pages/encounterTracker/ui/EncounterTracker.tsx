@@ -23,7 +23,7 @@ import s from './EncounterTracker.module.scss';
 
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
 const VILLAGE_MAP_IMAGE =
-  'https://encounterium.ru/map-images/plug-maps/Fantasy_Forest_Village_Battlemap_simple_compose_01.png';
+  'https://encounterium.ru/map-images/plug-maps/cropped-map-2.png';
 
 export const EncounterTracker = () => {
   const dispatch = useDispatch();

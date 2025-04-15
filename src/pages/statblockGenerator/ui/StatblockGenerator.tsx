@@ -1,8 +1,8 @@
 //import { ActualStatblock } from './actualStatblock';
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { GetCreaturesRequest, useGetCreaturesQuery, useLazyGetCreatureByNameQuery } from 'pages/statblockGenerator/api';
 import { TypeForm } from './typeForm';
-import { useDispatch, useSelector  } from 'react-redux';
+import { useDispatch  } from 'react-redux';
 import { ArmorHitdiceForm } from './armorHitdiceForm';
 import { MonsterSpeedForm } from './monsterSpeedForm';
 import { MonsterStatsForm } from './monsterStatsForm';
@@ -17,8 +17,8 @@ import s from './StatblockGenerator.module.scss';
 import {
   SINGLE_CREATURE_ID,
   generatedCreatureActions,
-  generatedCreatureSelectors,
-  GeneratedCreatureStore,
+  //generatedCreatureSelectors,
+  //GeneratedCreatureStore,
 
 } from 'entities/generatedCreature/model';
 
@@ -54,7 +54,7 @@ const requestBody: GetCreaturesRequest = {
 };
 
 export const StatblockGenerator = () => {
-  const { data: creatures, isLoading } = useGetCreaturesQuery(requestBody);
+  const { data: creatures } = useGetCreaturesQuery(requestBody);
   const [trigger, { data: fullCreatureData }] = useLazyGetCreatureByNameQuery();
 
   //console.log(fullCreatureData)
@@ -74,7 +74,6 @@ export const StatblockGenerator = () => {
   useEffect(() => {
     
     if (fullCreatureData) {
-      console.log('aboba')
       dispatch(generatedCreatureActions.updateCreatureName({
                   id: SINGLE_CREATURE_ID, 
                   name: {
@@ -82,6 +81,45 @@ export const StatblockGenerator = () => {
                     eng: fullCreatureData.name.eng,
                   }
                 }));
+      
+      dispatch(generatedCreatureActions.updateCreatureSize({
+        id: SINGLE_CREATURE_ID, 
+        size: {
+          rus: fullCreatureData.size.rus,
+          eng: fullCreatureData.size.eng,
+          cell: fullCreatureData.size.cell,
+        }
+      }));
+      
+      dispatch(generatedCreatureActions.updateCreatureType({
+        id: SINGLE_CREATURE_ID, 
+        type: {
+          name: fullCreatureData.type.name,
+          tags: fullCreatureData.type.tags,
+        }
+      }))
+
+      dispatch(generatedCreatureActions.updateTags({
+        id: SINGLE_CREATURE_ID,
+        tags: fullCreatureData.tags,
+      }))
+
+      dispatch(generatedCreatureActions.updateAlignment({
+        id: SINGLE_CREATURE_ID,
+        alignment: fullCreatureData.alignment,
+      }))
+
+      dispatch(generatedCreatureActions.updateAbilityScores({
+        id: SINGLE_CREATURE_ID,
+        ability: {
+          str: fullCreatureData.ability.str,
+          dex: fullCreatureData.ability.dex,
+          con: fullCreatureData.ability.con,
+          int: fullCreatureData.ability.int,
+          wis: fullCreatureData.ability.wis,
+          cha: fullCreatureData.ability.cha,
+        }
+      }))
       //dispatch(generatedCreatureActions.replaceCreature(fullCreatureData));
     }
   }, [fullCreatureData, dispatch]);
