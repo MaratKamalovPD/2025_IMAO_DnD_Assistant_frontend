@@ -301,6 +301,34 @@ import {
           changes: { conditionImmunities: action.payload.conditionImmunities }
         });
       },
+
+      addConditionImmunity: (
+        state,
+        action: PayloadAction<{ id: string; value: string }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (!creature) return;
+      
+        if (!creature.conditionImmunities) {
+          creature.conditionImmunities = [];
+        }
+      
+        if (!creature.conditionImmunities.includes(action.payload.value)) {
+          creature.conditionImmunities.push(action.payload.value);
+        }
+      },
+      
+      removeConditionImmunity: (
+        state,
+        action: PayloadAction<{ id: string; value: string }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (!creature?.conditionImmunities) return;
+      
+        creature.conditionImmunities = creature.conditionImmunities.filter(
+          condition => condition !== action.payload.value
+        );
+      },
       
       updateDamageImmunities: (state, action: PayloadAction<{id: string; damageImmunities: string[]}>) => {
         generatedCreatureAdapter.updateOne(state, {

@@ -21,6 +21,7 @@ import { useDispatch, useSelector  } from 'react-redux';
 import { PropertySection } from 'pages/statblockGenerator/ui/propertiesListsForm/propertySection';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel'
 import s from './PropertiesListsForm.module.scss';
+import { capitalizeFirstLetter, lowercaseFirstLetter } from 'shared/lib';
 
 export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
   initialSavingThrows = [],
@@ -50,6 +51,12 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
     if (generatedCreature && generatedCreature.savingThrows) {
       const initialNames = generatedCreature.savingThrows.map(st => st.name);
       setSavingThrows(initialNames);
+    }
+    
+    if (generatedCreature?.conditionImmunities) {
+      setConditionImmunities(
+        generatedCreature.conditionImmunities.map(capitalizeFirstLetter)
+      );
     }
   }, [generatedCreature]);
 
@@ -108,20 +115,52 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
 
   const addConditionImmunity = () => {
     const selected = conditionOptions.find(opt => opt.value === selectedCondition);
-    if (selected && !conditionImmunities.includes(selected.label)) {
-      setConditionImmunities([...conditionImmunities, selected.label]);
+    if (!selected || conditionImmunities.includes(selected.label)) return;
+  
+    const labelCapitalized = capitalizeFirstLetter(selected.label);
+    const labelLowercased = lowercaseFirstLetter(selected.label);
+  
+    setConditionImmunities([...conditionImmunities, labelCapitalized]);
+  
+    dispatch(generatedCreatureActions.addConditionImmunity({
+      id: SINGLE_CREATURE_ID,
+      value: labelLowercased
+    }));
+    
+  };
+  
+
+  type ItemType = 'savingThrow' | 'conditionImmunity' | 'skill';
+
+  const removeItem = (
+    _list: string[],
+    setList: React.Dispatch<React.SetStateAction<string[]>>,
+    index: number,
+    type: ItemType
+  ) => {
+    const itemToRemove = _list[index];
+    setList(prev => prev.filter((_, i) => i !== index));
+
+    switch (type) {
+      case 'savingThrow':
+        dispatch(generatedCreatureActions.removeSavingThrow({
+          id: SINGLE_CREATURE_ID,
+          name: itemToRemove
+        }));
+        break;
+
+      case 'conditionImmunity':
+        dispatch(generatedCreatureActions.removeConditionImmunity({
+          id: SINGLE_CREATURE_ID,
+          value: lowercaseFirstLetter(itemToRemove)
+        }));
+        break;
+
+      default:
+        console.warn(`Unknown item type: ${type}`);
     }
   };
 
-  const removeItem = (_list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, index: number) => {
-    const itemToRemove = _list[index];
-    setList(prev => prev.filter((_, i) => i !== index));
-  
-    dispatch(generatedCreatureActions.removeSavingThrow({
-      id: SINGLE_CREATURE_ID,
-      name: itemToRemove
-    }));
-  };
   
   const getSelectedSkillLabel = () => {
     return skillOptions.find(opt => opt.value === selectedSkill)?.label || '';
@@ -155,7 +194,7 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
           onSelectChange={setSelectedSthrow}
           onAddItem={addSavingThrow}
           items={savingThrows}
-          onRemoveItem={(index) => removeItem(savingThrows, setSavingThrows, index)}
+          onRemoveItem={(index) => removeItem(savingThrows, setSavingThrows, index, 'savingThrow')}
           buttonText={t.proficient}
           removeText={t.remove}
         />
@@ -167,7 +206,7 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
           onSelectChange={setSelectedSkill}
           onAddItem={(prof) => addSkill(prof || 'proficient')}
           items={skills}
-          onRemoveItem={(index) => removeItem(skills, setSkills, index)}
+          onRemoveItem={(index) => removeItem(skills, setSkills, index, 'skill')}
           buttonText={t.proficient}
           removeText={t.remove}
           additionalButton={{
@@ -187,7 +226,7 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
           onSelectChange={setSelectedCondition}
           onAddItem={addConditionImmunity}
           items={conditionImmunities}
-          onRemoveItem={(index) => removeItem(conditionImmunities, setConditionImmunities, index)}
+          onRemoveItem={(index) => removeItem(conditionImmunities, setConditionImmunities, index, 'conditionImmunity')}
           buttonText={t.immune}
           removeText={t.remove}
         />
