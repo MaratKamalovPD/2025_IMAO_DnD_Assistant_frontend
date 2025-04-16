@@ -1,5 +1,6 @@
 import React from 'react';
 import s from './CreatureSaveSection.module.scss';
+import { MonsterSelect } from "./monsterSelect";
 
 interface CreatureSaveSectionProps {
   onSave?: () => void;
@@ -50,6 +51,7 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
 
   return (
     <div className={s.creatureSaveSection}>
+      <MonsterSelect />
       {/* Сохраненная часть с пресетами */}
       <div className={s.creatureSaveSection__presetsContainer}>
         <div className={s.creatureSaveSection__presetsLabel}>
