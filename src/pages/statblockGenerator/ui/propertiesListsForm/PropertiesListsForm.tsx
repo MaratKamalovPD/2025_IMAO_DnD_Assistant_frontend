@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { PropertiesListsLocalization, savingThrowShortNames, skillToAbilityMap } from 'pages/statblockGenerator/lib';
 import { PropertiesListsFormProps, ProficiencyType } from 'pages/statblockGenerator/model';
 import { 
@@ -80,6 +80,25 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
       setSkills(formattedSkills);
     }
   }, [generatedCreature]);
+
+  const formattedSkills = useMemo(() => {
+    if (!generatedCreature?.skills) return [];
+  
+    return generatedCreature.skills.map(skill => {
+      const skillKey = skillOptions.find(opt => opt.label === skill.name)?.value;
+      const abilityKey = skillKey ? skillToAbilityMap[skillKey] : null;
+  
+      const abilityScore = abilityKey ? generatedCreature.ability?.[abilityKey] ?? 10 : 10;
+      const abilityModifier = Math.floor((abilityScore - 10) / 2);
+  
+      const rawProficiencyPart = skill.value - abilityModifier;
+      const isExpert = rawProficiencyPart === 2 * proficiencyBonus;
+  
+      const suffix = isExpert ? ' (эксперт)' : '';
+      return capitalizeFirstLetter(skill.name) + suffix;
+    });
+  }, [generatedCreature?.skills, generatedCreature?.ability, proficiencyBonus, skillOptions]);
+  
 
   const addSavingThrow = () => {
     const selected = savingThrowOptions.find(opt => opt.value === selectedSthrow);
@@ -253,7 +272,7 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
           options={skillOptions}
           onSelectChange={setSelectedSkill}
           onAddItem={(prof) => addSkill(prof || 'proficient')}
-          items={skills}
+          items={formattedSkills}
           onRemoveItem={(index) => removeItem(skills, setSkills, index, 'skill')}
           buttonText={t.proficient}
           removeText={t.remove}
