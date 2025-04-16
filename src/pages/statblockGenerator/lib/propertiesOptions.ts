@@ -1,5 +1,5 @@
 import { Language } from 'shared/lib';
-import { SelectOption } from 'pages/statblockGenerator/model';
+import { MonsterStats, SelectOption } from 'pages/statblockGenerator/model';
 
 export const getSavingThrowOptions = (language: Language): SelectOption[] => [
   { value: 'str', label: language === 'ru' ? 'Сила' : 'Strength' },
@@ -22,7 +22,7 @@ export const getSkillOptions = (language: Language): SelectOption[] => [
   { value: 'investigation', label: language === 'ru' ? 'Анализ' : 'Investigation' },
   { value: 'medicine', label: language === 'ru' ? 'Медицина' : 'Medicine' },
   { value: 'nature', label: language === 'ru' ? 'Природа' : 'Nature' },
-  { value: 'perception', label: language === 'ru' ? 'Восприятие' : 'Perception' },
+  { value: 'perception', label: language === 'ru' ? 'Внимательность' : 'Perception' },
   { value: 'performance', label: language === 'ru' ? 'Выступление' : 'Performance' },
   { value: 'persuasion', label: language === 'ru' ? 'Убеждение' : 'Persuasion' },
   { value: 'religion', label: language === 'ru' ? 'Религия' : 'Religion' },
@@ -68,4 +68,25 @@ export const savingThrowShortNames: Record<string, string> = {
   'Интеллект': 'Инт',
   'Мудрость': 'Мдр',
   'Харизма': 'Хар',
+};
+
+export const skillToAbilityMap: Record<string, keyof MonsterStats> = {
+  'acrobatics': 'dex',
+  'animal handling': 'wis',
+  'arcana': 'int',
+  'athletics': 'str',
+  'deception': 'cha',
+  'history': 'int',
+  'insight': 'wis',
+  'intimidation': 'cha',
+  'investigation': 'int',
+  'medicine': 'wis',
+  'nature': 'int',
+  'perception': 'wis',
+  'performance': 'cha',
+  'persuasion': 'cha',
+  'religion': 'int',
+  'sleight of hand': 'dex',
+  'stealth': 'dex',
+  'survival': 'wis'
 };

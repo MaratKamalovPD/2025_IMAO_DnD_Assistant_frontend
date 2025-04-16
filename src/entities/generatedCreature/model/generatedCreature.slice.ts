@@ -55,7 +55,7 @@ import {
       tags: [],
     },
     challengeRating: '1',
-    proficiencyBonus: '+2',
+    proficiencyBonus: '2',
     url: '',
     source: {
       shortName: 'HB',
@@ -70,7 +70,7 @@ import {
     armorClass: 10,
     armors: [],
     hits: {
-      average: 11,
+      average: 9,
       formula: '2d8',
     },
     speed: [
@@ -162,6 +162,13 @@ import {
         generatedCreatureAdapter.updateOne(state, {
           id: action.payload.id,
           changes: { challengeRating: action.payload.challengeRating }
+        });
+      },
+
+      updateProficiencyBonus: (state, action: PayloadAction<{id: string; proficiencyBonus: string}>) => {
+        generatedCreatureAdapter.updateOne(state, {
+          id: action.payload.id,
+          changes: { proficiencyBonus: action.payload.proficiencyBonus }
         });
       },
       
@@ -279,6 +286,35 @@ import {
           id: action.payload.id,
           changes: { skills: action.payload.skills }
         });
+      },
+
+      addOrUpdateSkill: (
+        state,
+        action: PayloadAction<{ id: string; skill: { name: string; value: number } }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (!creature) return;
+      
+        if (!creature.skills) {
+          creature.skills = [];
+        }
+      
+        const existing = creature.skills.find(s => s.name === action.payload.skill.name);
+        if (existing) {
+          existing.value = action.payload.skill.value;
+        } else {
+          creature.skills.push(action.payload.skill);
+        }
+      },
+      
+      removeSkill: (
+        state,
+        action: PayloadAction<{ id: string; name: string }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (!creature?.skills) return;
+      
+        creature.skills = creature.skills.filter(s => s.name !== action.payload.name);
       },
       
       updateDamageVulnerabilities: (state, action: PayloadAction<{id: string; damageVulnerabilities: string[]}>) => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { PropertiesListsLocalization, savingThrowShortNames } from 'pages/statblockGenerator/lib';
+import { PropertiesListsLocalization, savingThrowShortNames, skillToAbilityMap } from 'pages/statblockGenerator/lib';
 import { PropertiesListsFormProps, ProficiencyType } from 'pages/statblockGenerator/model';
 import { 
   getSavingThrowOptions, 
@@ -7,6 +7,7 @@ import {
   getConditionOptions,
   getExpertSuffix
 } from 'pages/statblockGenerator/lib';
+import { calculateStatModifier } from 'shared/lib';
 
 import {
   SINGLE_CREATURE_ID,
@@ -32,6 +33,16 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)
   );
+
+  const proficiencyBonus = Number(generatedCreature?.proficiencyBonus ?? 2);
+  const abilityScores = generatedCreature.ability ?? {
+    str: 10,
+    dex: 10,
+    con: 10,
+    int: 10,
+    wis: 10,
+    cha: 10
+  };
   
   const dispatch = useDispatch();
 
@@ -57,6 +68,16 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
       setConditionImmunities(
         generatedCreature.conditionImmunities.map(capitalizeFirstLetter)
       );
+    }
+
+    if (generatedCreature?.skills) {
+      const formattedSkills = generatedCreature.skills.map(skill => {
+        const isExpert = skill.value === 2 * proficiencyBonus;
+        const suffix = isExpert ? ' (эксперт)' : '';
+        return capitalizeFirstLetter(skill.name) + suffix;
+      });
+  
+      setSkills(formattedSkills);
     }
   }, [generatedCreature]);
 
@@ -94,24 +115,43 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
     const selected = skillOptions.find(opt => opt.value === selectedSkill);
     if (!selected) return;
 
+    const skillName = selected.label;
+    const skillKey = selected.value; 
     const expertSuffix = getExpertSuffix(language);
-    const expertText = `${selected.label}${expertSuffix}`;
-    const baseText = selected.label;
+    const isExpert = proficiency === 'expert';
 
-    const existingIndex = skills.findIndex(skill => 
-      skill === baseText || skill === expertText
+    const relatedAbility = skillToAbilityMap[skillKey]; 
+    const abilityScore = abilityScores[relatedAbility] ?? 10;
+    const abilityModifier = Math.floor((abilityScore - 10) / 2); 
+    const proficiencyValue = isExpert ? 2 * proficiencyBonus : proficiencyBonus;
+
+    const totalValue = abilityModifier + proficiencyValue;
+
+    const formatted = isExpert ? `${skillName}${expertSuffix}` : skillName;
+
+    const existingIndex = skills.findIndex(skill =>
+      skill === skillName || skill === `${skillName}${expertSuffix}`
     );
 
-    let newSkills = [...skills];
-    
+    const updatedSkills = [...skills];
     if (existingIndex >= 0) {
-      newSkills[existingIndex] = proficiency === 'expert' ? expertText : baseText;
+      updatedSkills[existingIndex] = formatted;
     } else {
-      newSkills.push(proficiency === 'expert' ? expertText : baseText);
+      updatedSkills.push(formatted);
     }
 
-    setSkills(newSkills);
+    setSkills(updatedSkills);
+
+    dispatch(generatedCreatureActions.addOrUpdateSkill({
+      id: SINGLE_CREATURE_ID,
+      skill: {
+        name: skillName,
+        value: totalValue
+      }
+    }));
   };
+
+  
 
   const addConditionImmunity = () => {
     const selected = conditionOptions.find(opt => opt.value === selectedCondition);
@@ -153,6 +193,14 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
         dispatch(generatedCreatureActions.removeConditionImmunity({
           id: SINGLE_CREATURE_ID,
           value: lowercaseFirstLetter(itemToRemove)
+        }));
+        break;
+
+      case 'skill':
+        const baseName = itemToRemove.split(' ')[0];
+        dispatch(generatedCreatureActions.removeSkill({
+          id: SINGLE_CREATURE_ID,
+          name: baseName
         }));
         break;
 

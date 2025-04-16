@@ -130,6 +130,11 @@ export const StatblockGenerator = () => {
         id: SINGLE_CREATURE_ID,
         conditionImmunities: fullCreatureData.conditionImmunities || [],     
       }))
+
+      dispatch(generatedCreatureActions.updateProficiencyBonus({
+        id: SINGLE_CREATURE_ID,
+        proficiencyBonus: fullCreatureData.proficiencyBonus,
+      }))
     }
   }, [fullCreatureData, dispatch]);
   
