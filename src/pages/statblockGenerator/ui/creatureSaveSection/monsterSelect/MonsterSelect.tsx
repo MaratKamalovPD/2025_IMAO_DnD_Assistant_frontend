@@ -66,15 +66,15 @@ interface MonsterSelectProps {
           isClearable
           isSearchable
           inputValue={searchValue}
-          onInputChange={(val, { action }) => {
-            if (action !== "input-blur" && action !== "menu-close") {
-              setSearchValue(val);
-            }
-          }}
-          value={selectedOption}
-          onChange={(option) => {
-            onChange(option?.value ?? "");
-          }}
+            onInputChange={(val, { action }) => {
+                if (action !== "input-blur" && action !== "menu-close") {
+                setSearchValue(val);
+                }
+            }}
+            onChange={(option) => {
+                onChange(option?.value ?? "");
+                setSearchValue(""); // вот оно
+            }}
           styles={{
             control: (base) => ({
               ...base,
