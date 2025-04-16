@@ -60,3 +60,12 @@ export const getProficiencyLabel = (type: 'proficient' | 'expert', language: Lan
 export const getExpertSuffix = (language: Language): string => {
   return language === 'ru' ? ' (эксперт)' : ' (ex)';
 };
+
+export const savingThrowShortNames: Record<string, string> = {
+  'Сила': 'Сил',
+  'Ловкость': 'Лов',
+  'Телосложение': 'Тел',
+  'Интеллект': 'Инт',
+  'Мудрость': 'Мдр',
+  'Харизма': 'Хар',
+};

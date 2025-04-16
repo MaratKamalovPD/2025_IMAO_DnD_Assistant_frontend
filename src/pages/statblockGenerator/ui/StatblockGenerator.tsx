@@ -115,6 +115,21 @@ export const StatblockGenerator = () => {
           cha: fullCreatureData.ability.cha,
         }
       }))
+
+      dispatch(generatedCreatureActions.updateSavingThrows({
+        id: SINGLE_CREATURE_ID,
+        savingThrows: fullCreatureData.savingThrows || []
+      }))
+
+      dispatch(generatedCreatureActions.updateSkills({
+        id: SINGLE_CREATURE_ID,
+        skills: fullCreatureData.skills,
+      }))
+
+      dispatch(generatedCreatureActions.updateConditionImmunities({
+        id: SINGLE_CREATURE_ID,
+        conditionImmunities: fullCreatureData.conditionImmunities || [],     
+      }))
     }
   }, [fullCreatureData, dispatch]);
   

@@ -232,12 +232,46 @@ import {
         }
       },
       
-      
       updateSavingThrows: (state, action: PayloadAction<{id: string; savingThrows: SavingThrow[]}>) => {
         generatedCreatureAdapter.updateOne(state, {
           id: action.payload.id,
           changes: { savingThrows: action.payload.savingThrows }
         });
+      },
+
+      addSavingThrow: (
+        state,
+        action: PayloadAction<{ id: string; savingThrow: SavingThrow }>
+      ) => {
+        const { id, savingThrow } = action.payload;
+        const creature = state.entities[id];
+        if (!creature) return;
+
+        if (!creature.savingThrows) {
+          creature.savingThrows = [];
+        }
+  
+        const existing = creature.savingThrows.find(st => st.name === savingThrow.name);
+        if (existing) {
+          Object.assign(existing, savingThrow); // обновляем
+        } else {
+          creature.savingThrows.push(savingThrow); // добавляем
+        }
+      },
+  
+      removeSavingThrow: (
+        state,
+        action: PayloadAction<{ id: string; name: string }>
+      ) => {
+        const { id, name } = action.payload;
+        const creature = state.entities[id];
+        if (!creature) return;
+
+        if (!creature.savingThrows) {
+          creature.savingThrows = [];
+        }
+  
+        creature.savingThrows = creature.savingThrows.filter(st => st.name !== name);
       },
       
       updateSkills: (state, action: PayloadAction<{id: string; skills: Skill[]}>) => {

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { PropertiesListsLocalization } from 'pages/statblockGenerator/lib';
+import React, { useEffect, useState } from 'react';
+import { PropertiesListsLocalization, savingThrowShortNames } from 'pages/statblockGenerator/lib';
 import { PropertiesListsFormProps, ProficiencyType } from 'pages/statblockGenerator/model';
 import { 
   getSavingThrowOptions, 
@@ -7,6 +7,17 @@ import {
   getConditionOptions,
   getExpertSuffix
 } from 'pages/statblockGenerator/lib';
+
+import {
+  SINGLE_CREATURE_ID,
+  generatedCreatureActions,
+  generatedCreatureSelectors,
+  GeneratedCreatureStore,
+
+} from 'entities/generatedCreature/model';
+
+import { useDispatch, useSelector  } from 'react-redux';
+
 import { PropertySection } from 'pages/statblockGenerator/ui/propertiesListsForm/propertySection';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel'
 import s from './PropertiesListsForm.module.scss';
@@ -17,6 +28,12 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
   initialConditionImmunities = [],
   language = 'en'
 }) => {
+  const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
+    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)
+  );
+  
+  const dispatch = useDispatch();
+
   const [selectedSthrow, setSelectedSthrow] = useState<string>('str');
   const [selectedSkill, setSelectedSkill] = useState<string>('acrobatics');
   const [selectedCondition, setSelectedCondition] = useState<string>('blinded');
@@ -29,12 +46,42 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
   const skillOptions = getSkillOptions(language);
   const conditionOptions = getConditionOptions(language);
 
+  useEffect(() => {
+    if (generatedCreature && generatedCreature.savingThrows) {
+      const initialNames = generatedCreature.savingThrows.map(st => st.name);
+      setSavingThrows(initialNames);
+    }
+  }, [generatedCreature]);
+
   const addSavingThrow = () => {
     const selected = savingThrowOptions.find(opt => opt.value === selectedSthrow);
-    if (selected && !savingThrows.includes(selected.label)) {
-      setSavingThrows([...savingThrows, selected.label]);
+    if (!selected || savingThrows.includes(selected.label)) return;
+  
+    setSavingThrows([...savingThrows, selected.label]);
+  
+    const existingSavingThrow = generatedCreature.savingThrows?.find(
+      st => st.name === selected.label
+    );
+  
+    if (existingSavingThrow) {
+      dispatch(generatedCreatureActions.addSavingThrow({
+        id: SINGLE_CREATURE_ID,
+        savingThrow: existingSavingThrow
+      }));
+    } else {
+      const shortName = savingThrowShortNames[selected.label] || selected.label.slice(0, 3);
+      
+      dispatch(generatedCreatureActions.addSavingThrow({
+        id: SINGLE_CREATURE_ID,
+        savingThrow: {
+          name: selected.label,
+          shortName: shortName,
+          value: 0 //TBU
+        }
+      }));
     }
   };
+  
 
   const addSkill = (proficiency: ProficiencyType) => {
     const selected = skillOptions.find(opt => opt.value === selectedSkill);
@@ -67,9 +114,15 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
   };
 
   const removeItem = (_list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, index: number) => {
+    const itemToRemove = _list[index];
     setList(prev => prev.filter((_, i) => i !== index));
+  
+    dispatch(generatedCreatureActions.removeSavingThrow({
+      id: SINGLE_CREATURE_ID,
+      name: itemToRemove
+    }));
   };
-
+  
   const getSelectedSkillLabel = () => {
     return skillOptions.find(opt => opt.value === selectedSkill)?.label || '';
   };
