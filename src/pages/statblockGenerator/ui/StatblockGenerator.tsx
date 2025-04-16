@@ -17,22 +17,19 @@ import s from './StatblockGenerator.module.scss';
 import {
   SINGLE_CREATURE_ID,
   generatedCreatureActions,
-  //generatedCreatureSelectors,
-  //GeneratedCreatureStore,
-
 } from 'entities/generatedCreature/model';
 
 const requestBody: GetCreaturesRequest = {
-  start: 0,          // Начинаем с первой записи
-  size: 10,          // Получаем 10 существ
+  start: 0,          
+  size: 10,          
   search: {
-    value: "",       // Пустая строка - без поискового запроса
-    exact: false     // Неточный поиск (можно изменить на true если нужно точное совпадение)
+    value: "",       
+    exact: false     
   },
   order: [
     {
-      field: "name", // Сортируем по имени существа
-      direction: "asc" // По возрастанию (A-Z)
+      field: "name", 
+      direction: "asc" 
     }
   ],
   filter: {
@@ -57,8 +54,6 @@ export const StatblockGenerator = () => {
   const { data: creatures } = useGetCreaturesQuery(requestBody);
   const [trigger, { data: fullCreatureData }] = useLazyGetCreatureByNameQuery();
 
-  //console.log(fullCreatureData)
-  
   const presetOptions = creatures?.map(creature => ({
     label: creature.name.rus,  // То, что будет отображаться в списке
     value: creature.url        // То, что будет значением при выборе
@@ -120,7 +115,6 @@ export const StatblockGenerator = () => {
           cha: fullCreatureData.ability.cha,
         }
       }))
-      //dispatch(generatedCreatureActions.replaceCreature(fullCreatureData));
     }
   }, [fullCreatureData, dispatch]);
   

@@ -51,7 +51,6 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
 
   return (
     <div className={s.creatureSaveSection}>
-      <MonsterSelect />
       {/* Сохраненная часть с пресетами */}
       <div className={s.creatureSaveSection__presetsContainer}>
         <div className={s.creatureSaveSection__presetsLabel}>
@@ -59,19 +58,12 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
         </div>
         
         <div className={s.creatureSaveSection__presetsDropdown}>
-          <select 
-            className={s.creatureSaveSection__presetSelect}
+          <MonsterSelect 
             value={selectedPreset}
-            onChange={(e) => onTextChange?.(e.target.value)}
-          >
-            <option value="">{t.select}</option>
-            {presetOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+            onChange={(val) => onTextChange?.(val)}
+          />
         </div>
+
 
         <button 
           className={s.creatureSaveSection__button} 
