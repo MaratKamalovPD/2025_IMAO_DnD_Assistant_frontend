@@ -5,7 +5,7 @@ import { Filters, OrderParams } from 'pages/bestiary/model';
 import { useEffect, useState } from 'react';
 import { throttle, useDebounce } from 'shared/lib';
 import { Spinner } from 'shared/ui/spinner';
-import { GetCharactersRequest, useGetCharactersQuery } from '../api';
+import { GetCharactersRequest, useLazyGetCharactersQuery } from '../api';
 import { CharacterClipped } from '../model';
 import { AddCharacterListForm } from './addCharacterListForm';
 import { CharacterCard } from './characterCard';
@@ -54,7 +54,11 @@ const CharactersContent = () => {
     mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue, orderParams),
   );
 
-  const { data: characters, isLoading, isError, status } = useGetCharactersQuery(requestBody);
+  const [trigger, { data: characters, isLoading, isError, status }] = useLazyGetCharactersQuery();
+
+  if (status == 'uninitialized') {
+    trigger(requestBody);
+  }
 
   const isPending = status === 'pending';
 
@@ -141,20 +145,21 @@ const CharactersContent = () => {
                 <Icon20Cancel />
               </div>
             </div>
-            <AddCharacterListForm />
+            <AddCharacterListForm reloadTrigger={trigger} requestBody={requestBody} />
           </div>
         </div>
       )}
 
       <div className={s.bestiaryContainer}>
-        <div>
-          <AddNewCard handleAddNewCharacterClick={() => setIsModalOpen(true)} />
-        </div>
         {allCharacters.map((character) => (
           <div key={character.id}>
             <CharacterCard character={character} viewMode={viewMode} />
           </div>
         ))}
+
+        <div>
+          <AddNewCard handleAddNewCharacterClick={() => setIsModalOpen(true)} />
+        </div>
       </div>
 
       {isPending && (
