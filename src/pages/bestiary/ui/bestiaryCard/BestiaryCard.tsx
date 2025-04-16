@@ -50,7 +50,7 @@ export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSele
           dexterity: creatureData.ability.dex,
           constitution: creatureData.ability.con,
           intelligence: creatureData.ability.int,
-          wisdom: creatureData.ability.wiz,
+          wisdom: creatureData.ability.wis,
           charisma: creatureData.ability.cha,
         },
         savingThrows: creatureData.savingThrows || [],

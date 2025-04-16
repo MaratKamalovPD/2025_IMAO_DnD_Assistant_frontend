@@ -32,7 +32,7 @@ const CharactersContent = () => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [filters, setFilters] = useState<Filters>({});
+  const [filters, _setFilters] = useState<Filters>({});
 
   const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
   const setStartThrottled = throttle(setStart, THROTTLE_TIME);

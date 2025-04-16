@@ -1,0 +1,86 @@
+.statsPanel {
+  border-radius: 15px;
+  background-color: var(--primary-bg-color);
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+  border: 3px solid black;
+  margin-bottom: 20px;
+
+  &__titleContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    color: var(--primary-btn-color);
+    font-weight: bold;
+    font-size: 24px;
+  }
+
+  &__abilities {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      justify-content: space-around;
+    }
+  }
+
+  &__ability {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100px;
+    padding: 10px;
+    background-color: var(--secondary-bg-color);
+    border-radius: 8px;
+  }
+
+  &__abilityHeader {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--primary-btn-color);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  &__abilityValue {
+    margin-bottom: 8px;
+  }
+
+  &__input {
+    width: 60px;
+    padding: 8px;
+    font-size: 16px;
+    text-align: center;
+    color: white;
+    background-color: var(--dark-bg-color);
+    border: none;
+    border-radius: 6px;
+
+    &:focus {
+      outline: 2px solid var(--primary-btn-color);
+    }
+
+    /* Remove arrows in number input */
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    &[type='number'] {
+      -moz-appearance: textfield;
+    }
+  }
+
+  &__abilityModifier {
+    font-size: 14px;
+    color: white;
+    text-align: center;
+  }
+}

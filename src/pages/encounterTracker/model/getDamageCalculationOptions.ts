@@ -1,5 +1,5 @@
 import { Creature } from 'entities/creature/model';
-import { DamageCalculationOptions, DamageModifier } from './types';
+import { DamageCalculationOptions} from './types';
 
 export function getDamageCalculationOptions(
     creature: Creature,

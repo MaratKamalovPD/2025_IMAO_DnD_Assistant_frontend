@@ -1,0 +1,1 @@
+export { AttackMainParams } from './AttackMainParams';

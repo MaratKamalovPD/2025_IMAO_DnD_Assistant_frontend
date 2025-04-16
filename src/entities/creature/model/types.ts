@@ -53,7 +53,7 @@ export type CreatureFullData = {
   attacksLLM?: AttackLLM[];
 };
 
-type Reaction = {
+export type Reaction = {
   name: string;
   value: string;
 };
@@ -76,93 +76,94 @@ export type DamageDicesRoll = {
   damage: Damage;
 };
 
-type Feat = {
+export type Feat = {
   name: string;
   value: number | string;
 };
 
-type LegendaryAction = {
+export type LegendaryAction = {
   name: string;
   value: number | string;
 };
 
-type Legendary = {
+export type Legendary = {
   list: LegendaryAction[];
   count: number | string;
 };
 
-type Armor = {
+export type Armor = {
   name: string;
   type: string;
   url: string | null;
 };
 
-type NameTranslations = {
+export type NameTranslations = {
   rus: string;
   eng: string;
 };
 
-type SizeTranslations = {
+export type SizeTranslations = {
   rus: string;
   eng: string;
   cell: string;
 };
 
-type CreatureType = {
+export type CreatureType = {
   name: string;
   tags: string[];
 };
 
-type Source = {
+export type Source = {
   shortName: string;
   name: string;
   group: SourceGroup;
 };
 
-type SourceGroup = {
+export type SourceGroup = {
   name: string;
   shortName: string;
 };
 
-type HitPoints = {
+export type HitPoints = {
   average: number;
   formula: string;
 };
 
-type Speed = {
+export type Speed = {
   value: number;
 };
 
-type AbilityScores = {
+export type AbilityScores = {
   str: number;
   dex: number;
   con: number;
   int: number;
-  wiz: number;
+  wis: number;
   cha: number;
 };
 
-type Skill = {
+export type Skill = {
   name: string;
   value: number;
 };
 
-type Senses = {
+export type Senses = {
   passivePerception: string;
   senses: Sense[];
 };
+
 
 type Sense = {
   name: string;
   value: number;
 }
 
-type Action = {
+export type Action = {
   name: string;
   value: string;
 };
 
-type Tag = {
+export type Tag = {
   name: string;
   description: string;
 };
@@ -174,18 +175,18 @@ export type DamageLLM = {
   bonus: number;
 };
 
-type AdditionalEffectLLM = {
+export type AdditionalEffectLLM = {
   damage?: DamageLLM;
   condition?: string;
   escapeDc?: number;
 };
 
-type MultiAttackLLM = {
+export type MultiAttackLLM = {
   type: string;
   count: number;
 };
 
-type AreaAttackLLM = {
+export type AreaAttackLLM = {
   shape?: string;
   recharge?: string;
   saveDc?: number;

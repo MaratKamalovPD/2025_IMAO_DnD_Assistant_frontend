@@ -32,6 +32,9 @@ export const Header = () => {
               <Link to='/characters'>Персонажи</Link>
             </li>
             <li>
+              <Link to='/statblock_generator'>Генератор существ</Link>
+            </li>
+            <li>
               <Link to='#'>Список партий</Link>
             </li>
             <li>

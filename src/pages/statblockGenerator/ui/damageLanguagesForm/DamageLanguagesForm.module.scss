@@ -1,0 +1,209 @@
+.damageLanguagesPanel {
+  border-radius: 15px;
+  background-color: var(--primary-bg-color);
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+  border: 3px solid black;
+  margin-bottom: 20px;
+
+  &__titleContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    color: var(--primary-btn-color);
+    font-weight: bold;
+    font-size: 24px;
+  }
+
+  &__sections {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+  }
+
+  &__section {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  &__sectionTitle {
+    color: var(--primary-btn-color);
+    font-size: 18px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid var(--primary-btn-color);
+    padding-bottom: 4px;
+  }
+
+  &__controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  &__select {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    color: white;
+    background-color: var(--secondary-bg-color);
+    border: none;
+    border-radius: 6px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+
+    &:focus {
+      outline: 2px solid var(--primary-btn-color);
+    }
+  }
+
+  &__textInput {
+    @extend .damageLanguagesPanel__select;
+    background-image: none;
+  }
+
+  &__numberInput {
+    @extend .damageLanguagesPanel__textInput;
+    width: 60px;
+    margin-left: 8px;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__button {
+    padding: 8px 12px;
+    background-color: var(--primary-btn-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: var(--primary-btn-hover);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  &__telepathy {
+    margin-bottom: 12px;
+  }
+
+  &__label {
+    font-size: 14px;
+    color: white;
+    display: flex;
+    align-items: center;
+  }
+
+  &__languageControls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  &__languageButtons {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__understandsBut {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    color: white;
+  }
+
+  &__understandsInput {
+    @extend .damageLanguagesPanel__textInput;
+    flex: 1;
+  }
+
+  &__lists {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__listGroup {
+    background-color: var(--secondary-bg-color);
+    border-radius: 6px;
+    padding: 8px;
+  }
+
+  &__listHeader {
+    color: var(--primary-btn-color);
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  &__listItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    background-color: var(--dark-bg-color);
+    border-radius: 4px;
+    margin-bottom: 4px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__removeButton {
+    background: none;
+    border: none;
+    color: var(--error-color);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 4px;
+    margin-left: 8px;
+
+    &:hover {
+      color: var(--error-hover);
+    }
+  }
+
+  &__buttonActive {
+    background-color: var(--accent-btn-color);
+    color: black;
+    border: 1px solid var(--primary-btn-color);
+
+    &:hover {
+      color: white;
+    }
+  }  
+}

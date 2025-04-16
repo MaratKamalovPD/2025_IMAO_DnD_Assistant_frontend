@@ -1,5 +1,5 @@
 import { Icon20DocumentPlusOutline } from '@vkontakte/icons';
-import { useViewSettings } from 'pages/bestiary/lib';
+//import { useViewSettings } from 'pages/bestiary/lib';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import s from './TopPanel.module.scss';
 
@@ -21,10 +21,10 @@ export const TopPanel: React.FC<TopPanelProps> = ({
     [setSearchValue],
   );
 
-  const { viewMode, setViewMode, alphabetSort, setAlphabetSort, ratingSort, setRatingSort } =
-    useViewSettings();
+  // const { viewMode, setViewMode, alphabetSort, setAlphabetSort, ratingSort, setRatingSort } =
+  //   useViewSettings();
 
-  const [isDropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [_isDropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
