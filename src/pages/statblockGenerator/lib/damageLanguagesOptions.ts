@@ -60,3 +60,11 @@ export const getUnderstandsSuffix = (language: Language, understandsBut: string)
     ? ` (понимает, но ${understandsBut})` 
     : ` (understands but ${understandsBut})`;
 };
+
+export const DAMAGE_DISPLAY_MAP: Record<string, string> = {
+  'дробящий, колющий и рубящий урон от немагических атак': 'Немагические атаки'
+};
+
+export const DAMAGE_INTERNAL_MAP = Object.fromEntries(
+  Object.entries(DAMAGE_DISPLAY_MAP).map(([key, value]) => [value, key])
+);

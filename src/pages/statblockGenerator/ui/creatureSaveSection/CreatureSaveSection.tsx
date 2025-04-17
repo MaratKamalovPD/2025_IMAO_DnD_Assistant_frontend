@@ -20,7 +20,7 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
   onImageUpload,
   onTextChange,
   onTriggerPreset,
-  presetOptions = [],
+  //presetOptions = [],
   selectedPreset = '',
   language = 'ru'
 }) => {

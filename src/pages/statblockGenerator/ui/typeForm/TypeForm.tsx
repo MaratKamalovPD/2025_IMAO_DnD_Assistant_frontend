@@ -7,7 +7,7 @@ import { TypeFormLocalization,
 import { TypeFormProps, TypeFormState, CreatureSize} from 'pages/statblockGenerator/model';
 import { FormElement } from 'pages/statblockGenerator/ui/typeForm/formElement';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
-import { Language, lowercaseFirstLetter, capitalizeFirstLetter } from 'shared/lib';
+import { lowercaseFirstLetter, capitalizeFirstLetter } from 'shared/lib';
 //import { RootState } from 'app/store';
 
 import { useDispatch, useSelector  } from 'react-redux';
@@ -16,7 +16,6 @@ import {
   generatedCreatureActions,
   generatedCreatureSelectors,
   GeneratedCreatureStore,
-
 } from 'entities/generatedCreature/model';
 
 // import type {

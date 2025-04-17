@@ -1,1 +1,1 @@
-export { VKLogin } from './VKLogin';
+//export { VKLogin } from './VKLogin';

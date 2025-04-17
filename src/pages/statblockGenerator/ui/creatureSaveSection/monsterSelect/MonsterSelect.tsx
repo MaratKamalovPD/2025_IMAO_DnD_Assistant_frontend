@@ -1,12 +1,11 @@
-import React, { useMemo, useState, useEffect } from "react";
-import Select, { components } from "react-select";
+import React, { useMemo, useState } from "react";
+import Select from "react-select";
 import { ExternalLink } from "lucide-react";
 import clsx from "clsx";
 import s from "./MonsterSelect.module.scss";
 import { useDebounce } from "shared/lib";
 import { CreatureClippedData } from "entities/creature/model/types";
 import {
-  GetCreaturesRequest,
   useGetCreaturesQuery,
 } from "pages/bestiary/api";
 import { mapFiltersToRequestBody } from "pages/bestiary/lib";
@@ -20,6 +19,8 @@ interface MonsterSelectProps {
   }
   
   export const MonsterSelect: React.FC<MonsterSelectProps> = ({ value, onChange }) => {
+    void value;
+
     const [searchValue, setSearchValue] = useState("");
     const debouncedSearch = useDebounce(searchValue, DEBOUNCE_TIME);
   
@@ -39,7 +40,7 @@ interface MonsterSelectProps {
         }));
     }, [creatures]);
   
-    const selectedOption = options.find((opt) => opt.value === value) ?? null;
+    //const selectedOption = options.find((opt) => opt.value === value) ?? null;
   
     const CustomOption = (props: any) => {
       const { data, innerRef, innerProps, isFocused } = props;

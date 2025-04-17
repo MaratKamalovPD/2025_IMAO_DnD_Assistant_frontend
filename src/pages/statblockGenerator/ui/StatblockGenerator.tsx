@@ -135,6 +135,22 @@ export const StatblockGenerator = () => {
         id: SINGLE_CREATURE_ID,
         proficiencyBonus: fullCreatureData.proficiencyBonus,
       }))
+
+      dispatch(generatedCreatureActions.updateDamageImmunities({
+        id: SINGLE_CREATURE_ID,
+        damageImmunities: fullCreatureData.damageImmunities || [],
+      }))
+
+      dispatch(generatedCreatureActions.updateDamageResistances({
+        id: SINGLE_CREATURE_ID,
+        damageResistances: fullCreatureData.damageResistances || [],
+      }))
+
+      dispatch(generatedCreatureActions.updateDamageVulnerabilities({
+        id: SINGLE_CREATURE_ID,
+        damageVulnerabilities: fullCreatureData.damageVulnerabilities || [],
+      }))
+
     }
   }, [fullCreatureData, dispatch]);
   

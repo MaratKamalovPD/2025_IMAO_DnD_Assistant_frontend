@@ -323,12 +323,32 @@ import {
           changes: { damageVulnerabilities: action.payload.damageVulnerabilities }
         });
       },
+
+      setDamageVulnerabilities: (
+        state,
+        action: PayloadAction<{ id: string; values: string[] }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.damageVulnerabilities = action.payload.values;
+        }
+      },
       
       updateDamageResistances: (state, action: PayloadAction<{id: string; damageResistances: string[]}>) => {
         generatedCreatureAdapter.updateOne(state, {
           id: action.payload.id,
           changes: { damageResistances: action.payload.damageResistances }
         });
+      },
+
+      setDamageResistances: (
+        state,
+        action: PayloadAction<{ id: string; values: string[] }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.damageResistances = action.payload.values;
+        }
       },
       
       updateConditionImmunities: (state, action: PayloadAction<{id: string; conditionImmunities: string[]}>) => {
@@ -371,6 +391,16 @@ import {
           id: action.payload.id,
           changes: { damageImmunities: action.payload.damageImmunities }
         });
+      },
+
+      setDamageImmunities: (
+        state,
+        action: PayloadAction<{ id: string; values: string[] }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.damageImmunities = action.payload.values;
+        }
       },
       
       updateSenses: (state, action: PayloadAction<{id: string; senses: Senses}>) => {
