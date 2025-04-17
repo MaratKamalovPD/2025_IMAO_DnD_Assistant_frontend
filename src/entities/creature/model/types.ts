@@ -40,7 +40,7 @@ export type CreatureFullData = {
   conditionImmunities?: string[];
   damageImmunities?: string[];
   senses: Senses;
-  languages: string[];
+  languages?: string[];
   feats?: Feat[];
   actions: Action[];
   bonusActions?: Action[];

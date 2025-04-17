@@ -57,6 +57,23 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
     setDamageVulnerabilities(formatDamageList(generatedCreature.damageVulnerabilities));
     setDamageResistances(formatDamageList(generatedCreature.damageResistances));
     setDamageImmunities(formatDamageList(generatedCreature.damageImmunities));
+
+    const parsedLanguages: string[] = [];
+    let parsedTelepathy = 0;
+
+    for (const entry of generatedCreature.languages ?? []) {
+      const normalized = entry.toLowerCase();
+
+      if (normalized.startsWith('телепатия')) {
+        const match = normalized.match(/\d+/);
+        parsedTelepathy = match ? parseInt(match[0], 10) : 0;
+      } else {
+        parsedLanguages.push(entry);
+      }
+    }
+
+    setLanguages(parsedLanguages);
+    setTelepathy(parsedTelepathy);
   }, [generatedCreature]);
 
   // Languages state
@@ -74,6 +91,19 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
     const value = e.target.value;
     setSelectedDamageType(value);
     setShowOtherDamage(value === '*');
+  };
+
+  const updateLanguagesInRedux = (langs: string[], telepathy: number) => {
+    const result = [...langs];
+  
+    if (telepathy > 0) {
+      result.push(`телепатия ${telepathy} фт.`);
+    }
+  
+    dispatch(generatedCreatureActions.setLanguages({
+      id: SINGLE_CREATURE_ID,
+      values: result
+    }));
   };
 
   const addDamageType = (type: DamageListType) => {
@@ -154,23 +184,29 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
   };
 
   const addLanguage = (speaks: boolean) => {
-    let languageText = selectedLanguage === '*' ? otherLanguage : 
-      languageOptions.find(opt => opt.value === selectedLanguage)?.label || selectedLanguage;
-    
-    if (!languageText) return;
-
+    let lang = selectedLanguage === '*'
+      ? otherLanguage
+      : languageOptions.find(opt => opt.value === selectedLanguage)?.label || selectedLanguage;
+  
+    if (!lang) return;
+  
     if (!speaks) {
-      languageText += getUnderstandsSuffix(language, understandsBut);
+      lang += ` (${understandsBut})`;
     }
-
-    if (!languages.includes(languageText)) {
-      setLanguages([...languages, languageText]);
+  
+    if (!languages.includes(lang)) {
+      const newLangs = [...languages, lang];
+      setLanguages(newLangs);
+      updateLanguagesInRedux(newLangs, telepathy);
     }
   };
-
+  
   const removeLanguage = (index: number) => {
-    setLanguages(prev => prev.filter((_, i) => i !== index));
+    const updated = languages.filter((_, i) => i !== index);
+    setLanguages(updated);
+    updateLanguagesInRedux(updated, telepathy);
   };
+  
 
   return (
     <CollapsiblePanel title={t.title}>

@@ -96,7 +96,7 @@ import {
       passivePerception: '10',
       senses: []
     },
-    languages: ['Common'],
+    languages: ['Общий'],
     feats: [],
     actions: [],
     legendary: undefined,
@@ -415,6 +415,16 @@ import {
           id: action.payload.id,
           changes: { languages: action.payload.languages }
         });
+      },
+
+      setLanguages: (
+        state,
+        action: PayloadAction<{ id: string; values: string[] }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.languages = action.payload.values;
+        }
       },
       
       updateFeats: (state, action: PayloadAction<{id: string; feats: Feat[]}>) => {

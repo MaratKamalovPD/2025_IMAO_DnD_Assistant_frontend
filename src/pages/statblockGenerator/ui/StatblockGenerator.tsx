@@ -151,6 +151,11 @@ export const StatblockGenerator = () => {
         damageVulnerabilities: fullCreatureData.damageVulnerabilities || [],
       }))
 
+      dispatch(generatedCreatureActions.updateLanguages({
+        id: SINGLE_CREATURE_ID,
+        languages: fullCreatureData.languages || [],
+      }))
+
     }
   }, [fullCreatureData, dispatch]);
   
