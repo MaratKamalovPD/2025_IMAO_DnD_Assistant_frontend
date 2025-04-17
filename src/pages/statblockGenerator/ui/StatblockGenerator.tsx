@@ -156,6 +156,11 @@ export const StatblockGenerator = () => {
         languages: fullCreatureData.languages || [],
       }))
 
+      dispatch(generatedCreatureActions.updateSpeed({
+        id: SINGLE_CREATURE_ID,
+        speed: fullCreatureData.speed || [],
+      }))
+
     }
   }, [fullCreatureData, dispatch]);
   

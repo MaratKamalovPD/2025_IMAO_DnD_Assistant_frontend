@@ -106,6 +106,8 @@ import {
     images: [],
     environment: [],
     attacksLLM: [],
+    useCustomSpeed: false,
+    
   };
   
   
@@ -212,6 +214,36 @@ import {
           id: action.payload.id,
           changes: { speed: action.payload.speed }
         });
+      },
+
+      setSpeed: (
+        state,
+        action: PayloadAction<{ id: string; value: CreatureFullData['speed'] }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.speed = action.payload.value;
+        }
+      },
+      
+      setUseCustomSpeed: (
+        state,
+        action: PayloadAction<{ id: string; value: boolean }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.useCustomSpeed = action.payload.value;
+        }
+      },
+      
+      setCustomSpeed: (
+        state,
+        action: PayloadAction<{ id: string; value: string }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.customSpeed = action.payload.value;
+        }
       },
       
       updateAbilityScores: (state, action: PayloadAction<{id: string; ability: AbilityScores}>) => {

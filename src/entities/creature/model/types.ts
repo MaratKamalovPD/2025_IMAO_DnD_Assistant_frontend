@@ -51,6 +51,8 @@ export type CreatureFullData = {
   images: string[];
   environment?: string[];
   attacksLLM?: AttackLLM[];
+  useCustomSpeed?: boolean;
+  customSpeed?: string;
 };
 
 export type Reaction = {
@@ -131,6 +133,8 @@ export type HitPoints = {
 
 export type Speed = {
   value: number;
+  name?: string;
+  additional?: string;
 };
 
 export type AbilityScores = {
