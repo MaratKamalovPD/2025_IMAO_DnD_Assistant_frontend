@@ -153,13 +153,14 @@ export type Skill = {
 
 export type Senses = {
   passivePerception: string;
-  senses: Sense[];
+  senses?: Sense[];
 };
 
 
 type Sense = {
   name: string;
   value: number;
+  additional?: string;
 }
 
 export type Action = {

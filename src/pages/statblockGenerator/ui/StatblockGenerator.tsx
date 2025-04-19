@@ -161,6 +161,11 @@ export const StatblockGenerator = () => {
         speed: fullCreatureData.speed || [],
       }))
 
+      dispatch(generatedCreatureActions.updateSenses({
+        id: SINGLE_CREATURE_ID,
+        senses: fullCreatureData.senses,
+      }))
+
     }
   }, [fullCreatureData, dispatch]);
   

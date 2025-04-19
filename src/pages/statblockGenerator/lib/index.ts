@@ -13,6 +13,6 @@ export { getSavingThrowOptions, getSkillOptions, getConditionOptions,
 export { DamageLanguagesLocalization } from './damageLanguagesLocalization';
 export { getDamageTypeOptions, getLanguageOptions,
      getUnderstandsSuffix, DAMAGE_DISPLAY_MAP, DAMAGE_INTERNAL_MAP } from './damageLanguagesOptions.ts';
-export { SensesLocalization } from './sensesLocalization';
+export { SensesLocalization, getSenseNameMap, getReverseSenseNameMap } from './sensesLocalization';
 
 

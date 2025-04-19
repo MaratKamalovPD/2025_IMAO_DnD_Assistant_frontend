@@ -107,7 +107,7 @@ import {
     environment: [],
     attacksLLM: [],
     useCustomSpeed: false,
-    
+
   };
   
   
@@ -440,6 +440,19 @@ import {
           id: action.payload.id,
           changes: { senses: action.payload.senses }
         });
+      },
+
+      setSenses: (
+        state,
+        action: PayloadAction<{ id: string; senses: { name: string; value: number; additional?: string }[] }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.senses = {
+            ...creature.senses,
+            senses: action.payload.senses
+          };
+        }
       },
       
       updateLanguages: (state, action: PayloadAction<{id: string; languages: string[]}>) => {
