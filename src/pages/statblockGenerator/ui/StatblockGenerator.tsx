@@ -166,6 +166,26 @@ export const StatblockGenerator = () => {
         senses: fullCreatureData.senses,
       }))
 
+      dispatch(generatedCreatureActions.updateArmorClass({
+        id: SINGLE_CREATURE_ID,
+        armorClass: fullCreatureData.armorClass,
+      }))
+
+      dispatch(generatedCreatureActions.updateArmors({
+        id: SINGLE_CREATURE_ID,
+        armors: fullCreatureData.armors || [],
+      }))
+
+      dispatch(generatedCreatureActions.updateArmorText({
+        id: SINGLE_CREATURE_ID,
+        armorText: fullCreatureData.armorText || '',
+      }))
+      
+      dispatch(generatedCreatureActions.updateHitPoints({
+        id: SINGLE_CREATURE_ID,
+        hits: fullCreatureData.hits,
+      }))
+
     }
   }, [fullCreatureData, dispatch]);
   

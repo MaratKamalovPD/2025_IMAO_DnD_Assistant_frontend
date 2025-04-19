@@ -201,6 +201,23 @@ import {
           changes: { armors: action.payload.armors }
         });
       },
+
+      updateArmorText: (state, action: PayloadAction<{id: string; armorText: string}>) => {
+        generatedCreatureAdapter.updateOne(state, {
+          id: action.payload.id,
+          changes: { armorText: action.payload.armorText }
+        });
+      },
+
+      setArmors: (state, action) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) creature.armors = action.payload.value;
+      },
+      
+      setArmorText: (state, action) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) creature.armorText = action.payload.value;
+      },
       
       updateHitPoints: (state, action: PayloadAction<{id: string; hits: HitPoints}>) => {
         generatedCreatureAdapter.updateOne(state, {
@@ -208,7 +225,17 @@ import {
           changes: { hits: action.payload.hits }
         });
       },
+
+      setHits: (state, action) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) creature.hits = action.payload.hits;
+      },
       
+      setCustomHp: (state, action) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) creature.customHp = action.payload.value;
+      },
+
       updateSpeed: (state, action: PayloadAction<{id: string; speed: Speed[]}>) => {
         generatedCreatureAdapter.updateOne(state, {
           id: action.payload.id,
