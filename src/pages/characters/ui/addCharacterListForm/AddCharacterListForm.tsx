@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { GetCharactersRequest, useAddCharacterMutation } from 'pages/characters/api';
 
+import clsx from 'clsx';
 import LssLogo from 'shared/assets/images/long_story_short_logo.tsx';
 import s from './AddCharacterListForm.module.scss';
 
@@ -69,7 +70,10 @@ export const AddCharacterListForm = ({ reloadTrigger, requestBody }: AddCharacte
 
   return (
     <div className={s.formContainer}>
-      <form className={s.addCharacterForm} onSubmit={handleSubmit}>
+      <form
+        className={clsx(s.addCharacterForm, { [s.marginTop5Rem]: jsonData })}
+        onSubmit={handleSubmit}
+      >
         <div className={s.lssContainer}>
           <a href='https://longstoryshort.app/characters/list/' target='_blank'>
             <LssLogo />

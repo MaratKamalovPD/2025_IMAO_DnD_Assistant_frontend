@@ -1,18 +1,19 @@
 import { FC, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import uniqid from 'uniqid';
 
 import { Creature, creatureActions, CreatureClippedData } from 'entities/creature/model';
 import { encounterActions } from 'entities/encounter/model';
 import { useLazyGetCreatureByNameQuery } from 'pages/bestiary/api';
-
-import { calculateInitiative } from 'pages/bestiary/model';
-import { useNavigate } from 'react-router';
-import placeholderImage from 'shared/assets/images/placeholder.png';
-import s from './BestiaryCard.module.scss';
+import { calculateInitiative } from 'shared/lib';
 import { GridCard } from './gridCard';
 import { ListCard } from './listCard';
+
+import s from './BestiaryCard.module.scss';
+
+import placeholderImage from 'shared/assets/images/placeholder.png';
 
 type BestiaryCardProps = {
   creature: CreatureClippedData;

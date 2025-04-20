@@ -11,8 +11,7 @@ $additional-border-color: #cfcfcf62;
   position: sticky;
   top: 95px;
   left: 0;
-  max-height: calc(100vh - 56px);
-  height: fit-content;
+  height: calc(100vh - 6rem);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -71,7 +70,6 @@ $additional-border-color: #cfcfcf62;
   > *:not(:first-child) {
     margin-bottom: 0.5rem;
   }
-
 
   > *:last-child {
     margin-bottom: 1.5rem;
