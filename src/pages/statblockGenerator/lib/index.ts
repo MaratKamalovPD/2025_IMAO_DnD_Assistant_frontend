@@ -12,7 +12,8 @@ export { getSavingThrowOptions, getSkillOptions, getConditionOptions,
     getProficiencyLabel, getExpertSuffix, savingThrowShortNames, skillToAbilityMap} from './propertiesOptions';
 export { DamageLanguagesLocalization } from './damageLanguagesLocalization';
 export { getDamageTypeOptions, getLanguageOptions,
-     getUnderstandsSuffix } from './damageLanguagesOptions.ts';
-export { SensesLocalization } from './sensesLocalization';
+     getUnderstandsSuffix, DAMAGE_DISPLAY_MAP, DAMAGE_INTERNAL_MAP } from './damageLanguagesOptions.ts';
+export { SensesLocalization, getSenseNameMap, getReverseSenseNameMap } from './sensesLocalization';
+export { calculateArmorClass } from './armorClassUtils'
 
 

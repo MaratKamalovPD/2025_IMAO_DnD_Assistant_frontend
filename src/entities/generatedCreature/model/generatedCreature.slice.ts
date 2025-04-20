@@ -96,7 +96,7 @@ import {
       passivePerception: '10',
       senses: []
     },
-    languages: ['Common'],
+    languages: ['Общий'],
     feats: [],
     actions: [],
     legendary: undefined,
@@ -106,6 +106,8 @@ import {
     images: [],
     environment: [],
     attacksLLM: [],
+    useCustomSpeed: false,
+
   };
   
   
@@ -199,6 +201,28 @@ import {
           changes: { armors: action.payload.armors }
         });
       },
+
+      updateArmorText: (state, action: PayloadAction<{id: string; armorText: string}>) => {
+        generatedCreatureAdapter.updateOne(state, {
+          id: action.payload.id,
+          changes: { armorText: action.payload.armorText }
+        });
+      },
+
+      setArmors: (state, action) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) creature.armors = action.payload.value;
+      },
+
+      setArmorClass: (state, action) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) creature.armorClass = action.payload.value;
+      },
+      
+      setArmorText: (state, action) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) creature.armorText = action.payload.value;
+      },
       
       updateHitPoints: (state, action: PayloadAction<{id: string; hits: HitPoints}>) => {
         generatedCreatureAdapter.updateOne(state, {
@@ -206,12 +230,52 @@ import {
           changes: { hits: action.payload.hits }
         });
       },
+
+      setHits: (state, action) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) creature.hits = action.payload.hits;
+      },
       
+      setCustomHp: (state, action) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) creature.customHp = action.payload.value;
+      },
+
       updateSpeed: (state, action: PayloadAction<{id: string; speed: Speed[]}>) => {
         generatedCreatureAdapter.updateOne(state, {
           id: action.payload.id,
           changes: { speed: action.payload.speed }
         });
+      },
+
+      setSpeed: (
+        state,
+        action: PayloadAction<{ id: string; value: CreatureFullData['speed'] }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.speed = action.payload.value;
+        }
+      },
+      
+      setUseCustomSpeed: (
+        state,
+        action: PayloadAction<{ id: string; value: boolean }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.useCustomSpeed = action.payload.value;
+        }
+      },
+      
+      setCustomSpeed: (
+        state,
+        action: PayloadAction<{ id: string; value: string }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.customSpeed = action.payload.value;
+        }
       },
       
       updateAbilityScores: (state, action: PayloadAction<{id: string; ability: AbilityScores}>) => {
@@ -323,12 +387,32 @@ import {
           changes: { damageVulnerabilities: action.payload.damageVulnerabilities }
         });
       },
+
+      setDamageVulnerabilities: (
+        state,
+        action: PayloadAction<{ id: string; values: string[] }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.damageVulnerabilities = action.payload.values;
+        }
+      },
       
       updateDamageResistances: (state, action: PayloadAction<{id: string; damageResistances: string[]}>) => {
         generatedCreatureAdapter.updateOne(state, {
           id: action.payload.id,
           changes: { damageResistances: action.payload.damageResistances }
         });
+      },
+
+      setDamageResistances: (
+        state,
+        action: PayloadAction<{ id: string; values: string[] }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.damageResistances = action.payload.values;
+        }
       },
       
       updateConditionImmunities: (state, action: PayloadAction<{id: string; conditionImmunities: string[]}>) => {
@@ -372,6 +456,16 @@ import {
           changes: { damageImmunities: action.payload.damageImmunities }
         });
       },
+
+      setDamageImmunities: (
+        state,
+        action: PayloadAction<{ id: string; values: string[] }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.damageImmunities = action.payload.values;
+        }
+      },
       
       updateSenses: (state, action: PayloadAction<{id: string; senses: Senses}>) => {
         generatedCreatureAdapter.updateOne(state, {
@@ -379,12 +473,35 @@ import {
           changes: { senses: action.payload.senses }
         });
       },
+
+      setSenses: (
+        state,
+        action: PayloadAction<{ id: string; senses: { name: string; value: number; additional?: string }[] }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.senses = {
+            ...creature.senses,
+            senses: action.payload.senses
+          };
+        }
+      },
       
       updateLanguages: (state, action: PayloadAction<{id: string; languages: string[]}>) => {
         generatedCreatureAdapter.updateOne(state, {
           id: action.payload.id,
           changes: { languages: action.payload.languages }
         });
+      },
+
+      setLanguages: (
+        state,
+        action: PayloadAction<{ id: string; values: string[] }>
+      ) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.languages = action.payload.values;
+        }
       },
       
       updateFeats: (state, action: PayloadAction<{id: string; feats: Feat[]}>) => {

@@ -135,6 +135,57 @@ export const StatblockGenerator = () => {
         id: SINGLE_CREATURE_ID,
         proficiencyBonus: fullCreatureData.proficiencyBonus,
       }))
+
+      dispatch(generatedCreatureActions.updateDamageImmunities({
+        id: SINGLE_CREATURE_ID,
+        damageImmunities: fullCreatureData.damageImmunities || [],
+      }))
+
+      dispatch(generatedCreatureActions.updateDamageResistances({
+        id: SINGLE_CREATURE_ID,
+        damageResistances: fullCreatureData.damageResistances || [],
+      }))
+
+      dispatch(generatedCreatureActions.updateDamageVulnerabilities({
+        id: SINGLE_CREATURE_ID,
+        damageVulnerabilities: fullCreatureData.damageVulnerabilities || [],
+      }))
+
+      dispatch(generatedCreatureActions.updateLanguages({
+        id: SINGLE_CREATURE_ID,
+        languages: fullCreatureData.languages || [],
+      }))
+
+      dispatch(generatedCreatureActions.updateSpeed({
+        id: SINGLE_CREATURE_ID,
+        speed: fullCreatureData.speed || [],
+      }))
+
+      dispatch(generatedCreatureActions.updateSenses({
+        id: SINGLE_CREATURE_ID,
+        senses: fullCreatureData.senses,
+      }))
+
+      dispatch(generatedCreatureActions.updateArmorClass({
+        id: SINGLE_CREATURE_ID,
+        armorClass: fullCreatureData.armorClass,
+      }))
+
+      dispatch(generatedCreatureActions.updateArmors({
+        id: SINGLE_CREATURE_ID,
+        armors: fullCreatureData.armors || [],
+      }))
+
+      dispatch(generatedCreatureActions.updateArmorText({
+        id: SINGLE_CREATURE_ID,
+        armorText: fullCreatureData.armorText || '',
+      }))
+      
+      dispatch(generatedCreatureActions.updateHitPoints({
+        id: SINGLE_CREATURE_ID,
+        hits: fullCreatureData.hits,
+      }))
+
     }
   }, [fullCreatureData, dispatch]);
   

@@ -7,7 +7,6 @@ import {
   getConditionOptions,
   getExpertSuffix
 } from 'pages/statblockGenerator/lib';
-import { calculateStatModifier } from 'shared/lib';
 
 import {
   SINGLE_CREATURE_ID,

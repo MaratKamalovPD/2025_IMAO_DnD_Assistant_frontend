@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { DamageLanguagesLocalization } from 'pages/statblockGenerator/lib';
+import React, { useEffect, useState } from 'react';
+import { DAMAGE_DISPLAY_MAP, DAMAGE_INTERNAL_MAP, DamageLanguagesLocalization } from 'pages/statblockGenerator/lib';
+import { capitalizeFirstLetter, lowercaseFirstLetter } from 'shared/lib';
 import { 
   DamageLanguagesFormProps, 
   DamageListType 
@@ -9,6 +10,13 @@ import {
   getLanguageOptions,
   getUnderstandsSuffix
 } from 'pages/statblockGenerator/lib';
+import { useDispatch, useSelector  } from 'react-redux';
+import {
+  SINGLE_CREATURE_ID,
+  generatedCreatureActions,
+  generatedCreatureSelectors,
+  GeneratedCreatureStore,
+} from 'entities/generatedCreature/model';
 import { DamageLanguageSection } from 'pages/statblockGenerator/ui/damageLanguagesForm/damageLanguageSection';
 import { ListGroup } from 'pages/statblockGenerator/ui/damageLanguagesForm/listGroup';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel'
@@ -23,7 +31,13 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
   language = 'en'
 }) => {
   const t = DamageLanguagesLocalization[language];
-  
+
+  const dispatch = useDispatch();
+
+  const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
+    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)
+  );
+
   // Damage types state
   const [selectedDamageType, setSelectedDamageType] = useState<string>('acid');
   const [otherDamageType, setOtherDamageType] = useState<string>('');
@@ -31,6 +45,36 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
   const [damageVulnerabilities, setDamageVulnerabilities] = useState<string[]>(initialDamageVulnerabilities);
   const [damageResistances, setDamageResistances] = useState<string[]>(initialDamageResistances);
   const [damageImmunities, setDamageImmunities] = useState<string[]>(initialDamageImmunities);
+
+  useEffect(() => {
+    if (!generatedCreature) return;
+  
+    const formatDamageList = (list: string[] = []) =>
+      list.map(dmg =>
+        capitalizeFirstLetter(DAMAGE_DISPLAY_MAP[dmg] || dmg)
+      );
+  
+    setDamageVulnerabilities(formatDamageList(generatedCreature.damageVulnerabilities));
+    setDamageResistances(formatDamageList(generatedCreature.damageResistances));
+    setDamageImmunities(formatDamageList(generatedCreature.damageImmunities));
+
+    const parsedLanguages: string[] = [];
+    let parsedTelepathy = 0;
+
+    for (const entry of generatedCreature.languages ?? []) {
+      const normalized = entry.toLowerCase();
+
+      if (normalized.startsWith('телепатия')) {
+        const match = normalized.match(/\d+/);
+        parsedTelepathy = match ? parseInt(match[0], 10) : 0;
+      } else {
+        parsedLanguages.push(entry);
+      }
+    }
+
+    setLanguages(parsedLanguages);
+    setTelepathy(parsedTelepathy);
+  }, [generatedCreature]);
 
   // Languages state
   const [selectedLanguage, setSelectedLanguage] = useState<string>('Common');
@@ -49,55 +93,89 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
     setShowOtherDamage(value === '*');
   };
 
-  const addDamageType = (type: DamageListType) => {
-    const damageType = selectedDamageType === '*' 
-      ? otherDamageType 
-      : damageTypeOptions.find(opt => opt.value === selectedDamageType)?.label || selectedDamageType;
-    
-    if (!damageType) return;
+  const updateLanguagesInRedux = (langs: string[], telepathy: number) => {
+    const result = [...langs];
   
-    const newVulnerabilities = [...damageVulnerabilities];
-    const newResistances = [...damageResistances];
-    const newImmunities = [...damageImmunities];
-  
-    const removeFromAllLists = () => {
-      const indexV = newVulnerabilities.indexOf(damageType);
-      if (indexV > -1) newVulnerabilities.splice(indexV, 1);
-      
-      const indexR = newResistances.indexOf(damageType);
-      if (indexR > -1) newResistances.splice(indexR, 1);
-      
-      const indexI = newImmunities.indexOf(damageType);
-      if (indexI > -1) newImmunities.splice(indexI, 1);
-    };
-  
-    removeFromAllLists();
-  
-    switch (type) {
-      case 'vulnerabilities':
-        newVulnerabilities.push(damageType);
-        break;
-      case 'resistances':
-        newResistances.push(damageType);
-        break;
-      case 'immunities':
-        newImmunities.push(damageType);
-        break;
+    if (telepathy > 0) {
+      result.push(`телепатия ${telepathy} фт.`);
     }
   
-    setDamageVulnerabilities(newVulnerabilities);
-    setDamageResistances(newResistances);
-    setDamageImmunities(newImmunities);
+    dispatch(generatedCreatureActions.setLanguages({
+      id: SINGLE_CREATURE_ID,
+      values: result
+    }));
+  };
+
+  const addDamageType = (type: DamageListType) => {
+    const rawLabel = selectedDamageType === '*'
+      ? otherDamageType
+      : damageTypeOptions.find(opt => opt.value === selectedDamageType)?.label || selectedDamageType;
+  
+    const displayLabel = capitalizeFirstLetter(rawLabel);
+    const internalLabel = DAMAGE_INTERNAL_MAP[displayLabel] || rawLabel.toLowerCase();
+  
+    const all = {
+      vulnerabilities: [...damageVulnerabilities],
+      resistances: [...damageResistances],
+      immunities: [...damageImmunities]
+    };
+  
+    // Удалим из всех
+    Object.keys(all).forEach(key => {
+      all[key as DamageListType] = all[key as DamageListType].filter(item => item !== displayLabel);
+    });
+  
+    all[type].push(displayLabel);
+  
+    // Обновим стейт компонента
+    setDamageVulnerabilities(all.vulnerabilities);
+    setDamageResistances(all.resistances);
+    setDamageImmunities(all.immunities);
+  
+    // Обновим Redux
+    dispatch(generatedCreatureActions.setDamageVulnerabilities({
+      id: SINGLE_CREATURE_ID,
+      values: all.vulnerabilities.map(d => DAMAGE_INTERNAL_MAP[d] || d.toLowerCase())
+    }));
+    dispatch(generatedCreatureActions.setDamageResistances({
+      id: SINGLE_CREATURE_ID,
+      values: all.resistances.map(d => DAMAGE_INTERNAL_MAP[d] || d.toLowerCase())
+    }));
+    dispatch(generatedCreatureActions.setDamageImmunities({
+      id: SINGLE_CREATURE_ID,
+      values: all.immunities.map(d => DAMAGE_INTERNAL_MAP[d] || d.toLowerCase())
+    }));
   };
 
   const removeDamageType = (type: DamageListType, index: number) => {
-    const setterMap = {
+    const currentList = {
+      vulnerabilities: damageVulnerabilities,
+      resistances: damageResistances,
+      immunities: damageImmunities
+    }[type];
+  
+    const updated = currentList.filter((_, i) => i !== index);
+  
+    const setMap = {
       vulnerabilities: setDamageVulnerabilities,
       resistances: setDamageResistances,
       immunities: setDamageImmunities
     };
-    setterMap[type](prev => prev.filter((_, i) => i !== index));
+  
+    setMap[type](updated);
+  
+    const reduxActionMap = {
+      vulnerabilities: generatedCreatureActions.setDamageVulnerabilities,
+      resistances: generatedCreatureActions.setDamageResistances,
+      immunities: generatedCreatureActions.setDamageImmunities
+    };
+  
+    dispatch(reduxActionMap[type]({
+      id: SINGLE_CREATURE_ID,
+      values: updated.map(d => DAMAGE_INTERNAL_MAP[d] || d.toLowerCase())
+    }));
   };
+  
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
@@ -106,23 +184,29 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
   };
 
   const addLanguage = (speaks: boolean) => {
-    let languageText = selectedLanguage === '*' ? otherLanguage : 
-      languageOptions.find(opt => opt.value === selectedLanguage)?.label || selectedLanguage;
-    
-    if (!languageText) return;
-
+    let lang = selectedLanguage === '*'
+      ? otherLanguage
+      : languageOptions.find(opt => opt.value === selectedLanguage)?.label || selectedLanguage;
+  
+    if (!lang) return;
+  
     if (!speaks) {
-      languageText += getUnderstandsSuffix(language, understandsBut);
+      lang += ` (${understandsBut})`;
     }
-
-    if (!languages.includes(languageText)) {
-      setLanguages([...languages, languageText]);
+  
+    if (!languages.includes(lang)) {
+      const newLangs = [...languages, lang];
+      setLanguages(newLangs);
+      updateLanguagesInRedux(newLangs, telepathy);
     }
   };
-
+  
   const removeLanguage = (index: number) => {
-    setLanguages(prev => prev.filter((_, i) => i !== index));
+    const updated = languages.filter((_, i) => i !== index);
+    setLanguages(updated);
+    updateLanguagesInRedux(updated, telepathy);
   };
+  
 
   return (
     <CollapsiblePanel title={t.title}>
