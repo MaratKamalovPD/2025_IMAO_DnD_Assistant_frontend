@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import {
+  generatedCreatureActions,
+  generatedCreatureSelectors,
+  GeneratedCreatureStore,
+  SINGLE_CREATURE_ID,
+} from 'entities/generatedCreature/model';
 import { MonsterSpeedLocalization } from 'pages/statblockGenerator/lib';
 import { MonsterSpeedFormProps, MonsterSpeedFormState } from 'pages/statblockGenerator/model';
+import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { SpeedInput } from 'pages/statblockGenerator/ui/monsterSpeedForm/speedInput';
 import { ToggleSwitch } from 'pages/statblockGenerator/ui/monsterSpeedForm/toggleSwitch';
-import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel'
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  generatedCreatureSelectors,
-  generatedCreatureActions,
-  SINGLE_CREATURE_ID,
-  GeneratedCreatureStore
-} from 'entities/generatedCreature/model';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import s from './MonsterSpeedForm.module.scss';
 
 export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
@@ -20,7 +20,7 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
   initialFlySpeed = 0,
   initialSwimSpeed = 0,
   initialCustomSpeed = '',
-  language = 'en'
+  language = 'en',
 }) => {
   const [state, setState] = useState<MonsterSpeedFormState>({
     speed: initialSpeed,
@@ -30,56 +30,54 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
     swimSpeed: initialSwimSpeed,
     customSpeed: initialCustomSpeed,
     useCustomSpeed: false,
-    hover: false
+    hover: false,
   });
 
   const dispatch = useDispatch();
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
-    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)
+    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
 
   const speedArray = generatedCreature?.speed ?? [];
   const useCustomSpeed = generatedCreature?.useCustomSpeed ?? false;
   const customSpeed = generatedCreature?.customSpeed ?? '';
 
-  const getSpeedByName = (name: string | undefined) =>
-    speedArray.find(s => s.name === name);
-  
-  const getSpeedValue = (name?: string) =>
-    getSpeedByName(name)?.value ?? 0;
-  
-  const isHover = () => getSpeedByName("летая")?.additional === "парит";
+  const getSpeedByName = (name: string | undefined) => speedArray.find((s) => s.name === name);
+
+  const getSpeedValue = (name?: string) => getSpeedByName(name)?.value ?? 0;
+
+  const isHover = () => getSpeedByName('летая')?.additional === 'парит';
 
   const updateNamedSpeed = (name: string | undefined, value: number) => {
-    let updated = speedArray.map(entry => {
+    let updated = speedArray.map((entry) => {
       if (entry.name === name) {
         return { ...entry, value };
       }
       return entry;
     });
-  
-    const exists = updated.some(entry => entry.name === name);
-  
+
+    const exists = updated.some((entry) => entry.name === name);
+
     if (!exists && value > 0) {
       updated.push({ name, value });
     }
-  
+
     // Удаляем записи с value === 0
-    updated = updated.filter(entry => entry.value > 0 || entry.name === undefined);
-  
-    dispatch(generatedCreatureActions.setSpeed({
-      id: SINGLE_CREATURE_ID,
-      value: updated
-    }));
+    updated = updated.filter((entry) => entry.value > 0 || entry.name === undefined);
+
+    dispatch(
+      generatedCreatureActions.setSpeed({
+        id: SINGLE_CREATURE_ID,
+        value: updated,
+      }),
+    );
   };
-  
-  
-  
+
   const updateHover = (enabled: boolean) => {
-    const updated = speedArray.map(entry => {
-      if (entry.name === "летая") {
+    const updated = speedArray.map((entry) => {
+      if (entry.name === 'летая') {
         if (enabled) {
-          return { ...entry, additional: "парит" };
+          return { ...entry, additional: 'парит' };
         } else {
           const { additional, ...rest } = entry;
           return rest;
@@ -87,45 +85,46 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
       }
       return entry;
     });
-  
-    dispatch(generatedCreatureActions.setSpeed({
-      id: SINGLE_CREATURE_ID,
-      value: updated
-    }));
+
+    dispatch(
+      generatedCreatureActions.setSpeed({
+        id: SINGLE_CREATURE_ID,
+        value: updated,
+      }),
+    );
   };
-  
-  
+
   const updateUseCustom = (value: boolean) => {
-    dispatch(generatedCreatureActions.setUseCustomSpeed({
-      id: SINGLE_CREATURE_ID,
-      value
-    }));
+    dispatch(
+      generatedCreatureActions.setUseCustomSpeed({
+        id: SINGLE_CREATURE_ID,
+        value,
+      }),
+    );
   };
-  
+
   const updateCustomSpeed = (value: string) => {
-    dispatch(generatedCreatureActions.setCustomSpeed({
-      id: SINGLE_CREATURE_ID,
-      value
-    }));
+    dispatch(
+      generatedCreatureActions.setCustomSpeed({
+        id: SINGLE_CREATURE_ID,
+        value,
+      }),
+    );
   };
-  
+
   const t = MonsterSpeedLocalization[language];
 
   return (
     <CollapsiblePanel title={t.title}>
       <div className={s.movementPanel__controls}>
-        <ToggleSwitch
-          label={t.customSpeed}
-          checked={useCustomSpeed}
-          onChange={updateUseCustom}
-        />
+        <ToggleSwitch label={t.customSpeed} checked={useCustomSpeed} onChange={updateUseCustom} />
 
         {useCustomSpeed ? (
           <div className={s.movementPanel__customSpeed}>
             <label className={s.movementPanel__label}>
               {t.speed}
               <input
-                type="text"
+                type='text'
                 value={customSpeed}
                 onChange={(e) => updateCustomSpeed(e.target.value)}
                 className={s.movementPanel__textInput}
@@ -164,7 +163,7 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
                 <div className={s.movementPanel__hoverCheckbox}>
                   <label className={s.movementPanel__checkboxLabel}>
                     <input
-                      type="checkbox"
+                      type='checkbox'
                       checked={isHover()}
                       onChange={(e) => updateHover(e.target.checked)}
                       className={s.movementPanel__checkbox}

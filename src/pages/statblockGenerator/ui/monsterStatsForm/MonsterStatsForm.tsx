@@ -1,26 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { MonsterStatsLocalization } from 'pages/statblockGenerator/lib';
-import { MonsterStatsFormProps, MonsterStats } from 'pages/statblockGenerator/model';
-import { StatInput } from 'pages/statblockGenerator/ui/monsterStatsForm/statInput';
-import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel'
 import {
-  SINGLE_CREATURE_ID,
   generatedCreatureActions,
   generatedCreatureSelectors,
   GeneratedCreatureStore,
-
+  SINGLE_CREATURE_ID,
 } from 'entities/generatedCreature/model';
+import { MonsterStatsLocalization } from 'pages/statblockGenerator/lib';
+import { MonsterStats, MonsterStatsFormProps } from 'pages/statblockGenerator/model';
+import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import { StatInput } from 'pages/statblockGenerator/ui/monsterStatsForm/statInput';
+import React, { useEffect, useState } from 'react';
 
-import { useDispatch, useSelector  } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
 
 import s from './MonsterStatsForm.module.scss';
 
-export const MonsterStatsForm: React.FC<MonsterStatsFormProps> = ({
-  language = 'en'
-}) => {
+export const MonsterStatsForm: React.FC<MonsterStatsFormProps> = ({ language = 'en' }) => {
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
-    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)
+    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
 
   const [stats, setStats] = useState<MonsterStats>({
@@ -36,32 +32,33 @@ export const MonsterStatsForm: React.FC<MonsterStatsFormProps> = ({
   const dispatch = useDispatch();
 
   useEffect(() => {
-      if (generatedCreature) {
-        setStats(prev => ({
-          ...prev,
-          str: generatedCreature.ability.str,
-          dex: generatedCreature.ability.dex,
-          con: generatedCreature.ability.con,
-          int: generatedCreature.ability.int,
-          wis: generatedCreature.ability.wis,
-          cha: generatedCreature.ability.cha,
-        }));
-      }
-    }, [generatedCreature]);
-
-    const handleStatChange = (stat: keyof MonsterStats, value: number) => {
-      setStats(prev => ({
+    if (generatedCreature) {
+      setStats((prev) => ({
         ...prev,
-        [stat]: value 
+        str: generatedCreature.ability.str,
+        dex: generatedCreature.ability.dex,
+        con: generatedCreature.ability.con,
+        int: generatedCreature.ability.int,
+        wis: generatedCreature.ability.wis,
+        cha: generatedCreature.ability.cha,
       }));
-    
-      dispatch(generatedCreatureActions.updateAbilityScore({
+    }
+  }, [generatedCreature]);
+
+  const handleStatChange = (stat: keyof MonsterStats, value: number) => {
+    setStats((prev) => ({
+      ...prev,
+      [stat]: value,
+    }));
+
+    dispatch(
+      generatedCreatureActions.updateAbilityScore({
         id: SINGLE_CREATURE_ID,
         abilityKey: stat,
         value: value,
-      }));
-    };
-    
+      }),
+    );
+  };
 
   return (
     <CollapsiblePanel title={t.title}>

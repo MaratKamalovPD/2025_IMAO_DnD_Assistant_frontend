@@ -1,17 +1,17 @@
 import React from 'react';
 import s from './CreatureSaveSection.module.scss';
-import { MonsterSelect } from "./monsterSelect";
+import { MonsterSelect } from './monsterSelect';
 
 interface CreatureSaveSectionProps {
   onSave?: () => void;
   onUsePreset?: () => void;
   onImageUpload?: (file: File) => void;
   onTextChange?: (text: string) => void;
-  onTriggerPreset?: (name: string) => void;  
+  onTriggerPreset?: (name: string) => void;
   presetOptions?: Array<{ label: string; value: string }>;
   selectedPreset?: string;
   language?: 'en' | 'ru';
-  isLoading?: boolean; 
+  isLoading?: boolean;
 }
 
 export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
@@ -22,7 +22,7 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
   onTriggerPreset,
   //presetOptions = [],
   selectedPreset = '',
-  language = 'ru'
+  language = 'ru',
 }) => {
   const translations = {
     ru: {
@@ -30,15 +30,15 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
       uploadImage: 'Загрузить изображение',
       presets: 'Пресеты существ:',
       select: 'Выбрать из списка',
-      usePreset: 'Использовать пресет'
+      usePreset: 'Использовать пресет',
     },
     en: {
       save: 'Save creature',
       uploadImage: 'Upload image',
       presets: 'Request presets:',
       select: 'Select from list',
-      usePreset: 'Use preset'
-    }
+      usePreset: 'Use preset',
+    },
   };
 
   const t = translations[language];
@@ -53,20 +53,14 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
     <div className={s.creatureSaveSection}>
       {/* Сохраненная часть с пресетами */}
       <div className={s.creatureSaveSection__presetsContainer}>
-        <div className={s.creatureSaveSection__presetsLabel}>
-          {t.presets}
-        </div>
-        
+        <div className={s.creatureSaveSection__presetsLabel}>{t.presets}</div>
+
         <div className={s.creatureSaveSection__presetsDropdown}>
-          <MonsterSelect 
-            value={selectedPreset}
-            onChange={(val) => onTextChange?.(val)}
-          />
+          <MonsterSelect value={selectedPreset} onChange={(val) => onTextChange?.(val)} />
         </div>
 
-
-        <button 
-          className={s.creatureSaveSection__button} 
+        <button
+          className={s.creatureSaveSection__button}
           onClick={() => selectedPreset && onTriggerPreset?.(selectedPreset)}
         >
           {t.usePreset}
@@ -76,9 +70,9 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
       {/* Поле для загрузки изображения */}
       <div className={s.creatureSaveSection__uploadContainer}>
         <label className={s.creatureSaveSection__uploadLabel}>
-          <input 
-            type="file" 
-            accept="image/*" 
+          <input
+            type='file'
+            accept='image/*'
             onChange={handleImageUpload}
             className={s.creatureSaveSection__uploadInput}
           />
@@ -88,10 +82,7 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
 
       {/* Круглая кнопка сохранения */}
       <div className={s.creatureSaveSection__saveButtonContainer}>
-        <button 
-          className={s.creatureSaveSection__saveButton}
-          onClick={onSave}
-        >
+        <button className={s.creatureSaveSection__saveButton} onClick={onSave}>
           {t.save}
         </button>
       </div>

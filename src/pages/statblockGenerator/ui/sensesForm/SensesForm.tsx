@@ -1,15 +1,15 @@
-import React from 'react';
+import {
+  generatedCreatureActions,
+  generatedCreatureSelectors,
+  GeneratedCreatureStore,
+  SINGLE_CREATURE_ID,
+} from 'entities/generatedCreature/model';
 import { getSenseNameMap, SensesLocalization } from 'pages/statblockGenerator/lib';
 import { SensesFormProps } from 'pages/statblockGenerator/model';
-import { SenseInput } from 'pages/statblockGenerator/ui/sensesForm/senseInput';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import { SenseInput } from 'pages/statblockGenerator/ui/sensesForm/senseInput';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  generatedCreatureSelectors,
-  generatedCreatureActions,
-  SINGLE_CREATURE_ID,
-  GeneratedCreatureStore
-} from 'entities/generatedCreature/model';
 import s from './SensesForm.module.scss';
 
 export const SensesForm: React.FC<SensesFormProps> = ({ language = 'en' }) => {
@@ -19,28 +19,23 @@ export const SensesForm: React.FC<SensesFormProps> = ({ language = 'en' }) => {
   const dispatch = useDispatch();
 
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
-    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)
+    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
 
   const senseArray = generatedCreature?.senses?.senses ?? [];
 
   const applicableForBlindBeyond: Array<keyof typeof senseNames> = ['blindsight', 'tremorsense'];
 
-  const getSenseValue = (
-    senseKey: keyof typeof senseNames
-  ): number => {
+  const getSenseValue = (senseKey: keyof typeof senseNames): number => {
     const senseName = senseNames[senseKey];
-    return senseArray.find(s => s.name === senseName)?.value ?? 0;
+    return senseArray.find((s) => s.name === senseName)?.value ?? 0;
   };
 
-  const updateSense = (
-    senseKey: keyof typeof senseNames,
-    value: number
-  ) => {
+  const updateSense = (senseKey: keyof typeof senseNames, value: number) => {
     const senseName = senseNames[senseKey];
     let updated = [...senseArray];
 
-    const index = updated.findIndex(s => s.name === senseName);
+    const index = updated.findIndex((s) => s.name === senseName);
 
     if (value === 0 && index !== -1) {
       updated.splice(index, 1); // удалить
@@ -54,21 +49,21 @@ export const SensesForm: React.FC<SensesFormProps> = ({ language = 'en' }) => {
       generatedCreatureActions.setSenses({
         id: SINGLE_CREATURE_ID,
         senses: updated,
-      })
+      }),
     );
   };
 
   const hasBlindBeyond = (senseKey: keyof typeof senseNames): boolean => {
     const senseName = senseNames[senseKey];
     return senseArray.some(
-      s => s.name === senseName && s.additional === 'слеп за пределами этого радиуса'
+      (s) => s.name === senseName && s.additional === 'слеп за пределами этого радиуса',
     );
   };
 
   const updateBlindBeyondFor = (senseKey: keyof typeof senseNames, enabled: boolean) => {
     const senseName = senseNames[senseKey];
 
-    const updated = senseArray.map(sense => {
+    const updated = senseArray.map((sense) => {
       if (sense.name === senseName) {
         if (enabled) {
           return { ...sense, additional: 'слеп за пределами этого радиуса' };
@@ -84,7 +79,7 @@ export const SensesForm: React.FC<SensesFormProps> = ({ language = 'en' }) => {
       generatedCreatureActions.setSenses({
         id: SINGLE_CREATURE_ID,
         senses: updated,
-      })
+      }),
     );
   };
 

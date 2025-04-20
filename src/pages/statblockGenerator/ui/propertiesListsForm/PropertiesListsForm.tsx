@@ -1,36 +1,37 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { PropertiesListsLocalization, savingThrowShortNames, skillToAbilityMap } from 'pages/statblockGenerator/lib';
-import { PropertiesListsFormProps, ProficiencyType } from 'pages/statblockGenerator/model';
-import { 
-  getSavingThrowOptions, 
-  getSkillOptions, 
+import {
   getConditionOptions,
-  getExpertSuffix
+  getExpertSuffix,
+  getSavingThrowOptions,
+  getSkillOptions,
+  PropertiesListsLocalization,
+  savingThrowShortNames,
+  skillToAbilityMap,
 } from 'pages/statblockGenerator/lib';
+import { ProficiencyType, PropertiesListsFormProps } from 'pages/statblockGenerator/model';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
-  SINGLE_CREATURE_ID,
   generatedCreatureActions,
   generatedCreatureSelectors,
   GeneratedCreatureStore,
-
+  SINGLE_CREATURE_ID,
 } from 'entities/generatedCreature/model';
 
-import { useDispatch, useSelector  } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { PropertySection } from 'pages/statblockGenerator/ui/propertiesListsForm/propertySection';
-import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel'
-import s from './PropertiesListsForm.module.scss';
 import { capitalizeFirstLetter, lowercaseFirstLetter } from 'shared/lib';
+import s from './PropertiesListsForm.module.scss';
 
 export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
   initialSavingThrows = [],
   initialSkills = [],
   initialConditionImmunities = [],
-  language = 'en'
+  language = 'en',
 }) => {
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
-    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)
+    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
 
   const proficiencyBonus = Number(generatedCreature?.proficiencyBonus ?? 2);
@@ -40,9 +41,9 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
     con: 10,
     int: 10,
     wis: 10,
-    cha: 10
+    cha: 10,
   };
-  
+
   const dispatch = useDispatch();
 
   const [selectedSthrow, setSelectedSthrow] = useState<string>('str');
@@ -50,7 +51,9 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
   const [selectedCondition, setSelectedCondition] = useState<string>('blinded');
   const [savingThrows, setSavingThrows] = useState<string[]>(initialSavingThrows);
   const [skills, setSkills] = useState<string[]>(initialSkills);
-  const [conditionImmunities, setConditionImmunities] = useState<string[]>(initialConditionImmunities);
+  const [conditionImmunities, setConditionImmunities] = useState<string[]>(
+    initialConditionImmunities,
+  );
 
   const t = PropertiesListsLocalization[language];
   const savingThrowOptions = getSavingThrowOptions(language);
@@ -59,96 +62,96 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
 
   useEffect(() => {
     if (generatedCreature && generatedCreature.savingThrows) {
-      const initialNames = generatedCreature.savingThrows.map(st => st.name);
+      const initialNames = generatedCreature.savingThrows.map((st) => st.name);
       setSavingThrows(initialNames);
     }
-    
+
     if (generatedCreature?.conditionImmunities) {
-      setConditionImmunities(
-        generatedCreature.conditionImmunities.map(capitalizeFirstLetter)
-      );
+      setConditionImmunities(generatedCreature.conditionImmunities.map(capitalizeFirstLetter));
     }
 
     if (generatedCreature?.skills) {
-      const formattedSkills = generatedCreature.skills.map(skill => {
+      const formattedSkills = generatedCreature.skills.map((skill) => {
         const isExpert = skill.value === 2 * proficiencyBonus;
         const suffix = isExpert ? ' (эксперт)' : '';
         return capitalizeFirstLetter(skill.name) + suffix;
       });
-  
+
       setSkills(formattedSkills);
     }
   }, [generatedCreature]);
 
   const formattedSkills = useMemo(() => {
     if (!generatedCreature?.skills) return [];
-  
-    return generatedCreature.skills.map(skill => {
-      const skillKey = skillOptions.find(opt => opt.label === skill.name)?.value;
+
+    return generatedCreature.skills.map((skill) => {
+      const skillKey = skillOptions.find((opt) => opt.label === skill.name)?.value;
       const abilityKey = skillKey ? skillToAbilityMap[skillKey] : null;
-  
-      const abilityScore = abilityKey ? generatedCreature.ability?.[abilityKey] ?? 10 : 10;
+
+      const abilityScore = abilityKey ? (generatedCreature.ability?.[abilityKey] ?? 10) : 10;
       const abilityModifier = Math.floor((abilityScore - 10) / 2);
-  
+
       const rawProficiencyPart = skill.value - abilityModifier;
       const isExpert = rawProficiencyPart === 2 * proficiencyBonus;
-  
+
       const suffix = isExpert ? ' (эксперт)' : '';
       return capitalizeFirstLetter(skill.name) + suffix;
     });
   }, [generatedCreature?.skills, generatedCreature?.ability, proficiencyBonus, skillOptions]);
-  
 
   const addSavingThrow = () => {
-    const selected = savingThrowOptions.find(opt => opt.value === selectedSthrow);
+    const selected = savingThrowOptions.find((opt) => opt.value === selectedSthrow);
     if (!selected || savingThrows.includes(selected.label)) return;
-  
+
     setSavingThrows([...savingThrows, selected.label]);
-  
+
     const existingSavingThrow = generatedCreature.savingThrows?.find(
-      st => st.name === selected.label
+      (st) => st.name === selected.label,
     );
-  
+
     if (existingSavingThrow) {
-      dispatch(generatedCreatureActions.addSavingThrow({
-        id: SINGLE_CREATURE_ID,
-        savingThrow: existingSavingThrow
-      }));
+      dispatch(
+        generatedCreatureActions.addSavingThrow({
+          id: SINGLE_CREATURE_ID,
+          savingThrow: existingSavingThrow,
+        }),
+      );
     } else {
       const shortName = savingThrowShortNames[selected.label] || selected.label.slice(0, 3);
-      
-      dispatch(generatedCreatureActions.addSavingThrow({
-        id: SINGLE_CREATURE_ID,
-        savingThrow: {
-          name: selected.label,
-          shortName: shortName,
-          value: 0 //TBU
-        }
-      }));
+
+      dispatch(
+        generatedCreatureActions.addSavingThrow({
+          id: SINGLE_CREATURE_ID,
+          savingThrow: {
+            name: selected.label,
+            shortName: shortName,
+            value: 0, //TBU
+          },
+        }),
+      );
     }
   };
-  
 
   const addSkill = (proficiency: ProficiencyType) => {
-    const selected = skillOptions.find(opt => opt.value === selectedSkill);
+    const selected = skillOptions.find((opt) => opt.value === selectedSkill);
     if (!selected) return;
 
     const skillName = selected.label;
-    const skillKey = selected.value; 
+    const skillKey = selected.value;
     const expertSuffix = getExpertSuffix(language);
     const isExpert = proficiency === 'expert';
 
-    const relatedAbility = skillToAbilityMap[skillKey]; 
+    const relatedAbility = skillToAbilityMap[skillKey];
     const abilityScore = abilityScores[relatedAbility] ?? 10;
-    const abilityModifier = Math.floor((abilityScore - 10) / 2); 
+    const abilityModifier = Math.floor((abilityScore - 10) / 2);
     const proficiencyValue = isExpert ? 2 * proficiencyBonus : proficiencyBonus;
 
     const totalValue = abilityModifier + proficiencyValue;
 
     const formatted = isExpert ? `${skillName}${expertSuffix}` : skillName;
 
-    const existingIndex = skills.findIndex(skill =>
-      skill === skillName || skill === `${skillName}${expertSuffix}`
+    const existingIndex = skills.findIndex(
+      (skill) => skill === skillName || skill === `${skillName}${expertSuffix}`,
     );
 
     const updatedSkills = [...skills];
@@ -160,33 +163,33 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
 
     setSkills(updatedSkills);
 
-    dispatch(generatedCreatureActions.addOrUpdateSkill({
-      id: SINGLE_CREATURE_ID,
-      skill: {
-        name: skillName,
-        value: totalValue
-      }
-    }));
+    dispatch(
+      generatedCreatureActions.addOrUpdateSkill({
+        id: SINGLE_CREATURE_ID,
+        skill: {
+          name: skillName,
+          value: totalValue,
+        },
+      }),
+    );
   };
-
-  
 
   const addConditionImmunity = () => {
-    const selected = conditionOptions.find(opt => opt.value === selectedCondition);
+    const selected = conditionOptions.find((opt) => opt.value === selectedCondition);
     if (!selected || conditionImmunities.includes(selected.label)) return;
-  
+
     const labelCapitalized = capitalizeFirstLetter(selected.label);
     const labelLowercased = lowercaseFirstLetter(selected.label);
-  
+
     setConditionImmunities([...conditionImmunities, labelCapitalized]);
-  
-    dispatch(generatedCreatureActions.addConditionImmunity({
-      id: SINGLE_CREATURE_ID,
-      value: labelLowercased
-    }));
-    
+
+    dispatch(
+      generatedCreatureActions.addConditionImmunity({
+        id: SINGLE_CREATURE_ID,
+        value: labelLowercased,
+      }),
+    );
   };
-  
 
   type ItemType = 'savingThrow' | 'conditionImmunity' | 'skill';
 
@@ -194,32 +197,38 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
     _list: string[],
     setList: React.Dispatch<React.SetStateAction<string[]>>,
     index: number,
-    type: ItemType
+    type: ItemType,
   ) => {
     const itemToRemove = _list[index];
-    setList(prev => prev.filter((_, i) => i !== index));
+    setList((prev) => prev.filter((_, i) => i !== index));
 
     switch (type) {
       case 'savingThrow':
-        dispatch(generatedCreatureActions.removeSavingThrow({
-          id: SINGLE_CREATURE_ID,
-          name: itemToRemove
-        }));
+        dispatch(
+          generatedCreatureActions.removeSavingThrow({
+            id: SINGLE_CREATURE_ID,
+            name: itemToRemove,
+          }),
+        );
         break;
 
       case 'conditionImmunity':
-        dispatch(generatedCreatureActions.removeConditionImmunity({
-          id: SINGLE_CREATURE_ID,
-          value: lowercaseFirstLetter(itemToRemove)
-        }));
+        dispatch(
+          generatedCreatureActions.removeConditionImmunity({
+            id: SINGLE_CREATURE_ID,
+            value: lowercaseFirstLetter(itemToRemove),
+          }),
+        );
         break;
 
       case 'skill':
         const baseName = itemToRemove.split(' ')[0];
-        dispatch(generatedCreatureActions.removeSkill({
-          id: SINGLE_CREATURE_ID,
-          name: baseName
-        }));
+        dispatch(
+          generatedCreatureActions.removeSkill({
+            id: SINGLE_CREATURE_ID,
+            name: baseName,
+          }),
+        );
         break;
 
       default:
@@ -227,9 +236,8 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
     }
   };
 
-  
   const getSelectedSkillLabel = () => {
-    return skillOptions.find(opt => opt.value === selectedSkill)?.label || '';
+    return skillOptions.find((opt) => opt.value === selectedSkill)?.label || '';
   };
 
   const isSkillExpert = (skillName: string) => {
@@ -238,12 +246,12 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
   };
 
   const getCurrentProficiency = () => {
-    const selected = skillOptions.find(opt => opt.value === selectedSkill);
+    const selected = skillOptions.find((opt) => opt.value === selectedSkill);
     if (!selected) return null;
 
     const skillText = selected.label;
-    const existingSkill = skills.find(skill => 
-      skill === skillText || skill.startsWith(`${skillText} (`)
+    const existingSkill = skills.find(
+      (skill) => skill === skillText || skill.startsWith(`${skillText} (`),
     );
 
     if (!existingSkill) return null;
@@ -252,7 +260,7 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
 
   return (
     <CollapsiblePanel title={t.title}>
-    <div className={s.propertiesPanel__sections}>
+      <div className={s.propertiesPanel__sections}>
         <PropertySection
           title={t.savingThrows}
           selectedValue={selectedSthrow}
@@ -277,7 +285,7 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
           removeText={t.remove}
           additionalButton={{
             text: t.expert,
-            onClick: () => addSkill('expert')
+            onClick: () => addSkill('expert'),
           }}
           language={language}
           isSkillsSection={true}
@@ -292,12 +300,13 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
           onSelectChange={setSelectedCondition}
           onAddItem={addConditionImmunity}
           items={conditionImmunities}
-          onRemoveItem={(index) => removeItem(conditionImmunities, setConditionImmunities, index, 'conditionImmunity')}
+          onRemoveItem={(index) =>
+            removeItem(conditionImmunities, setConditionImmunities, index, 'conditionImmunity')
+          }
           buttonText={t.immune}
           removeText={t.remove}
         />
       </div>
     </CollapsiblePanel>
-
   );
 };

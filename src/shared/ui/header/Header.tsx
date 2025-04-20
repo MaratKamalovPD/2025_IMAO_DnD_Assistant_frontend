@@ -46,7 +46,9 @@ export const Header = () => {
         </div>
         <div className={s.leftSection}>
           <button data-variant='secondary'>Зарегистрироваться</button>
-          <button data-variant='secondary'>Войти</button>
+          <Link to='/login'>
+            <button data-variant='secondary'>Войти</button>
+          </Link>
         </div>
       </nav>
     </>
