@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Language } from 'shared/lib';
 import { useDispatch, useSelector } from 'react-redux';
 import { InputGroup } from 'pages/statblockGenerator/ui/armorHitdiceForm/inputGroup';
 import { DefenseSection } from 'pages/statblockGenerator/ui/armorHitdiceForm/defenseSection';
-import { GeneratedCreatureStore, SINGLE_CREATURE_ID, generatedCreatureActions, generatedCreatureSelectors } from 'entities/generatedCreature/model';
+import {
+  GeneratedCreatureStore,
+  SINGLE_CREATURE_ID,
+  generatedCreatureActions,
+  generatedCreatureSelectors
+} from 'entities/generatedCreature/model';
 import s from './ArmorSection.module.scss';
-import { ArmorHitDiceLocalization } from 'pages/statblockGenerator/lib';
+import { ArmorHitDiceLocalization, calculateArmorClass } from 'pages/statblockGenerator/lib';
+
 
 const getArmorTypeFromName = (name: string, armorTypes: Record<string, string>): string => {
   const lowerName = name.toLowerCase();
@@ -23,10 +29,12 @@ export const ArmorSection: React.FC<{ language: Language }> = ({ language }) => 
 
   const armors = creature?.armors ?? [];
   const armorText = creature?.armorText ?? '';
+  const dexScore = creature?.ability?.dex ?? 10;
+  const dexMod = Math.floor((dexScore - 10) / 2);
 
   const hasShield = armors.some(a => a.name.toLowerCase() === t.shield.toLowerCase());
 
-  const armorType =
+  const initialArmorType =
     armorText !== ''
       ? 'other'
       : getArmorTypeFromName(
@@ -34,14 +42,46 @@ export const ArmorSection: React.FC<{ language: Language }> = ({ language }) => 
           t.armorTypes
         );
 
+  const [localArmorType, setLocalArmorType] = useState<string>(initialArmorType);
+  const skipNextSync = useRef(false);
+
+  useEffect(() => {
+    if (skipNextSync.current) {
+      skipNextSync.current = false;
+      return;
+    }
+
+    const newType =
+      armorText !== ''
+        ? 'other'
+        : getArmorTypeFromName(
+            armors.find(a => a.name.toLowerCase() !== t.shield.toLowerCase())?.name ?? '',
+            t.armorTypes
+          );
+
+    setLocalArmorType(newType);
+  }, [armorText, armors, t.armorTypes, t.shield]);
+
   const armorOptions = Object.entries(t.armorTypes).map(([value, label]) => ({ value, label }));
 
+  const recalcAC = (type: string, shield: boolean, dex: number) => {
+    return calculateArmorClass(type as any, dex, shield);
+  };
+
   const updateArmorType = (value: string) => {
+    setLocalArmorType(value);
+
     if (value === 'other') {
+      skipNextSync.current = true;
       dispatch(generatedCreatureActions.setArmorText({ id: SINGLE_CREATURE_ID, value: '' }));
       dispatch(generatedCreatureActions.setArmors({ id: SINGLE_CREATURE_ID, value: [] }));
     } else {
-      const mainArmor = { name: (t.armorTypes as Record<string, string>)[value] ?? value, type: 'armor', url: null };
+      const mainArmor = {
+        name: (t.armorTypes as Record<string, string>)[value] ?? value,
+        type: 'armor',
+        url: null
+      };
+
       const updated = hasShield
         ? [mainArmor, { name: t.shield, type: 'armor', url: '/armors/shield' }]
         : [mainArmor];
@@ -49,10 +89,15 @@ export const ArmorSection: React.FC<{ language: Language }> = ({ language }) => 
       dispatch(generatedCreatureActions.setArmors({ id: SINGLE_CREATURE_ID, value: updated }));
       dispatch(generatedCreatureActions.setArmorText({ id: SINGLE_CREATURE_ID, value: '' }));
     }
+
+    dispatch(generatedCreatureActions.setArmorClass({
+      id: SINGLE_CREATURE_ID,
+      value: recalcAC(value, hasShield, dexMod)
+    }));
   };
 
   const updateShield = (enabled: boolean) => {
-    if (armorType === 'other') return;
+    if (localArmorType === 'other') return;
 
     const mainArmor = armors.find(a => a.name.toLowerCase() !== t.shield.toLowerCase()) ?? {
       name: t.armorTypes.none,
@@ -65,19 +110,23 @@ export const ArmorSection: React.FC<{ language: Language }> = ({ language }) => 
       : [mainArmor];
 
     dispatch(generatedCreatureActions.setArmors({ id: SINGLE_CREATURE_ID, value: updated }));
+    dispatch(generatedCreatureActions.setArmorClass({
+      id: SINGLE_CREATURE_ID,
+      value: recalcAC(localArmorType, enabled, dexMod)
+    }));
   };
 
   const updateOtherArmor = (value: string) => {
     dispatch(generatedCreatureActions.setArmorText({ id: SINGLE_CREATURE_ID, value }));
   };
 
-  const showOtherArmor = armorType === 'other';
+  const showOtherArmor = localArmorType === 'other';
 
   return (
     <DefenseSection>
       <InputGroup label={t.armorType}>
         <select
-          value={armorType}
+          value={localArmorType}
           onChange={(e) => updateArmorType(e.target.value)}
           className={s.defensePanel__select}
         >
@@ -102,19 +151,14 @@ export const ArmorSection: React.FC<{ language: Language }> = ({ language }) => 
       </div>
 
       {showOtherArmor && (
-        <>
-          <InputGroup label={t.armorDescription}>
-            <input
-              type="text"
-              value={armorText}
-              onChange={(e) => updateOtherArmor(e.target.value)}
-              className={s.defensePanel__input}
-            />
-          </InputGroup>
-          <div className={s.defensePanel__hint}>
-            <i>{t.italicHint}</i>
-          </div>
-        </>
+        <InputGroup label={t.armorDescription}>
+          <input
+            type="text"
+            value={armorText}
+            onChange={(e) => updateOtherArmor(e.target.value)}
+            className={s.defensePanel__input}
+          />
+        </InputGroup>
       )}
     </DefenseSection>
   );

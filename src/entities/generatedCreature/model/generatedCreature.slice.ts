@@ -213,6 +213,11 @@ import {
         const creature = state.entities[action.payload.id];
         if (creature) creature.armors = action.payload.value;
       },
+
+      setArmorClass: (state, action) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) creature.armorClass = action.payload.value;
+      },
       
       setArmorText: (state, action) => {
         const creature = state.entities[action.payload.id];
