@@ -1,4 +1,4 @@
-type ArmorType =
+export type ArmorType =
   | 'none'
   | 'natural armor'
   | 'mage armor'
@@ -55,26 +55,39 @@ const allowsDexMod: Record<ArmorType, number | 'full' | false> = {
 };
 
 /**
- * Вычисляет итоговый класс брони
+ * Вычисляет итоговый класс брони (AC)
+ *
+ * @param type тип доспеха
+ * @param dexMod модификатор ловкости
+ * @param hasShield есть ли щит (+2 к AC)
+ * @param natArmorBonus дополнительный бонус, только если natural armor
  */
 export function calculateArmorClass(
   type: ArmorType,
   dexMod: number,
-  hasShield: boolean
+  hasShield: boolean,
+  natArmorBonus: number = 0
 ): number {
   const base = armorBaseAC[type] ?? 10;
   const dexRule = allowsDexMod[type];
 
   let total = base;
 
+  // добавляем модификатор ловкости
   if (dexRule === 'full') {
     total += dexMod;
   } else if (typeof dexRule === 'number') {
     total += Math.min(dexMod, dexRule);
   }
 
+  // добавляем бонус щита
   if (hasShield) {
     total += 2;
+  }
+
+  // бонус природной брони (только для natural armor)
+  if (type === 'natural armor') {
+    total += natArmorBonus;
   }
 
   return total;
