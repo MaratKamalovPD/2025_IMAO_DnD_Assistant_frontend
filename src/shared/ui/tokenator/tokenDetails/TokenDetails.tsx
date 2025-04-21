@@ -6,22 +6,23 @@ import clsx from 'clsx';
 import s from './TokenDetails.module.scss';
 import { useTokenator } from 'shared/lib';
 
-export const TokenDetails = () => {
-  const {
-    open,
-    load,
-    file,
-    reflectImage,
-    setReflectImage,
-    centerImage,
-    setCenterImage,
-    scale,
-    setScale,
-    scaleConfig,
-    MAX_SIZE,
-    MAX_DIMENSION,
-  } = useTokenator();
+type Props = ReturnType<typeof useTokenator>;
 
+export const TokenDetails: React.FC<Props> = ({
+  open,
+  load,
+  file,
+  reflectImage,
+  setReflectImage,
+  centerImage,
+  setCenterImage,
+  scale,
+  setScale,
+  scaleConfig,
+  MAX_SIZE,
+  MAX_DIMENSION,
+  }) => {
+  
   const download = useCallback((format: 'webp' | 'png') => {
     load(format).catch((err) => toast.error(err.message));
   }, [load]);

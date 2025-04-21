@@ -6,8 +6,9 @@ import clsx from 'clsx';
 import s from './TokenStamp.module.scss';
 import { useTokenator } from 'shared/lib';
 
-export const TokenStamp = () => {
-  const {
+type Props = ReturnType<typeof useTokenator>;
+
+export const TokenStamp: React.FC<Props> = ({
     tokenRef,
     border,
     background,
@@ -19,8 +20,8 @@ export const TokenStamp = () => {
     processFile,
     SVG_SIZE,
     scaleConfig,
-  } = useTokenator();
-
+  }) => {
+  
   const containerRef = useRef<SVGGElement>(null);
   const imageRef = useRef<SVGImageElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -100,6 +101,7 @@ export const TokenStamp = () => {
     onDrop,
     accept: { 'image/*': [] },
     multiple: false,
+    noClick: !!file,
   });
 
   return (
