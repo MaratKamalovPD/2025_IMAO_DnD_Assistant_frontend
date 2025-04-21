@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { UUID } from 'shared/lib';
-import { Participant } from './types';
+import { CellsCoordinates, Participant } from './types';
 
 export type EncounterState = {
   hasStarted: boolean;
@@ -11,6 +11,10 @@ export type EncounterState = {
   participants: Participant[];
   selectedCreatureId: string | null;
   attackedCreatureId: string | null;
+  statblockSize: { width: number; height: number };
+  statblockCoords: { x: number; y: number };
+  statblockIsMinimized: boolean;
+  statblockIsVisible: boolean;
 };
 
 const initialState: EncounterState = {
@@ -21,6 +25,10 @@ const initialState: EncounterState = {
   participants: [],
   selectedCreatureId: null,
   attackedCreatureId: null,
+  statblockSize: { width: 850, height: 600 },
+  statblockCoords: { x: 300, y: 0 },
+  statblockIsMinimized: false,
+  statblockIsVisible: false,
 };
 
 const encounterSlice = createSlice({
@@ -55,13 +63,22 @@ const encounterSlice = createSlice({
         state.currentTurnIndex--;
       }
     },
+    setCellsCoordinates: (state, action: PayloadAction<CellsCoordinates & { id: UUID }>) => {
+      const { id, cellsX, cellsY } = action.payload;
+
+      const creature = state.participants.find((part) => part.id === id);
+
+      if (creature) {
+        creature.cellsCoords = { cellsX, cellsY };
+      }
+    },
     setInitiativeOrder: (state, action: PayloadAction<Participant[]>) => {
       state.participants = action.payload;
     },
     selectCreature: (state, action: PayloadAction<UUID>) => {
       state.selectedCreatureId = action.payload;
     },
-    selectAttackedCreature: (state, action: PayloadAction<UUID>) => {
+    selectAttackedCreature: (state, action: PayloadAction<UUID | null>) => {
       state.attackedCreatureId = action.payload;
     },
     addParticipant: (state, action: PayloadAction<Participant>) => {
@@ -88,6 +105,18 @@ const encounterSlice = createSlice({
       });
 
       state.participants.sort((a, b) => b.initiative - a.initiative);
+    },
+    setStatblockSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
+      state.statblockSize = action.payload;
+    },
+    setStatblockCoords: (state, action: PayloadAction<{ x: number; y: number }>) => {
+      state.statblockCoords = action.payload;
+    },
+    setStatblockIsMinimized: (state, action: PayloadAction<boolean>) => {
+      state.statblockIsMinimized = action.payload;
+    },
+    setStatblockIsVisible: (state, action: PayloadAction<boolean>) => {
+      state.statblockIsVisible = action.payload;
     },
   },
 });

@@ -264,7 +264,11 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
                 &times;
               </button>
               {modalType === ModalType.Attack ? (
-                <AttackModal attackIndex={currentAttackIndex} attackData={currentAttackData} />
+                <AttackModal
+                  attackIndex={currentAttackIndex}
+                  attackData={currentAttackData}
+                  setIsModalOpen={setIsModalOpen}
+                />
               ) : modalType === ModalType.Condition ? (
                 <ApplyConditionModal />
               ) : (
