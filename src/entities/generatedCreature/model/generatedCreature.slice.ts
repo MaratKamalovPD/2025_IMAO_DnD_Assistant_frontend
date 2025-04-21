@@ -37,6 +37,22 @@ import {
   } from 'entities/creature/model';
 import { AttackFormAttack } from 'pages/statblockGenerator/model';
 
+type UpdateAttackPayload = {
+  id: string;
+  index: number;
+  data: AttackLLM;
+};
+
+type RemoveAttackPayload = {
+  id: string;
+  index: number;
+};
+
+type AddAttackPayload = {
+  id: string;
+  data: AttackLLM;
+};
+
   export const SINGLE_CREATURE_ID = 'current';
 
   const initialCreature: CreatureFullData = {
@@ -568,35 +584,28 @@ import { AttackFormAttack } from 'pages/statblockGenerator/model';
         });
       },
 
-      addAttackLLM: (
-        state,
-        action: PayloadAction<{ id: string; data: AttackFormAttack }>
-      ) => {
-        const entity = state.entities[action.payload.id];
-        if (entity) {
-          entity.attacksLLM = [...(entity.attacksLLM ?? []), action.payload.data];
+      addAttackLLM: (state, action: PayloadAction<AddAttackPayload>) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.attacksLLM = [...(creature.attacksLLM ?? []), action.payload.data];
         }
       },
-      
-      updateAttackLLM: (
-        state,
-        action: PayloadAction<{ id: string; index: number; data: AttackFormAttack }>
-      ) => {
-        const entity = state.entities[action.payload.id];
-        if (entity && entity.attacksLLM && entity.attacksLLM[action.payload.index]) {
-          entity.attacksLLM[action.payload.index] = action.payload.data;
+  
+      updateAttackLLM: (state, action: PayloadAction<UpdateAttackPayload>) => {
+        const creature = state.entities[action.payload.id];
+        if (creature && creature.attacksLLM) {
+          const updated = [...creature.attacksLLM];
+          updated[action.payload.index] = action.payload.data;
+          creature.attacksLLM = updated;
         }
       },
-      
-      removeAttackLLM: (
-        state,
-        action: PayloadAction<{ id: string; index: number }>
-      ) => {
-        const entity = state.entities[action.payload.id];
-        if (entity && entity.attacksLLM) {
-          entity.attacksLLM.splice(action.payload.index, 1);
+  
+      removeAttackLLM: (state, action: PayloadAction<RemoveAttackPayload>) => {
+        const creature = state.entities[action.payload.id];
+        if (creature && creature.attacksLLM) {
+          creature.attacksLLM = creature.attacksLLM.filter((_, i) => i !== action.payload.index);
         }
-      },
+      }
       
     },
   });
