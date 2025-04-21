@@ -10,6 +10,8 @@ export const VKLogin = () => {
 
   const [exchangeCode, { data }] = useLazyExchangeCodeQuery();
 
+  void data
+
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;

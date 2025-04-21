@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { InputGroup } from 'pages/statblockGenerator/ui/armorHitdiceForm/inputGroup';
 import { DefenseSection } from 'pages/statblockGenerator/ui/armorHitdiceForm/defenseSection';
 import { GeneratedCreatureStore, SINGLE_CREATURE_ID, generatedCreatureActions, generatedCreatureSelectors } from 'entities/generatedCreature/model';
-import { calculateStatModifier } from 'shared/lib';
 import s from './HitPointsSection.module.scss';
 import { ArmorHitDiceLocalization } from 'pages/statblockGenerator/lib';
 

@@ -22,7 +22,7 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
   initialCustomSpeed = '',
   language = 'en',
 }) => {
-  const [state, setState] = useState<MonsterSpeedFormState>({
+  const [_state, _setState] = useState<MonsterSpeedFormState>({
     speed: initialSpeed,
     burrowSpeed: initialBurrowSpeed,
     climbSpeed: initialClimbSpeed,

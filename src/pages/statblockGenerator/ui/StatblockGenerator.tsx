@@ -225,6 +225,13 @@ export const StatblockGenerator = () => {
           hits: fullCreatureData.hits,
         }),
       );
+
+      dispatch(
+        generatedCreatureActions.updateAttacksLLM({
+          id: SINGLE_CREATURE_ID,
+          attacksLLM: fullCreatureData.attacksLLM || [],
+        })
+      )
     }
   }, [fullCreatureData, dispatch]);
 

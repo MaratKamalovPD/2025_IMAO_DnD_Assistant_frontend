@@ -35,6 +35,7 @@ import {
     AttackLLM,
     //Damage
   } from 'entities/creature/model';
+import { AttackFormAttack } from 'pages/statblockGenerator/model';
 
   export const SINGLE_CREATURE_ID = 'current';
 
@@ -566,6 +567,37 @@ import {
           changes: { attacksLLM: action.payload.attacksLLM }
         });
       },
+
+      addAttackLLM: (
+        state,
+        action: PayloadAction<{ id: string; data: AttackFormAttack }>
+      ) => {
+        const entity = state.entities[action.payload.id];
+        if (entity) {
+          entity.attacksLLM = [...(entity.attacksLLM ?? []), action.payload.data];
+        }
+      },
+      
+      updateAttackLLM: (
+        state,
+        action: PayloadAction<{ id: string; index: number; data: AttackFormAttack }>
+      ) => {
+        const entity = state.entities[action.payload.id];
+        if (entity && entity.attacksLLM && entity.attacksLLM[action.payload.index]) {
+          entity.attacksLLM[action.payload.index] = action.payload.data;
+        }
+      },
+      
+      removeAttackLLM: (
+        state,
+        action: PayloadAction<{ id: string; index: number }>
+      ) => {
+        const entity = state.entities[action.payload.id];
+        if (entity && entity.attacksLLM) {
+          entity.attacksLLM.splice(action.payload.index, 1);
+        }
+      },
+      
     },
   });
   
