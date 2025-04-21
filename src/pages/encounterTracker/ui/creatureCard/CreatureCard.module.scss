@@ -1,14 +1,13 @@
 $gap: 0.3rem;
 $border-width: 2px;
-$selected-card-color: #FFD700;
+$selected-card-color: var(--accent-btn-color);
 
 .card {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 150px;
-  min-width: 150px;
-  height: 250px;
+  width: 135px;
+  height: 225px;
   border-radius: 20px 8px 8px;
   overflow: visible;
   transition: all 0.2s ease;
@@ -16,33 +15,33 @@ $selected-card-color: #FFD700;
   padding: $gap;
 
   &__blue {
-    background-color: #77B8D4;
-    border: 2px solid #3F1F77;
+    background-color: #77b8d4;
+    border: 2px solid #3f1f77;
   }
 
   &__red {
-    background-color: #D47777;
-    border: 2px solid #7E5555;
+    background-color: #d47777;
+    border: 2px solid #7e5555;
   }
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px);
 }
 
 .selected {
+  border: 2px solid transparent;
   border-color: $selected-card-color;
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-}
-
-.selected {
-  border-color: $selected-card-color;
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 20px $selected-card-color;
 }
 
 .currentTurn {
-  outline: 5px solid $selected-card-color;
+  width: 150px;
+  height: 250px;
+
+  .hpText {
+    font-size: 1rem;
+  }
 }
 
 .dead {
@@ -78,7 +77,7 @@ $selected-card-color: #FFD700;
   }
 
   &__blue {
-    background-color: #14386F;
+    background-color: #14386f;
   }
 }
 
@@ -93,17 +92,18 @@ $selected-card-color: #FFD700;
 
 .hpFill {
   height: 100%;
-  background: #5FAA5F;
+  background: #5faa5f;
   transition: width 0.3s ease;
 }
 
 .hpText {
   display: flex;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: bold;
-  color: #FFFFFF;
+  color: #ffffff;
   margin-top: 4px;
+  transition: all 0.2s ease;
 }
 
 .initiativeContainer {
@@ -112,7 +112,7 @@ $selected-card-color: #FFD700;
   right: 0;
   width: 45px;
   height: 45px;
-  background-color: #9FBB84;
+  background-color: #9fbb84;
   box-sizing: border-box;
   border-radius: 50%;
   border: 1px solid black;
@@ -145,15 +145,14 @@ $selected-card-color: #FFD700;
     transform: translate(0%, -75%);
     width: 35px;
     height: 50px;
-    background-color: #D9D9D9;
+    background-color: #d9d9d9;
   }
 
   &__inner {
     width: 28px;
     height: 43px;
     border-radius: 5px;
-    background-color: #DABF74;
+    background-color: #dabf74;
     padding-bottom: 10px;
   }
 }
-
