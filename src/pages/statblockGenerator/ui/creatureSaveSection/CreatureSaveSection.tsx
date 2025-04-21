@@ -1,6 +1,7 @@
 import React from 'react';
 import s from './CreatureSaveSection.module.scss';
 import { MonsterSelect } from './monsterSelect';
+import { TokenatorWidget } from 'shared/ui/tokenator';
 
 interface CreatureSaveSectionProps {
   onSave?: () => void;
@@ -79,6 +80,8 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
           {t.uploadImage}
         </label>
       </div>
+
+      <TokenatorWidget />
 
       {/* Круглая кнопка сохранения */}
       <div className={s.creatureSaveSection__saveButtonContainer}>
