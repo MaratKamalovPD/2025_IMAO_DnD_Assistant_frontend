@@ -60,8 +60,8 @@ export const AttackMainParams = ({ attack, onInputChange, onRangeChange }: Attac
             <input
               className={s.attackForm__statsElement__input}
               type="text"
-              name="attack_bonus"
-              value={attack.attack_bonus}
+              name="attackBonus"
+              value={attack.attackBonus}
               onChange={onInputChange}
               required
             />
