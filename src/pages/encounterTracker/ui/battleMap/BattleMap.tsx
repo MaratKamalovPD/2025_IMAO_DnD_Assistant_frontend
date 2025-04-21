@@ -58,8 +58,8 @@ export const BattleMap = ({ image }: { image: string }) => {
             <CreatureToken
               key={value.id}
               id={value.id}
-              x={cellSize / 2}
-              y={cellSize / 2 + cellSize * index}
+              x={value.cellsCoords ? value.cellsCoords.cellsX : 0}
+              y={value.cellsCoords ? value.cellsCoords.cellsY : index}
               cellSize={cellSize}
             />
           ))}

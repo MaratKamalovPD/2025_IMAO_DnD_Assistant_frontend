@@ -9,7 +9,7 @@ import {
   creatureSelectors,
   CreaturesStore,
 } from 'entities/creature/model';
-import { EncounterState, EncounterStore } from 'entities/encounter/model';
+import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
 import {
   AbilitySavingThrow,
   dndTraitToInitialForm,
@@ -39,9 +39,14 @@ enum AttackStatus {
 type AttackModalProps = {
   attackIndex?: number;
   attackData?: AttackLLM;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackData }) => {
+export const AttackModal: React.FC<AttackModalProps> = ({
+  attackIndex,
+  attackData,
+  setIsModalOpen,
+}) => {
   const dispatch = useDispatch();
 
   const { selectedCreatureId, attackedCreatureId } = useSelector<EncounterStore>(
@@ -187,6 +192,8 @@ export const AttackModal: React.FC<AttackModalProps> = ({ attackIndex, attackDat
     }
 
     dispatch(loggerActions.addLog(attackLog));
+    dispatch(encounterActions.selectAttackedCreature(null));
+    setIsModalOpen((prev) => !prev);
   };
 
   return (

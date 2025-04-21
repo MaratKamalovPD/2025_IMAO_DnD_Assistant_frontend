@@ -22,26 +22,46 @@ import { TrackPanel } from './trackPanel';
 import s from './EncounterTracker.module.scss';
 
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
-const VILLAGE_MAP_IMAGE =
-  'https://encounterium.ru/map-images/plug-maps/cropped-map-2.png';
+const VILLAGE_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-2.png';
 
 export const EncounterTracker = () => {
   const dispatch = useDispatch();
 
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [size, setSize] = useState({ width: 850, height: 600 });
-  const [toggleStatblock, setToggleStatblock] = useState(false);
+  const [isFirstRender, setIsFirstRender] = useState(true);
+  const [isFirstRender2, setIsFirstRender2] = useState(true);
   const [mapImage, setMapImage] = useState(DANGEON_MAP_IMAGE);
 
   const { lastLog } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
-  const { participants, currentTurnIndex } = useSelector<EncounterStore>(
-    (state) => state.encounter,
-  ) as EncounterState;
+  const {
+    participants,
+    currentTurnIndex,
+    selectedCreatureId,
+    statblockIsMinimized,
+    statblockIsVisible,
+    statblockSize,
+    statblockCoords,
+  } = useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
 
   useEffect(() => {
     if (!participants.length) return;
+    if (isFirstRender) {
+      setIsFirstRender(false);
+
+      return;
+    }
     dispatch(encounterActions.selectCreature(participants[currentTurnIndex].id));
-  }, [currentTurnIndex, participants]);
+  }, [currentTurnIndex, participants.length]);
+
+  useEffect(() => {
+    if (statblockIsVisible) return;
+    if (isFirstRender2) {
+      setIsFirstRender2(false);
+
+      return;
+    }
+
+    dispatch(encounterActions.setStatblockIsVisible(!statblockIsVisible));
+  }, [selectedCreatureId]);
 
   useEffect(() => {
     if (lastLog) {
@@ -53,17 +73,20 @@ export const EncounterTracker = () => {
   }, [lastLog]);
 
   const toggleWindow = () => {
-    if (isMinimized) {
-      setSize({ width: 850, height: 600 });
+    if (statblockIsMinimized) {
+      dispatch(encounterActions.setStatblockSize({ width: statblockSize.width, height: 600 }));
     } else {
-      setSize({ width: 350, height: 40 }); // или вообще height: 0
+      dispatch(encounterActions.setStatblockSize({ width: statblockSize.width, height: 40 })); // или вообще height: 0
     }
-    setIsMinimized(!isMinimized);
+    dispatch(encounterActions.setStatblockIsMinimized(!statblockIsMinimized));
   };
 
   const ToggleStatblock = () => {
     return (
-      <div className={s.toggleStatblock} onClick={() => setToggleStatblock((prev) => !prev)}>
+      <div
+        className={s.toggleStatblock}
+        onClick={() => dispatch(encounterActions.setStatblockIsVisible(!statblockIsVisible))}
+      >
         <Icon28DocumentListOutline fill='white' />
       </div>
     );
@@ -115,26 +138,31 @@ export const EncounterTracker = () => {
         <>
           <BattleMap image={mapImage} />
           <PopupMenu items={menuItems} />
-          {toggleStatblock && (
+          {statblockIsVisible && (
             <Rnd
               style={{ zIndex: 10 }}
               default={{
-                x: 100,
-                y: 100,
-                width: size.width,
-                height: size.height,
+                x: statblockCoords.x,
+                y: statblockCoords.y,
+                width: statblockSize.width,
+                height: statblockSize.height,
               }}
-              enableResizing={true}
-              size={size}
+              enableResizing={!statblockIsMinimized}
+              size={statblockSize}
               onResizeStop={(_e, _direction, ref) => {
-                setSize({
-                  width: ref.offsetWidth,
-                  height: ref.offsetHeight,
-                });
+                dispatch(
+                  encounterActions.setStatblockSize({
+                    width: ref.offsetWidth,
+                    height: ref.offsetHeight,
+                  }),
+                );
+              }}
+              onDragStop={(_e, data) => {
+                dispatch(encounterActions.setStatblockCoords({ x: data.x, y: data.y }));
               }}
             >
               {/* Передаём управление внутрь Statblock */}
-              <Statblock isMinimized={isMinimized} toggleWindow={toggleWindow} />
+              <Statblock isMinimized={statblockIsMinimized} toggleWindow={toggleWindow} />
             </Rnd>
           )}
 
