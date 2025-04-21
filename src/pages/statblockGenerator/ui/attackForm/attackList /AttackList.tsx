@@ -1,8 +1,8 @@
 import React from 'react';
+import clsx from 'clsx';
+import { AttackLLM, DamageLLM } from 'entities/creature/model';
 
 import s from './AttackList.module.scss';
-import clsx from 'clsx';
-import { AttackLLM } from 'entities/creature/model';
 
 interface AttackListProps {
   attacks: AttackLLM[];
@@ -10,24 +10,44 @@ interface AttackListProps {
   onRemove: (index: number) => void;
 }
 
+const formatDamage = (dmg: DamageLLM): string => {
+  return `${dmg.count}${dmg.dice}${dmg.bonus ? `+${dmg.bonus}` : ''} ${dmg.type}`;
+};
+
 const formatAttackText = (atk: AttackLLM): string => {
   if ('attacks' in atk && atk.attacks) {
     const subAttacks = atk.attacks.map(a => `${a.type} (${a.count})`).join(', ');
     return `${atk.name}: ${subAttacks}`;
   }
 
-  const typeText = atk.type === 'melee' ? 'Ближний бой' : atk.type === 'ranged' ? 'Дальний бой' : 'Атака';
-  const rangeText = atk.type === 'melee'
-    ? `, досягаемость ${atk.reach ?? '?'}`
-    : atk.type === 'ranged'
+  const typeText =
+    atk.type === 'melee'
+      ? 'Ближний бой'
+      : atk.type === 'ranged'
+      ? 'Дальний бой'
+      : 'Атака';
+
+  const rangeText =
+    atk.type === 'melee'
+      ? `, досягаемость ${atk.reach ?? '?'}`
+      : atk.type === 'ranged'
       ? `, дальность ${atk.range ?? '?'}`
       : '';
 
-  const damageText = atk.damage
-    ? `${atk.damage.count}${atk.damage.dice}${atk.damage.bonus ? `+${atk.damage.bonus}` : ''} ${atk.damage.type}`
+  const baseDamage = atk.damage
+    ? formatDamage(atk.damage)
     : '? урона';
 
-  return `${atk.name} (${typeText}${rangeText}): ${atk.attackBonus ?? '+0'} к попаданию, ${damageText}${atk.target ? ` (${atk.target})` : ''}`;
+  const additional = atk.additionalEffects
+    ?.filter(e => e.damage)
+    .map(e => formatDamage(e.damage!))
+    .join(' + ');
+
+  const fullDamage = additional
+    ? `${baseDamage} + ${additional}`
+    : baseDamage;
+
+  return `${atk.name} (${typeText}${rangeText}): ${atk.attackBonus ?? '+0'} к попаданию, ${fullDamage}${atk.target ? ` (${atk.target})` : ''}`;
 };
 
 export const AttackList: React.FC<AttackListProps> = ({ attacks, onEdit, onRemove }) => {
