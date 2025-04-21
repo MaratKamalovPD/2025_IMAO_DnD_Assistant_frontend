@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Creature, creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
-import { UUID } from 'shared/lib';
+import { normalizeString, UUID } from 'shared/lib';
 
 import placeholderImage from 'shared/assets/images/placeholder.png';
 
+import { findConditionInstance } from 'pages/encounterTracker/lib';
 import s from './CreatureCard.module.scss';
 
 type CreatureCardProps = {
@@ -74,6 +75,18 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
             (e.target as HTMLImageElement).src = placeholderImage;
           }}
         />
+        <div className={s.conditionsContainer}>
+          {creature.conditions?.map((condition, ind) => {
+            const normalizedConditionName = normalizeString(condition);
+            const { icon } = findConditionInstance(normalizedConditionName);
+
+            return (
+              <div key={ind}>
+                {icon && <img src={icon} alt={condition} className={s.conditionIcon} />}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <div className={infoClasses}>

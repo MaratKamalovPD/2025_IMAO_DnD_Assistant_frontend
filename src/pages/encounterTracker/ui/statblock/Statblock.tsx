@@ -228,6 +228,19 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
                   <div className={s.creaturePanel__actionsList__element} key={ind}>
                     {icon && <img src={icon} alt={condition} className={s.attackIcon} />}
                     {instance ? instance.label.ru : condition}
+                    <button
+                      className={s.closeButtonCondition}
+                      onClick={() =>
+                        dispatch(
+                          creatureActions.removeCondition({
+                            id: selectedCreature.id,
+                            condition: condition,
+                          }),
+                        )
+                      }
+                    >
+                      &times;
+                    </button>
                   </div>
                 );
               })}
