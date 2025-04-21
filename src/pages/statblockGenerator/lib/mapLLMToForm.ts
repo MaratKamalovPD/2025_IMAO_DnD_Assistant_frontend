@@ -14,6 +14,7 @@ export const mapLLMToForm = (atk: AttackLLM): AttackFormAttack => ({
       count: atk.damage?.count ?? 1,
       type: atk.damage?.type ?? 'дробящий',
       bonus: atk.damage?.bonus ?? 0
-    }
+    },
+    additionalEffects: atk.additionalEffects ?? [],
   });
   

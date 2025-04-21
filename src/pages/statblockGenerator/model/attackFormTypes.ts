@@ -9,6 +9,7 @@ import { DiceType } from 'shared/lib';
     range?: string;
     target?: string;
     damage: DamageLLM;
+    additionalEffects?: { damage?: DamageLLM }[];
   }
   
   export const initialDamage: DamageLLM = {
@@ -25,5 +26,6 @@ import { DiceType } from 'shared/lib';
     reach: '5 фт.', // начальное значение для ближнего боя
     range: undefined, // или '30/120 фт.' если хотите дальний бой по умолчанию
     target: '',
-    damage: initialDamage
+    damage: initialDamage,
+    additionalEffects: [],
   };

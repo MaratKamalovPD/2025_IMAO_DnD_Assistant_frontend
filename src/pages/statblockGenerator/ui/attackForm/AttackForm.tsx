@@ -13,8 +13,9 @@ import {
 } from 'entities/generatedCreature/model';
 import s from './AttackForm.module.scss';
 import { mapLLMToForm } from 'pages/statblockGenerator/lib';
-import { AttackLLM } from 'entities/creature/model';
+import { AttackLLM, DamageLLM } from 'entities/creature/model';
 import { AttackList } from './attackList ';
+import { AdditionalEffectsSection } from '../additionalEffectsSection/AdditionalEffectsSection';
 
 export const AttackForm = () => {
   const dispatch = useDispatch();
@@ -27,7 +28,8 @@ export const AttackForm = () => {
     type: 'melee',
     reach: '5 фт.',
     target: 'одна цель',
-    range: undefined
+    range: undefined,
+    additionalEffects: [],
   });
 
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -153,6 +155,11 @@ export const AttackForm = () => {
     }
   };
 
+//   const handleAdditionalEffectsChange = (effects: { damage: DamageLLM }[]) => {
+//     setAttack(prev => ({ ...prev, additionalEffects: effects }));
+//   };
+  
+
   return (
     <CollapsiblePanel title={'Добавить атаку'}>
       <form onSubmit={handleSubmit}>
@@ -190,6 +197,19 @@ export const AttackForm = () => {
               damage={attack.damage}
               onInputChange={handleDamageInputChange}
             />
+
+            <AdditionalEffectsSection
+            effects={(attack.additionalEffects ?? [])
+                .map(e => e.damage)
+                .filter((d): d is DamageLLM => d !== undefined)}
+            onChange={(updated) =>
+                setAttack(prev => ({
+                ...prev,
+                additionalEffects: updated.map(d => ({ damage: d }))
+                }))
+            }
+            />
+
           </>
         )}
 
