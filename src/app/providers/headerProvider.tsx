@@ -11,7 +11,10 @@ export const HeaderProviders = ({ children }: Props) => {
   const { data: userData, isLoading } = useCheckAuthQuery(null);
   const [triggerLogout, { isSuccess: isLogoutSuccess }] = useLazyLogoutQuery();
 
-  const logout = () => triggerLogout(null).unwrap();
+  const logout = async () => {
+    await triggerLogout(null).unwrap();
+    dispatch(authActions.logout());
+  };
 
   const storeUserData = useSelector<AuthStore>((state) => state.auth) as AuthState;
   let storeUser: UserData;
