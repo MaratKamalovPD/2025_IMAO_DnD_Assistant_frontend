@@ -1,6 +1,8 @@
 export {
   default as authApi,
-  useLazyExchangeCodeQuery
+  useLazyLoginQuery,
+  useCheckAuthQuery, 
+  useLazyLogoutQuery,
 } from './auth.api';
 
-export type { CodeExchangeRequest } from './auth.api';
+export type { LoginRequest } from './auth.api';

@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { TokenData } from 'entities/auth/model';
+import { AuthData } from 'entities/auth/model';
 
-export type CodeExchangeRequest = {
+export type LoginRequest = {
   code: string;
   state: string;
   codeVerifier: string;
@@ -13,16 +13,28 @@ const authApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
   tagTypes: ['Auth'],
   endpoints: (builder) => ({
-    exchangeCode: builder.query<TokenData, CodeExchangeRequest>({
+    login: builder.query<AuthData, LoginRequest>({
       query: (body) => ({
-        url: '/auth/exchange',
+        url: '/auth/login',
         method: 'POST',
         body,
       }),
     }),
+    checkAuth: builder.query<AuthData, null>({
+      query: () => ({ 
+        url: '/auth/check', 
+        method: 'GET',
+      })
+    }),
+    logout: builder.query<AuthData, null>({
+      query: () => ({ 
+        url: '/auth/logout', 
+        method: 'POST',
+      })
+    }),
   }),
 });
 
-export const { useLazyExchangeCodeQuery } = authApi;
+export const { useCheckAuthQuery, useLazyLogoutQuery, useLazyLoginQuery } = authApi;
 
 export default authApi;
