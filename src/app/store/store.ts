@@ -3,6 +3,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 
 import { creaturesReduser } from 'entities/creature';
 import { encounterReduser } from 'entities/encounter';
+import { authReducer } from 'entities/auth';
 import { generatedCreatureReduser } from 'entities/generatedCreature';
 import { bestiaryApi } from 'pages/bestiary/api';
 import { characterApi } from 'pages/characters/api';
@@ -15,6 +16,7 @@ export const store = configureStore({
     encounter: encounterReduser,
     creatures: creaturesReduser,
     logger: loggerReduser,
+    auth: authReducer,
     generatedCreature: generatedCreatureReduser,
     bestiaryApi: bestiaryApi.reducer,
     promtApi: promtApi.reducer,
