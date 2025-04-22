@@ -9,19 +9,18 @@ import { useTokenator } from 'shared/lib';
 type Props = ReturnType<typeof useTokenator>;
 
 export const TokenStamp: React.FC<Props> = ({
-    tokenRef,
-    border,
-    background,
-    scale,
-    setScale,
-    file,
-    reflectImage,
-    centerImage,
-    processFile,
-    SVG_SIZE,
-    scaleConfig,
-  }) => {
-  
+  tokenRef,
+  border,
+  background,
+  scale,
+  setScale,
+  file,
+  reflectImage,
+  centerImage,
+  processFile,
+  SVG_SIZE,
+  scaleConfig,
+}) => {
   const containerRef = useRef<SVGGElement>(null);
   const imageRef = useRef<SVGImageElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -114,11 +113,7 @@ export const TokenStamp: React.FC<Props> = ({
         xmlns="http://www.w3.org/2000/svg"
         viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
       >
-        <clipPath id="circle-clip">
-          <circle cx={SVG_SIZE / 2} cy={SVG_SIZE / 2} r={210} />
-        </clipPath>
-
-        <g ref={containerRef} clipPath="url(#circle-clip)">
+        <g ref={containerRef}>
           {background && <image href={background} width={SVG_SIZE} height={SVG_SIZE} />}
 
           {!file && (
@@ -151,4 +146,3 @@ export const TokenStamp: React.FC<Props> = ({
     </div>
   );
 };
-

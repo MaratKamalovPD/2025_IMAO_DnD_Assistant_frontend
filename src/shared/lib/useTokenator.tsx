@@ -9,7 +9,8 @@ const scaleConfig = {
   step: 0.07,
 };
 
-const SVG_SIZE = 512;
+const CANVAS_WIDTH = 300;
+const CANVAS_HEIGHT = 400;
 const MAX_SIZE = 50; // in MB
 const MAX_DIMENSION = 8064;
 
@@ -104,8 +105,8 @@ export const useTokenator = () => {
 
     const svgText = new XMLSerializer().serializeToString(svg);
     const canvas = document.createElement('canvas');
-    canvas.width = SVG_SIZE;
-    canvas.height = SVG_SIZE;
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
 
     const context = canvas.getContext('2d');
     const img = new Image();
@@ -113,7 +114,7 @@ export const useTokenator = () => {
 
     await new Promise<void>((resolve, reject) => {
       img.onload = () => {
-        context?.drawImage(img, 0, 0, SVG_SIZE, SVG_SIZE);
+        context?.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         const a = document.createElement('a');
         a.href = canvas.toDataURL(`image/${format}`, 1);
         a.download = `token.${format}`;
@@ -149,7 +150,7 @@ export const useTokenator = () => {
     background,
     MAX_SIZE,
     MAX_DIMENSION,
-    SVG_SIZE,
+    SVG_SIZE: CANVAS_WIDTH, // use as base size in components
     scaleConfig,
     scale,
     setScale,

@@ -1,38 +1,46 @@
+.wrapper {
+  width: 300px;
+  height: 400px;
+  box-sizing: border-box;
+
+  display: inline-block;
+  border: 8px solid var(--token-border-color);
+  background-color: var(--primary-bg-color);
+}
+
 .container {
-    width: 280px;
-    height: 280px;
-    pointer-events: initial;
-    cursor: pointer;
-    border-radius: 50%;
-    overflow: hidden;
-    touch-action: none;
-  
-    &.draggable {
-      cursor: grab;
-    }
-  
-    &.dragging {
-      cursor: grabbing;
-    }
+  width: 100%;
+  height: 100%;
+  pointer-events: initial;
+  cursor: pointer;
+  overflow: hidden;
+  touch-action: none;
+
+  &.draggable {
+    cursor: grab;
   }
-  
-  .dropText {
-    display: none;
-  
-    @media (min-width: 768px) {
-      display: block;
-    }
-  
-    span {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      padding: calc((100% - 256px) / 2);
-      font-size: calc(var(--main-font-size) * 2);
-      color: var(--text-color-secondary, #6a6a6a);
-      text-align: center;
-    }
+
+  &.dragging {
+    cursor: grabbing;
   }
-  
+}
+
+.dropText {
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    color: var(--text-color-secondary, #6a6a6a);
+    text-align: center;
+  }
+}
