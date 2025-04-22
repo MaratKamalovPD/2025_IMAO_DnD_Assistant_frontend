@@ -8,12 +8,10 @@ export const TokenatorWidget = () => {
   const tokenator = useTokenator(); 
 
   return (
-    <div className={s.wrapper}>
       <div className={s.layout}>
         <TokenDetails {...tokenator} />
         <TokenStamp {...tokenator} />
       </div>
-    </div>
   );
 };
 
