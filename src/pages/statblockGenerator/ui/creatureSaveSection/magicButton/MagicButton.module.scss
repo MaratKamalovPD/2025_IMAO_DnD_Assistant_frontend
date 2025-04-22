@@ -79,6 +79,40 @@
   }
 }
 
+.vortex {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(153, 32, 143, 0.8), transparent 50%);
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  z-index: 3;
+  pointer-events: none;
+  mix-blend-mode: lighten;
+}
+
+.clicked .vortex {
+  animation: vortexSpin 1.2s ease-in-out forwards;
+}
+
+@keyframes vortexSpin {
+  0% {
+    transform: translate(-50%, -50%) scale(0.2) rotate(0deg);
+    opacity: 0.8;
+  }
+  40% {
+    transform: translate(-50%, -50%) scale(1.5) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0) rotate(720deg);
+    opacity: 0;
+  }
+}
+
 .rune {
   position: absolute;
   font-size: 1.5rem;
@@ -88,36 +122,28 @@
   transition: opacity 0.3s, transform 0.3s;
   pointer-events: none;
   z-index: 2;
-  font-family: serif; // можешь заменить на рунный шрифт если хочешь
+  font-family: serif;
 }
 
 .clicked .rune {
-  opacity: 1;
-  transform: scale(1.2);
-  animation: runeFade 0.8s ease-out forwards;
+  animation: runeFade 1.2s ease-out forwards;
 }
 
 @keyframes runeFade {
   0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  50% {
     opacity: 1;
-    transform: scale(1.3);
+    transform: scale(1.2) translate(0, 0);
   }
   100% {
     opacity: 0;
-    transform: scale(1);
+    transform: scale(0) translate(-50%, -50%);
   }
 }
 
-
+/* Расположение рун по кругу */
 .rune0 { top: 0%; left: 50%; transform: translate(-50%, -50%); }
 .rune1 { top: 25%; left: 85%; transform: translate(-50%, -50%); }
 .rune2 { top: 75%; left: 85%; transform: translate(-50%, -50%); }
 .rune3 { top: 100%; left: 50%; transform: translate(-50%, -50%); }
 .rune4 { top: 75%; left: 15%; transform: translate(-50%, -50%); }
 .rune5 { top: 25%; left: 15%; transform: translate(-50%, -50%); }
-
-
