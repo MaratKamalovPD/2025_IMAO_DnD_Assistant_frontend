@@ -1,5 +1,6 @@
 import { authActions, AuthState, UserData } from 'entities/auth/model';
 import { AuthStore } from 'entities/auth/model/types';
+import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
 import { useCheckAuthQuery, useLazyLogoutQuery } from 'pages/login/api';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,8 +15,10 @@ export const HeaderProviders = ({ children }: Props) => {
   const logout = async () => {
     await triggerLogout(null).unwrap();
     dispatch(authActions.logout());
+    dispatch(encounterActions.setEncounterId(null));
   };
 
+  const { encounterId } = useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
   const storeUserData = useSelector<AuthStore>((state) => state.auth) as AuthState;
   let storeUser: UserData | undefined;
 
@@ -48,7 +51,7 @@ export const HeaderProviders = ({ children }: Props) => {
   if (isLoading) {
     return (
       <>
-        <Header isAuth={false} />
+        <Header isAuth={false} encounterId={null} />
         {children}
       </>
     );
@@ -56,7 +59,7 @@ export const HeaderProviders = ({ children }: Props) => {
 
   return (
     <>
-      <Header isAuth={isAuth} user={storeUser} logout={logout} />
+      <Header isAuth={isAuth} user={storeUser} logout={logout} encounterId={encounterId} />
       {children}
     </>
   );

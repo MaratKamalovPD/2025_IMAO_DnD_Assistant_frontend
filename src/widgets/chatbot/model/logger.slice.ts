@@ -8,7 +8,7 @@ export type LoggerState = {
   messageLogs: IMessage[];
 };
 
-const initialState: LoggerState = {
+export const initialState: LoggerState = {
   logs: [],
   messageLogs: [],
 };
@@ -17,6 +17,11 @@ const loggerSlice = createSlice({
   name: 'logger',
   initialState: initialState,
   reducers: {
+    setState: (state, action: PayloadAction<LoggerState>) => {
+      state.lastLog = action.payload.lastLog;
+      state.messageLogs = action.payload.messageLogs;
+      state.logs = action.payload.logs;
+    },
     addLog: (state, action: PayloadAction<string>) => {
       state.lastLog = action.payload;
       state.logs = [...state.logs, action.payload];

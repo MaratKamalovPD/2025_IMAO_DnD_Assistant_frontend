@@ -1,12 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
+import { authReducer } from 'entities/auth';
 import { creaturesReduser } from 'entities/creature';
 import { encounterReduser } from 'entities/encounter';
-import { authReducer } from 'entities/auth';
 import { generatedCreatureReduser } from 'entities/generatedCreature';
 import { bestiaryApi } from 'pages/bestiary/api';
 import { characterApi } from 'pages/characters/api';
+import encounterApi from 'pages/encounterList/api/encounter.api';
 import { promtApi } from 'pages/encounterTracker/api';
 import { authApi } from 'pages/login/api';
 import { loggerReduser } from 'widgets/chatbot/model';
@@ -21,6 +22,7 @@ export const store = configureStore({
     bestiaryApi: bestiaryApi.reducer,
     promtApi: promtApi.reducer,
     characterApi: characterApi.reducer,
+    encounterApi: encounterApi.reducer,
     authApi: authApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -28,6 +30,7 @@ export const store = configureStore({
       .concat(bestiaryApi.middleware)
       .concat(promtApi.middleware)
       .concat(characterApi.middleware)
+      .concat(encounterApi.middleware)
       .concat(authApi.middleware),
 });
 

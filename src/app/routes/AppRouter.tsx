@@ -1,13 +1,15 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { HeaderProviders } from 'app/providers';
+import { EncounterTrackerSaveProvider } from 'app/providers/encounterTrackerSaveProvider';
 import { Bestiary, CreatureStatblock } from 'pages/bestiary';
 import { Characters } from 'pages/characters';
+import { EncounterList } from 'pages/encounterList/';
 import { EncounterTracker } from 'pages/encounterTracker';
 import { Login } from 'pages/login';
 import { Main } from 'pages/main';
+import { StatblockGenerator } from 'pages/statblockGenerator';
 import { TestPage } from 'pages/test';
-import { StatblockGenerator} from 'pages/statblockGenerator';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +25,16 @@ const router = createBrowserRouter([
     element: (
       <HeaderProviders>
         <EncounterTracker />
+      </HeaderProviders>
+    ),
+  },
+  {
+    path: 'encounter_tracker/:id',
+    element: (
+      <HeaderProviders>
+        <EncounterTrackerSaveProvider>
+          <EncounterTracker />
+        </EncounterTrackerSaveProvider>
       </HeaderProviders>
     ),
   },
@@ -63,7 +75,15 @@ const router = createBrowserRouter([
         <StatblockGenerator />
       </HeaderProviders>
     ),
-  }
+  },
+  {
+    path: 'encounter_list',
+    element: (
+      <HeaderProviders>
+        <EncounterList />
+      </HeaderProviders>
+    ),
+  },
 ]);
 
 export const AppRouter = () => {

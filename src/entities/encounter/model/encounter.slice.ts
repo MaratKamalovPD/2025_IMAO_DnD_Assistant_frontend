@@ -5,6 +5,7 @@ import { UUID } from 'shared/lib';
 import { CellsCoordinates, Participant } from './types';
 
 export type EncounterState = {
+  encounterId: number | null;
   hasStarted: boolean;
   attackHandleModeActive: boolean;
   currentRound: number;
@@ -19,7 +20,8 @@ export type EncounterState = {
   statblockIsVisible: boolean;
 };
 
-const initialState: EncounterState = {
+export const initialState: EncounterState = {
+  encounterId: null,
   hasStarted: false,
   attackHandleModeActive: false,
   currentRound: 1,
@@ -38,6 +40,24 @@ const encounterSlice = createSlice({
   name: 'encounter',
   initialState,
   reducers: {
+    setEncounterId: (state, action: PayloadAction<number | null>) => {
+      state.encounterId = action.payload;
+    },
+    setState: (state, action: PayloadAction<EncounterState>) => {
+      state.attackHandleModeActive = action.payload.attackHandleModeActive;
+      state.hasStarted = action.payload.hasStarted;
+      state.attackHandleModeActive = action.payload.attackHandleModeActive;
+      state.currentRound = action.payload.currentRound;
+      state.currentTurnIndex = action.payload.currentTurnIndex;
+      state.participants = action.payload.participants;
+      state.selectedCreatureId = action.payload.selectedCreatureId;
+      state.attackedCreatureId = action.payload.attackedCreatureId;
+      state.currentAttackLLM = action.payload.currentAttackLLM;
+      state.statblockSize = action.payload.statblockSize;
+      state.statblockCoords = action.payload.statblockCoords;
+      state.statblockIsMinimized = action.payload.statblockIsMinimized;
+      state.statblockIsVisible = action.payload.statblockIsVisible;
+    },
     start: (state) => {
       state.hasStarted = true;
       state.participants.sort((a, b) => b.initiative - a.initiative);
