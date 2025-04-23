@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-
 import { useGesture } from '@use-gesture/react';
 import { useDropzone } from 'react-dropzone';
 import clsx from 'clsx';
@@ -7,14 +6,23 @@ import s from './TokenStamp.module.scss';
 import { useTokenator } from 'shared/lib';
 import { useDebouncedCallback } from 'use-debounce';
 import {
-  GeneratedCreatureStore,
   SINGLE_CREATURE_ID,
   generatedCreatureActions,
-  generatedCreatureSelectors,
 } from 'entities/generatedCreature/model';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 type Props = ReturnType<typeof useTokenator>;
+
+const blobToBase64 = (blob: Blob): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') resolve(reader.result);
+      else reject('Cannot convert blob to base64');
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
 
 export const TokenStamp: React.FC<Props> = ({
   tokenRef,
@@ -36,13 +44,7 @@ export const TokenStamp: React.FC<Props> = ({
   const [offsetPos, setOffsetPos] = useState({ x: 0, y: 0 });
 
   const [imageSize, setImageSize] = useState({ width: SVG_SIZE, height: SVG_SIZE });
-
-  useEffect(() => {
-    if (imageRef.current) {
-      const bbox = imageRef.current.getBoundingClientRect();
-      setImageSize({ width: bbox.width, height: bbox.height });
-    }
-  }, [file, scale]);
+  const dispatch = useDispatch();
 
   const size = useMemo(() => SVG_SIZE * scale, [scale, SVG_SIZE]);
   const delta = useMemo(() => SVG_SIZE / imageSize.width, [SVG_SIZE, imageSize.width]);
@@ -83,6 +85,13 @@ export const TokenStamp: React.FC<Props> = ({
   );
 
   useEffect(() => {
+    if (imageRef.current) {
+      const bbox = imageRef.current.getBoundingClientRect();
+      setImageSize({ width: bbox.width, height: bbox.height });
+    }
+  }, [file, scale]);
+
+  useEffect(() => {
     if (file && centerImage) {
       const sideWidth = size;
       setOffsetPos({
@@ -112,26 +121,29 @@ export const TokenStamp: React.FC<Props> = ({
     noClick: !!file,
   });
 
-  const dispatch = useDispatch();
-
   const saveImageToRedux = useDebouncedCallback(async () => {
     if (!file) return;
     try {
       const blob = await exportImage('png');
-      dispatch(generatedCreatureActions.setCreatureImage({ id: SINGLE_CREATURE_ID, imageBlob: blob }));
+      const base64 = await blobToBase64(blob);
+      dispatch(
+        generatedCreatureActions.setCreatureImage({
+          id: SINGLE_CREATURE_ID,
+          imageBase64: base64,
+        })
+      );
     } catch (e) {
-      console.error('Failed to export image:', e);
+      console.error('Failed to export image to Redux:', e);
     }
   }, 500);
 
   useEffect(() => {
     saveImageToRedux();
   }, [scale, file, reflectImage, centerImage]);
-  
+
   return (
     <div {...getRootProps()} className={s.wrapper}>
       <input {...getInputProps()} hidden />
-
       <svg
         ref={tokenRef}
         className={clsx(s.container, file && s.draggable, isDragging && s.dragging)}
@@ -140,13 +152,11 @@ export const TokenStamp: React.FC<Props> = ({
       >
         <g ref={containerRef}>
           {background && <image href={background} width={SVG_SIZE} height={SVG_SIZE} />}
-
           {!file && (
             <foreignObject width={SVG_SIZE} height={SVG_SIZE} x={0} y={0} className={s.dropText}>
               <span>Перетащите ваше изображение сюда</span>
             </foreignObject>
           )}
-
           {file && (
             <svg
               ref={imageRef as React.Ref<SVGSVGElement>}
@@ -165,7 +175,6 @@ export const TokenStamp: React.FC<Props> = ({
             </svg>
           )}
         </g>
-
         {border && <image href={border} width={SVG_SIZE} height={SVG_SIZE} />}
       </svg>
     </div>

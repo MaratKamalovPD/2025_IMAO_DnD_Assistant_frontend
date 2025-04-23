@@ -124,7 +124,7 @@ type AddAttackPayload = {
     environment: [],
     attacksLLM: [],
     useCustomSpeed: false,
-    imageBlob: undefined,
+    imageBase64: '',
   };
   
   
@@ -609,11 +609,11 @@ type AddAttackPayload = {
 
       setCreatureImage: (
         state,
-        action: PayloadAction<{ id: string; imageBlob: Blob }>
+        action: PayloadAction<{ id: string; imageBase64: string }>
       ) => {
         generatedCreatureAdapter.updateOne(state, {
           id: action.payload.id,
-          changes: { imageBlob: action.payload.imageBlob },
+          changes: { imageBase64: action.payload.imageBase64 },
         });
       },
       
