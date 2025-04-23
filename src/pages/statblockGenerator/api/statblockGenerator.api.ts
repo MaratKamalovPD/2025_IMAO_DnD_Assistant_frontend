@@ -22,14 +22,29 @@ const bestiaryApi = createApi({
         method: 'POST',
         body,
       }),
+      providesTags: ['Creature']
     }),
 
     getCreatureByName: builder.query<CreatureFullData, string>({
       query: (name) => ({ url: name }),
     }),
+
+    addCreature: builder.mutation<void, CreatureFullData>({
+      query: (creature) => ({
+        url: '/bestiary/generated_creature',
+        method: 'POST',
+        body: creature,
+      }),
+      invalidatesTags: ['Creature'],
+    }),
   }),
 });
 
-export const { useGetCreaturesQuery, useLazyGetCreatureByNameQuery, useGetCreatureByNameQuery } = bestiaryApi;
+export const { 
+    useGetCreaturesQuery,
+    useLazyGetCreatureByNameQuery,
+    useGetCreatureByNameQuery,
+    useAddCreatureMutation 
+  } = bestiaryApi;
 
 export default bestiaryApi;

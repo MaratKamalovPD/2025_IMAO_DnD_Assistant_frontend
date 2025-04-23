@@ -54,6 +54,7 @@ export type CreatureFullData = {
   attacksLLM?: AttackLLM[];
   useCustomSpeed?: boolean;
   customSpeed?: string;
+  imageBase64?: string;
 };
 
 export type Reaction = {
@@ -203,7 +204,7 @@ export type AreaAttackLLM = {
 
 export type AttackLLM = {
   name: string;
-  type?: string; // melee, ranged, area и т.д.
+  type?: 'melee' | 'ranged' | 'area'; // melee, ranged, area и т.д. TBU
   attackBonus?: string;
   reach?: string; // для ближних атак
   range?: string; // для дальних атак

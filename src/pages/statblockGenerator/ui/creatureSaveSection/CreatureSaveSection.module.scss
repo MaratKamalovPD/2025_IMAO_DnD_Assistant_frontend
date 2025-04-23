@@ -153,4 +153,12 @@
         font-size: 14px;
       }
     }
+
+    .creatureSaveSection__layout {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      gap: 1rem; // можно менять на нужное расстояние между элементами
+    }
+    
   }

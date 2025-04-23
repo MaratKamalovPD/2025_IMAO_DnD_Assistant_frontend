@@ -1,6 +1,8 @@
 import React from 'react';
 import s from './CreatureSaveSection.module.scss';
 import { MonsterSelect } from './monsterSelect';
+import { TokenatorWidget } from 'shared/ui/tokenator';
+import { MagicButton } from './magicButton';
 
 interface CreatureSaveSectionProps {
   onSave?: () => void;
@@ -80,12 +82,15 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
         </label>
       </div>
 
-      {/* Круглая кнопка сохранения */}
-      <div className={s.creatureSaveSection__saveButtonContainer}>
-        <button className={s.creatureSaveSection__saveButton} onClick={onSave}>
+      <div className={s.creatureSaveSection__layout}>
+        <TokenatorWidget />
+
+        {/* Круглая кнопка сохранения */}
+        <MagicButton onClick={onSave}>
           {t.save}
-        </button>
+        </MagicButton>
       </div>
+
     </div>
   );
 };

@@ -3,12 +3,13 @@ import { DiceType } from 'shared/lib';
   
   export interface AttackFormAttack {
     name: string;
-    type: 'melee' | 'ranged';
-    attack_bonus: string;
+    type: 'melee' | 'ranged' | 'area' ; // TBU
+    attackBonus?: string;
     reach?: string;
     range?: string;
-    target: string;
+    target?: string;
     damage: DamageLLM;
+    additionalEffects?: { damage?: DamageLLM }[];
   }
   
   export const initialDamage: DamageLLM = {
@@ -21,9 +22,10 @@ import { DiceType } from 'shared/lib';
   export const initialAttack: AttackFormAttack = {
     name: '',
     type: 'melee', // или 'ranged', в зависимости от того, что вы хотите по умолчанию
-    attack_bonus: '',
+    attackBonus: '',
     reach: '5 фт.', // начальное значение для ближнего боя
     range: undefined, // или '30/120 фт.' если хотите дальний бой по умолчанию
     target: '',
-    damage: initialDamage
+    damage: initialDamage,
+    additionalEffects: [],
   };

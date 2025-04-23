@@ -1,0 +1,116 @@
+.details {
+    border-radius: 15px;
+    background-color: var(--primary-bg-color);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    border: 2px solid var(--border);
+    margin-top: 24px;
+  
+    @media (min-width: 768px) {
+      margin-right: 24px;
+    }
+  
+    &__header {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 30px;
+      color: var(--primary-btn-color);
+      margin-bottom: 8px;
+    }
+  
+    &__text {
+      max-width: 290px;
+      font-size: 14px;
+      line-height: 1.4;
+      color: var(--text-color-secondary);
+      margin-bottom: 32px;
+  
+      p {
+        margin-bottom: 6px;
+      }
+    }
+  
+    &__controls {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      margin-bottom: 24px;
+  
+      &__slider {
+        flex-grow: 1;
+  
+        input[type='range'] {
+          width: 100%;
+          appearance: none;
+          height: 6px;
+          border-radius: 4px;
+          background-color: var(--border);
+  
+          &::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background-color: var(--primary-btn-color);
+            border-radius: 50%;
+            cursor: pointer;
+          }
+  
+          &::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background-color: var(--primary-btn-color);
+            border-radius: 50%;
+            cursor: pointer;
+          }
+        }
+      }
+  
+      button[data-variant] {
+        padding: 6px 10px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+    }
+  
+    &__actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+  
+      @media (min-width: 768px) {
+        flex-direction: row;
+      }
+  
+      &__downloadGroup {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+  
+        button {
+          flex: 1;
+        }
+  
+        button[data-variant='primary'] {
+          font-weight: bold;
+          background-color: var(--primary-btn-color);
+          color: white;
+  
+          &:hover {
+            background-color: var(--primary-btn-hover-color);
+          }
+        }
+      }
+  
+      button[data-variant='secondary'] {
+        background-color: var(--secondary-bg-color);
+        color: white;
+  
+        &:hover {
+          background-color: var(--secondary-hover-bg-color);
+        }
+      }
+    }
+  }
+  

@@ -16,4 +16,6 @@ export { getDamageTypeOptions, getLanguageOptions,
 export { SensesLocalization, getSenseNameMap, getReverseSenseNameMap } from './sensesLocalization';
 export { calculateArmorClass } from './armorClassUtils'
 
+export { mapLLMToForm } from './mapLLMToForm.ts'
+
 

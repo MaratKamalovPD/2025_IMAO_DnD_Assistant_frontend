@@ -1,0 +1,17 @@
+
+  .layout {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    width: fit-content;
+    height: fit-content;
+  
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+  }
+  

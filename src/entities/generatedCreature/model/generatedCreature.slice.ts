@@ -35,6 +35,23 @@ import {
     AttackLLM,
     //Damage
   } from 'entities/creature/model';
+import { AttackFormAttack } from 'pages/statblockGenerator/model';
+
+type UpdateAttackPayload = {
+  id: string;
+  index: number;
+  data: AttackLLM;
+};
+
+type RemoveAttackPayload = {
+  id: string;
+  index: number;
+};
+
+type AddAttackPayload = {
+  id: string;
+  data: AttackLLM;
+};
 
   export const SINGLE_CREATURE_ID = 'current';
 
@@ -107,7 +124,7 @@ import {
     environment: [],
     attacksLLM: [],
     useCustomSpeed: false,
-
+    imageBase64: '',
   };
   
   
@@ -566,6 +583,40 @@ import {
           changes: { attacksLLM: action.payload.attacksLLM }
         });
       },
+
+      addAttackLLM: (state, action: PayloadAction<AddAttackPayload>) => {
+        const creature = state.entities[action.payload.id];
+        if (creature) {
+          creature.attacksLLM = [...(creature.attacksLLM ?? []), action.payload.data];
+        }
+      },
+  
+      updateAttackLLM: (state, action: PayloadAction<UpdateAttackPayload>) => {
+        const creature = state.entities[action.payload.id];
+        if (creature && creature.attacksLLM) {
+          const updated = [...creature.attacksLLM];
+          updated[action.payload.index] = action.payload.data;
+          creature.attacksLLM = updated;
+        }
+      },
+  
+      removeAttackLLM: (state, action: PayloadAction<RemoveAttackPayload>) => {
+        const creature = state.entities[action.payload.id];
+        if (creature && creature.attacksLLM) {
+          creature.attacksLLM = creature.attacksLLM.filter((_, i) => i !== action.payload.index);
+        }
+      },
+
+      setCreatureImage: (
+        state,
+        action: PayloadAction<{ id: string; imageBase64: string }>
+      ) => {
+        generatedCreatureAdapter.updateOne(state, {
+          id: action.payload.id,
+          changes: { imageBase64: action.payload.imageBase64 },
+        });
+      },
+      
     },
   });
   

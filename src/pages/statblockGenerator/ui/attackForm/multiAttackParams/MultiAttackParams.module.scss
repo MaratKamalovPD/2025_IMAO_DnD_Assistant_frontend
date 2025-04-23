@@ -1,0 +1,100 @@
+@use '../AttackForm.module.scss';
+
+.multiAttackForm {
+    border-radius: 15px;
+    background-color: var(--primary-bg-color);
+    padding: 25px;
+    border: 3px solid black;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+  
+    &__titleContainer {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+  
+    &__subtitle {
+      color: var(--primary-btn-color);
+      font-weight: bold;
+      font-size: 20px;
+    }
+  
+    &__field {
+      margin-bottom: 1rem;
+    }
+  
+    &__label {
+      font-size: 15px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 5px;
+      display: block;
+    }
+  
+    &__input {
+      font-size: 15px;
+      padding: 8px;
+      color: white;
+      border-radius: 8px;
+      border: none;
+      background-color: var(--secondary-bg-color);
+      width: 100%;
+      margin-bottom: 0.5rem;
+  
+      &:focus {
+        outline: 2px solid var(--primary-btn-color);
+      }
+    }
+  
+    &__error {
+      color: #dc3545;
+      font-size: 0.85rem;
+      margin-top: -0.25rem;
+      margin-bottom: 0.5rem;
+    }
+  
+    &__group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+  
+      input {
+        flex: 1;
+      }
+    }
+  
+    &__removeButton {
+      background: none;
+      border: none;
+      color: #dc3545;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0 0.5rem;
+      line-height: 1;
+  
+      &:hover {
+        color: #a71d2a;
+      }
+    }
+  
+    &__addButton {
+      background-color: var(--primary-btn-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      align-self: start;
+      margin-top: 10px;
+  
+      &:hover {
+        background-color: var(--primary-btn-hover-color);
+      }
+    }
+  }
+  
