@@ -56,7 +56,7 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
   const handleAttack = useCallback((index: number, attack: AttackLLM) => {
     setCurrentAttackIndex(index);
     setCurrentAttackData(attack);
-    dispatch(encounterActions.enableAttackHandleMode());
+    dispatch(encounterActions.enableAttackHandleMode(attack));
   }, []);
 
   useEffect(() => {
@@ -208,13 +208,13 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
                 );
               })}
 
-              <button
+              {/* <button
                 className={s.creaturePanel__actionsList__element}
                 onClick={() => toggleModal(true, ModalType.Damage)}
                 data-variant='primary'
               >
                 Нанести урон
-              </button>
+              </button> */}
             </div>
           </div>
           <div className={s.creaturePanel__actionsContainer}>
@@ -228,6 +228,19 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
                   <div className={s.creaturePanel__actionsList__element} key={ind}>
                     {icon && <img src={icon} alt={condition} className={s.attackIcon} />}
                     {instance ? instance.label.ru : condition}
+                    <button
+                      className={s.closeButtonCondition}
+                      onClick={() =>
+                        dispatch(
+                          creatureActions.removeCondition({
+                            id: selectedCreature.id,
+                            condition: condition,
+                          }),
+                        )
+                      }
+                    >
+                      &times;
+                    </button>
                   </div>
                 );
               })}
@@ -264,7 +277,11 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
                 &times;
               </button>
               {modalType === ModalType.Attack ? (
-                <AttackModal attackIndex={currentAttackIndex} attackData={currentAttackData} />
+                <AttackModal
+                  attackIndex={currentAttackIndex}
+                  attackData={currentAttackData}
+                  setIsModalOpen={setIsModalOpen}
+                />
               ) : modalType === ModalType.Condition ? (
                 <ApplyConditionModal />
               ) : (

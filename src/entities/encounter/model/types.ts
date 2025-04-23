@@ -9,4 +9,10 @@ export type Participant = {
   _id: UUID; // id существа
   id: UUID; // id конкретного экземпляра существа
   initiative: number;
+  cellsCoords?: CellsCoordinates;
+};
+
+export type CellsCoordinates = {
+  cellsX: number;
+  cellsY: number;
 };

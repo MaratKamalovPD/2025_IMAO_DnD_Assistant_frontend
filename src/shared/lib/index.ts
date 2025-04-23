@@ -2,6 +2,7 @@ export { calculateStatModifier } from './calcStatMod';
 export { calculateInitiative } from './calculateInitiative';
 export { capitalizeFirstLetter } from './capitalizeFirstLetter';
 export { useDebounce } from './debounce';
+export { keepLeadingDigits } from './keepLeadingDigits';
 export { lowercaseFirstLetter } from './lowercaseFirstLetter';
 export { modifiers } from './modifier';
 export { normalizeString } from './normalizeString';

@@ -29,51 +29,119 @@
   align-items: center;
   justify-content: space-between;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
 
-  .rightSection {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+.leftSection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
-    @media (max-width: 768px) {
-      justify-content: space-around;
-      width: 100%;
-    }
-
-    .links {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: flex-start;
-      padding-inline-start: 0px;
-
-      li {
-        list-style: none;
-        margin-left: 1rem;
-      }
-
-      @media (max-width: 768px) {
-        li:nth-child(1),
-        li:nth-child(2) {
-          display: none;
-        }
-      }
-    }
+  @media (max-width: 768px) {
+    justify-content: space-around;
+    width: 100%;
   }
 
-  .leftSection {
+  &__logo {
+    height: 4rem;
+  }
+
+  &__links {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 1rem;
+    justify-content: flex-start;
+    padding-inline-start: 0px;
     gap: 1rem;
 
+    li {
+      list-style: none;
+      margin-left: 1rem;
+    }
+
     @media (max-width: 768px) {
-      display: none;
+      li:nth-child(1),
+      li:nth-child(2) {
+        display: none;
+      }
     }
   }
 }
 
-.logo {
-  height: 4rem;
+.rightSection {
+  padding-right: 1rem;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.authSection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  position: relative;
+
+  &__avatar {
+    height: 39px;
+    width: 39px;
+    border-radius: 50%;
+    align-self: center;
+  }
+
+  &__name {
+    font-size: 16px;
+    display: flex;
+    text-align: center;
+  }
+}
+
+.dropdownIcon {
+  transition: transform 0.3s ease;
+
+  &__rotated {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdownContainer {
+  position: absolute;
+  top: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 99;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--secondary-bg-color);
+  border: 1px solid var(--primary-bg-color);
+
+  &__btn {
+    padding: 0.5rem 1rem;
+    background-color: transparent;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: white;
+
+    a {
+      color: white;
+    }
+
+    &:first-of-type {
+      border-radius: 7px 7px 0 0;
+    }
+
+    &:last-of-type {
+      border-radius: 0 0 7px 7px;
+    }
+
+    &:hover {
+      background-color: #0000005b;
+    }
+  }
 }

@@ -1,9 +1,5 @@
 .statblockContainer {
-  display: flex;
-  padding: 15px;
-  justify-content: center;
-  flex-direction: column;
-  min-height: 40vh;
+  height: 100%;
 
   textarea {
     margin-top: 5px;
@@ -20,8 +16,8 @@
   border-radius: 15px;
   background-color: var(--primary-bg-color);
   display: flex;
-  justify-content: center; 
-  align-items: center;   
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
   padding: 5px;
   border: 3px solid black;
@@ -41,9 +37,12 @@
 }
 
 .creaturePanel {
+  container-type: inline-size;
+  overflow-y: scroll;
   border-radius: 15px;
   background-color: var(--primary-bg-color);
   display: flex;
+  height: 100%;
   flex-direction: column;
   padding: 25px;
   border: 3px solid black;
@@ -64,13 +63,24 @@
 
   &__statsContainer {
     display: flex;
+    align-items: center;
+    justify-content: flex-start;
     flex-direction: row;
+    flex-wrap: wrap;
     margin-bottom: 20px;
+    gap: 1rem;
 
-    @media (max-width: 768px) {
+    @container (width < 650px ) and (width >= 430px) {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      justify-items: end;
+    }
+
+    @container (width < 430px) {
       flex-direction: column;
-      align-items: flex-start;
-      gap: 1rem;
+      align-items: flex-end;
+      justify-content: flex-end;
     }
   }
 
@@ -82,7 +92,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    min-width: 30%;
 
     &__text {
       font-size: 15px;
@@ -124,13 +133,9 @@
   &__actionsList {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     margin-top: 10px;
     gap: 1rem;
-
-    @media (max-width: 768px) {
-      flex-direction: column;
-      align-items: flex-start;
-    }
 
     &__element {
       padding: 10px 15px;
@@ -196,6 +201,18 @@
   background: none;
   border: none;
   font-size: 24px;
+  cursor: pointer;
+  color: #f1eded;
+
+  &:hover {
+    color: var(--primary-btn-color) !important;
+  }
+}
+
+.closeButtonCondition {
+  background: var(--secondary-bg-color);
+  border: none;
+  font-size: 1rem;
   cursor: pointer;
   color: #f1eded;
 

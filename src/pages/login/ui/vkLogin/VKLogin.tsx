@@ -1,16 +1,17 @@
 import * as VKID from '@vkid/sdk';
-import { CodeExchangeRequest, useLazyExchangeCodeQuery } from 'pages/login/api';
+import { LoginRequest, useLazyLoginQuery } from 'pages/login/api';
 import { generateCodeChallenge, generateCodeVerifier } from 'pages/login/lib';
 import { useEffect, useRef } from 'react';
 
-export const VKLogin = () => {
+type VKLoginProps = {
+  setErr: (err: string) => void;
+  login: ReturnType<typeof useLazyLoginQuery>[0];
+};
+
+export const VKLogin: React.FC<VKLoginProps> = ({ setErr, login }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const initialized = useRef(false);
   const codeVerifierRef = useRef('');
-
-  const [exchangeCode, { data }] = useLazyExchangeCodeQuery();
-
-  void data
 
   useEffect(() => {
     if (initialized.current) return;
@@ -41,26 +42,24 @@ export const VKLogin = () => {
           showAlternativeLogin: true,
           scheme: VKID.Scheme.DARK,
         })
-        .on(VKID.WidgetEvents.ERROR, vkidOnError)
+        .on(VKID.WidgetEvents.ERROR, () => {
+          setErr('Упс, что-то пошло не так...');
+        })
         .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, (payload: any) => {
           const { code, device_id } = payload;
 
-          const requestBody: CodeExchangeRequest = {
+          const requestBody: LoginRequest = {
             code: code,
             deviceID: device_id,
             state: state,
             codeVerifier: codeVerifierRef.current,
           };
 
-          exchangeCode(requestBody);
+          login(requestBody);
         });
     };
 
     init();
-
-    function vkidOnError(error: any) {
-      console.error('VK Login Error:', error);
-    }
   }, []);
 
   return <div ref={containerRef} />;

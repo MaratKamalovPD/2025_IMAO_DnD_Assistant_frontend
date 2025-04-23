@@ -1,2 +1,2 @@
-export { HeaderProviders } from './headerProvidor';
+export { HeaderProviders } from './headerProvider';
 export { MainProviders } from './mainProvider';
