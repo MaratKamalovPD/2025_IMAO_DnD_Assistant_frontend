@@ -166,6 +166,8 @@ export const TokenStamp: React.FC<Props> = ({
         ref={tokenRef}
         className={clsx(s.container, file && s.draggable, isDragging && s.dragging)}
         xmlns="http://www.w3.org/2000/svg"
+        width={CANVAS_WIDTH} 
+        height={CANVAS_HEIGHT} 
         viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`}
       >
         <g ref={containerRef}>
