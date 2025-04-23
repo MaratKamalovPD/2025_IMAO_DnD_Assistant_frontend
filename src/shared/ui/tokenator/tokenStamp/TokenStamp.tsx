@@ -42,6 +42,7 @@ export const TokenStamp: React.FC<Props> = ({
   const imageRef = useRef<SVGImageElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [offsetPos, setOffsetPos] = useState({ x: 0, y: 0 });
+  const [bgReady, setBgReady] = useState(false);
 
   const [imageSize, setImageSize] = useState({ width: SVG_SIZE, height: SVG_SIZE });
   const dispatch = useDispatch();
@@ -101,6 +102,17 @@ export const TokenStamp: React.FC<Props> = ({
     }
   }, [file, centerImage, size, SVG_SIZE]);
 
+
+  // загрузка фонового изображения
+  useEffect(() => {
+    if (!background) return;
+    const img = new Image();
+    img.src = background;
+    img.onload = () => setBgReady(true);
+    img.onerror = () => setBgReady(false);
+  }, [background]);
+
+
   useEffect(() => {
     const oldSize = SVG_SIZE * (scale - scaleConfig.step);
     const newSize = SVG_SIZE * scale;
@@ -151,21 +163,21 @@ export const TokenStamp: React.FC<Props> = ({
         viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
       >
         <g ref={containerRef}>
-        {background ? (
-          <image
-            href={background}
-            width={SVG_SIZE}
-            height={SVG_SIZE}
-            onError={(e) => {
-              (e.target as SVGImageElement).remove(); // удаляем битое изображение
-              const fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-              fo.setAttribute('width', SVG_SIZE.toString());
-              fo.setAttribute('height', SVG_SIZE.toString());
-              fo.innerHTML = `<img src="${background}" width="${SVG_SIZE}" height="${SVG_SIZE}" alt="background" style="display:block;" />`;
-              e.currentTarget.parentNode?.appendChild(fo);
-            }}
-          />
-        ) : null}
+        {bgReady && background && (
+          <foreignObject width={SVG_SIZE} height={SVG_SIZE}>
+            <img
+              src={background}
+              width={SVG_SIZE}
+              height={SVG_SIZE}
+              alt=""
+              style={{ display: 'block' }}
+              onError={(e) => {
+                console.warn('Ошибка загрузки фонового изображения');
+                (e.currentTarget as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          </foreignObject>
+        )}
 
           {!file && (
             <foreignObject width={SVG_SIZE} height={SVG_SIZE} x={0} y={0} className={s.dropText}>
