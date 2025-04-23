@@ -26,8 +26,6 @@ const blobToBase64 = (blob: Blob): Promise<string> =>
 
 export const TokenStamp: React.FC<Props> = ({
   tokenRef,
-  border,
-  background,
   scale,
   setScale,
   file,
@@ -117,16 +115,6 @@ export const TokenStamp: React.FC<Props> = ({
     }
   }, [file, centerImage, sizeX, sizeY, CANVAS_WIDTH, CANVAS_HEIGHT]);
 
-  // загрузка фонового изображения
-  useEffect(() => {
-    if (!background) return;
-    const img = new Image();
-    img.src = background;
-    img.onload = () => setBgReady(true);
-    img.onerror = () => setBgReady(false);
-  }, [background]);
-
-
   useEffect(() => {
     const oldSizeX = CANVAS_WIDTH * (scale - scaleConfig.step);
     const newSizeX = CANVAS_WIDTH * scale;
@@ -181,22 +169,6 @@ export const TokenStamp: React.FC<Props> = ({
         viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`}
       >
         <g ref={containerRef}>
-        {bgReady && background && (
-          <foreignObject width={CANVAS_WIDTH} height={CANVAS_HEIGHT}>
-            <img
-              src={background}
-              width={CANVAS_WIDTH}
-              height={CANVAS_HEIGHT}
-              alt=""
-              style={{ display: 'block' }}
-              onError={(e) => {
-                console.warn('Ошибка загрузки фонового изображения');
-                (e.currentTarget as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          </foreignObject>
-        )}
-
           {!file && (
             <foreignObject width={CANVAS_WIDTH} height={CANVAS_HEIGHT} x={0} y={0} className={s.dropText}>
               <span>Перетащите ваше изображение сюда</span>
@@ -220,7 +192,7 @@ export const TokenStamp: React.FC<Props> = ({
             </svg>
           )}
         </g>
-        {border && <image href={border} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />}
+  
       </svg>
     </div>
   );

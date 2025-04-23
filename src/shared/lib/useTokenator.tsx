@@ -36,8 +36,6 @@ const getBase64 = (blob?: Blob): Promise<string | undefined> =>
 
 export const useTokenator = () => {
   const [file, setFile] = useState<string>();
-  const [border, setBorder] = useState<string>();
-  const [background, setBackground] = useState<string>();
   const [reflectImage, setReflectImage] = useState(false);
   const [centerImage, setCenterImage] = useState(false);
 
@@ -143,32 +141,6 @@ export const useTokenator = () => {
     });
   };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const borderResp = await fetch('/img/token/token-border.webp');
-        const borderBlob = await borderResp.blob();
-  
-        if (borderBlob.type.startsWith('image/')) {
-          setBorder(await getBase64(borderBlob));
-        } else {
-          console.warn('Border blob is not an image:', borderBlob.type);
-        }
-  
-        const bgResp = await fetch('/img/token/token-bg.webp');
-        const bgBlob = await bgResp.blob();
-  
-        if (bgBlob.type.startsWith('image/')) {
-          setBackground(await getBase64(bgBlob));
-        } else {
-          console.warn('Background blob is not an image:', bgBlob.type);
-        }
-      } catch (err) {
-        console.error('Ошибка при загрузке фона или рамки:', err);
-      }
-    })();
-  }, []);
-  
   const reset = () => {
     setFile(undefined);
     resetScale();
@@ -176,8 +148,6 @@ export const useTokenator = () => {
 
   return {
     tokenRef,
-    border,
-    background,
     MAX_SIZE,
     MAX_DIMENSION,
     CANVAS_WIDTH,
