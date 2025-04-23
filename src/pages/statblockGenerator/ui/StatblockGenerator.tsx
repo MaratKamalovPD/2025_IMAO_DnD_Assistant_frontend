@@ -60,7 +60,7 @@ const requestBody: GetCreaturesRequest = {
 };
 
 export const StatblockGenerator = () => {
-  const [addCreature, { isLoading, isSuccess, isError, error }] = useAddCreatureMutation();
+  const [addCreature, {isSuccess, isError, error }] = useAddCreatureMutation();
   const { data: creatures } = useGetCreaturesQuery(requestBody);
   const [trigger, { data: fullCreatureData }] = useLazyGetCreatureByNameQuery();
 

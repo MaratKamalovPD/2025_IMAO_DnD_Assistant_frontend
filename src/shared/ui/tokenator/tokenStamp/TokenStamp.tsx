@@ -41,8 +41,7 @@ export const TokenStamp: React.FC<Props> = ({
   const imageRef = useRef<SVGImageElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [offsetPos, setOffsetPos] = useState({ x: 0, y: 0 });
-  const [bgReady, setBgReady] = useState(false);
-
+  
   const [imageSize, setImageSize] = useState({ width: CANVAS_WIDTH, height: CANVAS_HEIGHT });
   const dispatch = useDispatch();
 

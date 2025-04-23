@@ -10,17 +10,13 @@ import {
     CreatureFullData,
     Reaction,
     SavingThrow,
-    //DamageDicesRolls,
-    //DamageDicesRoll,
     Feat,
-    //LegendaryAction,
     Legendary,
     Armor,
     NameTranslations,
     SizeTranslations,
     CreatureType,
     Source,
-    //SourceGroup,
     HitPoints,
     Speed,
     AbilityScores,
@@ -28,14 +24,9 @@ import {
     Senses,
     Action,
     Tag,
-    //DamageLLM,
-    //AdditionalEffectLLM,
-    //MultiAttackLLM,
-    //AreaAttackLLM,
     AttackLLM,
-    //Damage
   } from 'entities/creature/model';
-import { AttackFormAttack } from 'pages/statblockGenerator/model';
+
 
 type UpdateAttackPayload = {
   id: string;

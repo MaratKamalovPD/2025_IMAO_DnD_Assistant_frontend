@@ -20,6 +20,8 @@ export const MonsterSelect: React.FC<MonsterSelectProps> = ({ value, onChange })
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearch = useDebounce(searchValue, DEBOUNCE_TIME);
 
+  void value
+
   const requestBody = useMemo(() => {
     return mapFiltersToRequestBody({}, 0, MAX_RESULTS, debouncedSearch, []);
   }, [debouncedSearch]);

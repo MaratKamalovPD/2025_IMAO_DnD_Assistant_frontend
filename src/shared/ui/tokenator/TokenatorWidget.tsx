@@ -1,6 +1,5 @@
 import { TokenDetails } from './tokenDetails';
 import { TokenStamp } from './tokenStamp';
-import clsx from 'clsx';
 import s from './TokenatorWidget.module.scss';
 import { useTokenator } from 'shared/lib';
 

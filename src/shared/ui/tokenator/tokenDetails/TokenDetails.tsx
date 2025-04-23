@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { toast } from 'react-toastify';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import clsx from 'clsx';
 import s from './TokenDetails.module.scss';
 import { useTokenator } from 'shared/lib';
 
