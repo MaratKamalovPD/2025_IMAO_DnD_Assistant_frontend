@@ -1,6 +1,6 @@
 import { Icon20ChevronUp } from '@vkontakte/icons';
 import clsx from 'clsx';
-import { AuthData, UserData } from 'entities/auth/model';
+import { UserData } from 'entities/auth/model';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import logo from 'shared/assets/images/logo.png';
@@ -9,7 +9,7 @@ import s from './Header.module.scss';
 type HeaderProps = {
   isAuth: boolean;
   user?: UserData;
-  logout?: () => Promise<AuthData>;
+  logout?: () => Promise<void>;
 };
 
 export const Header: React.FC<HeaderProps> = ({ isAuth, user, logout }) => {

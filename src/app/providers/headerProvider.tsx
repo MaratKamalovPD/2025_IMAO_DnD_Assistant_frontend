@@ -17,7 +17,7 @@ export const HeaderProviders = ({ children }: Props) => {
   };
 
   const storeUserData = useSelector<AuthStore>((state) => state.auth) as AuthState;
-  let storeUser: UserData;
+  let storeUser: UserData | undefined;
 
   if (storeUserData) {
     storeUser = {
