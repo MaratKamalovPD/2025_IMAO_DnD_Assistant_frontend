@@ -43,6 +43,17 @@ export const EncounterTracker = () => {
   } = useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
 
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        dispatch(encounterActions.disableAttackHandleMode());
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
     if (!participants.length) return;
     if (isFirstRender) {
       setIsFirstRender(false);
