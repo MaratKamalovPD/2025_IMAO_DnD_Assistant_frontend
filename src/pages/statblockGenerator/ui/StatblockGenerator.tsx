@@ -5,7 +5,6 @@ import {
   useLazyGetCreatureByNameQuery,
 } from 'pages/statblockGenerator/api';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { ArmorHitdiceForm } from './armorHitdiceForm';
 import { AttackForm } from './attackForm';
 import { CreatureSaveSection } from './creatureSaveSection';
@@ -17,8 +16,17 @@ import { PropertiesListsForm } from './propertiesListsForm';
 import { SensesForm } from './sensesForm';
 import s from './StatblockGenerator.module.scss';
 import { TypeForm } from './typeForm';
+import { toast } from 'react-toastify';
 
-import { SINGLE_CREATURE_ID, generatedCreatureActions } from 'entities/generatedCreature/model';
+import {
+  GeneratedCreatureStore,
+  SINGLE_CREATURE_ID,
+  generatedCreatureActions,
+  generatedCreatureSelectors,
+} from 'entities/generatedCreature/model';
+import { useDispatch, useSelector } from 'react-redux';
+import { useAddCreatureMutation } from '../api/statblockGenerator.api';
+
 
 const requestBody: GetCreaturesRequest = {
   start: 0,
@@ -52,8 +60,13 @@ const requestBody: GetCreaturesRequest = {
 };
 
 export const StatblockGenerator = () => {
+  const [addCreature, { isLoading, isSuccess, isError, error }] = useAddCreatureMutation();
   const { data: creatures } = useGetCreaturesQuery(requestBody);
   const [trigger, { data: fullCreatureData }] = useLazyGetCreatureByNameQuery();
+
+  const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
+    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
+  );
 
   const presetOptions = creatures?.map((creature) => ({
     label: creature.name.rus, // То, что будет отображаться в списке
@@ -65,6 +78,25 @@ export const StatblockGenerator = () => {
     setSelectedPreset(text);
   };
 
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success('Существо успешно сохранено!');
+    }
+    if (isError) {
+      toast.error('Не удалось сохранить существо 😢');
+      console.error('Ошибка:', error);
+    }
+  }, [isSuccess, isError, error]);
+
+  const onSave = () => {
+    if (!generatedCreature) {
+      toast.warning('Нет существа для сохранения');
+      return;
+    }
+
+    addCreature(generatedCreature); // без unwrap
+  };
+  
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -255,7 +287,7 @@ export const StatblockGenerator = () => {
           onTextChange={handleTextChange}
           onUsePreset={handleUsePreset}
           onTriggerPreset={trigger}
-          // Другие пропсы...
+          onSave={onSave}
         />
         {/* <ActualStatblock  />  */}
         <TypeForm language='ru' />

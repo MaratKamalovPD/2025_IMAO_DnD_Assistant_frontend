@@ -10,7 +10,6 @@ import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { FormElement } from 'pages/statblockGenerator/ui/typeForm/formElement';
 import React, { useEffect, useState } from 'react';
 import { capitalizeFirstLetter, lowercaseFirstLetter } from 'shared/lib';
-//import { RootState } from 'app/store';
 
 import {
   GeneratedCreatureStore,
