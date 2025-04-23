@@ -145,16 +145,30 @@ export const useTokenator = () => {
 
   useEffect(() => {
     (async () => {
-      const borderResp = await fetch('/img/token/token-border.webp');
-      const borderBlob = await borderResp.blob();
-      setBorder(await getBase64(borderBlob));
-
-      const bgResp = await fetch('/img/token/token-bg.webp');
-      const bgBlob = await bgResp.blob();
-      setBackground(await getBase64(bgBlob));
+      try {
+        const borderResp = await fetch('/img/token/token-border.webp');
+        const borderBlob = await borderResp.blob();
+  
+        if (borderBlob.type.startsWith('image/')) {
+          setBorder(await getBase64(borderBlob));
+        } else {
+          console.warn('Border blob is not an image:', borderBlob.type);
+        }
+  
+        const bgResp = await fetch('/img/token/token-bg.webp');
+        const bgBlob = await bgResp.blob();
+  
+        if (bgBlob.type.startsWith('image/')) {
+          setBackground(await getBase64(bgBlob));
+        } else {
+          console.warn('Background blob is not an image:', bgBlob.type);
+        }
+      } catch (err) {
+        console.error('Ошибка при загрузке фона или рамки:', err);
+      }
     })();
   }, []);
-
+  
   const reset = () => {
     setFile(undefined);
     resetScale();
