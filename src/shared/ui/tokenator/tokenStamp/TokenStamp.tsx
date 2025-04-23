@@ -142,7 +142,7 @@ export const TokenStamp: React.FC<Props> = ({
   const saveImageToRedux = useDebouncedCallback(async () => {
     if (!file) return;
     try {
-      const blob = await exportImage('png');
+      const blob = await exportImage('webp');
       const base64 = await blobToBase64(blob);
       dispatch(
         generatedCreatureActions.setCreatureImage({
