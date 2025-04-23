@@ -34,7 +34,8 @@ export const TokenStamp: React.FC<Props> = ({
   reflectImage,
   centerImage,
   processFile,
-  SVG_SIZE,
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
   scaleConfig,
   exportImage,
 }) => {
@@ -44,12 +45,18 @@ export const TokenStamp: React.FC<Props> = ({
   const [offsetPos, setOffsetPos] = useState({ x: 0, y: 0 });
   const [bgReady, setBgReady] = useState(false);
 
-  const [imageSize, setImageSize] = useState({ width: SVG_SIZE, height: SVG_SIZE });
+  const [imageSize, setImageSize] = useState({ width: CANVAS_WIDTH, height: CANVAS_HEIGHT });
   const dispatch = useDispatch();
 
-  const size = useMemo(() => SVG_SIZE * scale, [scale, SVG_SIZE]);
-  const delta = useMemo(() => SVG_SIZE / imageSize.width, [SVG_SIZE, imageSize.width]);
-  const moveCompensate = useMemo(() => delta * scale, [delta, scale]);
+  const sizeX = useMemo(() => CANVAS_WIDTH * scale, [scale, CANVAS_WIDTH]);
+  const sizeY = useMemo(() => CANVAS_HEIGHT * scale, [scale, CANVAS_HEIGHT]);
+
+  const deltaX = useMemo(() => CANVAS_WIDTH / imageSize.width, [CANVAS_WIDTH, imageSize.width]);
+  const deltaY = useMemo(() => CANVAS_HEIGHT / imageSize.height, [CANVAS_HEIGHT, imageSize.height]);
+
+  const moveCompensateX = useMemo(() => deltaX * scale, [deltaX, scale]);
+  const moveCompensateY = useMemo(() => deltaY * scale, [deltaY, scale]);
+
 
   useGesture(
     {
@@ -58,25 +65,33 @@ export const TokenStamp: React.FC<Props> = ({
         setIsDragging(Boolean(dragging));
         if (!dragging) return;
         setOffsetPos((prev) => ({
-          x: prev.x + dx * moveCompensate,
-          y: prev.y + dy * moveCompensate,
+          x: prev.x + dx * moveCompensateX,
+          y: prev.y + dy * moveCompensateY,
         }));
       },
+  
       onWheel: ({ direction: [, dir], ctrlKey, metaKey, wheeling, velocity }) => {
         if (!wheeling || !file) return;
         const isApple = navigator.platform.includes('Mac');
         if ((isApple && !metaKey) || (!isApple && !ctrlKey)) return;
-
+  
         const safeVelocity = typeof velocity === 'number' ? velocity : velocity?.[1] || 1;
-        const next = scale + (scaleConfig.step / delta) * safeVelocity * dir;
-        setScale(next);
+  
+        // Можно использовать среднее масштабирование или только по ширине
+        const step = (scaleConfig.step / ((deltaX + deltaY) / 2)) * safeVelocity * dir;
+        setScale(scale + step);
+
       },
+  
       onPinch: ({ direction: [dir], pinching, event, velocity }) => {
         event.preventDefault();
         if (!pinching || !file) return;
+  
         const safeVelocity = typeof velocity === 'number' ? velocity : velocity?.[1] || 1;
-        const next = scale + (scaleConfig.step / delta) * safeVelocity * dir;
-        setScale(next);
+  
+        const step = (scaleConfig.step / ((deltaX + deltaY) / 2)) * safeVelocity * dir;
+        setScale(scale + step);
+
       },
     },
     {
@@ -84,6 +99,7 @@ export const TokenStamp: React.FC<Props> = ({
       eventOptions: { passive: false },
     }
   );
+  
 
   useEffect(() => {
     if (imageRef.current) {
@@ -94,14 +110,12 @@ export const TokenStamp: React.FC<Props> = ({
 
   useEffect(() => {
     if (file && centerImage) {
-      const sideWidth = size;
       setOffsetPos({
-        x: (SVG_SIZE - sideWidth) / 2,
-        y: (SVG_SIZE - sideWidth) / 2,
+        x: (CANVAS_WIDTH - sizeX) / 2,
+        y: (CANVAS_HEIGHT - sizeY) / 2,
       });
     }
-  }, [file, centerImage, size, SVG_SIZE]);
-
+  }, [file, centerImage, sizeX, sizeY, CANVAS_WIDTH, CANVAS_HEIGHT]);
 
   // загрузка фонового изображения
   useEffect(() => {
@@ -114,11 +128,15 @@ export const TokenStamp: React.FC<Props> = ({
 
 
   useEffect(() => {
-    const oldSize = SVG_SIZE * (scale - scaleConfig.step);
-    const newSize = SVG_SIZE * scale;
+    const oldSizeX = CANVAS_WIDTH * (scale - scaleConfig.step);
+    const newSizeX = CANVAS_WIDTH * scale;
+
+    const oldSizeY = CANVAS_HEIGHT * (scale - scaleConfig.step);
+    const newSizeY = CANVAS_HEIGHT * scale;
+
     setOffsetPos((prev) => ({
-      x: prev.x - (newSize - oldSize) / 2,
-      y: prev.y - (newSize - oldSize) / 2,
+      x: prev.x - (newSizeX - oldSizeX) / 2,
+      y: prev.y - (newSizeY - oldSizeY) / 2,
     }));
   }, [scale]);
 
@@ -160,15 +178,15 @@ export const TokenStamp: React.FC<Props> = ({
         ref={tokenRef}
         className={clsx(s.container, file && s.draggable, isDragging && s.dragging)}
         xmlns="http://www.w3.org/2000/svg"
-        viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
+        viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`}
       >
         <g ref={containerRef}>
         {bgReady && background && (
-          <foreignObject width={SVG_SIZE} height={SVG_SIZE}>
+          <foreignObject width={CANVAS_WIDTH} height={CANVAS_HEIGHT}>
             <img
               src={background}
-              width={SVG_SIZE}
-              height={SVG_SIZE}
+              width={CANVAS_WIDTH}
+              height={CANVAS_HEIGHT}
               alt=""
               style={{ display: 'block' }}
               onError={(e) => {
@@ -180,7 +198,7 @@ export const TokenStamp: React.FC<Props> = ({
         )}
 
           {!file && (
-            <foreignObject width={SVG_SIZE} height={SVG_SIZE} x={0} y={0} className={s.dropText}>
+            <foreignObject width={CANVAS_WIDTH} height={CANVAS_HEIGHT} x={0} y={0} className={s.dropText}>
               <span>Перетащите ваше изображение сюда</span>
             </foreignObject>
           )}
@@ -189,8 +207,8 @@ export const TokenStamp: React.FC<Props> = ({
               ref={imageRef as React.Ref<SVGSVGElement>}
               x={offsetPos.x}
               y={offsetPos.y}
-              width={size}
-              height={size}
+              width={sizeX}
+              height={sizeY}
             >
               <image
                 width="100%"
@@ -202,7 +220,7 @@ export const TokenStamp: React.FC<Props> = ({
             </svg>
           )}
         </g>
-        {border && <image href={border} width={SVG_SIZE} height={SVG_SIZE} />}
+        {border && <image href={border} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />}
       </svg>
     </div>
   );
