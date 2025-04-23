@@ -177,21 +177,16 @@ export const TokenStamp: React.FC<Props> = ({
             </foreignObject>
           )}
           {file && (
-            <svg
-              ref={imageRef as React.Ref<SVGSVGElement>}
-              x={offsetPos.x}
-              y={offsetPos.y}
-              width={sizeX}
-              height={sizeY}
-            >
-              <image
-                width="100%"
-                height="100%"
-                x={reflectImage ? '-100%' : '0'}
-                href={file}
-                transform={reflectImage ? 'scale(-1, 1)' : 'scale(1, 1)'}
-              />
-            </svg>
+            <image
+            ref={imageRef}
+            x={offsetPos.x}
+            y={offsetPos.y}
+            width={sizeX}
+            height={sizeY}
+            href={file}
+            transform={reflectImage ? 'scale(-1, 1)' : undefined}
+          />
+          
           )}
         </g>
   
