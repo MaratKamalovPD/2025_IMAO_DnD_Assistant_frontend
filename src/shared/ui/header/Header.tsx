@@ -7,12 +7,13 @@ import logo from 'shared/assets/images/logo.png';
 import s from './Header.module.scss';
 
 type HeaderProps = {
+  encounterId: number | null;
   isAuth: boolean;
   user?: UserData;
   logout?: () => Promise<void>;
 };
 
-export const Header: React.FC<HeaderProps> = ({ isAuth, user, logout }) => {
+export const Header: React.FC<HeaderProps> = ({ encounterId, isAuth, user, logout }) => {
   const location = useLocation();
   const [visible, setVisible] = useState(false);
 
@@ -57,7 +58,7 @@ export const Header: React.FC<HeaderProps> = ({ isAuth, user, logout }) => {
           </div>
         </div>
         <div className={s.rightSection}>
-          <Link to='/encounter_tracker'>
+          <Link to={encounterId ? `/encounter_tracker/${encounterId}` : '/encounter_tracker'}>
             <button data-variant='accent'>Трекер</button>
           </Link>
           {isAuth ? (
@@ -76,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({ isAuth, user, logout }) => {
               {isDropdownOpen && (
                 <div className={s.dropdownContainer}>
                   <div className={s.dropdownContainer__btn}>
-                    <Link to='#'>Список партий</Link>
+                    <Link to='/encounter_list'>Список сражений</Link>
                   </div>
                   <div className={s.dropdownContainer__btn}>
                     <Link to='/characters'>Персонажи</Link>

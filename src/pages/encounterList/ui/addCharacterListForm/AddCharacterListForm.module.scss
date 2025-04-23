@@ -1,0 +1,85 @@
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem 7rem;
+  overflow-y: auto;
+
+  .lssContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+    text-align: center;
+    padding: 0.7rem;
+    font-size: 1.1rem;
+    color: var(--accent-btn-color);
+  }
+
+  .inputContainer {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+
+    .inputList {
+      display: block;
+      border-radius: 10px;
+      border-width: 2px;
+      height: 30px;
+    }
+
+    .inputLabel {
+      margin-bottom: 5px;
+      position: relative;
+      display: block;
+
+      .buttonAdd {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      input[type='file'] {
+        position: absolute;
+        z-index: -1;
+        opacity: 0;
+        display: block;
+        width: 0;
+        height: 0;
+      }
+    }
+
+    .fileNamePreview {
+      margin-top: 5px;
+    }
+  }
+
+  .errorLabel {
+    color: red;
+    margin-bottom: 15px;
+  }
+
+  .successLabel {
+    color: green;
+    margin-bottom: 15px;
+  }
+
+  .previewContainer {
+    .preview {
+      background-color: var(--secondary-bg-color);
+      padding: 10px;
+      border-radius: 4px;
+      max-height: 300px;
+      overflow: auto;
+      margin-bottom: 2rem;
+    }
+  }
+}
+
+.marginTop5Rem {
+  margin-top: 5rem;
+}

@@ -42,7 +42,7 @@ export type Creature = {
   attacksLLM?: AttackLLM[];
 };
 
-const creatureAdapter = createEntityAdapter<Creature>({
+export const creatureAdapter = createEntityAdapter<Creature>({
   sortComparer: (a, b) => a.initiative - b.initiative,
 });
 
@@ -50,6 +50,10 @@ export const creatureSlice = createSlice({
   name: 'creature',
   initialState: creatureAdapter.getInitialState(),
   reducers: {
+    setState: (state, action: PayloadAction<EntityState<Creature, string>>) => {
+      state.ids = action.payload.ids;
+      state.entities = action.payload.entities;
+    },
     addCreature: (state, action: PayloadAction<Creature>) => {
       const count = Object.values(state.entities).reduce(
         (akk, value) => (value._id == action.payload._id ? akk + 1 : akk),
