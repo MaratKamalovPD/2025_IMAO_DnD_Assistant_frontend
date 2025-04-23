@@ -17,6 +17,8 @@ interface MonsterSelectProps {
 }
 
 export const MonsterSelect: React.FC<MonsterSelectProps> = ({ value, onChange }) => {
+  void value
+  
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearch = useDebounce(searchValue, DEBOUNCE_TIME);
 

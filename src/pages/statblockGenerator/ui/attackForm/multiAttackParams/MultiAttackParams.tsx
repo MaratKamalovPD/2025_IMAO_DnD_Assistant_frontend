@@ -8,7 +8,6 @@ export const MultiAttackParams: React.FC<MultiAttackParamsProps> = ({
   data,
   setData,
   existingNames,
-  isEditing,
   originalName,
 }) => {
   const handleChangeType = (index: number, value: string) => {

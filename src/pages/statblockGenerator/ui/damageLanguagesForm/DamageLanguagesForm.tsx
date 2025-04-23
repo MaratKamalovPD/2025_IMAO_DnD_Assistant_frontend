@@ -114,7 +114,6 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
           selectedDamageType;
 
     const displayLabel = capitalizeFirstLetter(rawLabel);
-    const internalLabel = DAMAGE_INTERNAL_MAP[displayLabel] || rawLabel.toLowerCase();
 
     const all = {
       vulnerabilities: [...damageVulnerabilities],
