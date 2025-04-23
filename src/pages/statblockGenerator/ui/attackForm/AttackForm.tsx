@@ -14,7 +14,7 @@ import {
 import s from './AttackForm.module.scss';
 import { mapLLMToForm } from 'pages/statblockGenerator/lib';
 import { AttackLLM, DamageLLM } from 'entities/creature/model';
-import { AttackList } from './attackList ';
+import { AttackList } from './attackList';
 import { AdditionalEffectsSection } from '../additionalEffectsSection/AdditionalEffectsSection';
 
 export const AttackForm = () => {
