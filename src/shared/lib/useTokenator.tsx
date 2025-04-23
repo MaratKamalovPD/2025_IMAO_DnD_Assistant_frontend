@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { Canvg } from 'canvg';
 
 const DEFAULT_SCALE = 1.1;
 
@@ -91,53 +92,53 @@ export const useTokenator = () => {
   const load = async (format: 'webp' | 'png' = 'png') => {
     const svg = tokenRef.current;
     if (!svg) throw new Error('no token provided');
-
-    const svgText = new XMLSerializer().serializeToString(svg);
+  
     const canvas = document.createElement('canvas');
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
-
-    const context = canvas.getContext('2d');
-    const img = new Image();
-    img.src = `data:image/svg+xml;base64,${btoa(svgText)}`;
-
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => {
-        context?.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        const a = document.createElement('a');
-        a.href = canvas.toDataURL(`image/${format}`, 1);
-        a.download = `token.${format}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        resolve();
-      };
-      img.onerror = reject;
-    });
+  
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas context not found');
+  
+    const svgText = new XMLSerializer().serializeToString(svg);
+    const canvgInstance = await Canvg.fromString(ctx, svgText);
+  
+    await canvgInstance.render();
+  
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL(`image/${format}`, 1);
+    a.download = `token.${format}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
+  
 
-  const exportImage = async (format: 'webp' | 'png' = 'png'): Promise<Blob> => {
+  const exportImage = async (format: 'webp' | 'png' = 'webp'): Promise<Blob> => {
     const svg = tokenRef.current;
     if (!svg) throw new Error('no token provided');
-
-    const svgText = new XMLSerializer().serializeToString(svg);
+  
     const canvas = document.createElement('canvas');
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
-
+  
     const ctx = canvas.getContext('2d');
-    const img = new Image();
-    img.src = `data:image/svg+xml;base64,${btoa(svgText)}`;
-
+    if (!ctx) throw new Error('Canvas context not found');
+  
+    const svgText = new XMLSerializer().serializeToString(svg);
+    const canvgInstance = await Canvg.fromString(ctx, svgText);
+  
+    await canvgInstance.render();
+  
     return new Promise<Blob>((resolve, reject) => {
-      img.onload = () => {
-        ctx?.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        canvas.toBlob((blob) => {
+      canvas.toBlob(
+        (blob) => {
           if (blob) resolve(blob);
           else reject(new Error('Не удалось экспортировать изображение.'));
-        }, `image/${format}`, 1);
-      };
-      img.onerror = reject;
+        },
+        `image/${format}`,
+        1
+      );
     });
   };
 
