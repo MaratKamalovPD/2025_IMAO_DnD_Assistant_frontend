@@ -56,7 +56,7 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
   const handleAttack = useCallback((index: number, attack: AttackLLM) => {
     setCurrentAttackIndex(index);
     setCurrentAttackData(attack);
-    dispatch(encounterActions.enableAttackHandleMode());
+    dispatch(encounterActions.enableAttackHandleMode(attack));
   }, []);
 
   useEffect(() => {
@@ -208,13 +208,13 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
                 );
               })}
 
-              <button
+              {/* <button
                 className={s.creaturePanel__actionsList__element}
                 onClick={() => toggleModal(true, ModalType.Damage)}
                 data-variant='primary'
               >
                 Нанести урон
-              </button>
+              </button> */}
             </div>
           </div>
           <div className={s.creaturePanel__actionsContainer}>

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { AttackLLM } from 'entities/creature/model';
 import { UUID } from 'shared/lib';
 import { CellsCoordinates, Participant } from './types';
 
@@ -11,6 +12,7 @@ export type EncounterState = {
   participants: Participant[];
   selectedCreatureId: string | null;
   attackedCreatureId: string | null;
+  currentAttackLLM: AttackLLM | null;
   statblockSize: { width: number; height: number };
   statblockCoords: { x: number; y: number };
   statblockIsMinimized: boolean;
@@ -25,6 +27,7 @@ const initialState: EncounterState = {
   participants: [],
   selectedCreatureId: null,
   attackedCreatureId: null,
+  currentAttackLLM: null,
   statblockSize: { width: 850, height: 600 },
   statblockCoords: { x: 300, y: 0 },
   statblockIsMinimized: false,
@@ -39,11 +42,13 @@ const encounterSlice = createSlice({
       state.hasStarted = true;
       state.participants.sort((a, b) => b.initiative - a.initiative);
     },
-    enableAttackHandleMode: (state) => {
+    enableAttackHandleMode: (state, action: PayloadAction<AttackLLM>) => {
       state.attackHandleModeActive = true;
+      state.currentAttackLLM = action.payload;
     },
     disableAttackHandleMode: (state) => {
       state.attackHandleModeActive = false;
+      state.currentAttackLLM = null;
     },
     nextTurn: (state) => {
       if (state.currentTurnIndex >= state.participants.length - 1) {
