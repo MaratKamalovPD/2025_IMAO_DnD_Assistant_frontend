@@ -23,6 +23,7 @@ const App = () => {
           pauseOnHover
           theme='dark'
           transition={Bounce}
+          style={{ marginTop: '75px' }}
         />
         <Footer />
       </MainProviders>
