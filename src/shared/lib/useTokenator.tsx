@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
 const DEFAULT_SCALE = 1.1;
@@ -16,25 +16,19 @@ const MAX_DIMENSION = 8064;
 
 const useClamp = (value: number, min: number, max: number): [number, (v: number) => void] => {
   const [clamped, setClamped] = useState(() => Math.min(Math.max(value, min), max));
-
   const update = (v: number) => {
     setClamped(Math.min(Math.max(v, min), max));
   };
-
   return [clamped, update];
 };
 
 const getBase64 = (blob?: Blob): Promise<string | undefined> =>
   new Promise((resolve, reject) => {
     if (!blob) return resolve(undefined);
-
     const reader = new FileReader();
     reader.onload = () => {
-      if (typeof reader.result !== 'string') {
-        reject();
-      } else {
-        resolve(reader.result);
-      }
+      if (typeof reader.result !== 'string') reject();
+      else resolve(reader.result);
     };
     reader.onerror = reject;
     reader.readAsDataURL(blob);
@@ -63,13 +57,10 @@ export const useTokenator = () => {
     await new Promise<void>((resolve, reject) => {
       img.onload = () => {
         const fileSize = fileItem.size / 1024 ** 2;
-        if (fileSize >= MAX_SIZE) {
-          reject(new Error('Размер файла больше допустимого.'));
-        } else if (img.height > MAX_DIMENSION || img.width > MAX_DIMENSION) {
+        if (fileSize >= MAX_SIZE) reject(new Error('Размер файла больше допустимого.'));
+        else if (img.height > MAX_DIMENSION || img.width > MAX_DIMENSION)
           reject(new Error('Ширина или высота файла выше допустимого.'));
-        } else {
-          resolve();
-        }
+        else resolve();
       };
       img.onerror = reject;
     });
@@ -127,6 +118,31 @@ export const useTokenator = () => {
     });
   };
 
+  const exportImage = async (format: 'webp' | 'png' = 'png'): Promise<Blob> => {
+    const svg = tokenRef.current;
+    if (!svg) throw new Error('no token provided');
+
+    const svgText = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement('canvas');
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.src = `data:image/svg+xml;base64,${btoa(svgText)}`;
+
+    return new Promise<Blob>((resolve, reject) => {
+      img.onload = () => {
+        ctx?.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Не удалось экспортировать изображение.'));
+        }, `image/${format}`, 1);
+      };
+      img.onerror = reject;
+    });
+  };
+
   useEffect(() => {
     (async () => {
       const borderResp = await fetch('/img/token/token-border.webp');
@@ -150,7 +166,7 @@ export const useTokenator = () => {
     background,
     MAX_SIZE,
     MAX_DIMENSION,
-    SVG_SIZE: CANVAS_WIDTH, // use as base size in components
+    SVG_SIZE: CANVAS_WIDTH,
     scaleConfig,
     scale,
     setScale,
@@ -163,6 +179,7 @@ export const useTokenator = () => {
     processFile,
     load,
     open,
+    exportImage,
     reset,
   };
 };

@@ -124,7 +124,7 @@ type AddAttackPayload = {
     environment: [],
     attacksLLM: [],
     useCustomSpeed: false,
-
+    imageBlob: undefined,
   };
   
   
@@ -605,7 +605,17 @@ type AddAttackPayload = {
         if (creature && creature.attacksLLM) {
           creature.attacksLLM = creature.attacksLLM.filter((_, i) => i !== action.payload.index);
         }
-      }
+      },
+
+      setCreatureImage: (
+        state,
+        action: PayloadAction<{ id: string; imageBlob: Blob }>
+      ) => {
+        generatedCreatureAdapter.updateOne(state, {
+          id: action.payload.id,
+          changes: { imageBlob: action.payload.imageBlob },
+        });
+      },
       
     },
   });

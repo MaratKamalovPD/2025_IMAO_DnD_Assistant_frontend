@@ -54,6 +54,7 @@ export type CreatureFullData = {
   attacksLLM?: AttackLLM[];
   useCustomSpeed?: boolean;
   customSpeed?: string;
+  imageBlob?: Blob;
 };
 
 export type Reaction = {

@@ -5,6 +5,14 @@ import { useDropzone } from 'react-dropzone';
 import clsx from 'clsx';
 import s from './TokenStamp.module.scss';
 import { useTokenator } from 'shared/lib';
+import { useDebouncedCallback } from 'use-debounce';
+import {
+  GeneratedCreatureStore,
+  SINGLE_CREATURE_ID,
+  generatedCreatureActions,
+  generatedCreatureSelectors,
+} from 'entities/generatedCreature/model';
+import { useDispatch, useSelector } from 'react-redux';
 
 type Props = ReturnType<typeof useTokenator>;
 
@@ -20,6 +28,7 @@ export const TokenStamp: React.FC<Props> = ({
   processFile,
   SVG_SIZE,
   scaleConfig,
+  exportImage,
 }) => {
   const containerRef = useRef<SVGGElement>(null);
   const imageRef = useRef<SVGImageElement>(null);
@@ -103,6 +112,22 @@ export const TokenStamp: React.FC<Props> = ({
     noClick: !!file,
   });
 
+  const dispatch = useDispatch();
+
+  const saveImageToRedux = useDebouncedCallback(async () => {
+    if (!file) return;
+    try {
+      const blob = await exportImage('png');
+      dispatch(generatedCreatureActions.setCreatureImage({ id: SINGLE_CREATURE_ID, imageBlob: blob }));
+    } catch (e) {
+      console.error('Failed to export image:', e);
+    }
+  }, 500);
+
+  useEffect(() => {
+    saveImageToRedux();
+  }, [scale, file, reflectImage, centerImage]);
+  
   return (
     <div {...getRootProps()} className={s.wrapper}>
       <input {...getInputProps()} hidden />
