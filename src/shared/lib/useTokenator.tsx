@@ -1,6 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Canvg } from 'canvg';
+import tokenBg from 'shared/assets/images/tokenator/token-bg-1.webp'; // token-bg-2.webp
+import tokenBorder from 'shared/assets/images/tokenator/token-border.webp';
+import { getBase64FromBlob } from './base64Funcs';
 
 const DEFAULT_SCALE = 1.1;
 
@@ -37,6 +40,8 @@ const getBase64 = (blob?: Blob): Promise<string | undefined> =>
 
 export const useTokenator = () => {
   const [file, setFile] = useState<string>();
+  const [border, setBorder] = useState<string>();
+  const [background, setBackground] = useState<string>();
   const [reflectImage, setReflectImage] = useState(false);
   const [centerImage, setCenterImage] = useState(false);
 
@@ -142,6 +147,18 @@ export const useTokenator = () => {
     });
   };
 
+  useEffect(() => {
+    (async () => {
+      const [bgBase64, borderBase64] = await Promise.all([
+        getBase64FromBlob(tokenBg),
+        getBase64FromBlob(tokenBorder),
+      ]);
+  
+      setBackground(bgBase64);
+      setBorder(borderBase64);
+    })();
+  }, []);
+
   const reset = () => {
     setFile(undefined);
     resetScale();
@@ -149,6 +166,8 @@ export const useTokenator = () => {
 
   return {
     tokenRef,
+    border,
+    background,
     MAX_SIZE,
     MAX_DIMENSION,
     CANVAS_WIDTH,

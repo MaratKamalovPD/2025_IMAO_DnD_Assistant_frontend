@@ -3,7 +3,7 @@ import { useGesture } from '@use-gesture/react';
 import { useDropzone } from 'react-dropzone';
 import clsx from 'clsx';
 import s from './TokenStamp.module.scss';
-import { useTokenator } from 'shared/lib';
+import { blobToBase64, useTokenator } from 'shared/lib';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   SINGLE_CREATURE_ID,
@@ -13,19 +13,11 @@ import { useDispatch } from 'react-redux';
 
 type Props = ReturnType<typeof useTokenator>;
 
-const blobToBase64 = (blob: Blob): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result === 'string') resolve(reader.result);
-      else reject('Cannot convert blob to base64');
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
 
 export const TokenStamp: React.FC<Props> = ({
   tokenRef,
+  border,
+  background,
   scale,
   setScale,
   file,
@@ -170,6 +162,7 @@ export const TokenStamp: React.FC<Props> = ({
         viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`}
       >
         <g ref={containerRef}>
+          {background && <image href={background} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />}
           {!file && (
             <foreignObject width={CANVAS_WIDTH} height={CANVAS_HEIGHT} x={0} y={0} className={s.dropText}>
               <span>Перетащите ваше изображение сюда</span>
@@ -188,7 +181,7 @@ export const TokenStamp: React.FC<Props> = ({
           
           )}
         </g>
-  
+          {/* {border && <image href={border} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />} */}
       </svg>
     </div>
   );

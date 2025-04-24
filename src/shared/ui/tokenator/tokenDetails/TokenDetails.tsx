@@ -13,6 +13,7 @@ import {
   Icon28MagnifierMinus,
   Icon28DownloadOutline,
 } from '@vkontakte/icons';
+import { IconButtonWithTooltip } from './iconButtonWithTooltip';
 
 type Props = ReturnType<typeof useTokenator>;
 
@@ -110,29 +111,20 @@ export const TokenDetails: React.FC<Props> = ({
           </Tippy>
         </div>
 
-        <Tippy content="Отразить изображение">
-          <button
-            type="button"
-            data-variant="secondary"
-            disabled={!file}
-            onClick={() => setReflectImage(!reflectImage)}
-            aria-label="Отразить изображение"
-          >
-            <Icon28FlipHorizontalOutline />
-          </button>
-        </Tippy>      
+        <IconButtonWithTooltip
+          title="Отразить изображение"
+          icon={<Icon28FlipHorizontalOutline />}
+          onClick={() => setReflectImage(!reflectImage)}
+          disabled={!file}
+        />      
         
-        <Tippy content="Центрировать изображение">
-          <button
-            type="button"
-            data-variant="secondary"
-            disabled={!file}
-            onClick={() => setCenterImage(!centerImage)}
-            aria-label="Центрировать изображение"
-          >
-            <Icon28TargetOutline />
-          </button>
-        </Tippy>
+        <IconButtonWithTooltip
+          title="Центрировать изображение"
+          icon={<Icon28TargetOutline />}
+          onClick={() => setCenterImage(!centerImage)}
+          disabled={!file}
+        />
+
       </div>
 
       <div className={s.details__actionsRow}>
