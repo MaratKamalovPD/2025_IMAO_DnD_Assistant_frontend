@@ -74,43 +74,111 @@
       }
     }
   
-    &__actions {
+    .details__controls__sliderWrapper {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
-  
-      @media (min-width: 768px) {
-        flex-direction: row;
-      }
-  
-      &__downloadGroup {
+      align-items: center;
+      gap: 12px; // расстояние между кнопками и слайдером
+    
+      button {
         display: flex;
-        gap: 8px;
-        width: 100%;
-  
-        button {
-          flex: 1;
+        align-items: center;
+        justify-content: center;
+        padding: 6px;
+        border: none;
+        cursor: pointer;
+    
+        &[disabled] {
+          opacity: 0.5;
+          cursor: default;
         }
-  
-        button[data-variant='primary'] {
-          font-weight: bold;
-          background-color: var(--primary-btn-color);
-          color: white;
-  
+    
+        svg {
+          width: 28px;
+          height: 28px;
+        }
+      }
+    
+      .details__controls__slider {
+        flex: 1; 
+        min-width: 150px;
+      }
+    }
+
+    .details__actionsRow {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .downloadDropdown {
+      position: relative;
+    
+      button {
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    
+        svg {
+          width: 28px;
+          height: 28px;
+        }
+      }
+    
+      &__menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 6px;
+        background: #f5f5f5;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        z-index: 10;
+    
+        button {
+          padding: 8px 16px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          text-align: left;
+          width: 100%;
+          font-size: 14px;
+    
           &:hover {
-            background-color: var(--primary-btn-hover-color);
+            background-color: #eaeaea;
+          }
+    
+          &:disabled {
+            opacity: 0.6;
+            cursor: default;
           }
         }
       }
-  
-      button[data-variant='secondary'] {
-        background-color: var(--secondary-bg-color);
-        color: white;
-  
-        &:hover {
-          background-color: var(--secondary-hover-bg-color);
-        }
-      }
     }
-  }
+
+    .sliderBlock {
+      position: relative;
+      flex: 1;
+    }
+    
+    .sliderValue {
+      position: absolute;
+      top: -40px;
+      background-color: #222;
+      color: #fff;
+      padding: 4px 10px;
+      font-size: 14px;
+      border-radius: 8px;
+      white-space: nowrap;
+      z-index: 1;
+      pointer-events: none;
+
+    }
+    
+    
+    
+}
   

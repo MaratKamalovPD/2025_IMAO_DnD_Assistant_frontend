@@ -1,9 +1,18 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
 import { toast } from 'react-toastify';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import s from './TokenDetails.module.scss';
 import { useTokenator } from 'shared/lib';
+import {
+  Icon28FlipHorizontalOutline,
+  Icon28TargetOutline,
+  Icon28MagnifierPlus,
+  Icon28MagnifierMinus,
+  Icon28DownloadOutline,
+} from '@vkontakte/icons';
 
 type Props = ReturnType<typeof useTokenator>;
 
@@ -20,11 +29,25 @@ export const TokenDetails: React.FC<Props> = ({
   scaleConfig,
   MAX_SIZE,
   MAX_DIMENSION,
-  }) => {
-  
-  const download = useCallback((format: 'webp' | 'png') => {
-    load(format).catch((err) => toast.error(err.message));
-  }, [load]);
+}) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false); // в компоненте
+
+  const download = useCallback(
+    (format: 'webp' | 'png') => {
+      load(format).catch((err) => toast.error(err.message));
+    },
+    [load]
+  );
+
+  const handleZoomIn = () => {
+    const newScale = Math.min(scale + scaleConfig.step, scaleConfig.max);
+    setScale(newScale);
+  };
+
+  const handleZoomOut = () => {
+    const newScale = Math.max(scale - scaleConfig.step, scaleConfig.min);
+    setScale(newScale);
+  };
 
   return (
     <div className={s.details}>
@@ -38,58 +61,115 @@ export const TokenDetails: React.FC<Props> = ({
       </div>
 
       <div className={s.details__controls}>
-        <div className={s.details__controls__slider}>
-          <Slider
-            value={scale}
-            onChange={(value) => setScale(typeof value === 'number' ? value : value[0])}
-            min={scaleConfig.min}
-            max={scaleConfig.max}
-            step={scaleConfig.step}
-          />
+        <div className={s.details__controls__sliderWrapper}>
+          <Tippy content="Уменьшить масштаб">
+            <button
+              type="button"
+              data-variant="secondary"
+              onClick={handleZoomOut}
+              disabled={scale <= scaleConfig.min}
+              aria-label="Уменьшить масштаб"
+            >
+              <Icon28MagnifierMinus />
+            </button>
+          </Tippy>
+
+          <div className={s.sliderBlock}>
+          <div
+            className={s.sliderValue}
+            style={{
+              left: `${((scale - scaleConfig.min) / (scaleConfig.max - scaleConfig.min)) * 100}%`,
+              transform: 'translateX(-50%)',
+            }}
+          >
+            {scale.toFixed(2)}
+          </div>
+            <div className={s.details__controls__slider}>
+              <Slider
+                value={scale}
+                onChange={(value) =>
+                  setScale(typeof value === 'number' ? value : value[0])
+                }
+                min={scaleConfig.min}
+                max={scaleConfig.max}
+                step={scaleConfig.step}
+              />
+            </div>
+          </div>
+
+          <Tippy content="Увеличить масштаб">
+            <button
+              type="button"
+              data-variant="secondary"
+              onClick={handleZoomIn}
+              disabled={scale >= scaleConfig.max}
+              aria-label="Увеличить масштаб"
+            >
+              <Icon28MagnifierPlus />
+            </button>
+          </Tippy>
         </div>
 
-        <button
-          type="button"
-          data-variant="secondary"
-          disabled={!file}
-          onClick={() => setReflectImage(!reflectImage)}
-        >
-          Отразить
-        </button>
-
-        <button
-          type="button"
-          data-variant="secondary"
-          disabled={!file}
-          onClick={() => setCenterImage(!centerImage)}
-        >
-          Центрировать
-        </button>
+        <Tippy content="Отразить изображение">
+          <button
+            type="button"
+            data-variant="secondary"
+            disabled={!file}
+            onClick={() => setReflectImage(!reflectImage)}
+            aria-label="Отразить изображение"
+          >
+            <Icon28FlipHorizontalOutline />
+          </button>
+        </Tippy>      
+        
+        <Tippy content="Центрировать изображение">
+          <button
+            type="button"
+            data-variant="secondary"
+            disabled={!file}
+            onClick={() => setCenterImage(!centerImage)}
+            aria-label="Центрировать изображение"
+          >
+            <Icon28TargetOutline />
+          </button>
+        </Tippy>
       </div>
 
-      <div className={s.details__actions}>
+      <div className={s.details__actionsRow}>
         <button type="button" data-variant="secondary" onClick={open}>
           Загрузить картинку
         </button>
 
-        <div className={s.details__actions__downloadGroup}>
-          <button
-            type="button"
-            data-variant="primary"
-            disabled={!file}
-            onClick={() => download('png')}
-          >
-            Скачать PNG
-          </button>
+        <div className={s.downloadDropdown}>
+          <Tippy content="Скачать изображение">
+            <button
+              type="button"
+              data-variant="primary"
+              disabled={!file}
+              onClick={() => setDropdownOpen((prev) => !prev)}
+            >
+              <Icon28DownloadOutline />
+            </button>
+          </Tippy>
 
-          <button
-            type="button"
-            data-variant="primary"
-            disabled={!file}
-            onClick={() => download('webp')}
-          >
-            WEBP
-          </button>
+          {dropdownOpen && (
+            <div className={s.downloadDropdown__menu}>
+              <button
+                type="button"
+                disabled={!file}
+                onClick={() => download('webp')}
+              >
+                WEBP
+              </button>
+              <button
+                type="button"
+                disabled={!file}
+                onClick={() => download('png')}
+              >
+                PNG
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
