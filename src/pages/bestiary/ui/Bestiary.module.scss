@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: row;
   gap: 1rem;
+  container-type: inline-size;
+  container-name: bestiary-container;
 }
 
 .bestiaryContainer {
@@ -9,6 +11,14 @@
 
   &__outlet {
     width: 35%;
+  }
+}
+
+@container bestiary-container (max-width: 1080px) {
+  .bestiaryContainer {
+    &__outlet {
+      display: none;
+    }
   }
 }
 

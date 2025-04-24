@@ -72,7 +72,7 @@ export const CreatureStatblock = () => {
           </div>
         )}
         {creature.feats && (
-          <DescriptionSection sectionTitle={'Подвиги'} elements={creature.feats} />
+          <DescriptionSection sectionTitle={'Способности'} elements={creature.feats} />
         )}
         {creature.actions && (
           <DescriptionSection sectionTitle={'Действия'} elements={creature.actions} />

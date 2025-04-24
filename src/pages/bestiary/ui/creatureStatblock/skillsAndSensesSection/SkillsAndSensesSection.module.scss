@@ -49,3 +49,13 @@
     flex-direction: row;
   }
 }
+
+@container statblock-container (max-width: 750px) {
+  .skillsContainer {
+    &__title {
+      width: 20%;
+      white-space: wrap;
+      margin-right: 1rem;
+    }
+  }
+}

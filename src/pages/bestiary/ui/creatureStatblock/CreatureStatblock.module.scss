@@ -17,6 +17,12 @@ $additional-border-color: #cfcfcf62;
   flex-direction: column;
 }
 
+@container bestiary-container (max-width: 1080px) {
+  .statblock {
+    width: 100%;
+  }
+}
+
 .header {
   padding: 1rem;
   position: sticky;
@@ -66,6 +72,8 @@ $additional-border-color: #cfcfcf62;
   padding: 0 1rem;
   font-size: 15px;
   gap: 1rem;
+  container-type: inline-size;
+  container-name: statblock-container;
 
   > *:not(:first-child) {
     margin-bottom: 0.5rem;
@@ -83,8 +91,10 @@ $additional-border-color: #cfcfcf62;
   background-color: var(--secondary-bg-color);
   border-radius: 8px;
   padding: 0.75rem;
+  gap: 0.5rem;
 
   &__typeContainer {
+    display: flex;
     color: $additional-text-color;
   }
 
@@ -92,6 +102,16 @@ $additional-border-color: #cfcfcf62;
     color: $additional-text-color;
     display: flex;
     flex-direction: row;
+  }
+}
+
+@container statblock-container (max-width: 600px) {
+  .commonContainer {
+    flex-direction: column !important;
+    
+    &__typeContainer {
+      flex-wrap: wrap;
+    }
   }
 }
 
@@ -124,6 +144,21 @@ $additional-border-color: #cfcfcf62;
       height: 280px;
       object-fit: cover;
       object-position: top;
+    }
+  }
+}
+
+@container statblock-container (max-width: 600px) {
+  .mainContainer {
+    &__image {
+      width: 150px;
+      height: 150px;
+      min-width: 150px;
+
+      img {
+        width: 150px;
+        height: 200px;
+      }
     }
   }
 }
