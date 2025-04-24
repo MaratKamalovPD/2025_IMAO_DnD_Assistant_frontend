@@ -69,35 +69,6 @@
         }
       }
   
-      &__slider {
-        flex-grow: 1;
-  
-        input[type='range'] {
-          width: 100%;
-          appearance: none;
-          height: 6px;
-          border-radius: 4px;
-          background-color: var(--border);
-  
-          &::-webkit-slider-thumb {
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            background-color: var(--primary-btn-color);
-            border-radius: 50%;
-            cursor: pointer;
-          }
-  
-          &::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            background-color: var(--primary-btn-color);
-            border-radius: 50%;
-            cursor: pointer;
-          }
-        }
-      }
-  
       button[data-variant] {
         padding: 6px 10px;
         border: none;

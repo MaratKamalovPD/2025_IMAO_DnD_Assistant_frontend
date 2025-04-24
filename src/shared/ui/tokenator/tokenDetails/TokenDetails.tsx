@@ -92,25 +92,36 @@ export const TokenDetails: React.FC<Props> = ({
           />      
 
           <div className={s.sliderBlock}>
-          <div
-            className={s.sliderValue}
-            style={{
-              left: `${((scale - scaleConfig.min) / (scaleConfig.max - scaleConfig.min)) * 100}%`,
-              transform: 'translateX(-50%)',
-            }}
-          >
-            {scale.toFixed(2)}
-          </div>
+            <div
+              className={s.sliderValue}
+              style={{
+                left: `${((scale - scaleConfig.min) / (scaleConfig.max - scaleConfig.min)) * 100}%`,
+                transform: 'translateX(-50%)',
+              }}
+            >
+              {scale.toFixed(2)}
+            </div>
             <div className={s.details__controls__slider}>
-              <Slider
-                value={scale}
-                onChange={(value) =>
-                  setScale(typeof value === 'number' ? value : value[0])
-                }
-                min={scaleConfig.min}
-                max={scaleConfig.max}
-                step={scaleConfig.step}
-              />
+            <Slider
+              value={scale}
+              onChange={(value) =>
+                setScale(typeof value === 'number' ? value : value[0])
+              }
+              min={scaleConfig.min}
+              max={scaleConfig.max}
+              step={scaleConfig.step}
+              trackStyle={{ backgroundColor: '#ff6f61', height: 6 }}
+              railStyle={{ backgroundColor: '#ddd', height: 6 }}
+              handleStyle={{
+                borderColor: '#ff6f61',
+                backgroundColor: '#fff',
+                borderWidth: 2,
+                height: 25,
+                width: 25,
+                marginTop: -9,
+                boxShadow: '0 0 4px rgba(0, 0, 0, 0.2)',
+              }}
+            />
             </div>
           </div>
 
@@ -145,17 +156,14 @@ export const TokenDetails: React.FC<Props> = ({
         </button>
 
         <div className={s.downloadDropdown} ref={dropdownRef}>
-  <Tippy content="Скачать изображение">
-    <button
-      type="button"
-      data-variant="primary"
-      disabled={!file}
-      onClick={() => setDropdownOpen(true)} // только открытие
-    >
-      <Icon28DownloadOutline />
-    </button>
-  </Tippy>
 
+        <IconButtonWithTooltip
+          title="Скачать изображение"
+          icon={<Icon28DownloadOutline />}
+          onClick={() => setDropdownOpen(true)}
+          disabled={!file}
+        />
+  
   {dropdownOpen && (
     <div className={s.downloadDropdown__menu}>
       <button
