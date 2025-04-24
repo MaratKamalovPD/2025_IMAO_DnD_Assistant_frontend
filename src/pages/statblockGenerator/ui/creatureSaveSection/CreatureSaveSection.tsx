@@ -82,13 +82,12 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
         </label>
       </div>
 
-      <div className={s.creatureSaveSection__layout}>
-        <TokenatorWidget />
+      <MagicButton onClick={onSave}>
+        {t.save}
+      </MagicButton>
 
-        {/* Круглая кнопка сохранения */}
-        <MagicButton onClick={onSave}>
-          {t.save}
-        </MagicButton>
+      <div className={s.creatureSaveSection__layout}>
+        <TokenatorWidget /> 
       </div>
 
     </div>

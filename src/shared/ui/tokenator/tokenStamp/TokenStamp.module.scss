@@ -6,6 +6,12 @@
   display: inline-block;
   border: 8px solid var(--token-border-color);
   background-color: var(--primary-bg-color);
+
+  &.circle {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+  }
 }
 
 .container {
@@ -22,6 +28,10 @@
 
   &.dragging {
     cursor: grabbing;
+  }
+
+  &.circle {
+    border-radius: 50%;
   }
 }
 

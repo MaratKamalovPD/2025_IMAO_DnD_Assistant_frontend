@@ -3,7 +3,7 @@ import { useGesture } from '@use-gesture/react';
 import { useDropzone } from 'react-dropzone';
 import clsx from 'clsx';
 import s from './TokenStamp.module.scss';
-import { blobToBase64, useTokenator } from 'shared/lib';
+import { blobToBase64 } from 'shared/lib';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   SINGLE_CREATURE_ID,
@@ -11,41 +11,56 @@ import {
 } from 'entities/generatedCreature/model';
 import { useDispatch } from 'react-redux';
 
-type Props = ReturnType<typeof useTokenator>;
-
+// Обновлённый тип пропсов
+type Props = {
+  shape?: 'rect' | 'circle';
+  file?: string;
+  background?: string;
+  border?: string;
+  reflectImage?: boolean;
+  centerImage?: boolean;
+  processFile: (file: File) => void;
+  tokenRef: React.RefObject<SVGSVGElement | null>;
+  imageRef: React.RefObject<SVGImageElement | null>;
+  scale: number;
+  setScale: (scale: number) => void;
+  offsetPos: { x: number; y: number };
+  setOffsetPos: (pos: { x: number; y: number }) => void;
+  moveCompensateX: number;
+  moveCompensateY: number;
+  CANVAS_WIDTH: number;
+  CANVAS_HEIGHT: number;
+  scaleConfig: { step: number };
+  exportImage: (format?: 'webp' | 'png') => Promise<Blob>;
+};
 
 export const TokenStamp: React.FC<Props> = ({
   tokenRef,
+  imageRef,
   border,
   background,
   scale,
   setScale,
+  offsetPos,
+  setOffsetPos,
+  moveCompensateX,
+  moveCompensateY,
   file,
   reflectImage,
   centerImage,
   processFile,
-  CANVAS_HEIGHT,
   CANVAS_WIDTH,
+  CANVAS_HEIGHT,
   scaleConfig,
   exportImage,
+  shape = 'rect',
 }) => {
   const containerRef = useRef<SVGGElement>(null);
-  const imageRef = useRef<SVGImageElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [offsetPos, setOffsetPos] = useState({ x: 0, y: 0 });
-  
-  const [imageSize, setImageSize] = useState({ width: CANVAS_WIDTH, height: CANVAS_HEIGHT });
   const dispatch = useDispatch();
 
   const sizeX = useMemo(() => CANVAS_WIDTH * scale, [scale, CANVAS_WIDTH]);
   const sizeY = useMemo(() => CANVAS_HEIGHT * scale, [scale, CANVAS_HEIGHT]);
-
-  const deltaX = useMemo(() => CANVAS_WIDTH / imageSize.width, [CANVAS_WIDTH, imageSize.width]);
-  const deltaY = useMemo(() => CANVAS_HEIGHT / imageSize.height, [CANVAS_HEIGHT, imageSize.height]);
-
-  const moveCompensateX = useMemo(() => deltaX * scale, [deltaX, scale]);
-  const moveCompensateY = useMemo(() => deltaY * scale, [deltaY, scale]);
-
 
   useGesture(
     {
@@ -53,34 +68,26 @@ export const TokenStamp: React.FC<Props> = ({
         event.preventDefault();
         setIsDragging(Boolean(dragging));
         if (!dragging) return;
-        setOffsetPos((prev) => ({
-          x: prev.x + dx * moveCompensateX,
-          y: prev.y + dy * moveCompensateY,
-        }));
+        setOffsetPos({
+          x: offsetPos.x + dx * moveCompensateX,
+          y: offsetPos.y + dy * moveCompensateY,
+        });
       },
-  
+      
       onWheel: ({ direction: [, dir], ctrlKey, metaKey, wheeling, velocity }) => {
         if (!wheeling || !file) return;
         const isApple = navigator.platform.includes('Mac');
         if ((isApple && !metaKey) || (!isApple && !ctrlKey)) return;
-  
         const safeVelocity = typeof velocity === 'number' ? velocity : velocity?.[1] || 1;
-  
-        // Можно использовать среднее масштабирование или только по ширине
-        const step = (scaleConfig.step / ((deltaX + deltaY) / 2)) * safeVelocity * dir;
+        const step = (scaleConfig.step / 1) * safeVelocity * dir;
         setScale(scale + step);
-
       },
-  
       onPinch: ({ direction: [dir], pinching, event, velocity }) => {
         event.preventDefault();
         if (!pinching || !file) return;
-  
         const safeVelocity = typeof velocity === 'number' ? velocity : velocity?.[1] || 1;
-  
-        const step = (scaleConfig.step / ((deltaX + deltaY) / 2)) * safeVelocity * dir;
+        const step = (scaleConfig.step / 1) * safeVelocity * dir;
         setScale(scale + step);
-
       },
     },
     {
@@ -88,14 +95,6 @@ export const TokenStamp: React.FC<Props> = ({
       eventOptions: { passive: false },
     }
   );
-  
-
-  useEffect(() => {
-    if (imageRef.current) {
-      const bbox = imageRef.current.getBoundingClientRect();
-      setImageSize({ width: bbox.width, height: bbox.height });
-    }
-  }, [file, scale]);
 
   useEffect(() => {
     if (file && centerImage) {
@@ -105,19 +104,6 @@ export const TokenStamp: React.FC<Props> = ({
       });
     }
   }, [file, centerImage, sizeX, sizeY, CANVAS_WIDTH, CANVAS_HEIGHT]);
-
-  useEffect(() => {
-    const oldSizeX = CANVAS_WIDTH * (scale - scaleConfig.step);
-    const newSizeX = CANVAS_WIDTH * scale;
-
-    const oldSizeY = CANVAS_HEIGHT * (scale - scaleConfig.step);
-    const newSizeY = CANVAS_HEIGHT * scale;
-
-    setOffsetPos((prev) => ({
-      x: prev.x - (newSizeX - oldSizeX) / 2,
-      y: prev.y - (newSizeY - oldSizeY) / 2,
-    }));
-  }, [scale]);
 
   const onDrop = (accepted: File[]) => {
     if (accepted[0]) processFile(accepted[0]);
@@ -135,12 +121,22 @@ export const TokenStamp: React.FC<Props> = ({
     try {
       const blob = await exportImage('webp');
       const base64 = await blobToBase64(blob);
-      dispatch(
-        generatedCreatureActions.setCreatureImage({
-          id: SINGLE_CREATURE_ID,
-          imageBase64: base64,
-        })
-      );
+
+      if (shape === 'rect') {
+        dispatch(
+          generatedCreatureActions.setCreatureImage({
+            id: SINGLE_CREATURE_ID,
+            imageBase64: base64,
+          })
+        );
+      } else {
+        dispatch(
+          generatedCreatureActions.setCreatureImageCircle({
+            id: SINGLE_CREATURE_ID,
+            imageBase64Circle: base64,
+          })
+        );
+      }
     } catch (e) {
       console.error('Failed to export image to Redux:', e);
     }
@@ -151,37 +147,55 @@ export const TokenStamp: React.FC<Props> = ({
   }, [scale, file, reflectImage, centerImage]);
 
   return (
-    <div {...getRootProps()} className={s.wrapper}>
+    <div {...getRootProps()} className={clsx(s.wrapper, shape === 'circle' && s.circle)}>
       <input {...getInputProps()} hidden />
       <svg
         ref={tokenRef}
         className={clsx(s.container, file && s.draggable, isDragging && s.dragging)}
         xmlns="http://www.w3.org/2000/svg"
-        width={CANVAS_WIDTH} 
-        height={CANVAS_HEIGHT} 
+        width={CANVAS_WIDTH}
+        height={CANVAS_HEIGHT}
         viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`}
       >
-        <g ref={containerRef}>
+        {shape === 'circle' && (
+          <defs>
+            <clipPath id="circleClip">
+              <circle
+                cx={CANVAS_WIDTH / 2}
+                cy={CANVAS_HEIGHT / 2}
+                r={Math.max(CANVAS_WIDTH, CANVAS_HEIGHT) / 2}
+              />
+            </clipPath>
+          </defs>
+        )}
+        <g
+          ref={containerRef}
+          clipPath={shape === 'circle' ? 'url(#circleClip)' : undefined}
+        >
           {background && <image href={background} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />}
           {!file && (
-            <foreignObject width={CANVAS_WIDTH} height={CANVAS_HEIGHT} x={0} y={0} className={s.dropText}>
+            <foreignObject
+              width={CANVAS_WIDTH}
+              height={CANVAS_HEIGHT}
+              x={0}
+              y={0}
+              className={s.dropText}
+            >
               <span>Перетащите ваше изображение сюда</span>
             </foreignObject>
           )}
           {file && (
             <image
-            ref={imageRef}
-            x={offsetPos.x}
-            y={offsetPos.y}
-            width={sizeX}
-            height={sizeY}
-            href={file}
-            transform={reflectImage ? 'scale(-1, 1)' : undefined}
-          />
-          
+              ref={imageRef}
+              x={reflectImage ? -(offsetPos.x + sizeX) : offsetPos.x}
+              y={offsetPos.y}
+              width={sizeX}
+              height={sizeY}
+              href={file}
+              transform={reflectImage ? 'scale(-1, 1)' : undefined}
+            />
           )}
         </g>
-          {/* {border && <image href={border} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />} */}
       </svg>
     </div>
   );
