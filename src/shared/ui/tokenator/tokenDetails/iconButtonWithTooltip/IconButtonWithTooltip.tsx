@@ -17,14 +17,12 @@ export const IconButtonWithTooltip: React.FC<Props> = ({
   onClick,
   disabled = false,
   'aria-label': ariaLabel,
-  variant = 'secondary',
 }) => {
   return (
     <Tippy content={title}>
       <div>
         <button
           type="button"
-          data-variant={variant}
           onClick={onClick}
           disabled={disabled}
           aria-label={ariaLabel || title}

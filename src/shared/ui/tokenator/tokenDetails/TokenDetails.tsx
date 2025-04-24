@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { toast } from 'react-toastify';
@@ -33,6 +33,27 @@ export const TokenDetails: React.FC<Props> = ({
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false); // в компоненте
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleDocumentClick = useCallback((event: MouseEvent) => {
+    // Если клик был вне dropdown — закрываем
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setDropdownOpen(false);
+    }
+  }, []);
+  
+
+  
+  useEffect(() => {
+    if (dropdownOpen) {
+      document.addEventListener('mousedown', handleDocumentClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleDocumentClick);
+    };
+  }, [dropdownOpen, handleDocumentClick]);
+
+
   const download = useCallback(
     (format: 'webp' | 'png') => {
       load(format).catch((err) => toast.error(err.message));
@@ -63,17 +84,12 @@ export const TokenDetails: React.FC<Props> = ({
 
       <div className={s.details__controls}>
         <div className={s.details__controls__sliderWrapper}>
-          <Tippy content="Уменьшить масштаб">
-            <button
-              type="button"
-              data-variant="secondary"
-              onClick={handleZoomOut}
-              disabled={scale <= scaleConfig.min}
-              aria-label="Уменьшить масштаб"
-            >
-              <Icon28MagnifierMinus />
-            </button>
-          </Tippy>
+          <IconButtonWithTooltip
+            title="Уменьшить масштаб"
+            icon={<Icon28MagnifierMinus />}
+            onClick={() => handleZoomOut()}
+            disabled={scale <= scaleConfig.min}
+          />      
 
           <div className={s.sliderBlock}>
           <div
@@ -98,17 +114,13 @@ export const TokenDetails: React.FC<Props> = ({
             </div>
           </div>
 
-          <Tippy content="Увеличить масштаб">
-            <button
-              type="button"
-              data-variant="secondary"
-              onClick={handleZoomIn}
-              disabled={scale >= scaleConfig.max}
-              aria-label="Увеличить масштаб"
-            >
-              <Icon28MagnifierPlus />
-            </button>
-          </Tippy>
+          <IconButtonWithTooltip
+            title="Увеличить масштаб"
+            icon={<Icon28MagnifierPlus />}
+            onClick={() => handleZoomIn()}
+            disabled={scale >= scaleConfig.max}
+          />      
+          
         </div>
 
         <IconButtonWithTooltip
@@ -132,37 +144,44 @@ export const TokenDetails: React.FC<Props> = ({
           Загрузить картинку
         </button>
 
-        <div className={s.downloadDropdown}>
-          <Tippy content="Скачать изображение">
-            <button
-              type="button"
-              data-variant="primary"
-              disabled={!file}
-              onClick={() => setDropdownOpen((prev) => !prev)}
-            >
-              <Icon28DownloadOutline />
-            </button>
-          </Tippy>
+        <div className={s.downloadDropdown} ref={dropdownRef}>
+  <Tippy content="Скачать изображение">
+    <button
+      type="button"
+      data-variant="primary"
+      disabled={!file}
+      onClick={() => setDropdownOpen(true)} // только открытие
+    >
+      <Icon28DownloadOutline />
+    </button>
+  </Tippy>
 
-          {dropdownOpen && (
-            <div className={s.downloadDropdown__menu}>
-              <button
-                type="button"
-                disabled={!file}
-                onClick={() => download('webp')}
-              >
-                WEBP
-              </button>
-              <button
-                type="button"
-                disabled={!file}
-                onClick={() => download('png')}
-              >
-                PNG
-              </button>
-            </div>
-          )}
-        </div>
+  {dropdownOpen && (
+    <div className={s.downloadDropdown__menu}>
+      <button
+        type="button"
+        disabled={!file}
+        onClick={() => {
+          download('webp');
+          setDropdownOpen(false);
+        }}
+      >
+        WEBP
+      </button>
+
+      <button
+        type="button"
+        disabled={!file}
+        onClick={() => {
+          download('png');
+          setDropdownOpen(false);
+        }}
+      >
+        PNG
+      </button>
+    </div>
+  )}
+</div>
       </div>
     </div>
   );
