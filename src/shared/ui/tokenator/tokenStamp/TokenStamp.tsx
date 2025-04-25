@@ -60,6 +60,25 @@ export const TokenStamp: React.FC<Props> = ({
   const sizeX = useMemo(() => CANVAS_WIDTH * scale, [scale, CANVAS_WIDTH]);
   const sizeY = useMemo(() => CANVAS_HEIGHT * scale, [scale, CANVAS_HEIGHT]);
 
+  const prevScale = useRef(scale);
+
+  useEffect(() => {
+    const oldScale = prevScale.current;
+    if (scale !== oldScale) {
+      const oldWidth = CANVAS_WIDTH * oldScale;
+      const newWidth = CANVAS_WIDTH * scale;
+      const oldHeight = CANVAS_HEIGHT * oldScale;
+      const newHeight = CANVAS_HEIGHT * scale;
+
+      setOffsetPos({
+        x: offsetPos.x - (newWidth - oldWidth) / 2,
+        y: offsetPos.y - (newHeight - oldHeight) / 2,
+      });
+
+      prevScale.current = scale;
+    }
+  }, [scale]);
+
   useGesture(
     {
       onDrag: ({ delta: [dx, dy], dragging, event }) => {
