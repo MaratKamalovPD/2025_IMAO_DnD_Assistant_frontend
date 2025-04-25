@@ -18,7 +18,6 @@ type Props = {
   background?: string;
   border?: string;
   reflectImage?: boolean;
-  centerImage?: boolean;
   processFile: (file: File) => void;
   tokenRef: React.RefObject<SVGSVGElement | null>;
   imageRef: React.RefObject<SVGImageElement | null>;
@@ -47,7 +46,6 @@ export const TokenStamp: React.FC<Props> = ({
   moveCompensateY,
   file,
   reflectImage,
-  centerImage,
   processFile,
   CANVAS_WIDTH,
   CANVAS_HEIGHT,
@@ -96,15 +94,6 @@ export const TokenStamp: React.FC<Props> = ({
     }
   );
 
-  useEffect(() => {
-    if (file && centerImage) {
-      setOffsetPos({
-        x: (CANVAS_WIDTH - sizeX) / 2,
-        y: (CANVAS_HEIGHT - sizeY) / 2,
-      });
-    }
-  }, [file, centerImage, sizeX, sizeY, CANVAS_WIDTH, CANVAS_HEIGHT]);
-
   const onDrop = (accepted: File[]) => {
     if (accepted[0]) processFile(accepted[0]);
   };
@@ -144,7 +133,7 @@ export const TokenStamp: React.FC<Props> = ({
 
   useEffect(() => {
     saveImageToRedux();
-  }, [scale, file, reflectImage, centerImage, offsetPos]);
+  }, [scale, file, reflectImage, offsetPos]);
 
   return (
     <div {...getRootProps()} className={clsx(s.wrapper, shape === 'circle' && s.circle)}>

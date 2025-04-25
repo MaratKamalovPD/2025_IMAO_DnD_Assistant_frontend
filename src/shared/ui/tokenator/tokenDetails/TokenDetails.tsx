@@ -20,8 +20,7 @@ interface Props {
   processFile: (file: File) => void;
   reflectImage: boolean;
   setReflectImage: (val: boolean) => void;
-  centerImage: boolean;
-  setCenterImage: (val: boolean) => void;
+  centerImage: () => void;
   scale: number;
   setScale: (val: number) => void;
   download: (val: "webp" | "png") => void;
@@ -38,7 +37,6 @@ export const TokenDetails: React.FC<Props> = ({
   reflectImage,
   setReflectImage,
   centerImage,
-  setCenterImage,
   scale,
   setScale,
   scaleConfig,
@@ -140,7 +138,7 @@ export const TokenDetails: React.FC<Props> = ({
         <IconButtonWithTooltip
           title="Центрировать изображение"
           icon={<Icon28TargetOutline />}
-          onClick={() => setCenterImage(!centerImage)}
+          onClick={() => centerImage()}
           disabled={!file}
         />
       </div>

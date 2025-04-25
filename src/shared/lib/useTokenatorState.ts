@@ -15,15 +15,15 @@ const CANVAS_WIDTH = 300;
 const CANVAS_HEIGHT = 400;
 
 export const useTokenatorState = (file?: string) => {
-const [reflectImage, setReflectImage] = useState(false);
-const [centerImage, setCenterImage] = useState(false);
-
+  const [reflectImage, setReflectImage] = useState(false);
+  
   const tokenRef = useRef<SVGSVGElement>(null);
   const imageRef = useRef<SVGImageElement>(null);
 
   const [scale, setScale] = useClamp(DEFAULT_SCALE, scaleConfig.min, scaleConfig.max);
   const [offsetPos, setOffsetPos] = useState({ x: 0, y: 0 });
   const [imageSize, setImageSize] = useState({ width: CANVAS_WIDTH, height: CANVAS_HEIGHT });
+  const [centerImageTrigger, setCenterImageTrigger] = useState(0);
 
   const sizeX = useMemo(() => CANVAS_WIDTH * scale, [scale]);
   const sizeY = useMemo(() => CANVAS_HEIGHT * scale, [scale]);
@@ -76,6 +76,19 @@ const [centerImage, setCenterImage] = useState(false);
     [exportImage]
   );
 
+  useEffect(() => {
+    if (file) {
+      setOffsetPos({
+        x: (CANVAS_WIDTH - sizeX) / 2,
+        y: (CANVAS_HEIGHT - sizeY) / 2,
+      });
+    }
+  }, [centerImageTrigger]);
+
+  const centerImage = () => {
+    setCenterImageTrigger((v) => v + 1);
+  };
+
   // при загрузке нового файла — ресетим offset и scale
   useEffect(() => {
     if (file) {
@@ -107,7 +120,6 @@ const [centerImage, setCenterImage] = useState(false);
     reflectImage,
     setReflectImage,
     centerImage,
-    setCenterImage,
     exportImage,
     download,
   };
