@@ -108,6 +108,22 @@ export const useTokenatorState = (file?: string) => {
     }
   }, [file, scale]);
 
+  const setScaleWithAnchor = (newScale: number) => {
+    const clamped = Math.max(scaleConfig.min, Math.min(scaleConfig.max, newScale));
+
+    const oldWidth = CANVAS_WIDTH * scale;
+    const newWidth = CANVAS_WIDTH * clamped;
+    const oldHeight = CANVAS_HEIGHT * scale;
+    const newHeight = CANVAS_HEIGHT * clamped;
+
+    setOffsetPos({
+      x: offsetPos.x - (newWidth - oldWidth) / 2,
+      y: offsetPos.y - (newHeight - oldHeight) / 2,
+    });
+
+    setScale(clamped);
+  };
+
   return {
     tokenRef,
     imageRef,
@@ -122,5 +138,6 @@ export const useTokenatorState = (file?: string) => {
     centerImage,
     exportImage,
     download,
+    setScaleWithAnchor,
   };
 };

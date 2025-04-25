@@ -35,6 +35,7 @@ type Props = {
     step: number;
   };
   exportImage: (format?: 'webp' | 'png') => Promise<Blob>;
+  setScaleWithAnchor: (val: number) => void;
 };
 
 export const TokenStamp: React.FC<Props> = ({
@@ -56,6 +57,7 @@ export const TokenStamp: React.FC<Props> = ({
   scaleConfig,
   exportImage,
   shape = 'rect',
+  setScaleWithAnchor,
 }) => {
   const containerRef = useRef<SVGGElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -66,22 +68,22 @@ export const TokenStamp: React.FC<Props> = ({
 
   const prevScale = useRef(scale);
 
-  useEffect(() => {
-    const oldScale = prevScale.current;
-    if (scale !== oldScale) {
-      const oldWidth = CANVAS_WIDTH * oldScale;
-      const newWidth = CANVAS_WIDTH * scale;
-      const oldHeight = CANVAS_HEIGHT * oldScale;
-      const newHeight = CANVAS_HEIGHT * scale;
+  // useEffect(() => {
+  //   const oldScale = prevScale.current;
+  //   if (scale !== oldScale) {
+  //     const oldWidth = CANVAS_WIDTH * oldScale;
+  //     const newWidth = CANVAS_WIDTH * scale;
+  //     const oldHeight = CANVAS_HEIGHT * oldScale;
+  //     const newHeight = CANVAS_HEIGHT * scale;
 
-      setOffsetPos({
-        x: offsetPos.x - (newWidth - oldWidth) / 2,
-        y: offsetPos.y - (newHeight - oldHeight) / 2,
-      });
+  //     setOffsetPos({
+  //       x: offsetPos.x - (newWidth - oldWidth) / 2,
+  //       y: offsetPos.y - (newHeight - oldHeight) / 2,
+  //     });
 
-      prevScale.current = scale;
-    }
-  }, [scale]);
+  //     prevScale.current = scale;
+  //   }
+  // }, [scale]);
 
   const isTouchDevice = useMemo(() => {
     return window.matchMedia('(pointer: coarse)').matches;
@@ -103,8 +105,7 @@ export const TokenStamp: React.FC<Props> = ({
           event.preventDefault();
           const step = scaleConfig.step * d;
           const next = scale + step;
-          const clamped = Math.max(scaleConfig.min, Math.min(scaleConfig.max, next));
-          setScale(clamped);
+          setScaleWithAnchor(next)
         },
       }),
     },
@@ -126,8 +127,7 @@ export const TokenStamp: React.FC<Props> = ({
       e.preventDefault();
       const delta = -Math.sign(e.deltaY) * scaleConfig.step;
       const next = scale + delta;
-      const clamped = Math.max(scaleConfig.min, Math.min(scaleConfig.max, next));
-      setScale(clamped);
+      setScaleWithAnchor(next)
     };
 
     el.addEventListener('wheel', handler, { passive: false });

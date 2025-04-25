@@ -24,6 +24,7 @@ interface Props {
   scale: number;
   setScale: (val: number) => void;
   download: (val: "webp" | "png") => void;
+  setScaleWithAnchor: (val: number) => void;
   scaleConfig: {
     min: number;
     max: number;
@@ -41,6 +42,7 @@ export const TokenDetails: React.FC<Props> = ({
   setScale,
   scaleConfig,
   download,
+  setScaleWithAnchor,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -61,13 +63,11 @@ export const TokenDetails: React.FC<Props> = ({
   }, [dropdownOpen, handleDocumentClick]);
 
   const handleZoomIn = () => {
-    const newScale = Math.min(scale + scaleConfig.step, scaleConfig.max);
-    setScale(newScale);
+    setScaleWithAnchor(scale + scaleConfig.step);
   };
 
   const handleZoomOut = () => {
-    const newScale = Math.max(scale - scaleConfig.step, scaleConfig.min);
-    setScale(newScale);
+    setScaleWithAnchor(scale - scaleConfig.step);
   };
 
   return (
@@ -101,7 +101,9 @@ export const TokenDetails: React.FC<Props> = ({
             <div className={s.details__controls__slider}>
               <Slider
                 value={scale}
-                onChange={(value) => setScale(typeof value === 'number' ? value : value[0])}
+                onChange={(value) =>
+                  setScaleWithAnchor(typeof value === 'number' ? value : value[0])
+                }
                 min={scaleConfig.min}
                 max={scaleConfig.max}
                 step={scaleConfig.step}
