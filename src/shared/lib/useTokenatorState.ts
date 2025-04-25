@@ -13,6 +13,9 @@ const CANVAS_WIDTH = 300;
 const CANVAS_HEIGHT = 400;
 
 export const useTokenatorState = (file?: string) => {
+const [reflectImage, setReflectImage] = useState(false);
+const [centerImage, setCenterImage] = useState(false);
+
   const tokenRef = useRef<SVGSVGElement>(null);
   const imageRef = useRef<SVGImageElement>(null);
 
@@ -57,5 +60,9 @@ export const useTokenatorState = (file?: string) => {
     setOffsetPos,
     moveCompensateX,
     moveCompensateY,
+    reflectImage,
+    setReflectImage,
+    centerImage,
+    setCenterImage,
   };
 };

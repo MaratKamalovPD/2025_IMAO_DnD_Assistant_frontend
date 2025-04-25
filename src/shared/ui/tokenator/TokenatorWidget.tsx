@@ -18,8 +18,6 @@ export const TokenatorWidget = () => {
         file={shared.file}
         background={shared.background}
         border={shared.border}
-        reflectImage={shared.reflectImage}
-        centerImage={shared.centerImage}
         processFile={shared.processFile}
         CANVAS_WIDTH={shared.CANVAS_WIDTH}
         CANVAS_HEIGHT={shared.CANVAS_HEIGHT}
@@ -33,8 +31,6 @@ export const TokenatorWidget = () => {
         file={shared.file}
         background={shared.background}
         border={shared.border}
-        reflectImage={shared.reflectImage}
-        centerImage={shared.centerImage}
         processFile={shared.processFile}
         CANVAS_WIDTH={shared.CANVAS_WIDTH}
         CANVAS_HEIGHT={shared.CANVAS_HEIGHT}

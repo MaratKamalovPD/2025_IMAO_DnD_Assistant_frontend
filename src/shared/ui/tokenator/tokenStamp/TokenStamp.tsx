@@ -144,7 +144,7 @@ export const TokenStamp: React.FC<Props> = ({
 
   useEffect(() => {
     saveImageToRedux();
-  }, [scale, file, reflectImage, centerImage]);
+  }, [scale, file, reflectImage, centerImage, offsetPos]);
 
   return (
     <div {...getRootProps()} className={clsx(s.wrapper, shape === 'circle' && s.circle)}>

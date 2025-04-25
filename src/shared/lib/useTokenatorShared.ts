@@ -40,9 +40,7 @@ export const useTokenatorShared = () => {
   const [file, setFile] = useState<string>();
   const [background, setBackground] = useState<string>();
   const [border, setBorder] = useState<string>();
-  const [reflectImage, setReflectImage] = useState(false);
-  const [centerImage, setCenterImage] = useState(false);
-
+ 
   const processFile = async (fileItem?: File) => {
     try {
       await checkFile(fileItem);
@@ -70,10 +68,6 @@ export const useTokenatorShared = () => {
     processFile,
     background,
     border,
-    reflectImage,
-    setReflectImage,
-    centerImage,
-    setCenterImage,
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
     scaleConfig,
