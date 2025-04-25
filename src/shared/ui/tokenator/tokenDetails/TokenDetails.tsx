@@ -1,18 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import 'tippy.js/dist/tippy.css';
-import Slider from 'rc-slider';
-import 'rc-slider/assets/index.css';
-import s from './TokenDetails.module.scss';
-import {
-  Icon28FlipHorizontalOutline,
-  Icon28TargetOutline,
-  Icon28MagnifierPlus,
-  Icon28MagnifierMinus,
-  Icon28DownloadOutline,
-} from '@vkontakte/icons';
-import { IconButtonWithTooltip } from './iconButtonWithTooltip';
+import React from 'react';
 
-// Обновлённый тип пропсов для TokenDetails
+import s from './TokenDetails.module.scss';
+import { UploadInfo } from './uploadInfo';
+import { ZoomControls } from './zoomControls';
+import { UploadButton } from './uploadButton';
+import { DownloadButton } from './downloadButton';
+
+// Тип пропсов для TokenDetails
 interface Props {
   file?: string;
   processFile: (file: File) => void;
@@ -21,13 +15,14 @@ interface Props {
   centerImage: () => void;
   scale: number;
   setScale: (val: number) => void;
-  download: (val: "webp" | "png") => void;
   setScaleWithAnchor: (val: number) => void;
+  download: (format: "webp" | "png") => void;
   scaleConfig: {
     min: number;
     max: number;
     step: number;
   };
+  showHeaderAndInfo?: boolean;
 }
 
 export const TokenDetails: React.FC<Props> = ({
@@ -40,155 +35,30 @@ export const TokenDetails: React.FC<Props> = ({
   scaleConfig,
   download,
   setScaleWithAnchor,
+  showHeaderAndInfo = true,
 }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const handleDocumentClick = useCallback((event: MouseEvent) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-      setDropdownOpen(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (dropdownOpen) {
-      document.addEventListener('mousedown', handleDocumentClick);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleDocumentClick);
-    };
-  }, [dropdownOpen, handleDocumentClick]);
-
-  const handleZoomIn = () => {
-    setScaleWithAnchor(scale + scaleConfig.step);
-  };
-
-  const handleZoomOut = () => {
-    setScaleWithAnchor(scale - scaleConfig.step);
-  };
-
   return (
     <div className={s.details}>
-      <div className={s.details__header}>Описание</div>
+      {showHeaderAndInfo && (
+        <>
+          <div className={s.details__header}>Описание</div>
+          <UploadInfo />
+        </>
+      )}
 
-      <div className={s.details__text}>
-        <p>Вес загружаемой картинки не более 50&nbsp;MB</p>
-        <p>Размер картинки не должен превышать 8064px на 8064px</p>
-      </div>
-
-      <div className={s.details__controls}>
-        <div className={s.details__controls__sliderWrapper}>
-          <IconButtonWithTooltip
-            title="Уменьшить масштаб"
-            icon={<Icon28MagnifierMinus />}
-            onClick={handleZoomOut}
-            disabled={scale <= scaleConfig.min}
-          />
-
-          <div className={s.sliderBlock}>
-            <div
-              className={s.sliderValue}
-              style={{
-                left: `${((scale - scaleConfig.min) / (scaleConfig.max - scaleConfig.min)) * 100}%`,
-                transform: 'translateX(-50%)',
-              }}
-            >
-              {scale.toFixed(2)}
-            </div>
-            <div className={s.details__controls__slider}>
-              <Slider
-                value={scale}
-                onChange={(value) =>
-                  setScaleWithAnchor(typeof value === 'number' ? value : value[0])
-                }
-                min={scaleConfig.min}
-                max={scaleConfig.max}
-                step={scaleConfig.step}
-                trackStyle={{ backgroundColor: '#ff6f61', height: 6 }}
-                railStyle={{ backgroundColor: '#ddd', height: 6 }}
-                handleStyle={{
-                  borderColor: '#ff6f61',
-                  backgroundColor: '#fff',
-                  borderWidth: 2,
-                  height: 25,
-                  width: 25,
-                  marginTop: -9,
-                  boxShadow: '0 0 4px rgba(0, 0, 0, 0.2)',
-                }}
-              />
-            </div>
-          </div>
-
-          <IconButtonWithTooltip
-            title="Увеличить масштаб"
-            icon={<Icon28MagnifierPlus />}
-            onClick={handleZoomIn}
-            disabled={scale >= scaleConfig.max}
-          />
-        </div>
-
-        <IconButtonWithTooltip
-          title="Отразить изображение"
-          icon={<Icon28FlipHorizontalOutline />}
-          onClick={() => setReflectImage(!reflectImage)}
-          disabled={!file}
-        />
-
-        <IconButtonWithTooltip
-          title="Центрировать изображение"
-          icon={<Icon28TargetOutline />}
-          onClick={() => centerImage()}
-          disabled={!file}
-        />
-      </div>
+      <ZoomControls
+        scale={scale}
+        scaleConfig={scaleConfig}
+        setScaleWithAnchor={setScaleWithAnchor}
+        reflectImage={reflectImage}
+        setReflectImage={setReflectImage}
+        centerImage={centerImage}
+        file={file}
+      />
 
       <div className={s.details__actionsRow}>
-        <button type="button" data-variant="secondary" onClick={() => {
-          const input = document.createElement('input');
-          input.type = 'file';
-          input.accept = 'image/*';
-          input.onchange = (e) => {
-            const fileItem = (e.target as HTMLInputElement).files?.[0];
-            if (fileItem) processFile(fileItem);
-          };
-          input.click();
-        }}>
-          Загрузить картинку
-        </button>
-
-        <div className={s.downloadDropdown} ref={dropdownRef}>
-          <IconButtonWithTooltip
-            title="Скачать изображение"
-            icon={<Icon28DownloadOutline />}
-            onClick={() => setDropdownOpen(true)}
-            disabled={!file}
-          />
-
-          {dropdownOpen && (
-            <div className={s.downloadDropdown__menu}>
-              <button
-                type="button"
-                disabled={!file}
-                onClick={() => {
-                  download('webp');
-                  setDropdownOpen(false);
-                }}
-              >
-                WEBP
-              </button>
-              <button
-                type="button"
-                disabled={!file}
-                onClick={() => {
-                  download('png');
-                  setDropdownOpen(false);
-                }}
-              >
-                PNG
-              </button>
-            </div>
-          )}
-        </div>
+        <UploadButton processFile={processFile} />
+        <DownloadButton file={file} download={download} />
       </div>
     </div>
   );

@@ -1,17 +1,29 @@
+.layout {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  width: fit-content;
+  height: fit-content;
 
-  .layout {
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    width: fit-content;
-    height: fit-content;
-  
-    @media (min-width: 768px) {
-      flex-direction: row;
-      align-items: flex-start;
-      justify-content: flex-start;
-    }
+  @media (min-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
   }
+}
+
+.tokenBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
   
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 24px;
+  }
+}

@@ -14,27 +14,31 @@ export const TokenatorWidget = () => {
 
   return (
     <div className={s.layout}>
-      <TokenDetails {...shared} {...rectState}  />
+      <div className={s.tokenBlock}>
+        <TokenDetails {...shared} {...rectState} />
+        <TokenStamp
+          shape="rect"
+          file={shared.file}
+          processFile={shared.processFile}
+          CANVAS_WIDTH={shared.CANVAS_WIDTH}
+          CANVAS_HEIGHT={shared.CANVAS_HEIGHT}
+          scaleConfig={shared.scaleConfig}
+          {...rectState}
+        />
+      </div>
 
-      <TokenStamp
-        shape="rect"
-        file={shared.file}
-        processFile={shared.processFile}
-        CANVAS_WIDTH={shared.CANVAS_WIDTH}
-        CANVAS_HEIGHT={shared.CANVAS_HEIGHT}
-        scaleConfig={shared.scaleConfig}
-        {...rectState}
-      />
-
-      <TokenStamp
-        shape="circle"
-        file={shared.file}
-        processFile={shared.processFile}
-        CANVAS_WIDTH={shared.CANVAS_WIDTH}
-        CANVAS_HEIGHT={shared.CANVAS_HEIGHT}
-        scaleConfig={shared.scaleConfig}
-        {...circleState}
-      />
+      <div className={s.tokenBlock}>
+        <TokenDetails {...shared} {...circleState} showHeaderAndInfo={false} />
+        <TokenStamp
+          shape="circle"
+          file={shared.file}
+          processFile={shared.processFile}
+          CANVAS_WIDTH={shared.CANVAS_WIDTH}
+          CANVAS_HEIGHT={shared.CANVAS_HEIGHT}
+          scaleConfig={shared.scaleConfig}
+          {...circleState}
+        />
+      </div>
     </div>
   );
 };
