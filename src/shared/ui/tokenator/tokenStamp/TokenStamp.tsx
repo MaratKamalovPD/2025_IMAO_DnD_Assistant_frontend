@@ -29,7 +29,11 @@ type Props = {
   moveCompensateY: number;
   CANVAS_WIDTH: number;
   CANVAS_HEIGHT: number;
-  scaleConfig: { step: number };
+  scaleConfig: {
+    min: number;
+    max: number;
+    step: number;
+  };
   exportImage: (format?: 'webp' | 'png') => Promise<Blob>;
 };
 
@@ -79,6 +83,10 @@ export const TokenStamp: React.FC<Props> = ({
     }
   }, [scale]);
 
+  const isTouchDevice = useMemo(() => {
+    return window.matchMedia('(pointer: coarse)').matches;
+  }, []);
+
   useGesture(
     {
       onDrag: ({ delta: [dx, dy], dragging, event }) => {
@@ -90,28 +98,41 @@ export const TokenStamp: React.FC<Props> = ({
           y: offsetPos.y + dy * moveCompensateY,
         });
       },
-      
-      onWheel: ({ direction: [, dir], ctrlKey, metaKey, wheeling, velocity }) => {
-        if (!wheeling || !file) return;
-        const isApple = navigator.platform.includes('Mac');
-        if ((isApple && !metaKey) || (!isApple && !ctrlKey)) return;
-        const safeVelocity = typeof velocity === 'number' ? velocity : velocity?.[1] || 1;
-        const step = (scaleConfig.step / 1) * safeVelocity * dir;
-        setScale(scale + step);
-      },
-      onPinch: ({ direction: [dir], pinching, event, velocity }) => {
-        event.preventDefault();
-        if (!pinching || !file) return;
-        const safeVelocity = typeof velocity === 'number' ? velocity : velocity?.[1] || 1;
-        const step = (scaleConfig.step / 1) * safeVelocity * dir;
-        setScale(scale + step);
-      },
+      ...(isTouchDevice && {
+        onPinch: ({ event, da: [d] }) => {
+          event.preventDefault();
+          const step = scaleConfig.step * d;
+          const next = scale + step;
+          const clamped = Math.max(scaleConfig.min, Math.min(scaleConfig.max, next));
+          setScale(clamped);
+        },
+      }),
     },
     {
       target: tokenRef,
       eventOptions: { passive: false },
     }
   );
+
+  useEffect(() => {
+    const el = tokenRef.current;
+    if (!el) return;
+
+    const handler = (e: WheelEvent) => {
+      const isMac = navigator.platform.includes('Mac');
+      const isZoomKey = isMac ? e.metaKey : e.ctrlKey;
+      if (!isZoomKey || !file) return;
+
+      e.preventDefault();
+      const delta = -Math.sign(e.deltaY) * scaleConfig.step;
+      const next = scale + delta;
+      const clamped = Math.max(scaleConfig.min, Math.min(scaleConfig.max, next));
+      setScale(clamped);
+    };
+
+    el.addEventListener('wheel', handler, { passive: false });
+    return () => el.removeEventListener('wheel', handler);
+  }, [tokenRef, scale, file, scaleConfig, setScale]);
 
   const onDrop = (accepted: File[]) => {
     if (accepted[0]) processFile(accepted[0]);
