@@ -24,6 +24,7 @@ interface Props {
   setCenterImage: (val: boolean) => void;
   scale: number;
   setScale: (val: number) => void;
+  download: (val: "webp" | "png") => void;
   scaleConfig: {
     min: number;
     max: number;
@@ -41,6 +42,7 @@ export const TokenDetails: React.FC<Props> = ({
   scale,
   setScale,
   scaleConfig,
+  download,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -59,13 +61,6 @@ export const TokenDetails: React.FC<Props> = ({
       document.removeEventListener('mousedown', handleDocumentClick);
     };
   }, [dropdownOpen, handleDocumentClick]);
-
-  const download = useCallback(
-    (format: 'webp' | 'png') => {
-      toast('Экспорт пока не реализован в TokenDetails.');
-    },
-    []
-  );
 
   const handleZoomIn = () => {
     const newScale = Math.min(scale + scaleConfig.step, scaleConfig.max);

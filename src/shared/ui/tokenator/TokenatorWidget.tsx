@@ -11,7 +11,7 @@ export const TokenatorWidget = () => {
 
   return (
     <div className={s.layout}>
-      <TokenDetails {...shared} {...rectState} exportImage={rectState.exportImage} />
+      <TokenDetails {...shared} {...rectState}  />
 
       <TokenStamp
         shape="rect"

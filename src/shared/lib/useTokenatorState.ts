@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useClamp } from './useClamp';
 import { Canvg } from 'canvg';
+import { toast } from 'react-toastify';
 
 const DEFAULT_SCALE = 1.1;
 
@@ -61,6 +62,19 @@ const [centerImage, setCenterImage] = useState(false);
     });
   };
   
+  const download = useCallback(
+    (format: 'webp' | 'png') => {
+      exportImage(format).then((blob) => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `token.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }).catch((err) => toast.error(err.message));
+    },
+    [exportImage]
+  );
 
   // при загрузке нового файла — ресетим offset и scale
   useEffect(() => {
@@ -95,5 +109,6 @@ const [centerImage, setCenterImage] = useState(false);
     centerImage,
     setCenterImage,
     exportImage,
+    download,
   };
 };
