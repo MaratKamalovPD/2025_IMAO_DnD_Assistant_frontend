@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useClamp } from './useClamp';
 import { Canvg } from 'canvg';
 import { toast } from 'react-toastify';
+import { getBase64FromBlob } from './base64Funcs';
 
 const DEFAULT_SCALE = 1.1;
 
@@ -14,8 +15,11 @@ const scaleConfig = {
 const CANVAS_WIDTH = 300;
 const CANVAS_HEIGHT = 400;
 
-export const useTokenatorState = (file?: string) => {
+export const useTokenatorState = (file?: string, tokenBg?: string, tokenBorder?: string) => {
   const [reflectImage, setReflectImage] = useState(false);
+
+  const [background, setBackground] = useState<string>();
+  const [border, setBorder] = useState<string>();
   
   const tokenRef = useRef<SVGSVGElement>(null);
   const imageRef = useRef<SVGImageElement>(null);
@@ -124,6 +128,17 @@ export const useTokenatorState = (file?: string) => {
     setScale(clamped);
   };
 
+  useEffect(() => {
+    (async () => {
+      const [bgBase64, borderBase64] = await Promise.all([
+        getBase64FromBlob(tokenBg || ''),
+        getBase64FromBlob(tokenBorder || ''),
+      ]);
+      setBackground(bgBase64);
+      setBorder(borderBase64);
+    })();
+  }, []);
+
   return {
     tokenRef,
     imageRef,
@@ -139,5 +154,7 @@ export const useTokenatorState = (file?: string) => {
     exportImage,
     download,
     setScaleWithAnchor,
+    background,
+    border,
   };
 };

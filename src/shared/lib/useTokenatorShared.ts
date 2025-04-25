@@ -1,9 +1,8 @@
 // shared/lib/useTokenatorShared.ts
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
-import tokenBg from 'shared/assets/images/tokenator/token-bg-1.webp';
-import tokenBorder from 'shared/assets/images/tokenator/token-border.webp';
-import { getBase64FromBlob, getBase64 } from './base64Funcs';
+
+import { getBase64 } from './base64Funcs';
 
 export const CANVAS_WIDTH = 300;
 export const CANVAS_HEIGHT = 400;
@@ -38,8 +37,7 @@ const checkFile = async (fileItem?: File): Promise<void> => {
 
 export const useTokenatorShared = () => {
   const [file, setFile] = useState<string>();
-  const [background, setBackground] = useState<string>();
-  const [border, setBorder] = useState<string>();
+  
  
   const processFile = async (fileItem?: File) => {
     try {
@@ -52,22 +50,9 @@ export const useTokenatorShared = () => {
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      const [bgBase64, borderBase64] = await Promise.all([
-        getBase64FromBlob(tokenBg),
-        getBase64FromBlob(tokenBorder),
-      ]);
-      setBackground(bgBase64);
-      setBorder(borderBase64);
-    })();
-  }, []);
-
   return {
     file,
     processFile,
-    background,
-    border,
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
     scaleConfig,

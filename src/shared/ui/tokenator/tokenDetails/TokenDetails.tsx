@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
-import { toast } from 'react-toastify';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import s from './TokenDetails.module.scss';
@@ -39,7 +37,6 @@ export const TokenDetails: React.FC<Props> = ({
   setReflectImage,
   centerImage,
   scale,
-  setScale,
   scaleConfig,
   download,
   setScaleWithAnchor,

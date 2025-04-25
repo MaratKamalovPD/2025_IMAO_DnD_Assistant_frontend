@@ -201,7 +201,16 @@ export const TokenStamp: React.FC<Props> = ({
           ref={containerRef}
           clipPath={shape === 'circle' ? 'url(#circleClip)' : undefined}
         >
-          {background && <image href={background} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} />}
+          {background && (
+            <image
+              href={background}
+              x={-(Math.max(CANVAS_WIDTH, CANVAS_HEIGHT) - CANVAS_WIDTH) / 2}
+              y={-(Math.max(CANVAS_WIDTH, CANVAS_HEIGHT) - CANVAS_HEIGHT) / 2}
+              width={Math.max(CANVAS_WIDTH, CANVAS_HEIGHT)}
+              height={Math.max(CANVAS_WIDTH, CANVAS_HEIGHT)}
+              preserveAspectRatio="xMidYMid slice"
+            />
+          )}
           {!file && (
             <foreignObject
               width={CANVAS_WIDTH}
