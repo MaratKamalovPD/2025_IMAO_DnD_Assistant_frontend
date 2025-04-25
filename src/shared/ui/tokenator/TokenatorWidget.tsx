@@ -11,7 +11,7 @@ export const TokenatorWidget = () => {
 
   return (
     <div className={s.layout}>
-      <TokenDetails {...shared} {...rectState} />
+      <TokenDetails {...shared} {...rectState} exportImage={rectState.exportImage} />
 
       <TokenStamp
         shape="rect"
@@ -22,7 +22,6 @@ export const TokenatorWidget = () => {
         CANVAS_WIDTH={shared.CANVAS_WIDTH}
         CANVAS_HEIGHT={shared.CANVAS_HEIGHT}
         scaleConfig={shared.scaleConfig}
-        exportImage={() => Promise.reject()} // можно прокинуть если нужно
         {...rectState}
       />
 
@@ -35,7 +34,6 @@ export const TokenatorWidget = () => {
         CANVAS_WIDTH={shared.CANVAS_WIDTH}
         CANVAS_HEIGHT={shared.CANVAS_HEIGHT}
         scaleConfig={shared.scaleConfig}
-        exportImage={() => Promise.reject()} // можно прокинуть если нужно
         {...circleState}
       />
     </div>

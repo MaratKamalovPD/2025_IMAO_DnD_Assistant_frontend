@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useClamp } from './useClamp';
+import { Canvg } from 'canvg';
 
 const DEFAULT_SCALE = 1.1;
 
@@ -31,6 +32,35 @@ const [centerImage, setCenterImage] = useState(false);
 
   const moveCompensateX = useMemo(() => deltaX * scale, [deltaX, scale]);
   const moveCompensateY = useMemo(() => deltaY * scale, [deltaY, scale]);
+
+  const exportImage = async (format: 'webp' | 'png' = 'webp'): Promise<Blob> => {
+    const svg = tokenRef.current;
+    if (!svg) throw new Error('no token provided');
+  
+    const canvas = document.createElement('canvas');
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+  
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas context not found');
+  
+    const svgText = new XMLSerializer().serializeToString(svg);
+    const canvgInstance = await Canvg.fromString(ctx, svgText);
+  
+    await canvgInstance.render();
+  
+    return new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Не удалось экспортировать изображение.'));
+        },
+        `image/${format}`,
+        1
+      );
+    });
+  };
+  
 
   // при загрузке нового файла — ресетим offset и scale
   useEffect(() => {
@@ -64,5 +94,6 @@ const [centerImage, setCenterImage] = useState(false);
     setReflectImage,
     centerImage,
     setCenterImage,
+    exportImage,
   };
 };
