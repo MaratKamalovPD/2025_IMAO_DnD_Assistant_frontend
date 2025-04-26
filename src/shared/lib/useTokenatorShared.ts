@@ -4,8 +4,6 @@ import { toast } from 'react-toastify';
 
 import { getBase64 } from './base64Funcs';
 
-export const CANVAS_WIDTH = 300;
-export const CANVAS_HEIGHT = 400;
 export const scaleConfig = {
   max: 2,
   min: 0.1,
@@ -53,8 +51,6 @@ export const useTokenatorShared = () => {
   return {
     file,
     processFile,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     scaleConfig,
   };
 };

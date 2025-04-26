@@ -9,32 +9,28 @@ import tokenBgCircle from 'shared/assets/images/tokenator/circle-token-bg-1.webp
 
 export const TokenatorWidget = () => {
   const shared = useTokenatorShared();
-  const rectState = useTokenatorState(shared.file, tokenBgRect, tokenBorder);
-  const circleState = useTokenatorState(shared.file, tokenBgCircle, tokenBorder);
+  const rectState = useTokenatorState(300, 400, shared.file, tokenBgRect, tokenBorder);
+  const circleState = useTokenatorState(400, 400, shared.file, tokenBgCircle, tokenBorder);
 
   return (
     <div className={s.layout}>
       <div className={s.tokenBlock}>
-        <TokenDetails {...shared} {...rectState} />
+        <TokenDetails {...shared} {...rectState} shape="rect" />
         <TokenStamp
           shape="rect"
           file={shared.file}
           processFile={shared.processFile}
-          CANVAS_WIDTH={shared.CANVAS_WIDTH}
-          CANVAS_HEIGHT={shared.CANVAS_HEIGHT}
           scaleConfig={shared.scaleConfig}
           {...rectState}
         />
       </div>
 
       <div className={s.tokenBlock}>
-        <TokenDetails {...shared} {...circleState} showHeaderAndInfo={false} />
+        <TokenDetails {...shared} {...circleState} showHeaderAndInfo={false} shape="circle"/>
         <TokenStamp
           shape="circle"
           file={shared.file}
           processFile={shared.processFile}
-          CANVAS_WIDTH={shared.CANVAS_WIDTH}
-          CANVAS_HEIGHT={shared.CANVAS_HEIGHT}
           scaleConfig={shared.scaleConfig}
           {...circleState}
         />

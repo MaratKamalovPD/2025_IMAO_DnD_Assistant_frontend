@@ -5,11 +5,12 @@ import s from './DownloadButton.module.scss';
 import { IconButtonWithTooltip } from '../iconButtonWithTooltip';
 
 interface DownloadButtonProps {
-  download: (format: 'webp' | 'png') => void;
+  shape: 'rect' | 'circle';  
+  download: (format: 'webp' | 'png', shape: 'rect' | 'circle') => void;
   file?: string;
 }
 
-export const DownloadButton: React.FC<DownloadButtonProps> = ({ download, file }) => {
+export const DownloadButton: React.FC<DownloadButtonProps> = ({ download, file, shape }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -43,7 +44,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({ download, file }
             type="button"
             disabled={!file}
             onClick={() => {
-              download('webp');
+              download('webp', shape);
               setDropdownOpen(false);
             }}
           >
@@ -53,7 +54,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({ download, file }
             type="button"
             disabled={!file}
             onClick={() => {
-              download('png');
+              download('png', shape);
               setDropdownOpen(false);
             }}
           >

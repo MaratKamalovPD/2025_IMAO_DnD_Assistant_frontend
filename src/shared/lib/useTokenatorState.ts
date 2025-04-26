@@ -12,10 +12,17 @@ const scaleConfig = {
   step: 0.07,
 };
 
-const CANVAS_WIDTH = 300;
-const CANVAS_HEIGHT = 400;
+export const useTokenatorState = (
+    canvasWidth: number,
+    canvasHeight: number,
+    file?: string,
+    tokenBg?: string,
+    tokenBorder?: string,
+    ) => {
 
-export const useTokenatorState = (file?: string, tokenBg?: string, tokenBorder?: string) => {
+  const CANVAS_WIDTH = canvasWidth
+  const CANVAS_HEIGHT = canvasHeight
+
   const [reflectImage, setReflectImage] = useState(false);
 
   const [background, setBackground] = useState<string>();
@@ -38,22 +45,52 @@ export const useTokenatorState = (file?: string, tokenBg?: string, tokenBorder?:
   const moveCompensateX = useMemo(() => deltaX * scale, [deltaX, scale]);
   const moveCompensateY = useMemo(() => deltaY * scale, [deltaY, scale]);
 
-  const exportImage = async (format: 'webp' | 'png' = 'webp'): Promise<Blob> => {
+  const exportImage = async (
+    format: 'webp' | 'png' = 'webp',
+    shape: 'rect' | 'circle' = 'rect'
+  ): Promise<Blob> => {
     const svg = tokenRef.current;
     if (!svg) throw new Error('no token provided');
   
-    const canvas = document.createElement('canvas');
-    canvas.width = CANVAS_WIDTH;
-    canvas.height = CANVAS_HEIGHT;
+    const canvasSize = Math.max(CANVAS_WIDTH, CANVAS_HEIGHT); // квадратный размер для круга
+    const isCircle = shape === 'circle';
   
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Canvas context not found');
+    // 1. Оффскрин канвас для рендера SVG
+    const offscreen = document.createElement('canvas');
+    offscreen.width = isCircle ? canvasSize : CANVAS_WIDTH;
+    offscreen.height = isCircle ? canvasSize : CANVAS_HEIGHT;
+    const offCtx = offscreen.getContext('2d');
+    if (!offCtx) throw new Error('offscreen context not found');
   
     const svgText = new XMLSerializer().serializeToString(svg);
-    const canvgInstance = await Canvg.fromString(ctx, svgText);
-  
+    const canvgInstance = await Canvg.fromString(offCtx, svgText);
     await canvgInstance.render();
   
+    // 2. Финальный канвас
+    const canvas = document.createElement('canvas');
+    canvas.width = isCircle ? canvasSize : CANVAS_WIDTH;
+    canvas.height = isCircle ? canvasSize : CANVAS_HEIGHT;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('canvas context not found');
+  
+    if (isCircle) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(canvasSize / 2, canvasSize / 2, canvasSize / 2, 0, Math.PI * 2);
+      ctx.clip();
+    }
+  
+    // 3. Рисуем изображение, центрируя
+    const dx = isCircle ? (canvasSize - CANVAS_WIDTH) / 2 : 0;
+    const dy = isCircle ? (canvasSize - CANVAS_HEIGHT) / 2 : 0;
+  
+    ctx.drawImage(offscreen, dx, dy, CANVAS_WIDTH, CANVAS_HEIGHT);
+  
+    if (isCircle) {
+      ctx.restore();
+    }
+  
+    // 4. Сохраняем
     return new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
         (blob) => {
@@ -67,8 +104,8 @@ export const useTokenatorState = (file?: string, tokenBg?: string, tokenBorder?:
   };
   
   const download = useCallback(
-    (format: 'webp' | 'png') => {
-      exportImage(format).then((blob) => {
+    (format: 'webp' | 'png', shape: 'rect' | 'circle') => {
+      exportImage(format, shape).then((blob) => {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = `token.${format}`;
@@ -156,5 +193,7 @@ export const useTokenatorState = (file?: string, tokenBg?: string, tokenBorder?:
     setScaleWithAnchor,
     background,
     border,
+    CANVAS_WIDTH,
+    CANVAS_HEIGHT,
   };
 };

@@ -34,7 +34,7 @@ type Props = {
     max: number;
     step: number;
   };
-  exportImage: (format?: 'webp' | 'png') => Promise<Blob>;
+  exportImage: (format?: 'webp' | 'png', shape?: 'rect' | 'circle') => Promise<Blob>;
   setScaleWithAnchor: (val: number) => void;
 };
 
@@ -65,25 +65,6 @@ export const TokenStamp: React.FC<Props> = ({
 
   const sizeX = useMemo(() => CANVAS_WIDTH * scale, [scale, CANVAS_WIDTH]);
   const sizeY = useMemo(() => CANVAS_HEIGHT * scale, [scale, CANVAS_HEIGHT]);
-
-  const prevScale = useRef(scale);
-
-  // useEffect(() => {
-  //   const oldScale = prevScale.current;
-  //   if (scale !== oldScale) {
-  //     const oldWidth = CANVAS_WIDTH * oldScale;
-  //     const newWidth = CANVAS_WIDTH * scale;
-  //     const oldHeight = CANVAS_HEIGHT * oldScale;
-  //     const newHeight = CANVAS_HEIGHT * scale;
-
-  //     setOffsetPos({
-  //       x: offsetPos.x - (newWidth - oldWidth) / 2,
-  //       y: offsetPos.y - (newHeight - oldHeight) / 2,
-  //     });
-
-  //     prevScale.current = scale;
-  //   }
-  // }, [scale]);
 
   const isTouchDevice = useMemo(() => {
     return window.matchMedia('(pointer: coarse)').matches;
@@ -148,7 +129,7 @@ export const TokenStamp: React.FC<Props> = ({
   const saveImageToRedux = useDebouncedCallback(async () => {
     if (!file) return;
     try {
-      const blob = await exportImage('webp');
+      const blob = await exportImage('webp', shape);
       const base64 = await blobToBase64(blob);
 
       if (shape === 'rect') {

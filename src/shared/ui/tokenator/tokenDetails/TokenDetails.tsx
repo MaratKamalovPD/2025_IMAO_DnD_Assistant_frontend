@@ -8,6 +8,7 @@ import { DownloadButton } from './downloadButton';
 
 // Тип пропсов для TokenDetails
 interface Props {
+  shape: 'rect' | 'circle';
   file?: string;
   processFile: (file: File) => void;
   reflectImage: boolean;
@@ -16,7 +17,7 @@ interface Props {
   scale: number;
   setScale: (val: number) => void;
   setScaleWithAnchor: (val: number) => void;
-  download: (format: "webp" | "png") => void;
+  download: (format: "webp" | "png", shape: 'rect' | 'circle') => void;
   scaleConfig: {
     min: number;
     max: number;
@@ -36,6 +37,7 @@ export const TokenDetails: React.FC<Props> = ({
   download,
   setScaleWithAnchor,
   showHeaderAndInfo = true,
+  shape,
 }) => {
   return (
     <div className={s.details}>
@@ -58,7 +60,7 @@ export const TokenDetails: React.FC<Props> = ({
 
       <div className={s.details__actionsRow}>
         <UploadButton processFile={processFile} />
-        <DownloadButton file={file} download={download} />
+        <DownloadButton file={file} download={download} shape={shape}/>
       </div>
     </div>
   );
