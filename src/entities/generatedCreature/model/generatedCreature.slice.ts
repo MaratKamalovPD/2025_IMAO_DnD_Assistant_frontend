@@ -606,6 +606,16 @@ type AddAttackPayload = {
           changes: { imageBase64: action.payload.imageBase64 },
         });
       },
+
+      setCreatureImageCircle: (
+        state,
+        action: PayloadAction<{ id: string; imageBase64Circle: string }>
+      ) => {
+        generatedCreatureAdapter.updateOne(state, {
+          id: action.payload.id,
+          changes: { imageBase64Circle: action.payload.imageBase64Circle },
+        });
+      },
       
     },
   });

@@ -55,6 +55,7 @@ export type CreatureFullData = {
   useCustomSpeed?: boolean;
   customSpeed?: string;
   imageBase64?: string;
+  imageBase64Circle?: string;
 };
 
 export type Reaction = {

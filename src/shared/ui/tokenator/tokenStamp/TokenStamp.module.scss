@@ -6,6 +6,12 @@
   display: inline-block;
   border: 8px solid var(--token-border-color);
   background-color: var(--primary-bg-color);
+
+  &.circle {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+  }
 }
 
 .container {
@@ -23,6 +29,10 @@
   &.dragging {
     cursor: grabbing;
   }
+
+  &.circle {
+    border-radius: 50%;
+  }
 }
 
 .dropText {
@@ -38,8 +48,7 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    padding: 1rem;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     color: var(--text-color-secondary, #6a6a6a);
     text-align: center;
   }

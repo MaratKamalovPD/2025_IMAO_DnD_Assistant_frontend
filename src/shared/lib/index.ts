@@ -14,4 +14,7 @@ export { DiceType } from './types';
 export type { D20Roll, Dice, Language, UUID } from './types';
 
 export { Dice10, Dice100, Dice12, Dice20, Dice4, Dice6, Dice8 } from './dice';
-export { useTokenator } from './useTokenator'
+export { useTokenatorState } from './useTokenatorState'
+export { useTokenatorShared } from './useTokenatorShared'
+export { blobToBase64, getBase64FromBlob, getBase64} from './base64Funcs'
+export { useClamp } from './useClamp'

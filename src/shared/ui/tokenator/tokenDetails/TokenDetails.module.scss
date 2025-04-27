@@ -24,7 +24,7 @@
       font-size: 14px;
       line-height: 1.4;
       color: var(--text-color-secondary);
-      margin-bottom: 32px;
+      margin-bottom: 16px;
   
       p {
         margin-bottom: 6px;
@@ -33,36 +33,39 @@
   
     &__controls {
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       gap: 12px;
-      margin-bottom: 24px;
-  
-      &__slider {
-        flex-grow: 1;
-  
-        input[type='range'] {
-          width: 100%;
-          appearance: none;
-          height: 6px;
-          border-radius: 4px;
-          background-color: var(--border);
-  
-          &::-webkit-slider-thumb {
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            background-color: var(--primary-btn-color);
-            border-radius: 50%;
-            cursor: pointer;
+      padding: 18px;
+
+      &__sliderWrapper{
+
+        display: flex;
+        align-items: center;
+        gap: 24px; 
+        padding: 24px;
+      
+        button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 6px;
+          border: none;
+          cursor: pointer;
+      
+          &[disabled] {
+            opacity: 0.5;
+            cursor: default;
           }
-  
-          &::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            background-color: var(--primary-btn-color);
-            border-radius: 50%;
-            cursor: pointer;
+      
+          svg {
+            width: 28px;
+            height: 28px;
           }
+        }
+      
+        .details__controls__slider {
+          flex: 1; 
+          min-width: 150px;
         }
       }
   
@@ -74,43 +77,82 @@
       }
     }
   
-    &__actions {
+    .details__actionsRow {
       display: flex;
-      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       gap: 12px;
-  
-      @media (min-width: 768px) {
-        flex-direction: row;
-      }
-  
-      &__downloadGroup {
+    }
+    
+    .downloadDropdown {
+      position: relative;
+    
+      button {
+        padding: 6px;
         display: flex;
-        gap: 8px;
-        width: 100%;
-  
-        button {
-          flex: 1;
+        align-items: center;
+        justify-content: center;
+    
+        svg {
+          width: 28px;
+          height: 28px;
         }
-  
-        button[data-variant='primary'] {
-          font-weight: bold;
-          background-color: var(--primary-btn-color);
-          color: white;
-  
+      }
+    
+      &__menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 6px;
+        padding: 4px;
+        background: var(--secondary-bg-color);
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        z-index: 10;
+    
+        button {
+          padding: 8px 16px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          text-align: left;
+          width: 100%;
+          font-size: 14px;
+    
           &:hover {
-            background-color: var(--primary-btn-hover-color);
+            background-color: var(--secondary-bg-color-hover);
+          }
+    
+          &:disabled {
+            opacity: 0.6;
+            cursor: default;
           }
         }
       }
-  
-      button[data-variant='secondary'] {
-        background-color: var(--secondary-bg-color);
-        color: white;
-  
-        &:hover {
-          background-color: var(--secondary-hover-bg-color);
-        }
-      }
     }
-  }
+
+    .sliderBlock {
+      position: relative;
+      flex: 1;
+    }
+    
+    .sliderValue {
+      position: absolute;
+      top: -40px;
+      background-color: #222;
+      color: #fff;
+      padding: 4px 10px;
+      font-size: 14px;
+      border-radius: 8px;
+      white-space: nowrap;
+      z-index: 1;
+      pointer-events: none;
+
+    }
+    
+    
+    
+}
   
