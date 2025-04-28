@@ -59,6 +59,8 @@ export const TokenStamp: React.FC<Props> = ({
   shape = 'rect',
   setScaleWithAnchor,
 }) => {
+  void border
+
   const containerRef = useRef<SVGGElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const dispatch = useDispatch();
