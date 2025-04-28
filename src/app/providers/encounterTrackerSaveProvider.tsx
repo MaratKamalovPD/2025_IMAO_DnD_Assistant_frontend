@@ -27,8 +27,8 @@ export const EncounterTrackerSaveProvider = ({ children }: Props) => {
 
   const [saveEncounter] = useUpdateEncounterMutation();
 
-  if (encounterState.encounterId !== Number(id) && status === 'uninitialized') {
-    trigger(Number(id));
+  if (encounterState.encounterId !== id && status === 'uninitialized') {
+    trigger(id as string);
   }
 
   useEffect(() => {
@@ -36,15 +36,15 @@ export const EncounterTrackerSaveProvider = ({ children }: Props) => {
       dispatch(encounterActions.setState(encounter.data.encounterState));
       dispatch(creatureActions.setState(encounter.data.creaturesState));
       dispatch(loggerActions.setState(encounter.data.loggerState));
-      dispatch(encounterActions.setEncounterId(Number(id)));
+      dispatch(encounterActions.setEncounterId(id || null));
     }
   }, [isLoading, isError, encounter]);
 
   const updateState = useCallback(
     debounce((body: EncounterSave) => {
-      if (body.encounterState.encounterId !== Number(id)) return;
+      if (body.encounterState.encounterId !== id) return;
       saveEncounter({
-        id: Number(id),
+        id: id,
         body: body,
       })?.unwrap();
     }, DEBOUNSE_TIME),

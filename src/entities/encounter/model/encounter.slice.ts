@@ -5,7 +5,7 @@ import { UUID } from 'shared/lib';
 import { CellsCoordinates, Participant } from './types';
 
 export type EncounterState = {
-  encounterId: number | null;
+  encounterId: UUID | null;
   hasStarted: boolean;
   attackHandleModeActive: boolean;
   currentRound: number;
@@ -40,7 +40,7 @@ const encounterSlice = createSlice({
   name: 'encounter',
   initialState,
   reducers: {
-    setEncounterId: (state, action: PayloadAction<number | null>) => {
+    setEncounterId: (state, action: PayloadAction<UUID | null>) => {
       state.encounterId = action.payload;
     },
     setState: (state, action: PayloadAction<EncounterState>) => {

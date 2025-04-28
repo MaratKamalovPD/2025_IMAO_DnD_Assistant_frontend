@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+import { UUID } from 'shared/lib';
 import { Encounter, EncounterClipped, EncounterSave } from '../model';
 import type { SearchParams } from './types';
 
@@ -34,20 +35,20 @@ const encounterApi = createApi({
       }),
     }),
 
-    updateEncounter: builder.mutation<null, { id: number; body: EncounterSave }>({
+    updateEncounter: builder.mutation<null, { id: UUID; body: EncounterSave }>({
       query: ({ id, body }) => ({
-        url: String(id),
+        url: id,
         method: 'POST',
         body: body,
       }),
     }),
 
-    getEncounterById: builder.query<Encounter, number>({
-      query: (id) => ({ url: String(id) }),
+    getEncounterById: builder.query<Encounter, UUID>({
+      query: (id) => ({ url: id }),
     }),
 
-    deleteEncounterById: builder.query<Encounter, number>({
-      query: (id) => ({ url: String(id), method: 'DELETE' }),
+    deleteEncounterById: builder.query<Encounter, UUID>({
+      query: (id) => ({ url: id, method: 'DELETE' }),
     }),
   }),
 });

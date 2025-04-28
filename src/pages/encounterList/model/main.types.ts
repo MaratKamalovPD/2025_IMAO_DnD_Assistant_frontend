@@ -1,14 +1,15 @@
+import { UUID } from 'shared/lib';
 import { EncounterSave } from './encounterSave.types';
 
 export type Encounter = {
-  id: number;
+  id: UUID;
   userID: number;
   name: string;
   data: EncounterSave;
 };
 
 export type EncounterClipped = {
-  id: number;
+  id: UUID;
   userID: number;
   name: string;
 };
