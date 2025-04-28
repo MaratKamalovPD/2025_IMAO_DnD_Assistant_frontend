@@ -8,12 +8,20 @@ import { initialState as loggerInitialState } from 'widgets/chatbot/model/logger
 
 export type EncounterSave = {
   encounterState: EncounterState;
+<<<<<<< HEAD
   creatureState: EntityState<Creature, string>;
+=======
+  creaturesState: EntityState<Creature, string>;
+>>>>>>> d9dcfff30e4061e9f5ddf831f2b68403f0a526d9
   loggerState: LoggerState;
 };
 
 export const encounterSaveInitial: EncounterSave = {
   encounterState: encounterInitialState,
+<<<<<<< HEAD
   creatureState: creatureAdapter.getInitialState(),
+=======
+  creaturesState: creatureAdapter.getInitialState(),
+>>>>>>> d9dcfff30e4061e9f5ddf831f2b68403f0a526d9
   loggerState: loggerInitialState,
 };
