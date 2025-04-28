@@ -1,10 +1,10 @@
-export const throttle = (
-  func: (...args: any[]) => void,
+export const throttle = <T extends (...args: Parameters<T>) => ReturnType<T>>(
+  func: T,
   delay: number,
-): ((...args: any[]) => void) => {
+): ((...args: Parameters<T>) => ReturnType<T> | undefined) => {
   let isCalled: boolean = false;
 
-  return (...args: any[]): void => {
+  return (...args: Parameters<T>): ReturnType<T> | undefined => {
     if (isCalled) return;
 
     isCalled = true;

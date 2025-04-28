@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, Reducer } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
 import { authReducer } from 'entities/auth';
@@ -37,3 +37,17 @@ export const store = configureStore({
 setupListeners(store.dispatch);
 
 export type RootState = ReturnType<typeof store.getState>;
+export type RootStore = ReturnType<
+  Reducer<{
+    encounter: typeof encounterReduser;
+    creatures: typeof creaturesReduser;
+    logger: typeof loggerReduser;
+    auth: typeof authReducer;
+    generatedCreature: typeof generatedCreatureReduser;
+    bestiaryApi: typeof bestiaryApi.reducer;
+    promtApi: typeof promtApi.reducer;
+    characterApi: typeof characterApi.reducer;
+    encounterApi: typeof encounterApi.reducer;
+    authApi: typeof authApi.reducer;
+  }>
+>;

@@ -1,31 +1,31 @@
-import { EntityState } from '@reduxjs/toolkit';
-import { Creature, creatureActions, CreaturesStore } from 'entities/creature/model';
-import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
-import { useLazyGetEncounterByIdQuery, useUpdateEncounterMutation } from 'pages/encounterList/api';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
-import { throttle } from 'shared/lib';
-import { loggerActions, LoggerState, LoggerStore } from 'widgets/chatbot/model';
+
+import { RootState, RootStore } from 'app/store';
+import { creatureActions } from 'entities/creature/model';
+import { encounterActions } from 'entities/encounter/model';
+import { useLazyGetEncounterByIdQuery, useUpdateEncounterMutation } from 'pages/encounterList/api';
+import { EncounterSave } from 'pages/encounterList/model';
+import { debounce } from 'shared/lib/debounce';
+import { loggerActions } from 'widgets/chatbot/model';
 import { Props } from './types';
 
-const THROTTLE_TIME = 1000;
+const DEBOUNSE_TIME = 2000;
 
 export const EncounterTrackerSaveProvider = ({ children }: Props) => {
   const dispatch = useDispatch();
   const { id } = useParams();
 
-  const loggerState = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
-  const encounterState = useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
-  const creatureState = useSelector<CreaturesStore>((state) => state.creatures) as EntityState<
-    Creature,
-    string
-  >;
+  const {
+    logger: loggerState,
+    encounter: encounterState,
+    creatures: creaturesState,
+  } = useSelector<RootStore>((state) => state) as RootState;
 
   const [trigger, { data: encounter, isLoading, isError, status }] = useLazyGetEncounterByIdQuery();
 
-  const [body] = useUpdateEncounterMutation();
-  const bodyThrottled = throttle(body, THROTTLE_TIME);
+  const [saveEncounter] = useUpdateEncounterMutation();
 
   if (encounterState.encounterId !== Number(id) && status === 'uninitialized') {
     trigger(Number(id));
@@ -33,16 +33,28 @@ export const EncounterTrackerSaveProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (!isLoading && !isError && encounter) {
-      dispatch(encounterActions.setState({ ...encounter.data.encounterState }));
-      dispatch(creatureActions.setState({ ...encounter.data.creatureState }));
-      dispatch(loggerActions.setState({ ...encounter.data.loggerState }));
+      dispatch(encounterActions.setState(encounter.data.encounterState));
+      dispatch(creatureActions.setState(encounter.data.creaturesState));
+      dispatch(loggerActions.setState(encounter.data.loggerState));
       dispatch(encounterActions.setEncounterId(Number(id)));
     }
   }, [isLoading, isError, encounter]);
 
-  useEffect(() => {
-    bodyThrottled({ id: Number(id), body: { loggerState, encounterState, creatureState } });
-  }, [loggerState, encounterState.attackHandleModeActive, creatureState]);
+  const updateState = useCallback(
+    debounce((body: EncounterSave) => {
+      if (body.encounterState.encounterId !== Number(id)) return;
+      saveEncounter({
+        id: Number(id),
+        body: body,
+      })?.unwrap();
+    }, DEBOUNSE_TIME),
+    [saveEncounter],
+  );
+
+  useEffect(
+    () => updateState({ loggerState, encounterState, creaturesState }),
+    [loggerState, creaturesState, encounterState],
+  );
 
   return <>{children}</>;
 };
