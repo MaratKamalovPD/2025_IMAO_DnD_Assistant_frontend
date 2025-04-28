@@ -32,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({ encounterId, isAuth, user, logou
   }, []);
 
   useEffect(() => {
-    if (location.pathname === '/encounter_tracker') {
+    if (/encounter_tracker/.test(location.pathname)) {
       setVisible(false);
       return;
     }
