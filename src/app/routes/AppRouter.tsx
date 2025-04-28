@@ -10,11 +10,17 @@ import { Login } from 'pages/login';
 import { Main } from 'pages/main';
 import { StatblockGenerator } from 'pages/statblockGenerator';
 import { TestPage } from 'pages/test';
+import { Footer } from 'shared/ui';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Main />,
+    element: (
+      <>
+        <Main />
+        <Footer />
+      </>
+    ),
   },
   {
     path: 'test',
@@ -43,6 +49,7 @@ const router = createBrowserRouter([
     element: (
       <HeaderProviders>
         <Bestiary />
+        <Footer />
       </HeaderProviders>
     ),
     children: [
@@ -57,6 +64,7 @@ const router = createBrowserRouter([
     element: (
       <HeaderProviders>
         <Characters />
+        <Footer />
       </HeaderProviders>
     ),
   },
@@ -65,6 +73,7 @@ const router = createBrowserRouter([
     element: (
       <HeaderProviders>
         <Login />
+        <Footer />
       </HeaderProviders>
     ),
   },
@@ -73,6 +82,7 @@ const router = createBrowserRouter([
     element: (
       <HeaderProviders>
         <StatblockGenerator />
+        <Footer />
       </HeaderProviders>
     ),
   },
@@ -81,6 +91,7 @@ const router = createBrowserRouter([
     element: (
       <HeaderProviders>
         <EncounterList />
+        <Footer />
       </HeaderProviders>
     ),
   },

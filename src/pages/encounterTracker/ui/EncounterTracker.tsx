@@ -19,6 +19,7 @@ import { MenuItem, PopupMenu } from './popupMenu';
 import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
 
+import Tippy from '@tippyjs/react';
 import s from './EncounterTracker.module.scss';
 
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
@@ -51,6 +52,12 @@ export const EncounterTracker = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    document.body.setAttribute('data-page', 'tracker');
+
+    return () => document.body.removeAttribute('data-page');
   }, []);
 
   useEffect(() => {
@@ -94,12 +101,14 @@ export const EncounterTracker = () => {
 
   const ToggleStatblock = () => {
     return (
-      <div
-        className={s.toggleStatblock}
-        onClick={() => dispatch(encounterActions.setStatblockIsVisible(!statblockIsVisible))}
-      >
-        <Icon28DocumentListOutline fill='white' />
-      </div>
+      <Tippy content={'Таблица характкристик'}>
+        <div
+          className={s.toggleStatblock}
+          onClick={() => dispatch(encounterActions.setStatblockIsVisible(!statblockIsVisible))}
+        >
+          <Icon28DocumentListOutline fill='white' />
+        </div>
+      </Tippy>
     );
   };
 
@@ -112,7 +121,10 @@ export const EncounterTracker = () => {
       color: s.red,
     },
     {
-      content: { type: 'component', component: <ToggleStatblock /> },
+      content: {
+        type: 'component',
+        component: <ToggleStatblock />,
+      },
       color: s.green,
       href: '#rocket',
     },
@@ -120,9 +132,11 @@ export const EncounterTracker = () => {
       content: {
         type: 'component',
         component: (
-          <div className={s.toggle} onClick={() => setMapImage(DANGEON_MAP_IMAGE)}>
-            <Icon28DiamondOutline fill='white' />
-          </div>
+          <Tippy content={'Установить карту подземелья'}>
+            <div className={s.toggle} onClick={() => setMapImage(DANGEON_MAP_IMAGE)}>
+              <Icon28DiamondOutline fill='white' />
+            </div>
+          </Tippy>
         ),
       },
       color: s.green,
@@ -132,9 +146,11 @@ export const EncounterTracker = () => {
       content: {
         type: 'component',
         component: (
-          <div className={s.toggle} onClick={() => setMapImage(VILLAGE_MAP_IMAGE)}>
-            <Icon28HomeOutline fill='white' />
-          </div>
+          <Tippy content={'Установить карту деревни'}>
+            <div className={s.toggle} onClick={() => setMapImage(VILLAGE_MAP_IMAGE)}>
+              <Icon28HomeOutline fill='white' />
+            </div>
+          </Tippy>
         ),
       },
       color: s.green,

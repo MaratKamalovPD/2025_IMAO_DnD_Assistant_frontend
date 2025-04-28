@@ -85,7 +85,7 @@ export const EncounterList = () => {
   if (isError) return <div>Error loading characters</div>;
 
   return (
-    <div>
+    <div className={s.encounterListContainer}>
       <h1 className={s.title}>Мои сражения</h1>
 
       <TopPanel

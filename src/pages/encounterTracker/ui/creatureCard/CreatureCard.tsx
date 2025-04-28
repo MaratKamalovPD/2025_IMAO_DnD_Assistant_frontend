@@ -8,6 +8,7 @@ import { normalizeString, UUID } from 'shared/lib';
 
 import placeholderImage from 'shared/assets/images/placeholder.png';
 
+import Tippy from '@tippyjs/react';
 import { findConditionInstance } from 'pages/encounterTracker/lib';
 import s from './CreatureCard.module.scss';
 
@@ -78,12 +79,14 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
         <div className={s.conditionsContainer}>
           {creature.conditions?.map((condition, ind) => {
             const normalizedConditionName = normalizeString(condition);
-            const { icon } = findConditionInstance(normalizedConditionName);
+            const { icon, instance } = findConditionInstance(normalizedConditionName);
 
             return (
-              <div key={ind}>
-                {icon && <img src={icon} alt={condition} className={s.conditionIcon} />}
-              </div>
+              <Tippy content={instance ? instance.label.ru : condition}>
+                <div key={ind}>
+                  {icon && <img src={icon} alt={condition} className={s.conditionIcon} />}
+                </div>
+              </Tippy>
             );
           })}
         </div>

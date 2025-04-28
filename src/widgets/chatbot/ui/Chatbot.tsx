@@ -8,6 +8,7 @@ import { ActionProvider, MessageParser } from '../model';
 import { loggerActions, LoggerState } from '../model/logger.slice';
 import { IMessage, LoggerStore } from '../model/types';
 
+import Tippy from '@tippyjs/react';
 import s from './Chatbot.module.scss';
 
 export const Chatbot = () => {
@@ -40,9 +41,11 @@ export const Chatbot = () => {
           />
         </div>
       )}
-      <button className={s.chatbotButton} onClick={() => toggleBot((prev) => !prev)}>
-        {!showBot ? <Icon28BookOutline /> : <Icon28CancelAltOutline />}
-      </button>
+      <Tippy content={'Журнал сражения'}>
+        <button className={s.chatbotButton} onClick={() => toggleBot((prev) => !prev)}>
+          {!showBot ? <Icon28BookOutline /> : <Icon28CancelAltOutline />}
+        </button>
+      </Tippy>
     </>
   );
 };

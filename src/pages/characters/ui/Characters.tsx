@@ -86,7 +86,7 @@ export const Characters = () => {
   if (isError) return <div>Error loading characters</div>;
 
   return (
-    <div>
+    <div className={s.charactersContainer}>
       <h1 className={s.title}>Мои персонажи</h1>
 
       <TopPanel

@@ -64,6 +64,10 @@ export const CreatureToken = ({ transform, id, x, y, cellSize }: CreatureTokenPr
   }, [debounceCoords]);
 
   useEffect(() => {
+    dispatch(encounterActions.setCellsCoordinates({ cellsX: x, cellsY: y, id }));
+  }, []);
+
+  useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       x = (e.clientX - transform.x) / transform.k;
       y = (e.clientY - transform.y) / transform.k;

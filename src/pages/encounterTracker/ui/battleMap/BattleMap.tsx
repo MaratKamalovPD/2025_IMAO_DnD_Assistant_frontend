@@ -200,13 +200,13 @@ export const BattleMap = ({ image }: { image: string }) => {
 
           {participants
             .filter((value) => selectedCreatureId !== value.id)
-            .map((value) => (
+            .map((value, index) => (
               <CreatureToken
                 transform={transform}
                 key={value.id}
                 id={value.id}
                 x={value.cellsCoords ? value.cellsCoords.cellsX : 0}
-                y={value.cellsCoords ? value.cellsCoords.cellsY : 0}
+                y={value.cellsCoords ? value.cellsCoords.cellsY : index}
                 cellSize={cellSize}
               />
             ))}

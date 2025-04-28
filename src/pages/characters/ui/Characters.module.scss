@@ -1,3 +1,7 @@
+.charactersContainer {
+  margin-top: 80px;
+}
+
 .bestiaryContainer {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -8,6 +12,8 @@
 }
 
 .title {
+  margin-block-start: 0;
+  padding-block-start: 0.67em;
   margin-bottom: 1rem;
 }
 

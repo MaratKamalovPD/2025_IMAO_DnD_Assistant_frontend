@@ -143,8 +143,7 @@ const BestiaryContent = () => {
 
   return (
     <div
-      className={clsx({
-        [s.bestiaryContainer]: !hasOutlet,
+      className={clsx(s.bestiaryContainer, {
         [s.bestiaryContainer__outlet]: hasOutlet,
       })}
     >

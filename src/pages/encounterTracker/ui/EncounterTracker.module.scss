@@ -1,3 +1,7 @@
+body[data-page='tracker'] {
+  overflow: hidden;
+}
+
 .encounterTrackerContainer {
   display: flex;
   height: 100vh;

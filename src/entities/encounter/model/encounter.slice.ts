@@ -31,7 +31,7 @@ export const initialState: EncounterState = {
   attackedCreatureId: null,
   currentAttackLLM: null,
   statblockSize: { width: 850, height: 600 },
-  statblockCoords: { x: 300, y: 0 },
+  statblockCoords: { x: 300, y: 100 },
   statblockIsMinimized: false,
   statblockIsVisible: false,
 };
