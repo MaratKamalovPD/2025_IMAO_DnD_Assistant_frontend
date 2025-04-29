@@ -20,11 +20,14 @@ export const ListCard: FC<ListCardProps> = ({ creature, isSelected }) => {
       <div className={s.challengeRatingContainer}>{creature.challengeRating}</div>
       <div className={s.infoContainer}>
         <div className={s.mainSection}>
-          <div className={s.mainSection__title}>
-            <Tippy content={creature.name.rus}>
-              <div className={s.mainSection__name}>{creature.name.rus}</div>
-            </Tippy>
-          </div>
+          <Tippy content={creature.name.rus}>
+            <div className={s.mainSection__titleContainer}>
+              <div className={s.mainSection__title}>{creature.name.rus}</div>
+              <div className={clsx(s.mainSection__title, s.mainSection__titleEng)}>
+                [{creature.name.eng}]
+              </div>
+            </div>
+          </Tippy>
           <div className={s.mainSection__type}>{creature.type.name}</div>
         </div>
         <div className={s.sourceSection}>

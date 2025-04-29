@@ -34,3 +34,9 @@
     }
   }
 }
+
+@container statblock-container (max-width: 600px) {
+  .fightStatsContainer {
+    margin-bottom: 5rem;
+  }
+}

@@ -40,12 +40,22 @@
   gap: 0.25rem;
   font-size: 14px;
 
-  &__name {
+  &__titleContainer {
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  &__title {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
     width: fit-content;
+    color: #ffffff;
+  }
+
+  &__titleEng {
+    color: #c0c0c0;
   }
 
   &__type {

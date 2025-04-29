@@ -29,11 +29,13 @@ export const GridCard: FC<GridCardProps> = ({ creature, handleAddToTtackerClick,
 
       <div className={s.infoContainer}>
         <div className={s.header}>
-          <div className={s.header__titleContainer}>
-            <Tippy content={creature.name.rus}>
+          <Tippy content={creature.name.rus}>
+            <div className={s.header__titleContainer}>
               <div className={s.header__title}>{creature.name.rus}</div>
-            </Tippy>
-          </div>
+              <div className={clsx(s.header__title, s.header__titleEng)}>[{creature.name.eng}]</div>
+            </div>
+          </Tippy>
+
           <div className={s.header__tags}>
             <span className={s.header__typeTag}>{creature.type.name}</span>
             {creature.type?.tags &&

@@ -77,7 +77,7 @@ export const TopPanel: React.FC<TopPanelProps> = ({
               className={s.additionsContainer__btn}
             >
               <Icon24Sort width={19} height={19} />
-              <span>Фильтры</span>
+              <span className={s.additionsContainer__filtersText}>Фильтры</span>
             </button>
           </Tippy>
           {isAnyFilterSet && (
