@@ -1,13 +1,19 @@
 import { Dice, DiceType } from "./types";
 
-export const parseDice = (diceText: string): Dice => {
-  const parsedDice = diceText.toLowerCase().split('к');
-  if (parsedDice.length !== 2) {
+export function parseDice(diceText: `${number}к${number}`): Dice;
+export function parseDice(diceText: string): { dice: Dice; modifier: number };
+export function parseDice(diceText: string): Dice | { dice: Dice; modifier: number } {
+  const cleaned = diceText.toLowerCase().replace(/\s+/g, '');
+  const match = cleaned.match(/^(\d+)к(\d+)([+-]\d+)?$/);
+
+  if (!match) {
     throw new Error(`Invalid dice format: ${diceText}`);
   }
 
-  const count = Number(parsedDice[0]);
-  const sides = Number(parsedDice[1]);
+  const count = Number(match[1]);
+  const sides = Number(match[2]);
+  const modifierRaw = match[3];
+  const modifier = modifierRaw ? Number(modifierRaw) : undefined;
 
   if (isNaN(count) || isNaN(sides)) {
     throw new Error(`Invalid number in dice format: ${diceText}`);
@@ -28,9 +34,11 @@ export const parseDice = (diceText: string): Dice => {
     throw new Error(`Unsupported dice type: d${sides}`);
   }
 
-  return {
+  const dice: Dice = {
     count,
     type: diceType,
-    edgesNum: Number(sides),
+    edgesNum: sides,
   };
-};
+
+  return modifier === undefined ? dice : { dice, modifier };
+}

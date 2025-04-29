@@ -1,6 +1,7 @@
 import { Bounce, ToastContainer } from 'react-toastify';
 import { MainProviders } from './providers';
 import { AppRouter } from './routes';
+import 'pages/bestiary/ui/creatureStatblock/dice-roller'
 
 import 'app/styles/global.scss';
 

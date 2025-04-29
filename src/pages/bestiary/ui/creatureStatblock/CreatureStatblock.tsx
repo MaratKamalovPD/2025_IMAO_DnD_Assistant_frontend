@@ -10,20 +10,34 @@ import s from './CreatureStatblock.module.scss';
 import { DescriptionSection } from './descriptionSection';
 import { FightStatsSection } from './fightStatsSection';
 import { SkillsAndSensesSection } from './skillsAndSensesSection';
+import { useEffect } from 'react';
+import { CreatureFullData } from 'entities/creature/model';
 
-export const CreatureStatblock = () => {
+interface CreatureStatblockProps {
+  creature?: CreatureFullData;
+}
+
+export const CreatureStatblock = ({ creature: creatureProp }: CreatureStatblockProps) => {
   const { creatureName } = useParams();
-  if (creatureName === undefined) {
-    const navigate = useNavigate();
-    navigate('/bestiary');
+  const navigate = useNavigate();
 
-    return;
-  }
+  const creatureApiPath = creatureName ? `/bestiary/${creatureName}` : undefined;
 
-  const { data: creature } = useGetCreatureByNameQuery(`/bestiary/${creatureName}`);
+const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, {
+  skip: !!creatureProp || !creatureName,
+});
+
+
+  useEffect(() => {
+    if (!creatureName && !creatureProp) {
+      navigate('/bestiary');
+    }
+  }, [creatureName, creatureProp, navigate]);
+
+  const creature = creatureProp ?? creatureQueryData;
 
   if (!creature) {
-    return;
+    return null;
   }
 
   return (
@@ -46,7 +60,7 @@ export const CreatureStatblock = () => {
           <div className={s.commonContainer__sourceContainer}>
             Источник:&nbsp;
             <Tippy content={creature.source.name}>
-              <div className={s.commonContainer__shortName}>{creature?.source.shortName}</div>
+              <div className={s.commonContainer__shortName}>{creature.source.shortName}</div>
             </Tippy>
             ,&nbsp;{creature.source.group.shortName}
           </div>

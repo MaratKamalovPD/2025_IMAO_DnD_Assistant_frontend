@@ -11,4 +11,5 @@ export enum ToastType {
   SavingThrow = 'СПАСБРОСОК',
   AbilityCheck = 'ПРОВЕРКА',
   SkillCheck = 'ПРОВЕРКА НАВЫКА',
+  Attack = 'БРОСОК АТАКИ'
 }

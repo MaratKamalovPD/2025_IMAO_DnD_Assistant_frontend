@@ -18,6 +18,7 @@ import s from './StatblockGenerator.module.scss';
 import { TypeForm } from './typeForm';
 import { toast } from 'react-toastify';
 
+
 import {
   GeneratedCreatureStore,
   SINGLE_CREATURE_ID,
@@ -26,6 +27,7 @@ import {
 } from 'entities/generatedCreature/model';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAddCreatureMutation } from '../api/statblockGenerator.api';
+import { CreatureStatblock } from 'pages/bestiary';
 
 
 const requestBody: GetCreaturesRequest = {
@@ -299,6 +301,8 @@ export const StatblockGenerator = () => {
         <SensesForm language='ru' />
         <AttackForm />
       </div>
+
+      <CreatureStatblock creature={generatedCreature} />
     </div>
   );
 };
