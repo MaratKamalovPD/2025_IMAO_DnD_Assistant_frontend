@@ -6,15 +6,17 @@ import {
 } from 'entities/generatedCreature/model';
 import { MonsterStatsLocalization } from 'pages/statblockGenerator/lib';
 import { MonsterStats, MonsterStatsFormProps } from 'pages/statblockGenerator/model';
-import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import { CollapsiblePanel, CollapsiblePanelRef } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { StatInput } from 'pages/statblockGenerator/ui/monsterStatsForm/statInput';
-import React, { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
 import s from './MonsterStatsForm.module.scss';
 
-export const MonsterStatsForm: React.FC<MonsterStatsFormProps> = ({ language = 'en' }) => {
+
+
+export const MonsterStatsForm = forwardRef<CollapsiblePanelRef, MonsterStatsFormProps>(({ language = 'en' }, ref) => {
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
@@ -61,7 +63,7 @@ export const MonsterStatsForm: React.FC<MonsterStatsFormProps> = ({ language = '
   };
 
   return (
-    <CollapsiblePanel title={t.title}>
+    <CollapsiblePanel ref={ref} title={t.title}>
       <div className={s.statsPanel__abilities}>
         {Object.entries(stats).map(([stat, value]) => (
           <StatInput
@@ -75,4 +77,4 @@ export const MonsterStatsForm: React.FC<MonsterStatsFormProps> = ({ language = '
       </div>
     </CollapsiblePanel>
   );
-};
+});

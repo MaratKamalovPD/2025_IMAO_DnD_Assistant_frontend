@@ -12,22 +12,22 @@ import {
   getLanguageOptions,
 } from 'pages/statblockGenerator/lib';
 import { DamageLanguagesFormProps, DamageListType } from 'pages/statblockGenerator/model';
-import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import { CollapsiblePanel, CollapsiblePanelRef } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { DamageLanguageSection } from 'pages/statblockGenerator/ui/damageLanguagesForm/damageLanguageSection';
 import { ListGroup } from 'pages/statblockGenerator/ui/damageLanguagesForm/listGroup';
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { capitalizeFirstLetter } from 'shared/lib';
 import s from './DamageLanguagesForm.module.scss';
 
-export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
+export const DamageLanguagesForm = forwardRef<CollapsiblePanelRef, DamageLanguagesFormProps>(({
   initialDamageVulnerabilities = [],
   initialDamageResistances = [],
   initialDamageImmunities = [],
   initialLanguages = [],
   initialTelepathy = 0,
   language = 'en',
-}) => {
+}, ref) => {
   const t = DamageLanguagesLocalization[language];
 
   const dispatch = useDispatch();
@@ -219,7 +219,7 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
   };
 
   return (
-    <CollapsiblePanel title={t.title}>
+    <CollapsiblePanel ref={ref} title={t.title}>
       <div className={s.damageLanguagesPanel__sections}>
         {/* Damage Types Section */}
         <DamageLanguageSection title={t.damageTypes}>
@@ -421,4 +421,4 @@ export const DamageLanguagesForm: React.FC<DamageLanguagesFormProps> = ({
       </div>
     </CollapsiblePanel>
   );
-};
+});

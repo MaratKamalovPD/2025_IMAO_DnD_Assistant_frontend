@@ -8,7 +8,7 @@ import {
 import { CreatureSize, TypeFormProps, TypeFormState } from 'pages/statblockGenerator/model';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { FormElement } from 'pages/statblockGenerator/ui/typeForm/formElement';
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { capitalizeFirstLetter, lowercaseFirstLetter } from 'shared/lib';
 
 import {
@@ -24,8 +24,9 @@ import { useDispatch, useSelector } from 'react-redux';
 // } from 'entities/creature/model';
 
 import s from './TypeForm.module.scss';
+import { CollapsiblePanelRef } from '../collapsiblePanel/CollapsiblePanel';
 
-export const TypeForm: React.FC<TypeFormProps> = ({ language = 'en' }) => {
+export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ language = 'en' }, ref) => {
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
@@ -151,7 +152,7 @@ export const TypeForm: React.FC<TypeFormProps> = ({ language = 'en' }) => {
     };
 
   return (
-    <CollapsiblePanel title={t.title}>
+    <CollapsiblePanel ref={ref} title={t.title}>
       <div className={s.creaturePanel__statsContainer}>
         <FormElement label={t.name}>
           <input
@@ -222,4 +223,4 @@ export const TypeForm: React.FC<TypeFormProps> = ({ language = 'en' }) => {
       </div>
     </CollapsiblePanel>
   );
-};
+});

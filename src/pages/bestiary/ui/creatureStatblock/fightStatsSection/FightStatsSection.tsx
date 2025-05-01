@@ -4,13 +4,16 @@ import { HitRollToast } from 'pages/bestiary/ui/creatureStatblock/statblockToast
 import { toast } from 'react-toastify';
 import { Dice, parseDice, rollDice } from 'shared/lib';
 import s from './FightStatsSection.module.scss';
+import { JumpTarget } from 'pages/bestiary/model';
+import { cursorStyle } from 'pages/bestiary/lib';
 
 type FightStatsProps = {
   creature: CreatureFullData;
   conModifier: number;
+  onJump?: (target: JumpTarget) => void;
 };
 
-export const FightStatsSection: React.FC<FightStatsProps> = ({ creature, conModifier }) => {
+export const FightStatsSection: React.FC<FightStatsProps> = ({ creature, conModifier, onJump }) => {
   let parsedDice: Dice;
   let hitsModifier = 0;
 
@@ -30,7 +33,7 @@ export const FightStatsSection: React.FC<FightStatsProps> = ({ creature, conModi
   return (
     <div className={s.fightStatsContainer}>
       <div className={s.fightStatsContainer__line}>
-        <span className={s.fightStatsContainer__title}>Класс доспеха:&nbsp;</span>
+        <span onClick={() => onJump?.('armor')} className={s.fightStatsContainer__title} style={cursorStyle(onJump != null)}>Класс доспеха:&nbsp;</span>
         <span className={s.fightStatsContainer__text}>
           {creature.armorClass}
           {creature.armors && (
@@ -47,7 +50,7 @@ export const FightStatsSection: React.FC<FightStatsProps> = ({ creature, conModi
         </span>
       </div>
       <div className={s.fightStatsContainer__line}>
-        <span className={s.fightStatsContainer__title}>Хиты:&nbsp;</span>
+        <span onClick={() => onJump?.('armor')} className={s.fightStatsContainer__title} style={cursorStyle(onJump != null)}>Хиты:&nbsp;</span>
         <span className={s.fightStatsContainer__text}>
           {creature.hits.average}{' '}
           {creature.hits.formula && (
@@ -68,11 +71,11 @@ export const FightStatsSection: React.FC<FightStatsProps> = ({ creature, conModi
         </span>
       </div>
       <div className={s.fightStatsContainer__line}>
-        <span className={s.fightStatsContainer__title}>Скорость:&nbsp;</span>
+        <span onClick={() => onJump?.('speed')} className={s.fightStatsContainer__title} style={cursorStyle(onJump != null)}>Скорость:&nbsp;</span>
         <span className={s.fightStatsContainer__text}>{creature.speed[0].value} фт.</span>
       </div>
       <div className={s.fightStatsContainer__line}>
-        <span className={s.fightStatsContainer__title}>Размер:&nbsp;</span>
+        <span onClick={() => onJump?.('type')} className={s.fightStatsContainer__title} style={cursorStyle(onJump != null)}>Размер:&nbsp;</span>
         <span className={s.fightStatsContainer__text}>
           {creature.size.rus.toLowerCase()}, {creature.size.cell}
         </span>

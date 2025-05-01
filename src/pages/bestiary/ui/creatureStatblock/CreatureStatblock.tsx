@@ -12,12 +12,17 @@ import { FightStatsSection } from './fightStatsSection';
 import { SkillsAndSensesSection } from './skillsAndSensesSection';
 import { useEffect } from 'react';
 import { CreatureFullData } from 'entities/creature/model';
+import { JumpTarget } from 'pages/bestiary/model';
+import { cursorStyle } from 'pages/bestiary/lib';
+
+
 
 interface CreatureStatblockProps {
   creature?: CreatureFullData;
+  onJump?: (target: JumpTarget) => void;
 }
 
-export const CreatureStatblock = ({ creature: creatureProp }: CreatureStatblockProps) => {
+export const CreatureStatblock = ({ creature: creatureProp, onJump  }: CreatureStatblockProps) => {
   const { creatureName } = useParams();
   const navigate = useNavigate();
 
@@ -43,7 +48,7 @@ const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, 
   return (
     <div className={s.statblock}>
       <div className={s.header}>
-        <div className={s.header__nameSection}>
+        <div onClick={() => onJump?.('type')} className={s.header__nameSection} style={cursorStyle(onJump != null)}>
           <span className={s.header__nameRus}>{creature.name.rus}</span>
           <span className={s.header__nameEng}>{creature.name.eng}</span>
         </div>
@@ -53,7 +58,7 @@ const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, 
       </div>
       <div className={s.statblockBody}>
         <div className={s.commonContainer}>
-          <div className={s.commonContainer__typeContainer}>
+          <div onClick={() => onJump?.('type')} className={s.commonContainer__typeContainer} style={cursorStyle(onJump != null)}>
             {creature.size.rus} {creature.type.name}
             {creature.type.tags ? ` (${creature.type.tags})` : ''}, {creature.alignment}
           </div>
@@ -70,9 +75,9 @@ const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, 
             <img src={creature.images[1]}></img>
           </div>
           <div className={s.mainContainer__description}>
-            <FightStatsSection creature={creature} conModifier={modifiers[creature.ability.con]} />
-            <AbilitiesSection creature={creature} />
-            <SkillsAndSensesSection creature={creature} />
+            <FightStatsSection creature={creature} conModifier={modifiers[creature.ability.con]} onJump={onJump}/>
+            <AbilitiesSection creature={creature} onJump={onJump}/>
+            <SkillsAndSensesSection creature={creature} onJump={onJump}/>
             <div className={s.mainContainer__infoSection}></div>
           </div>
         </div>
@@ -89,7 +94,7 @@ const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, 
           <DescriptionSection sectionTitle={'Способности'} elements={creature.feats} />
         )}
         {creature.actions && (
-          <DescriptionSection sectionTitle={'Действия'} elements={creature.actions} />
+          <DescriptionSection sectionTitle={'Действия'} elements={creature.actions} onJump={onJump}/>
         )}
         {creature.bonusActions && (
           <DescriptionSection sectionTitle={'Бонусные действия'} elements={creature.bonusActions} />

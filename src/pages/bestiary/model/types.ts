@@ -13,3 +13,5 @@ export enum ToastType {
   SkillCheck = 'ПРОВЕРКА НАВЫКА',
   Attack = 'БРОСОК АТАКИ'
 }
+
+export type JumpTarget = 'type' | 'armor' | 'speed' | 'stats' | 'properties' | 'damage' | 'senses' | 'attack';

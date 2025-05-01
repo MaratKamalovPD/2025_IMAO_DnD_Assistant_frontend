@@ -1,10 +1,11 @@
 import Tippy from '@tippyjs/react';
 import { CreatureFullData } from 'entities/creature/model';
-import { ToastType } from 'pages/bestiary/model';
+import { JumpTarget, ToastType } from 'pages/bestiary/model';
 import { D20RollToast } from 'pages/bestiary/ui/creatureStatblock/statblockToasts/d20RollToast';
 import { toast } from 'react-toastify';
 import { DiceType, modifiers, rollDice } from 'shared/lib';
 import s from './AbilitiesSection.module.scss';
+import { cursorStyle } from 'pages/bestiary/lib';
 
 type Ability = {
   name: string;
@@ -17,9 +18,10 @@ type Abilities = Ability[];
 
 type AbilitiesProps = {
   creature: CreatureFullData;
+  onJump?: (target: JumpTarget) => void;
 };
 
-export const AbilitiesSection: React.FC<AbilitiesProps> = ({ creature }) => {
+export const AbilitiesSection: React.FC<AbilitiesProps> = ({ creature, onJump }) => {
   const creatureAbilities: Abilities = [
     {
       name: 'СИЛ',
@@ -77,7 +79,7 @@ export const AbilitiesSection: React.FC<AbilitiesProps> = ({ creature }) => {
       {Object.entries(creatureAbilities).map(([_, el]) => (
         <div key={el.name}>
           <Tippy content={el.fullName}>
-            <div className={s.abilitiesContainer__title}>{el.name}</div>
+            <div onClick={() => onJump?.('stats')} className={s.abilitiesContainer__title} style={cursorStyle(onJump != null)}>{el.name}</div>
           </Tippy>
           <Tippy content={'Нажмите для броска 1к20'}>
             <div

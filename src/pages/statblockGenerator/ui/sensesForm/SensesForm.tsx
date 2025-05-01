@@ -6,13 +6,15 @@ import {
 } from 'entities/generatedCreature/model';
 import { getSenseNameMap, SensesLocalization } from 'pages/statblockGenerator/lib';
 import { SensesFormProps } from 'pages/statblockGenerator/model';
-import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import { CollapsiblePanel, CollapsiblePanelRef } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { SenseInput } from 'pages/statblockGenerator/ui/sensesForm/senseInput';
-import React from 'react';
+import { forwardRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import s from './SensesForm.module.scss';
 
-export const SensesForm: React.FC<SensesFormProps> = ({ language = 'en' }) => {
+
+
+export const SensesForm = forwardRef<CollapsiblePanelRef, SensesFormProps>(({ language = 'en' }, ref) => {
   const t = SensesLocalization[language];
   const senseNames = getSenseNameMap(language);
 
@@ -84,7 +86,7 @@ export const SensesForm: React.FC<SensesFormProps> = ({ language = 'en' }) => {
   };
 
   return (
-    <CollapsiblePanel title={t.title}>
+    <CollapsiblePanel ref={ref} title={t.title}>
       <div className={s.sensesPanel__senses}>
         {(['blindsight', 'darkvision', 'tremorsense', 'truesight'] as const).map((senseKey) => (
           <SenseInput
@@ -107,4 +109,4 @@ export const SensesForm: React.FC<SensesFormProps> = ({ language = 'en' }) => {
       </div>
     </CollapsiblePanel>
   );
-};
+});

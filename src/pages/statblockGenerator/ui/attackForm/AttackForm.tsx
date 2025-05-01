@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AttackMainParams } from './attackMainParams';
 import { AttackDamageParams } from './attackDamageParams';
 import { MultiAttackParams } from './multiAttackParams';
 import { AttackFormAttack, initialAttack } from 'pages/statblockGenerator/model';
-import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import { CollapsiblePanel, CollapsiblePanelRef } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import {
   SINGLE_CREATURE_ID,
   generatedCreatureSelectors,
@@ -17,7 +17,7 @@ import { AttackLLM, DamageLLM } from 'entities/creature/model';
 import { AttackList } from './attackList';
 import { AdditionalEffectsSection } from '../additionalEffectsSection/AdditionalEffectsSection';
 
-export const AttackForm = () => {
+export const AttackForm = forwardRef<CollapsiblePanelRef, {}>((_, ref) => {
   const dispatch = useDispatch();
   const attacksList = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)?.attacksLLM ?? []
@@ -161,7 +161,7 @@ export const AttackForm = () => {
   
 
   return (
-    <CollapsiblePanel title={'Добавить атаку'}>
+    <CollapsiblePanel ref={ref} title={'Добавить атаку'}>
       <form onSubmit={handleSubmit}>
         <div className={s.attackForm__modeToggle}>
           <label>
@@ -227,4 +227,4 @@ export const AttackForm = () => {
       )}
     </CollapsiblePanel>
   );
-};
+});

@@ -4,7 +4,7 @@ import {
   useGetCreaturesQuery,
   useLazyGetCreatureByNameQuery,
 } from 'pages/statblockGenerator/api';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArmorHitdiceForm } from './armorHitdiceForm';
 import { AttackForm } from './attackForm';
 import { CreatureSaveSection } from './creatureSaveSection';
@@ -28,6 +28,8 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useAddCreatureMutation } from '../api/statblockGenerator.api';
 import { CreatureStatblock } from 'pages/bestiary';
+import { CollapsiblePanelRef } from './collapsiblePanel/CollapsiblePanel';
+import { JumpTarget } from 'pages/bestiary/model';
 
 
 const requestBody: GetCreaturesRequest = {
@@ -66,6 +68,26 @@ export const StatblockGenerator = () => {
   const { data: creatures } = useGetCreaturesQuery(requestBody);
   const [trigger, { data: fullCreatureData }] = useLazyGetCreatureByNameQuery();
 
+  const formRefs: Record<JumpTarget, React.RefObject<CollapsiblePanelRef | null>> = {
+    type: useRef<CollapsiblePanelRef | null>(null),
+    armor: useRef<CollapsiblePanelRef | null>(null),
+    speed: useRef<CollapsiblePanelRef | null>(null),
+    stats: useRef<CollapsiblePanelRef | null>(null),
+    properties: useRef<CollapsiblePanelRef | null>(null),
+    damage: useRef<CollapsiblePanelRef | null>(null),
+    senses: useRef<CollapsiblePanelRef | null>(null),
+    attack: useRef<CollapsiblePanelRef | null>(null),
+  };
+  
+  const onJump = (target: JumpTarget) => {
+    const panel = formRefs[target].current;
+    panel?.expand();
+    setTimeout(() => {
+      panel?.rootElement?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+  
+  
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
@@ -292,17 +314,19 @@ export const StatblockGenerator = () => {
           onSave={onSave}
         />
         {/* <ActualStatblock  />  */}
-        <TypeForm language='ru' />
-        <ArmorHitdiceForm language='ru' />
-        <MonsterSpeedForm language='ru' />
-        <MonsterStatsForm language='ru' />
-        <PropertiesListsForm language='ru' />
-        <DamageLanguagesForm language='ru' />
-        <SensesForm language='ru' />
-        <AttackForm />
+        <TypeForm ref={formRefs.type} language='ru' />
+        <ArmorHitdiceForm ref={formRefs.armor} language='ru' />
+        <MonsterSpeedForm ref={formRefs.speed} language='ru' />
+        <MonsterStatsForm ref={formRefs.stats} language='ru' />
+        <PropertiesListsForm ref={formRefs.properties} language='ru' />
+        <DamageLanguagesForm ref={formRefs.damage} language='ru' />
+        <SensesForm ref={formRefs.senses} language='ru' />
+        <AttackForm ref={formRefs.attack} />
+        
       </div>
 
-      <CreatureStatblock creature={generatedCreature} />
+      <CreatureStatblock creature={generatedCreature} onJump={onJump} />
+
     </div>
   );
 };
