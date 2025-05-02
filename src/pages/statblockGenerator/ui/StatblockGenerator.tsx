@@ -310,9 +310,32 @@ export const StatblockGenerator = () => {
     }
   };
 
+  const [panelWidth, setPanelWidth] = useState<number>(900);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = panelWidth;
+  
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const delta = moveEvent.clientX - startX;
+      setPanelWidth(startWidth + delta);
+    };
+  
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+  
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
+  
+
   return (
     <div className={s.statblockGeneratorContainer}>
-      <div className={s.statblockGeneratorPanel}>
+      
+      <div className={s.statblockGeneratorPanel} style={{ width: `${panelWidth}px` }}>
         <PromptSection language='ru' />
         <CreatureSaveSection
           presetOptions={presetOptions}
@@ -334,7 +357,11 @@ export const StatblockGenerator = () => {
         
       </div>
 
-      <CreatureStatblock creature={generatedCreature} onJump={onJump} triggerGlow={triggerGlow}/>
+      <div className={s.resizer} onMouseDown={handleMouseDown} />
+
+      <div className={s.creatureStatblockPanel} style={{ flex: 1 }}>
+          <CreatureStatblock creature={generatedCreature} onJump={onJump} triggerGlow={triggerGlow}/>
+      </div>
 
     </div>
   );

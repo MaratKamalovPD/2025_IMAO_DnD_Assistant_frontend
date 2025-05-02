@@ -5,6 +5,10 @@
   justify-content: center;
   flex-direction: row;
   min-height: 40vh;
+  width: 100%;
+  height: 100%;
+  container-type: inline-size;
+  container-name: statblock-generator;
 }
 
 .statblockGeneratorPanel {
@@ -130,6 +134,31 @@
       height: 150px;
     }
   }
+}
+
+.creatureStatblockPanel {
+  flex-grow: 1;
+  min-width: 0; 
+  display: flex;
+  flex-direction: column;
+}
+
+.resizer {
+  width: 7px;
+  background-color: var(--secondary-bg-color);
+  cursor: col-resize;
+  position: relative;
+  transition: background-color 0.2s ease, width 0.2s ease;
+  position: relative;
+}
+
+.resizer:hover {
+  background-color: var(--accent-btn-color);
+  width: 8px;
+}
+
+.resizer:active {
+  background-color: var(--accent-btn-color);
 }
 
 /////////// glow-part /////////////////
