@@ -16,6 +16,11 @@ import { AttackModal } from 'pages/encounterTracker/ui/attackModal';
 import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
 import { normalizeString } from 'shared/lib';
 
+import {
+  userInterfaceActions,
+  UserInterfaceState,
+  UserInterfaceStore,
+} from 'entities/userInterface/model';
 import s from './Statblock.module.scss';
 
 enum ModalType {
@@ -37,9 +42,10 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
   const [currentAttackIndex, setCurrentAttackIndex] = useState<number | undefined>();
   const [currentAttackData, setCurrentAttackData] = useState<AttackLLM | undefined>(undefined);
 
-  const { selectedCreatureId, attackedCreatureId, hasStarted } = useSelector<EncounterStore>(
-    (state) => state.encounter,
-  ) as EncounterState;
+  const { hasStarted } = useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
+  const { selectedCreatureId, attackedCreatureId } = useSelector<UserInterfaceStore>(
+    (state) => state.userInterface,
+  ) as UserInterfaceState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
@@ -56,13 +62,13 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
   const handleAttack = useCallback((index: number, attack: AttackLLM) => {
     setCurrentAttackIndex(index);
     setCurrentAttackData(attack);
-    dispatch(encounterActions.enableAttackHandleMode(attack));
+    dispatch(userInterfaceActions.enableAttackHandleMode(attack));
   }, []);
 
   useEffect(() => {
     if (attackedCreatureId !== null) {
       toggleModal(true, ModalType.Attack);
-      dispatch(encounterActions.disableAttackHandleMode());
+      dispatch(userInterfaceActions.disableAttackHandleMode());
     }
   }, [attackedCreatureId]);
 

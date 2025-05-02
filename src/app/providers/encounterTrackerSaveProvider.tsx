@@ -4,14 +4,14 @@ import { useParams } from 'react-router';
 
 import { RootState, RootStore } from 'app/store';
 import { creatureActions } from 'entities/creature/model';
-import { encounterActions } from 'entities/encounter/model';
-import { useLazyGetEncounterByIdQuery, useUpdateEncounterMutation } from 'pages/encounterList/api';
-import { EncounterSave } from 'pages/encounterList/model';
+import { useLazyGetEncounterByIdQuery, useUpdateEncounterMutation } from 'entities/encounter/api';
+import { encounterActions, EncounterSave } from 'entities/encounter/model';
+import { loggerActions } from 'entities/logger/model';
+import { userInterfaceActions } from 'entities/userInterface/model';
 import { debounce } from 'shared/lib/debounce';
-import { loggerActions } from 'widgets/chatbot/model';
 import { Props } from './types';
 
-const DEBOUNSE_TIME = 2000;
+const DEBOUNSE_TIME = 1000;
 
 export const EncounterTrackerSaveProvider = ({ children }: Props) => {
   const dispatch = useDispatch();
@@ -29,6 +29,7 @@ export const EncounterTrackerSaveProvider = ({ children }: Props) => {
 
   if (encounterState.encounterId !== id && status === 'uninitialized') {
     trigger(id as string);
+    dispatch(userInterfaceActions.resetState());
   }
 
   useEffect(() => {

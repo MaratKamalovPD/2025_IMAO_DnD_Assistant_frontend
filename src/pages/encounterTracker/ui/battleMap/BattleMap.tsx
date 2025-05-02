@@ -1,8 +1,14 @@
-import { select as dselect, zoom as dzoom } from 'd3';
+import { select as dselect, zoom as dzoom, zoomIdentity } from 'd3';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
+import {
+  userInterfaceActions,
+  UserInterfaceState,
+  UserInterfaceStore,
+} from 'entities/userInterface/model';
+import { useDebounce } from 'shared/lib/debounce';
 import { CreatureToken } from './creatureToken';
 import { GridLayout } from './gridLayout';
 
@@ -11,13 +17,24 @@ import s from './BattleMap.module.scss';
 const cols = 26;
 const rows = 18;
 const cellSize = 50;
+const DEBOUNCE_TIME = 500;
 
 export const BattleMap = ({ image }: { image: string }) => {
+  const dispatch = useDispatch();
+
+  const { participants } = useSelector<EncounterStore>(
+    (state) => state.encounter,
+  ) as EncounterState;
+  const { selectedCreatureId, mapTransform } = useSelector<UserInterfaceStore>(
+    (state) => state.userInterface,
+  ) as UserInterfaceState;
+
   const [mapSize, setMapSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
-  const [transform, setTransform] = useState({ x: 0, y: 0, k: 1 });
+  const [transform, setTransform] = useState(mapTransform);
+  const debouncedTransforme = useDebounce(transform, DEBOUNCE_TIME);
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPoint, setStartPoint] = useState({ x: 0, y: 0 });
   const [endPoint, setEndPoint] = useState({ x: 0, y: 0 });
@@ -25,10 +42,6 @@ export const BattleMap = ({ image }: { image: string }) => {
     Array<{ start: { x: number; y: number }; end: { x: number; y: number } }>
   >([]);
   const svgRef = useRef<SVGSVGElement>(null);
-
-  const { participants, selectedCreatureId } = useSelector<EncounterStore>(
-    (state) => state.encounter,
-  ) as EncounterState;
 
   const zoom = dzoom()
     .scaleExtent([0.1, 20])
@@ -38,8 +51,22 @@ export const BattleMap = ({ image }: { image: string }) => {
 
   useEffect(() => {
     const svg = dselect(svgRef.current);
+    svg.call(
+      zoom.transform as any,
+      zoomIdentity.translate(transform.x, transform.y).scale(transform.k),
+    );
     svg.call(zoom as any);
-  }, [transform]);
+  }, []);
+
+  useEffect(() => {
+    dispatch(
+      userInterfaceActions.setMapTransform({
+        x: debouncedTransforme.x,
+        y: debouncedTransforme.y,
+        k: debouncedTransforme.k,
+      }),
+    );
+  }, [debouncedTransforme]);
 
   useEffect(() => {
     const resizeMap = () => {

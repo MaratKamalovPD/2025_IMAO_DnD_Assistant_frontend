@@ -3,8 +3,8 @@ import { Creature } from 'entities/creature/model';
 import { creatureAdapter } from 'entities/creature/model/creature.slice';
 import { EncounterState } from 'entities/encounter/model';
 import { initialState as encounterInitialState } from 'entities/encounter/model/encounter.slice';
-import { LoggerState } from 'widgets/chatbot/model';
-import { initialState as loggerInitialState } from 'widgets/chatbot/model/logger.slice';
+import { LoggerState } from 'entities/logger/model';
+import { initialState as loggerInitialState } from 'entities/logger/model/logger.slice';
 
 export type EncounterSave = {
   encounterState: EncounterState;

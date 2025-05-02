@@ -1,16 +1,16 @@
 import { useState } from 'react';
 
-import { GetEncounterListRequest, useAddEncounterMutation } from 'pages/encounterList/api';
-import { EncounterSave } from 'pages/encounterList/model';
-import { encounterSaveInitial } from 'pages/encounterList/model/encounterSave.types';
-import s from './AddCharacterListForm.module.scss';
+import { GetEncounterListRequest, useAddEncounterMutation } from 'entities/encounter/api';
+import { EncounterSave, encounterSaveInitial } from 'entities/encounter/model';
 
-type AddCharacterListFormProps = {
+import s from './AddEncounterForm.module.scss';
+
+type AddEncounterFormProps = {
   reloadTrigger: (arg: GetEncounterListRequest, preferCacheValue?: boolean) => unknown;
   requestBody: GetEncounterListRequest;
 };
 
-export const AddCharacterListForm = ({ reloadTrigger, requestBody }: AddCharacterListFormProps) => {
+export const AddEncounterForm = ({ reloadTrigger, requestBody }: AddEncounterFormProps) => {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -26,7 +26,7 @@ export const AddCharacterListForm = ({ reloadTrigger, requestBody }: AddCharacte
 
       await body({ name, data }).unwrap();
 
-      setSuccess('Файл успешно Добавлен!');
+      setSuccess('Сражение успешно Добавлено!');
 
       reloadTrigger(requestBody, false);
     } catch (err) {

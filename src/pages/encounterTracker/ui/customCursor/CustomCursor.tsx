@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { EncounterState, EncounterStore } from 'entities/encounter/model';
+import { UserInterfaceState, UserInterfaceStore } from 'entities/userInterface/model';
 
 import s from './CustomCursor.module.scss';
 
 export const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
-  const { attackHandleModeActive } = useSelector<EncounterStore>(
-    (state) => state.encounter,
-  ) as EncounterState;
+  const { attackHandleModeActive } = useSelector<UserInterfaceStore>(
+    (state) => state.userInterface,
+  ) as UserInterfaceState;
 
   useEffect(() => {
     if (!attackHandleModeActive) {

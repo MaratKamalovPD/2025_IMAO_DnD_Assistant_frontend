@@ -1,7 +1,4 @@
-import { Icon20Cancel } from '@vkontakte/icons';
-
 import { mapFiltersToRequestBody } from 'pages/bestiary/lib';
-import { Filters } from 'pages/bestiary/model';
 import { useEffect, useState } from 'react';
 import { throttle, useDebounce } from 'shared/lib';
 import { Spinner } from 'shared/ui/spinner';
@@ -11,6 +8,7 @@ import { AddCharacterListForm } from './addCharacterListForm';
 import { CharacterCard } from './characterCard';
 import { TopPanel } from './topPanel';
 
+import { ModalOverlay } from 'shared/ui';
 import s from './Characters.module.scss';
 import { AddNewCard } from './addNewCard';
 
@@ -24,20 +22,19 @@ export const Characters = () => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [filters, _setFilters] = useState<Filters>({});
 
   const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
   const setStartThrottled = throttle(setStart, THROTTLE_TIME);
 
   const [requestBody, setRequestBody] = useState<GetCharactersRequest>(
-    mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue),
+    mapFiltersToRequestBody({}, 0, RESPONSE_SIZE, debouncedSearchValue),
   );
 
   const [trigger, { data: characters, isLoading, isError, status }] = useLazyGetCharactersQuery();
 
-  if (status == 'uninitialized') {
+  useEffect(() => {
     trigger(requestBody);
-  }
+  }, [requestBody]);
 
   const isPending = status === 'pending';
 
@@ -60,11 +57,11 @@ export const Characters = () => {
   useEffect(() => {
     setStart(0);
     setHasMore(true);
-    setRequestBody(mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue));
-  }, [debouncedSearchValue, filters]);
+    setRequestBody(mapFiltersToRequestBody({}, 0, RESPONSE_SIZE, debouncedSearchValue));
+  }, [debouncedSearchValue]);
 
   useEffect(() => {
-    setRequestBody(mapFiltersToRequestBody(filters, start, RESPONSE_SIZE, debouncedSearchValue));
+    setRequestBody(mapFiltersToRequestBody({}, start, RESPONSE_SIZE, debouncedSearchValue));
   }, [start]);
 
   useEffect(() => {
@@ -87,30 +84,22 @@ export const Characters = () => {
 
   return (
     <div className={s.charactersContainer}>
-      <h1 className={s.title}>Мои персонажи</h1>
+      <TopPanel setSearchValue={setSearchValue} setIsModalOpen={setIsModalOpen} />
 
-      <TopPanel
-        searchValue={searchValue}
-        setSearchValue={setSearchValue}
+      <ModalOverlay
+        title='Загрузка листа персонажа'
+        isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-      />
+      >
+        <AddCharacterListForm reloadTrigger={trigger} requestBody={requestBody} />
+      </ModalOverlay>
 
-      {isModalOpen && (
-        <div className={s.modalOverlay} onClick={() => setIsModalOpen(false)}>
-          <div className={s.modalOverlay__content} onClick={(e) => e.stopPropagation()}>
-            <div className={s.modalOverlay__header}>
-              <div className={s.modalOverlay__title}>Загрузка листа персонажа</div>
-              <div className={s.modalOverlay__closeBtn} onClick={() => setIsModalOpen(false)}>
-                <Icon20Cancel />
-              </div>
-            </div>
-            <AddCharacterListForm reloadTrigger={trigger} requestBody={requestBody} />
-          </div>
-        </div>
+      {allCharacters.length === 0 && !isLoading && (
+        <div className={s.spinnerContainer}>Ничего не найдено</div>
       )}
 
       {!isLoading && (
-        <div className={s.bestiaryContainer}>
+        <div className={s.charactersContent}>
           {allCharacters.map((character) => (
             <div key={character.id}>
               <CharacterCard character={character} />
@@ -128,8 +117,6 @@ export const Characters = () => {
           <Spinner size={100} />
         </div>
       )}
-
-      {allCharacters.length === 0 && !isLoading && <div>Ничего не найдено</div>}
     </div>
   );
 };

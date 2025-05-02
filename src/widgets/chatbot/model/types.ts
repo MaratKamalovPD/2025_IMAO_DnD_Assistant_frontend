@@ -1,8 +1,7 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import { createChatBotMessage } from 'react-chatbot-kit';
-import { Reducer } from 'redux';
 
-import { LoggerState } from './logger.slice';
+import { IMessage } from 'entities/logger/model';
 
 export type ActionProviderProps = {
   createChatBotMessage: typeof createChatBotMessage;
@@ -14,8 +13,6 @@ export type MessageParserProps = {
   children: ReactElement<IChatProps>;
   actions: any;
 };
-
-export type LoggerStore = ReturnType<Reducer<{ logger: LoggerState }>>;
 
 type BotState = {
   messages: IMessage[];
@@ -61,25 +58,3 @@ type IBackgroundColor = {
 type ICustomMessage = {
   [index: string]: (props: any) => ReactElement;
 };
-
-type IMessageOptions = {
-  loading?: boolean;
-  widget?: string;
-  delay?: number;
-  payload?: any;
-};
-
-type IBaseMessage = {
-  message: string;
-  type: string;
-  id: number;
-};
-
-export type IMessage = {
-  options?: IMessageOptions;
-  loading?: boolean;
-  widget?: string;
-  delay?: number;
-  withAvatar?: boolean;
-  payload?: any;
-} & IBaseMessage;

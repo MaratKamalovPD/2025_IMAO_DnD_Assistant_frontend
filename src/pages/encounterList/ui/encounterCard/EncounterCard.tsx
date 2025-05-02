@@ -1,20 +1,26 @@
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
-import { useLazyDeleteEncounterByIdQuery } from 'pages/encounterList/api';
-import { EncounterClipped } from 'pages/encounterList/model';
+import { GetEncounterListRequest, useLazyDeleteEncounterByIdQuery } from 'entities/encounter/api';
+import { EncounterClipped } from 'entities/encounter/model';
 
+import Tippy from '@tippyjs/react';
+import { Icon20TrashSimpleOutline } from '@vkontakte/icons';
 import { useNavigate } from 'react-router';
 import s from './EncounterCard.module.scss';
 
 type EncounterCardProps = {
   encounter: EncounterClipped;
+  reloadTrigger: (arg: GetEncounterListRequest, preferCacheValue?: boolean) => unknown;
+  requestBody: GetEncounterListRequest;
 };
 
-export const EncounterCard: FC<EncounterCardProps> = ({ encounter }) => {
+export const EncounterCard: FC<EncounterCardProps> = ({
+  encounter,
+  reloadTrigger,
+  requestBody,
+}) => {
   const navigate = useNavigate();
-
-  const [isDeleted, setIsDeleted] = useState(false);
 
   const [trigger, { isLoading, isError, isUninitialized, requestId }] =
     useLazyDeleteEncounterByIdQuery();
@@ -29,7 +35,7 @@ export const EncounterCard: FC<EncounterCardProps> = ({ encounter }) => {
 
   useEffect(() => {
     if (!isLoading && !isError && !isUninitialized) {
-      setIsDeleted(true);
+      reloadTrigger(requestBody, false);
       toast.success(`Сражение успешно удалено!`);
     } else if (isError && !isUninitialized) {
       toast.error(`Упс, что-то пошло не так :(`);
@@ -38,21 +44,22 @@ export const EncounterCard: FC<EncounterCardProps> = ({ encounter }) => {
 
   return (
     <>
-      {!isDeleted && (
-        <div
-          className={s.card}
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            navigate(`/encounter_tracker/${encounter.id}`);
-          }}
-        >
-          <div className={s.cardText}>{encounter.name}</div>
-          <button data-variant='secondary' onClick={handleDeleteClick}>
-            Удалить
-          </button>
-        </div>
-      )}
+      <div
+        className={s.card}
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          navigate(`/encounter_tracker/${encounter.id}`);
+        }}
+      >
+        <Tippy content={encounter.name}>
+          <span className={s.cardText}>{encounter.name}</span>
+        </Tippy>
+        <button className={s.btn} data-variant='secondary' onClick={handleDeleteClick}>
+          <Icon20TrashSimpleOutline width={18} height={18} />
+          Удалить
+        </button>
+      </div>
     </>
   );
 };

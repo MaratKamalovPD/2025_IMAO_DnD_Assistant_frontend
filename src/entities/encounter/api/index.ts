@@ -1,5 +1,5 @@
 export {
-  default as characterApi,
+  default as encounterApi,
   useAddEncounterMutation,
   useLazyDeleteEncounterByIdQuery,
   useLazyGetEncounterByIdQuery,

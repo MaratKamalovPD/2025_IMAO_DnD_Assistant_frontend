@@ -1,3 +1,4 @@
+import Tippy from '@tippyjs/react';
 import {
   Icon28DiamondOutline,
   Icon28DocumentListOutline,
@@ -8,9 +9,14 @@ import { createChatBotMessage } from 'react-chatbot-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { Rnd } from 'react-rnd';
 
-import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
-import { loggerActions, LoggerState, LoggerStore } from 'widgets/chatbot/model';
-import { Chatbot } from 'widgets/chatbot/ui/Chatbot';
+import { EncounterState, EncounterStore } from 'entities/encounter/model';
+import { loggerActions, LoggerState, LoggerStore } from 'entities/logger/model';
+import {
+  userInterfaceActions,
+  UserInterfaceState,
+  UserInterfaceStore,
+} from 'entities/userInterface/model';
+import { Chatbot } from 'widgets/chatbot';
 import { BattleMap } from './battleMap';
 import { CardList } from './cardList';
 import { CustomCursor } from './customCursor';
@@ -19,7 +25,6 @@ import { MenuItem, PopupMenu } from './popupMenu';
 import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
 
-import Tippy from '@tippyjs/react';
 import s from './EncounterTracker.module.scss';
 
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
@@ -33,20 +38,21 @@ export const EncounterTracker = () => {
   const [mapImage, setMapImage] = useState(DANGEON_MAP_IMAGE);
 
   const { lastLog } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
+  const { participants, currentTurnIndex } = useSelector<EncounterStore>(
+    (state) => state.encounter,
+  ) as EncounterState;
   const {
-    participants,
-    currentTurnIndex,
     selectedCreatureId,
     statblockIsMinimized,
     statblockIsVisible,
     statblockSize,
     statblockCoords,
-  } = useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
+  } = useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        dispatch(encounterActions.disableAttackHandleMode());
+        dispatch(userInterfaceActions.disableAttackHandleMode());
       }
     };
 
@@ -67,7 +73,7 @@ export const EncounterTracker = () => {
 
       return;
     }
-    dispatch(encounterActions.selectCreature(participants[currentTurnIndex].id));
+    dispatch(userInterfaceActions.selectCreature(participants[currentTurnIndex].id));
   }, [currentTurnIndex, participants.length]);
 
   useEffect(() => {
@@ -78,7 +84,7 @@ export const EncounterTracker = () => {
       return;
     }
 
-    dispatch(encounterActions.setStatblockIsVisible(!statblockIsVisible));
+    dispatch(userInterfaceActions.setStatblockIsVisible(!statblockIsVisible));
   }, [selectedCreatureId]);
 
   useEffect(() => {
@@ -92,11 +98,11 @@ export const EncounterTracker = () => {
 
   const toggleWindow = () => {
     if (statblockIsMinimized) {
-      dispatch(encounterActions.setStatblockSize({ width: statblockSize.width, height: 600 }));
+      dispatch(userInterfaceActions.setStatblockSize({ width: statblockSize.width, height: 600 }));
     } else {
-      dispatch(encounterActions.setStatblockSize({ width: statblockSize.width, height: 40 })); // или вообще height: 0
+      dispatch(userInterfaceActions.setStatblockSize({ width: statblockSize.width, height: 40 })); // или вообще height: 0
     }
-    dispatch(encounterActions.setStatblockIsMinimized(!statblockIsMinimized));
+    dispatch(userInterfaceActions.setStatblockIsMinimized(!statblockIsMinimized));
   };
 
   const ToggleStatblock = () => {
@@ -104,7 +110,7 @@ export const EncounterTracker = () => {
       <Tippy content={'Таблица характкристик'}>
         <div
           className={s.toggleStatblock}
-          onClick={() => dispatch(encounterActions.setStatblockIsVisible(!statblockIsVisible))}
+          onClick={() => dispatch(userInterfaceActions.setStatblockIsVisible(!statblockIsVisible))}
         >
           <Icon28DocumentListOutline fill='white' />
         </div>
@@ -178,14 +184,14 @@ export const EncounterTracker = () => {
               size={statblockSize}
               onResizeStop={(_e, _direction, ref) => {
                 dispatch(
-                  encounterActions.setStatblockSize({
+                  userInterfaceActions.setStatblockSize({
                     width: ref.offsetWidth,
                     height: ref.offsetHeight,
                   }),
                 );
               }}
               onDragStop={(_e, data) => {
-                dispatch(encounterActions.setStatblockCoords({ x: data.x, y: data.y }));
+                dispatch(userInterfaceActions.setStatblockCoords({ x: data.x, y: data.y }));
               }}
             >
               {/* Передаём управление внутрь Statblock */}

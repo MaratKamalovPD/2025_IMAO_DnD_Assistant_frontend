@@ -1,17 +1,15 @@
-import { Icon20Cancel } from '@vkontakte/icons';
-
-import { mapFiltersToRequestBody } from 'pages/bestiary/lib';
 import { useEffect, useState } from 'react';
+
+import { GetEncounterListRequest, useLazyGetEncounterListQuery } from 'entities/encounter/api';
+import { EncounterClipped } from 'entities/encounter/model';
+import { mapFiltersToRequestBody } from 'pages/bestiary/lib';
 import { throttle, useDebounce } from 'shared/lib';
-import { Spinner } from 'shared/ui/spinner';
-import { AddCharacterListForm } from './addCharacterListForm';
+import { ModalOverlay, Spinner } from 'shared/ui';
+import { AddEncounterForm } from './addEncounterForm';
+import { EncounterCard } from './encounterCard';
 import { TopPanel } from './topPanel';
 
-import { GetEncounterListRequest, useLazyGetEncounterListQuery } from '../api';
-import { EncounterClipped } from '../model';
-
 import s from './EncounterList.module.scss';
-import { EncounterCard } from './encounterCard';
 
 const RESPONSE_SIZE = 24;
 const DEBOUNCE_TIME = 500;
@@ -34,9 +32,9 @@ export const EncounterList = () => {
   const [trigger, { data: characters, isLoading, isError, status }] =
     useLazyGetEncounterListQuery();
 
-  if (status == 'uninitialized') {
+  useEffect(() => {
     trigger(requestBody);
-  }
+  }, [requestBody]);
 
   const isPending = status === 'pending';
 
@@ -86,33 +84,25 @@ export const EncounterList = () => {
 
   return (
     <div className={s.encounterListContainer}>
-      <h1 className={s.title}>Мои сражения</h1>
+      <TopPanel setSearchValue={setSearchValue} setIsModalOpen={setIsModalOpen} />
 
-      <TopPanel
-        searchValue={searchValue}
-        setSearchValue={setSearchValue}
+      <ModalOverlay
+        title='Добавление сражения'
+        isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-      />
-
-      {isModalOpen && (
-        <div className={s.modalOverlay} onClick={() => setIsModalOpen(false)}>
-          <div className={s.modalOverlay__content} onClick={(e) => e.stopPropagation()}>
-            <div className={s.modalOverlay__header}>
-              <div className={s.modalOverlay__title}>Добавление сражения</div>
-              <div className={s.modalOverlay__closeBtn} onClick={() => setIsModalOpen(false)}>
-                <Icon20Cancel />
-              </div>
-            </div>
-            <AddCharacterListForm reloadTrigger={trigger} requestBody={requestBody} />
-          </div>
-        </div>
-      )}
+      >
+        <AddEncounterForm reloadTrigger={trigger} requestBody={requestBody} />
+      </ModalOverlay>
 
       {!isLoading && (
-        <div className={s.bestiaryContainer}>
+        <div className={s.encounterListContent}>
           {encounterList.map((encounter) => (
-            <div key={encounter.id}>
-              <EncounterCard encounter={encounter} />
+            <div className={s.encounterListContent__element} key={encounter.id}>
+              <EncounterCard
+                encounter={encounter}
+                reloadTrigger={trigger}
+                requestBody={requestBody}
+              />
             </div>
           ))}
         </div>
@@ -124,7 +114,9 @@ export const EncounterList = () => {
         </div>
       )}
 
-      {encounterList.length === 0 && !isLoading && <div>Ничего не найдено</div>}
+      {encounterList.length === 0 && !isLoading && (
+        <div className={s.spinnerContainer}>Ничего не найдено</div>
+      )}
     </div>
   );
 };

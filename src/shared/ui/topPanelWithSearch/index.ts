@@ -1,0 +1,1 @@
+export { TopPanelWithSearch } from './TopPanelWithSearch';

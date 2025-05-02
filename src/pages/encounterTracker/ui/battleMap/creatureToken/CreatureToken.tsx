@@ -4,9 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Creature, creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
+import { CellsCoordinates } from 'entities/encounter/model/types';
+import {
+  userInterfaceActions,
+  UserInterfaceState,
+  UserInterfaceStore,
+} from 'entities/userInterface/model';
 import { keepLeadingDigits, useDebounce, UUID } from 'shared/lib';
 
-import { CellsCoordinates } from 'entities/encounter/model/types';
 import s from './CreatureToken.module.scss';
 
 type CreatureTokenProps = {
@@ -50,8 +55,12 @@ export const CreatureToken = ({ transform, id, x, y, cellSize }: CreatureTokenPr
     creatureSelectors.selectById(state, id || ''),
   ) as Creature;
 
-  const { attackHandleModeActive, currentAttackLLM, selectedCreatureId, participants } =
-    useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
+  const { participants } = useSelector<EncounterStore>(
+    (state) => state.encounter,
+  ) as EncounterState;
+
+  const { attackHandleModeActive, currentAttackLLM, selectedCreatureId } =
+    useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
 
   const participant = participants.find((part) => part.id === id);
   const [coords, setCoords] = useState<CellsCoordinates | null>(participant?.cellsCoords || null);
@@ -98,9 +107,9 @@ export const CreatureToken = ({ transform, id, x, y, cellSize }: CreatureTokenPr
 
   const handleClick = useCallback(() => {
     if (!attackHandleModeActive) {
-      dispatch(encounterActions.selectCreature(id));
+      dispatch(userInterfaceActions.selectCreature(id));
     } else {
-      dispatch(encounterActions.selectAttackedCreature(id));
+      dispatch(userInterfaceActions.selectAttackedCreature(id));
     }
   }, [attackHandleModeActive]);
 
