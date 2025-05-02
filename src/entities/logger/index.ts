@@ -1,0 +1,1 @@
+export { loggerReduser } from './model';

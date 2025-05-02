@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
-import { LoggerState } from './logger.slice';
-import { ActionProviderProps, LoggerStore } from './types';
+import { LoggerState, LoggerStore } from 'entities/logger/model';
+import { ActionProviderProps } from './types';
 
 export const ActionProvider = ({
   createChatBotMessage,

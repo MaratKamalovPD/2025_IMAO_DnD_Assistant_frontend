@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 import { Creature, creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
-import { loggerActions } from 'widgets/chatbot/model';
+import { loggerActions } from 'entities/logger/model';
 
 import s from './TrackPanel.module.scss';
 

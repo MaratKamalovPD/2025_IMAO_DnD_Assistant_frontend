@@ -10,8 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Rnd } from 'react-rnd';
 
 import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
+import { loggerActions, LoggerState, LoggerStore } from 'entities/logger/model';
 import { Chatbot } from 'widgets/chatbot';
-import { loggerActions, LoggerState, LoggerStore } from 'widgets/chatbot/model';
 import { BattleMap } from './battleMap';
 import { CardList } from './cardList';
 import { CustomCursor } from './customCursor';

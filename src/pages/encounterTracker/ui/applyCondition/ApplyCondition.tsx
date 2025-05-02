@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, creatureActions } from 'entities/creature/model/creature.slice';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
+import { loggerActions } from 'entities/logger/model';
 import {
   conditionIcons,
   ConditionOption,
@@ -15,7 +16,6 @@ import {
 import { hasConditionImmunity } from 'pages/encounterTracker/model';
 import { ConditionImmunityToast } from 'pages/encounterTracker/ui/trackerToasts/conditionImmunityToast';
 import { OptionWithIcon, SingleValueWithIcon } from 'shared/ui';
-import { loggerActions } from 'widgets/chatbot/model';
 
 import s from './ApplyCondition.module.scss';
 

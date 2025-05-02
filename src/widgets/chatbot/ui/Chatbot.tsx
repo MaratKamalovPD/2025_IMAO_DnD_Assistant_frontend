@@ -3,10 +3,10 @@ import { useCallback, useState } from 'react';
 import { Chatbot as Cb } from 'react-chatbot-kit';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { IMessage, LoggerStore } from 'entities/logger/model';
+import { loggerActions, LoggerState } from '../../../entities/logger/model/logger.slice';
 import { config } from '../config';
 import { ActionProvider, MessageParser } from '../model';
-import { loggerActions, LoggerState } from '../model/logger.slice';
-import { IMessage, LoggerStore } from '../model/types';
 
 import Tippy from '@tippyjs/react';
 import s from './Chatbot.module.scss';

@@ -10,6 +10,7 @@ import {
   CreaturesStore,
 } from 'entities/creature/model';
 import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
+import { loggerActions } from 'entities/logger/model';
 import {
   AbilitySavingThrow,
   dndTraitToInitialForm,
@@ -26,7 +27,6 @@ import { D20AttackRollToast } from 'pages/encounterTracker/ui/trackerToasts/d20A
 import { D20SavingThrowToast } from 'pages/encounterTracker/ui/trackerToasts/d20SavingThrow';
 import { DamageRollToast } from 'pages/encounterTracker/ui/trackerToasts/damageRollToast';
 import { CheckboxState, ThreeStateCheckbox } from 'shared/ui/threeStateCheckbox';
-import { loggerActions } from 'widgets/chatbot/model';
 
 import s from './AttackModal.module.scss';
 
