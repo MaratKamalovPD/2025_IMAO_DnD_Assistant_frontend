@@ -57,10 +57,25 @@ const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, 
       </div>
       <div className={s.statblockBody}>
         <div className={s.commonContainer}>
-          <div onClick={() => onJump?.('type')} className={s.commonContainer__typeContainer} style={cursorStyle(onJump != null)}>
-            {creature.size.rus} {creature.type.name}
-            {creature.type.tags ? ` (${creature.type.tags})` : ''}, {creature.alignment}
-          </div>
+        <div onClick={() => {
+            onJump?.('type');
+          }}
+          className={s.commonContainer__typeContainer}
+          style={cursorStyle(onJump != null)}
+        >
+          <span onClick={() => triggerGlow?.('size')}>
+            {creature.size.rus}&nbsp;
+          </span>
+
+          <span onClick={() => triggerGlow?.('type')}>
+            {creature.type.name}
+            {creature.type.tags ? ` (${creature.type.tags})` : ''},&nbsp; 
+          </span>
+
+          <span onClick={() => triggerGlow?.('alignment')}>
+            {creature.alignment}
+          </span>
+        </div>
           <div className={s.commonContainer__sourceContainer}>
             Источник:&nbsp;
             <Tippy content={creature.source.name}>
@@ -75,7 +90,7 @@ const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, 
           </div>
           <div className={s.mainContainer__description}>
             <FightStatsSection creature={creature} conModifier={modifiers[creature.ability.con]} onJump={onJump}/>
-            <AbilitiesSection creature={creature} onJump={onJump}/>
+            <AbilitiesSection creature={creature} onJump={onJump} triggerGlow={triggerGlow}/>
             <SkillsAndSensesSection creature={creature} onJump={onJump}/>
             <div className={s.mainContainer__infoSection}></div>
           </div>

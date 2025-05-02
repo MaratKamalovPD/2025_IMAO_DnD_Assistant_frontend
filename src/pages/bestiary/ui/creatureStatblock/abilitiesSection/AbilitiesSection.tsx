@@ -19,9 +19,10 @@ type Abilities = Ability[];
 type AbilitiesProps = {
   creature: CreatureFullData;
   onJump?: (target: JumpTarget) => void;
+  triggerGlow?: (id: string) => void;
 };
 
-export const AbilitiesSection: React.FC<AbilitiesProps> = ({ creature, onJump }) => {
+export const AbilitiesSection: React.FC<AbilitiesProps> = ({ creature, onJump, triggerGlow }) => {
   const creatureAbilities: Abilities = [
     {
       name: 'СИЛ',
@@ -79,7 +80,8 @@ export const AbilitiesSection: React.FC<AbilitiesProps> = ({ creature, onJump })
       {Object.entries(creatureAbilities).map(([_, el]) => (
         <div key={el.name}>
           <Tippy content={el.fullName}>
-            <div onClick={() => onJump?.('stats')} className={s.abilitiesContainer__title} style={cursorStyle(onJump != null)}>{el.name}</div>
+            <div onClick={() => { onJump?.('stats');  triggerGlow?.(el.name)}} className={s.abilitiesContainer__title} 
+            style={cursorStyle(onJump != null)}>{el.name}</div>
           </Tippy>
           <Tippy content={'Нажмите для броска 1к20'}>
             <div

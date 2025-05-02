@@ -16,7 +16,7 @@ import s from './MonsterStatsForm.module.scss';
 
 
 
-export const MonsterStatsForm = forwardRef<CollapsiblePanelRef, MonsterStatsFormProps>(({ language = 'en' }, ref) => {
+export const MonsterStatsForm = forwardRef<CollapsiblePanelRef, MonsterStatsFormProps>(({ language = 'en', clearGlow, getGlowClass }, ref) => {
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
@@ -72,6 +72,8 @@ export const MonsterStatsForm = forwardRef<CollapsiblePanelRef, MonsterStatsForm
             value={value as number}
             onChange={(value) => handleStatChange(stat as keyof MonsterStats, value)}
             modifierPrefix={t.modifierPrefix}
+            getGlowClass={getGlowClass}
+            clearGlow={clearGlow}
           />
         ))}
       </div>

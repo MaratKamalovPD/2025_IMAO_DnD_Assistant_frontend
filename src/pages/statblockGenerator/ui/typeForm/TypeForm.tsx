@@ -175,7 +175,11 @@ export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ langua
           <select
             value={state.size}
             onChange={handleChange('size')}
-            className={s.creaturePanel__statsElement__select}
+            onClick={() => clearGlow?.('size')}
+            className={clsx(
+              s.creaturePanel__statsElement__select,
+              getGlowClass?.('size')
+            )}
           >
             {Object.entries(t.sizes).map(([key, label]) => (
               <option key={key} value={key}>
@@ -190,7 +194,11 @@ export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ langua
             <select
               value={state.type}
               onChange={handleChange('type')}
-              className={s.creaturePanel__statsElement__select}
+              onClick={() => clearGlow?.('type')}
+              className={clsx(
+                s.creaturePanel__statsElement__select,
+                getGlowClass?.('type')
+              )}
             >
               {Object.entries(t.types).map(([key, label]) => (
                 <option key={key} value={key}>
@@ -225,7 +233,11 @@ export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ langua
             type='text'
             value={state.alignment}
             onChange={handleChange('alignment')}
-            className={s.creaturePanel__statsElement__input}
+            onClick={() => clearGlow?.('alignment')}
+            className={clsx(
+              s.creaturePanel__statsElement__input,
+              getGlowClass?.('alignment')
+            )}
           />
         </FormElement>
       </div>

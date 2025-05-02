@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 
 type GlowMap = Record<string, boolean>;
 
-export const useGlow = (timeoutMs: number = 5000, fadeMs: number = 400) => {
+export const useGlow = (timeoutMs: number = 3000, fadeMs: number = 400) => {
   const [glowMap, setGlowMap] = useState<GlowMap>({});
   const [fadeMap, setFadeMap] = useState<GlowMap>({});
 
@@ -11,6 +11,8 @@ export const useGlow = (timeoutMs: number = 5000, fadeMs: number = 400) => {
   const triggerGlow = useCallback((id: string) => {
     setFadeMap((prev) => ({ ...prev, [id]: false }));
     setGlowMap((prev) => ({ ...prev, [id]: true }));
+
+    console.log('triggerGlow: ', id)
 
     // очистим старые таймеры, если есть
     if (timers.current[id]) {

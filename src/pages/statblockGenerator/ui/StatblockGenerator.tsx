@@ -326,7 +326,7 @@ export const StatblockGenerator = () => {
         <TypeForm ref={formRefs.type} language='ru' clearGlow={clearGlow} getGlowClass={getGlowClass} />
         <ArmorHitdiceForm ref={formRefs.armor} language='ru' />
         <MonsterSpeedForm ref={formRefs.speed} language='ru' />
-        <MonsterStatsForm ref={formRefs.stats} language='ru' />
+        <MonsterStatsForm ref={formRefs.stats} language='ru' clearGlow={clearGlow} getGlowClass={getGlowClass}/>
         <PropertiesListsForm ref={formRefs.properties} language='ru' />
         <DamageLanguagesForm ref={formRefs.damage} language='ru' />
         <SensesForm ref={formRefs.senses} language='ru' />
