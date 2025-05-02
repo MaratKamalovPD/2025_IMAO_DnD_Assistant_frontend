@@ -35,9 +35,9 @@ export const Characters = () => {
 
   const [trigger, { data: characters, isLoading, isError, status }] = useLazyGetCharactersQuery();
 
-  if (status == 'uninitialized') {
+  useEffect(() => {
     trigger(requestBody);
-  }
+  }, [requestBody]);
 
   const isPending = status === 'pending';
 

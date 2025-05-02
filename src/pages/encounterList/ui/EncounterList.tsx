@@ -34,9 +34,9 @@ export const EncounterList = () => {
   const [trigger, { data: characters, isLoading, isError, status }] =
     useLazyGetEncounterListQuery();
 
-  if (status == 'uninitialized') {
+  useEffect(() => {
     trigger(requestBody);
-  }
+  }, [requestBody]);
 
   const isPending = status === 'pending';
 
