@@ -1,30 +1,69 @@
 .card {
-  background-color: var(--primary-bg-color);
+  box-sizing: border-box;
+  background: var(--secondary-bg-color);
   border-radius: 20px;
-  padding: 1rem;
-  transition: box-shadow 0.3s ease;
+  padding: 1.2rem;
+  transition: all 0.3s ease;
   display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  align-items: stretch;
+  align-items: center;
   justify-content: space-between;
-  box-sizing: content-box;
-  height: fit-content;
-  width: 300px;
-  height: 50px;
-  transition: border 0.3s ease;
-  overflow-y: hidden;
+  width: 100%;
+  min-height: 70px;
+  border: solid 4px var(--primary-bg-color);
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.3;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
+    pointer-events: none;
+  }
 
   &:hover {
-    opacity: 0.9;
-    z-index: 1;
+    transform: translateY(-2px);
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.05),
+      0 4px 6px -2px rgba(0, 0, 0, 0.02);
+
+    &::before {
+      transform: translate(-50%, -50%) scale(15);
+      opacity: 0.6;
+    }
   }
 
   .cardText {
-    max-width: 150px;
-    text-overflow: ellipsis;
-    height: 50px;
-    overflow-wrap: break-word;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    max-width: 180px;
     overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    padding-left: 24px;
+    z-index: 1;
+
+    &::before {
+      content: '⚔️';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  .btn {
+    display: flex;
+    gap: 0.2rem;
   }
 }

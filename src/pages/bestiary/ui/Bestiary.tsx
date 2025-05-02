@@ -1,5 +1,7 @@
-import { Icon20Cancel } from '@vkontakte/icons';
 import clsx from 'clsx';
+import { useCallback, useEffect, useState } from 'react';
+import { Outlet, useParams } from 'react-router';
+
 import { CreatureClippedData } from 'entities/creature/model/types';
 import { GetCreaturesRequest, useGetCreaturesQuery } from 'pages/bestiary/api';
 import {
@@ -10,14 +12,13 @@ import {
   ViewSettingsProvider,
 } from 'pages/bestiary/lib';
 import { Filters, OrderParams } from 'pages/bestiary/model';
-import { useCallback, useEffect, useState } from 'react';
-import { Outlet, useParams } from 'react-router';
 import { throttle, useDebounce } from 'shared/lib';
-import { Spinner } from 'shared/ui/spinner';
-import s from './Bestiary.module.scss';
+import { ModalOverlay, Spinner } from 'shared/ui';
 import { BestiaryCard } from './bestiaryCard';
 import { FilterModalWindow } from './filterModalWindow';
 import { TopPanel } from './topPanel';
+
+import s from './Bestiary.module.scss';
 
 const RESPONSE_SIZE = 24;
 const DEBOUNCE_TIME = 500;
@@ -148,31 +149,20 @@ const BestiaryContent = () => {
       })}
     >
       <TopPanel
-        searchValue={searchValue}
         isAnyFilterSet={isAnyFilterSet}
         setFilters={setFilters}
         setSearchValue={setSearchValue}
         setIsModalOpen={setIsModalOpen}
       />
 
-      {isModalOpen && (
-        <div className={s.modalOverlay} onClick={() => setIsModalOpen(false)}>
-          <div className={s.modalOverlay__content} onClick={(e) => e.stopPropagation()}>
-            <div className={s.modalOverlay__header}>
-              <div className={s.modalOverlay__title}>Фильтры</div>
-              <div className={s.modalOverlay__closeBtn} onClick={() => setIsModalOpen(false)}>
-                <Icon20Cancel />
-              </div>
-            </div>
-            <FilterModalWindow
-              onFilterChange={handleFilterChange}
-              selectedFilters={filters}
-              collapsedCategories={collapsedCategories}
-              onToggleCollapse={handleToggleCollapse}
-            />
-          </div>
-        </div>
-      )}
+      <ModalOverlay title='Фильтры' isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
+        <FilterModalWindow
+          onFilterChange={handleFilterChange}
+          selectedFilters={filters}
+          collapsedCategories={collapsedCategories}
+          onToggleCollapse={handleToggleCollapse}
+        />
+      </ModalOverlay>
 
       {!isLoading && (
         <div className={s.bestiaryContent}>
