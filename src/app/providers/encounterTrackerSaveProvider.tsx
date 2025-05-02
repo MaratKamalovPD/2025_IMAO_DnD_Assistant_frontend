@@ -29,6 +29,7 @@ export const EncounterTrackerSaveProvider = ({ children }: Props) => {
 
   if (encounterState.encounterId !== id && status === 'uninitialized') {
     trigger(id as string);
+    dispatch(userInterfaceActions.resetState());
   }
 
   useEffect(() => {
@@ -36,7 +37,6 @@ export const EncounterTrackerSaveProvider = ({ children }: Props) => {
       dispatch(encounterActions.setState(encounter.data.encounterState));
       dispatch(creatureActions.setState(encounter.data.creaturesState));
       dispatch(loggerActions.setState(encounter.data.loggerState));
-      dispatch(userInterfaceActions.resetState());
       dispatch(encounterActions.setEncounterId(id || null));
     }
   }, [isLoading, isError, encounter]);

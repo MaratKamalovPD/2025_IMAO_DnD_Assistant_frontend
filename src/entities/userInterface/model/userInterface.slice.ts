@@ -20,7 +20,7 @@ export const initialState: UserInterfaceState = {
   selectedCreatureId: null,
   attackedCreatureId: null,
   currentAttackLLM: null,
-  mapTransform: { x: 0, y: 0, k: 0 },
+  mapTransform: { x: 0, y: 0, k: 1 },
   statblockSize: { width: 850, height: 600 },
   statblockCoords: { x: 300, y: 100 },
   statblockIsMinimized: false,
@@ -36,7 +36,7 @@ const userInterfaceSlice = createSlice({
       state.selectedCreatureId = null;
       state.attackedCreatureId = null;
       state.currentAttackLLM = null;
-      state.mapTransform = { x: 0, y: 0, k: 0 };
+      state.mapTransform = { x: 0, y: 0, k: 1 };
       state.statblockIsMinimized = false;
       state.statblockIsVisible = false;
     },
