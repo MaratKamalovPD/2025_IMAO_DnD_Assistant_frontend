@@ -5,6 +5,7 @@ import Select from 'react-select';
 import { creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { Creature, creatureActions } from 'entities/creature/model/creature.slice';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
+import { UserInterfaceState, UserInterfaceStore } from 'entities/userInterface/model';
 import {
   damageTypeIcons,
   DamageTypeOption,
@@ -27,9 +28,12 @@ export const DamageTypesForm: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const { selectedCreatureId, currentTurnIndex, participants } = useSelector<EncounterStore>(
+  const { currentTurnIndex, participants } = useSelector<EncounterStore>(
     (state) => state.encounter,
   ) as EncounterState;
+  const { selectedCreatureId } = useSelector<UserInterfaceStore>(
+    (state) => state.userInterface,
+  ) as UserInterfaceState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),

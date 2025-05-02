@@ -3,12 +3,17 @@ import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Creature, creatureSelectors, CreaturesStore } from 'entities/creature/model';
-import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
+import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { normalizeString, UUID } from 'shared/lib';
 
 import placeholderImage from 'shared/assets/images/placeholder.png';
 
 import Tippy from '@tippyjs/react';
+import {
+  userInterfaceActions,
+  UserInterfaceState,
+  UserInterfaceStore,
+} from 'entities/userInterface/model';
 import { findConditionInstance } from 'pages/encounterTracker/lib';
 import s from './CreatureCard.module.scss';
 
@@ -24,8 +29,12 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
     creatureSelectors.selectById(state, id),
   ) as Creature;
 
-  const { hasStarted, attackHandleModeActive, selectedCreatureId, currentTurnIndex, participants } =
-    useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
+  const { hasStarted, currentTurnIndex, participants } = useSelector<EncounterStore>(
+    (state) => state.encounter,
+  ) as EncounterState;
+  const { attackHandleModeActive, selectedCreatureId } = useSelector<UserInterfaceStore>(
+    (state) => state.userInterface,
+  ) as UserInterfaceState;
 
   if (!creature) return null;
 
@@ -33,9 +42,9 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
 
   const handleClick = useCallback(() => {
     if (!attackHandleModeActive) {
-      dispatch(encounterActions.selectCreature(id));
+      dispatch(userInterfaceActions.selectCreature(id));
     } else {
-      dispatch(encounterActions.selectAttackedCreature(id));
+      dispatch(userInterfaceActions.selectAttackedCreature(id));
     }
   }, [attackHandleModeActive]);
 

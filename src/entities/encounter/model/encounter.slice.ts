@@ -1,39 +1,22 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { AttackLLM } from 'entities/creature/model';
 import { UUID } from 'shared/lib';
 import { CellsCoordinates, Participant } from './types';
 
 export type EncounterState = {
   encounterId: UUID | null;
   hasStarted: boolean;
-  attackHandleModeActive: boolean;
   currentRound: number;
   currentTurnIndex: number;
   participants: Participant[];
-  selectedCreatureId: string | null;
-  attackedCreatureId: string | null;
-  currentAttackLLM: AttackLLM | null;
-  statblockSize: { width: number; height: number };
-  statblockCoords: { x: number; y: number };
-  statblockIsMinimized: boolean;
-  statblockIsVisible: boolean;
 };
 
 export const initialState: EncounterState = {
   encounterId: null,
   hasStarted: false,
-  attackHandleModeActive: false,
   currentRound: 1,
   currentTurnIndex: 0,
   participants: [],
-  selectedCreatureId: null,
-  attackedCreatureId: null,
-  currentAttackLLM: null,
-  statblockSize: { width: 850, height: 600 },
-  statblockCoords: { x: 300, y: 100 },
-  statblockIsMinimized: false,
-  statblockIsVisible: false,
 };
 
 const encounterSlice = createSlice({
@@ -44,31 +27,14 @@ const encounterSlice = createSlice({
       state.encounterId = action.payload;
     },
     setState: (state, action: PayloadAction<EncounterState>) => {
-      state.attackHandleModeActive = action.payload.attackHandleModeActive;
       state.hasStarted = action.payload.hasStarted;
-      state.attackHandleModeActive = action.payload.attackHandleModeActive;
       state.currentRound = action.payload.currentRound;
       state.currentTurnIndex = action.payload.currentTurnIndex;
       state.participants = action.payload.participants;
-      state.selectedCreatureId = action.payload.selectedCreatureId;
-      state.attackedCreatureId = action.payload.attackedCreatureId;
-      state.currentAttackLLM = action.payload.currentAttackLLM;
-      state.statblockSize = action.payload.statblockSize;
-      state.statblockCoords = action.payload.statblockCoords;
-      state.statblockIsMinimized = action.payload.statblockIsMinimized;
-      state.statblockIsVisible = action.payload.statblockIsVisible;
     },
     start: (state) => {
       state.hasStarted = true;
       state.participants.sort((a, b) => b.initiative - a.initiative);
-    },
-    enableAttackHandleMode: (state, action: PayloadAction<AttackLLM>) => {
-      state.attackHandleModeActive = true;
-      state.currentAttackLLM = action.payload;
-    },
-    disableAttackHandleMode: (state) => {
-      state.attackHandleModeActive = false;
-      state.currentAttackLLM = null;
     },
     nextTurn: (state) => {
       if (state.currentTurnIndex >= state.participants.length - 1) {
@@ -100,12 +66,6 @@ const encounterSlice = createSlice({
     setInitiativeOrder: (state, action: PayloadAction<Participant[]>) => {
       state.participants = action.payload;
     },
-    selectCreature: (state, action: PayloadAction<UUID>) => {
-      state.selectedCreatureId = action.payload;
-    },
-    selectAttackedCreature: (state, action: PayloadAction<UUID | null>) => {
-      state.attackedCreatureId = action.payload;
-    },
     addParticipant: (state, action: PayloadAction<Participant>) => {
       state.participants.push(action.payload);
 
@@ -130,18 +90,6 @@ const encounterSlice = createSlice({
       });
 
       state.participants.sort((a, b) => b.initiative - a.initiative);
-    },
-    setStatblockSize: (state, action: PayloadAction<{ width: number; height: number }>) => {
-      state.statblockSize = action.payload;
-    },
-    setStatblockCoords: (state, action: PayloadAction<{ x: number; y: number }>) => {
-      state.statblockCoords = action.payload;
-    },
-    setStatblockIsMinimized: (state, action: PayloadAction<boolean>) => {
-      state.statblockIsMinimized = action.payload;
-    },
-    setStatblockIsVisible: (state, action: PayloadAction<boolean>) => {
-      state.statblockIsVisible = action.payload;
     },
   },
 });

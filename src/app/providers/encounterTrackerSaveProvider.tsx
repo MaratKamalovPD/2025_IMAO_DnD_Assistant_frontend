@@ -7,6 +7,7 @@ import { creatureActions } from 'entities/creature/model';
 import { useLazyGetEncounterByIdQuery, useUpdateEncounterMutation } from 'entities/encounter/api';
 import { encounterActions, EncounterSave } from 'entities/encounter/model';
 import { loggerActions } from 'entities/logger/model';
+import { userInterfaceActions } from 'entities/userInterface/model';
 import { debounce } from 'shared/lib/debounce';
 import { Props } from './types';
 
@@ -35,6 +36,7 @@ export const EncounterTrackerSaveProvider = ({ children }: Props) => {
       dispatch(encounterActions.setState(encounter.data.encounterState));
       dispatch(creatureActions.setState(encounter.data.creaturesState));
       dispatch(loggerActions.setState(encounter.data.loggerState));
+      dispatch(userInterfaceActions.resetState());
       dispatch(encounterActions.setEncounterId(id || null));
     }
   }, [isLoading, isError, encounter]);

@@ -6,6 +6,7 @@ import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { CreatureToken } from './creatureToken';
 import { GridLayout } from './gridLayout';
 
+import { UserInterfaceState, UserInterfaceStore } from 'entities/userInterface/model';
 import s from './BattleMap.module.scss';
 
 const cols = 26;
@@ -26,9 +27,12 @@ export const BattleMap = ({ image }: { image: string }) => {
   >([]);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const { participants, selectedCreatureId } = useSelector<EncounterStore>(
+  const { participants } = useSelector<EncounterStore>(
     (state) => state.encounter,
   ) as EncounterState;
+  const { selectedCreatureId } = useSelector<UserInterfaceStore>(
+    (state) => state.userInterface,
+  ) as UserInterfaceState;
 
   const zoom = dzoom()
     .scaleExtent([0.1, 20])

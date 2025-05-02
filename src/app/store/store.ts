@@ -7,6 +7,7 @@ import { encounterReduser } from 'entities/encounter';
 import { encounterApi } from 'entities/encounter/api';
 import { generatedCreatureReduser } from 'entities/generatedCreature';
 import { loggerReduser } from 'entities/logger';
+import { userInterfaceReduser } from 'entities/userInterface';
 import { bestiaryApi } from 'pages/bestiary/api';
 import { characterApi } from 'pages/characters/api';
 import { promtApi } from 'pages/encounterTracker/api';
@@ -19,6 +20,7 @@ export const store = configureStore({
     logger: loggerReduser,
     auth: authReducer,
     generatedCreature: generatedCreatureReduser,
+    userInterface: userInterfaceReduser,
     bestiaryApi: bestiaryApi.reducer,
     promtApi: promtApi.reducer,
     characterApi: characterApi.reducer,
@@ -44,6 +46,7 @@ export type RootStore = ReturnType<
     logger: typeof loggerReduser;
     auth: typeof authReducer;
     generatedCreature: typeof generatedCreatureReduser;
+    userInterface: typeof userInterfaceReduser;
     bestiaryApi: typeof bestiaryApi.reducer;
     promtApi: typeof promtApi.reducer;
     characterApi: typeof characterApi.reducer;

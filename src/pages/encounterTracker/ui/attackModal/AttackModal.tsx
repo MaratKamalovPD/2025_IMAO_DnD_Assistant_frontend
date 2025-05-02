@@ -9,8 +9,12 @@ import {
   creatureSelectors,
   CreaturesStore,
 } from 'entities/creature/model';
-import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
 import { loggerActions } from 'entities/logger/model';
+import {
+  userInterfaceActions,
+  UserInterfaceState,
+  UserInterfaceStore,
+} from 'entities/userInterface/model';
 import {
   AbilitySavingThrow,
   dndTraitToInitialForm,
@@ -49,9 +53,9 @@ export const AttackModal: React.FC<AttackModalProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const { selectedCreatureId, attackedCreatureId } = useSelector<EncounterStore>(
-    (state) => state.encounter,
-  ) as EncounterState;
+  const { selectedCreatureId, attackedCreatureId } = useSelector<UserInterfaceStore>(
+    (state) => state.userInterface,
+  ) as UserInterfaceState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
@@ -192,7 +196,7 @@ export const AttackModal: React.FC<AttackModalProps> = ({
     }
 
     dispatch(loggerActions.addLog(attackLog));
-    dispatch(encounterActions.selectAttackedCreature(null));
+    dispatch(userInterfaceActions.selectAttackedCreature(null));
     setIsModalOpen((prev) => !prev);
   };
 
