@@ -1,3 +1,4 @@
+import Tippy from '@tippyjs/react';
 import {
   Icon28DiamondOutline,
   Icon28DocumentListOutline,
@@ -9,8 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Rnd } from 'react-rnd';
 
 import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
+import { Chatbot } from 'widgets/chatbot';
 import { loggerActions, LoggerState, LoggerStore } from 'widgets/chatbot/model';
-import { Chatbot } from 'widgets/chatbot/ui/Chatbot';
 import { BattleMap } from './battleMap';
 import { CardList } from './cardList';
 import { CustomCursor } from './customCursor';
@@ -19,7 +20,6 @@ import { MenuItem, PopupMenu } from './popupMenu';
 import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
 
-import Tippy from '@tippyjs/react';
 import s from './EncounterTracker.module.scss';
 
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
