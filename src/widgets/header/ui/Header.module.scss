@@ -128,6 +128,8 @@
     }
 
     &:last-child {
+      border-top: solid 2px;
+      border-color: var(--primary-bg-color);
       border-radius: 0 0 7px 7px;
     }
 
