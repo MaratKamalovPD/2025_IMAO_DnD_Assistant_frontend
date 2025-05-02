@@ -19,6 +19,7 @@ $additional-border-color: #cfcfcf62;
 
 @container bestiary-container (max-width: 1080px) {
   .statblock {
+    margin-top: 95px;
     width: 100%;
   }
 }
@@ -108,7 +109,7 @@ $additional-border-color: #cfcfcf62;
 @container statblock-container (max-width: 600px) {
   .commonContainer {
     flex-direction: column !important;
-    
+
     &__typeContainer {
       flex-wrap: wrap;
     }
