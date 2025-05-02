@@ -4,13 +4,13 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { authReducer } from 'entities/auth';
 import { creaturesReduser } from 'entities/creature';
 import { encounterReduser } from 'entities/encounter';
+import { encounterApi } from 'entities/encounter/api';
 import { generatedCreatureReduser } from 'entities/generatedCreature';
+import { loggerReduser } from 'entities/logger';
 import { bestiaryApi } from 'pages/bestiary/api';
 import { characterApi } from 'pages/characters/api';
-import encounterApi from 'pages/encounterList/api/encounter.api';
 import { promtApi } from 'pages/encounterTracker/api';
 import { authApi } from 'pages/login/api';
-import { loggerReduser } from 'widgets/chatbot/model';
 
 export const store = configureStore({
   reducer: {
