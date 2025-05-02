@@ -1,10 +1,11 @@
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
 import { authActions, AuthState, UserData } from 'entities/auth/model';
 import { AuthStore } from 'entities/auth/model/types';
 import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
 import { useCheckAuthQuery, useLazyLogoutQuery } from 'pages/login/api';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Header } from 'shared/ui';
+import { Header } from 'widgets/header';
 import { Props } from './types';
 
 export const HeaderProviders = ({ children }: Props) => {
