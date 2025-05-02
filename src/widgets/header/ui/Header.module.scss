@@ -119,6 +119,23 @@
   background-color: var(--secondary-bg-color);
   border: 1px solid var(--primary-bg-color);
 
+  a {
+    color: white;
+    display: block;
+
+    &:first-child {
+      border-radius: 7px 7px 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 7px 7px;
+    }
+
+    &:hover {
+      background-color: #0000005b;
+    }
+  }
+
   &__btn {
     padding: 0.5rem 1rem;
     background-color: transparent;
@@ -127,21 +144,5 @@
     cursor: pointer;
     transition: background-color 0.2s ease;
     color: white;
-
-    a {
-      color: white;
-    }
-
-    &:first-of-type {
-      border-radius: 7px 7px 0 0;
-    }
-
-    &:last-of-type {
-      border-radius: 0 0 7px 7px;
-    }
-
-    &:hover {
-      background-color: #0000005b;
-    }
   }
 }

@@ -7,7 +7,7 @@ import logo from 'shared/assets/images/logo.png';
 import s from './Header.module.scss';
 
 type HeaderProps = {
-  encounterId: number | null;
+  encounterId: string | null;
   isAuth: boolean;
   user?: UserData;
   logout?: () => Promise<void>;
@@ -76,15 +76,17 @@ export const Header: React.FC<HeaderProps> = ({ encounterId, isAuth, user, logou
               />
               {isDropdownOpen && (
                 <div className={s.dropdownContainer}>
-                  <div className={s.dropdownContainer__btn}>
-                    <Link to='/encounter_list'>Список сражений</Link>
-                  </div>
-                  <div className={s.dropdownContainer__btn}>
-                    <Link to='/characters'>Персонажи</Link>
-                  </div>
-                  <div className={s.dropdownContainer__btn} onClick={() => logout?.()}>
-                    Выйти
-                  </div>
+                  <Link to='/encounter_list'>
+                    <div className={s.dropdownContainer__btn}>Список сражений</div>
+                  </Link>
+                  <Link to='/characters'>
+                    <div className={s.dropdownContainer__btn}>Персонажи</div>
+                  </Link>
+                  <Link to='#'>
+                    <div className={s.dropdownContainer__btn} onClick={() => logout?.()}>
+                      Выйти
+                    </div>
+                  </Link>
                 </div>
               )}
             </div>
