@@ -25,12 +25,16 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import s from './TypeForm.module.scss';
 import { CollapsiblePanelRef } from '../collapsiblePanel/CollapsiblePanel';
+import clsx from 'clsx';
 
-export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ language = 'en' }, ref) => {
+
+
+export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ language = 'en', clearGlow, getGlowClass}, ref) => {
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
 
+  
   const [state, setState] = useState<TypeFormState>({
     name: generatedCreature?.name?.rus || 'Monster',
     size: (['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan'].includes(
@@ -159,7 +163,11 @@ export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ langua
             type='text'
             value={state.name}
             onChange={handleChange('name')}
-            className={s.creaturePanel__statsElement__input}
+            onClick={() => clearGlow?.('name')}
+            className={clsx(
+              s.creaturePanel__statsElement__input,
+              getGlowClass?.('name')
+            )}
           />
         </FormElement>
 

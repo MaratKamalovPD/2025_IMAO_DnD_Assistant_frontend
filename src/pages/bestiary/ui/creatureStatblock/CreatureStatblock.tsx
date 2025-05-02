@@ -15,14 +15,13 @@ import { CreatureFullData } from 'entities/creature/model';
 import { JumpTarget } from 'pages/bestiary/model';
 import { cursorStyle } from 'pages/bestiary/lib';
 
-
-
 interface CreatureStatblockProps {
   creature?: CreatureFullData;
   onJump?: (target: JumpTarget) => void;
+  triggerGlow?: (id: string) => void;
 }
 
-export const CreatureStatblock = ({ creature: creatureProp, onJump  }: CreatureStatblockProps) => {
+export const CreatureStatblock = ({ creature: creatureProp, onJump, triggerGlow  }: CreatureStatblockProps) => {
   const { creatureName } = useParams();
   const navigate = useNavigate();
 
@@ -48,7 +47,7 @@ const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, 
   return (
     <div className={s.statblock}>
       <div className={s.header}>
-        <div onClick={() => onJump?.('type')} className={s.header__nameSection} style={cursorStyle(onJump != null)}>
+        <div onClick={() => { onJump?.('type');  triggerGlow?.('name')}} className={s.header__nameSection} style={cursorStyle(onJump != null)}>
           <span className={s.header__nameRus}>{creature.name.rus}</span>
           <span className={s.header__nameEng}>{creature.name.eng}</span>
         </div>

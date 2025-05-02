@@ -18,4 +18,4 @@ export { calculateArmorClass } from './armorClassUtils'
 
 export { mapLLMToForm } from './mapLLMToForm.ts'
 
-
+export { useGlow } from './useGlow'

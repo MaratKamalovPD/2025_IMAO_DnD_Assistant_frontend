@@ -7,6 +7,8 @@ export interface TypeFormProps {
   initialAlignment?: string;
   initialOtherType?: string;
   language?: Language;
+  getGlowClass?: (id: string) => string;
+  clearGlow?: (id: string) => void;
 }
 
 export interface TypeFormState {

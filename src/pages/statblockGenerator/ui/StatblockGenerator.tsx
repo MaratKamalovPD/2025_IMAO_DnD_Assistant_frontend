@@ -30,7 +30,8 @@ import { useAddCreatureMutation } from '../api/statblockGenerator.api';
 import { CreatureStatblock } from 'pages/bestiary';
 import { CollapsiblePanelRef } from './collapsiblePanel/CollapsiblePanel';
 import { JumpTarget } from 'pages/bestiary/model';
-
+import clsx from 'clsx';
+import { useGlow } from '../lib';
 
 const requestBody: GetCreaturesRequest = {
   start: 0,
@@ -67,6 +68,14 @@ export const StatblockGenerator = () => {
   const [addCreature, { isSuccess, isError, error }] = useAddCreatureMutation();
   const { data: creatures } = useGetCreaturesQuery(requestBody);
   const [trigger, { data: fullCreatureData }] = useLazyGetCreatureByNameQuery();
+  const { glowActiveMap, glowFadeMap, triggerGlow, clearGlow } = useGlow();
+
+  const getGlowClass = (id: string) =>
+    clsx(
+      glowActiveMap[id] && s.glowHighlight,
+      glowFadeMap[id] && s.glowFading
+    );
+
 
   const formRefs: Record<JumpTarget, React.RefObject<CollapsiblePanelRef | null>> = {
     type: useRef<CollapsiblePanelRef | null>(null),
@@ -314,7 +323,7 @@ export const StatblockGenerator = () => {
           onSave={onSave}
         />
         {/* <ActualStatblock  />  */}
-        <TypeForm ref={formRefs.type} language='ru' />
+        <TypeForm ref={formRefs.type} language='ru' clearGlow={clearGlow} getGlowClass={getGlowClass} />
         <ArmorHitdiceForm ref={formRefs.armor} language='ru' />
         <MonsterSpeedForm ref={formRefs.speed} language='ru' />
         <MonsterStatsForm ref={formRefs.stats} language='ru' />
@@ -325,7 +334,7 @@ export const StatblockGenerator = () => {
         
       </div>
 
-      <CreatureStatblock creature={generatedCreature} onJump={onJump} />
+      <CreatureStatblock creature={generatedCreature} onJump={onJump} triggerGlow={triggerGlow}/>
 
     </div>
   );
