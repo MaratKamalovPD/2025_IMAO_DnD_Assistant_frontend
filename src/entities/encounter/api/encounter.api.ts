@@ -1,8 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { UUID } from 'shared/lib';
-import { Encounter, EncounterClipped, EncounterSave } from '../../../pages/encounterList/model';
+
 import type { SearchParams } from './types';
+import { Encounter, EncounterClipped, EncounterSave } from '../model';
 
 export type GetEncounterListRequest = {
   start: number;

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IMessage } from './types';
 
-import { IMessage } from '../../../widgets/chatbot/model/types';
 
 export type LoggerState = {
   lastLog?: string;

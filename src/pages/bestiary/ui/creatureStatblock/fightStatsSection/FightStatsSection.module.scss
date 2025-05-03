@@ -40,3 +40,9 @@
     margin-bottom: 5rem;
   }
 }
+
+@container statblock-container (max-width: 485px) {
+  .fightStatsContainer {
+    margin-bottom: 1.5rem;
+  }
+}

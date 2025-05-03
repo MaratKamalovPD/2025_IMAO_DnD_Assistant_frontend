@@ -5,6 +5,7 @@ export { TypeFormLocalization,
     getCellSizeDescription }
 from './typeFormLocalization';
 export { ArmorHitDiceLocalization } from './armorHitDiceLocalization';
+export type { ArmorTypeInfo } from './armorHitDiceLocalization';
 export { MonsterSpeedLocalization } from './monsterSpeedLocalization';
 export { MonsterStatsLocalization } from './monsterStatsLocalization';
 export { PropertiesListsLocalization } from './propertiesListsLocalization';
@@ -19,3 +20,5 @@ export { calculateArmorClass } from './armorClassUtils'
 export { mapLLMToForm } from './mapLLMToForm.ts'
 
 export { useGlow } from './useGlow'
+
+export { armorIcons } from './armorsIcons'

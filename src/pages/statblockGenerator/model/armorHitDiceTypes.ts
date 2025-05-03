@@ -18,3 +18,9 @@ export interface ArmorHitDiceFormState {
   otherArmor: string;
 }
 
+export type ArmourOptionType = {
+  value: string;
+  label: string;
+  icon?: string; 
+  description?: string; 
+};

@@ -27,6 +27,7 @@ $additional-border-color: #cfcfcf62;
 @container statblock-generator (min-width: 0px) {
   .statblock {
     width: 100%;
+    top: 85px;
   }
 }
 
@@ -166,6 +167,14 @@ $additional-border-color: #cfcfcf62;
         width: 150px;
         height: 200px;
       }
+    }
+  }
+}
+
+@container statblock-container (max-width: 485px) {
+  .mainContainer {
+    &__image {
+      position: relative; 
     }
   }
 }

@@ -1,7 +1,5 @@
 import { Dice, DiceType } from "./types";
 
-export function parseDice(diceText: `${number}к${number}`): Dice;
-export function parseDice(diceText: string): { dice: Dice; modifier: number };
 export function parseDice(diceText: string): Dice | { dice: Dice; modifier: number } {
   const cleaned = diceText.toLowerCase().replace(/\s+/g, '');
   const match = cleaned.match(/^(\d+)к(\d+)([+-]\d+)?$/);
