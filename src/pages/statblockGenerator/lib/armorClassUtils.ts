@@ -1,35 +1,35 @@
 export type ArmorType =
   | 'none'
-  | 'natural armor'
-  | 'mage armor'
-  | 'padded armor'
-  | 'leather armor'
-  | 'studded leather'
-  | 'hide armor'
-  | 'chain shirt'
-  | 'scale mail'
+  | 'natural'
+  | 'mage'
+  | 'padded'
+  | 'leather'
+  | 'studded'
+  | 'hide'
+  | 'chainShirt'
+  | 'scaleMail'
   | 'breastplate'
-  | 'half plate'
-  | 'ring mail'
-  | 'chain mail'
+  | 'halfPlate'
+  | 'ringMail'
+  | 'chainMail'
   | 'splint'
   | 'plate'
   | 'other';
 
 const armorBaseAC: Record<ArmorType, number> = {
   none: 10,
-  'natural armor': 10,
-  'mage armor': 13,
-  'padded armor': 11,
-  'leather armor': 11,
-  'studded leather': 12,
-  'hide armor': 12,
-  'chain shirt': 13,
-  'scale mail': 14,
-  'breastplate': 14,
-  'half plate': 15,
-  'ring mail': 14,
-  'chain mail': 16,
+  natural: 10,
+  mage: 13,
+  padded: 11,
+  leather: 11,
+  studded: 12,
+  hide: 12,
+  chainShirt: 13,
+  scaleMail: 14,
+  breastplate: 14,
+  halfPlate: 15,
+  ringMail: 14,
+  chainMail: 16,
   splint: 17,
   plate: 18,
   other: 10
@@ -37,18 +37,18 @@ const armorBaseAC: Record<ArmorType, number> = {
 
 const allowsDexMod: Record<ArmorType, number | 'full' | false> = {
   none: 'full',
-  'natural armor': 'full',
-  'mage armor': 'full',
-  'padded armor': 'full',
-  'leather armor': 'full',
-  'studded leather': 'full',
-  'hide armor': 2,
-  'chain shirt': 2,
-  'scale mail': 2,
-  'breastplate': 2,
-  'half plate': 2,
-  'ring mail': false,
-  'chain mail': false,
+  natural: 'full',
+  mage: 'full',
+  padded: 'full',
+  leather: 'full',
+  studded: 'full',
+  hide: 2,
+  chainShirt: 2,
+  scaleMail: 2,
+  breastplate: 2,
+  halfPlate: 2,
+  ringMail: false,
+  chainMail: false,
   splint: false,
   plate: false,
   other: 'full'
@@ -86,7 +86,7 @@ export function calculateArmorClass(
   }
 
   // бонус природной брони (только для natural armor)
-  if (type === 'natural armor') {
+  if (type === 'natural') {
     total += natArmorBonus;
   }
 
