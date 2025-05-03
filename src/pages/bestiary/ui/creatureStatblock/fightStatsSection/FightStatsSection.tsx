@@ -16,7 +16,7 @@ type FightStatsProps = {
 export const FightStatsSection: React.FC<FightStatsProps> = ({ creature, conModifier, onJump }) => {
   let parsedDice: Dice;
   let hitsModifier = 0;
-
+ 
   if (creature.hits.formula) {
     parsedDice = parseDice(creature.hits.formula);
     hitsModifier = parsedDice.count * conModifier;
