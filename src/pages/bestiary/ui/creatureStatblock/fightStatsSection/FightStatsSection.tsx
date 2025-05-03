@@ -18,7 +18,7 @@ export const FightStatsSection: React.FC<FightStatsProps> = ({ creature, conModi
   let hitsModifier = 0;
  
   if (creature.hits.formula) {
-    parsedDice = parseDice(creature.hits.formula);
+    parsedDice = parseDice(creature.hits.formula) as Dice;
     hitsModifier = parsedDice.count * conModifier;
   }
 

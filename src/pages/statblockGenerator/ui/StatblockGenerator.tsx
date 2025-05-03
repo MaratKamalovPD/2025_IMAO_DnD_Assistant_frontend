@@ -302,35 +302,38 @@ export const StatblockGenerator = () => {
 
   const handleUsePreset = () => {
     if (selectedPreset) {
-      // Загружаем полные данные о существе по имени
       trigger(selectedPreset);
 
-      // Здесь можно добавить дополнительную логику
       console.log('Применен пресет:', selectedPreset);
     }
   };
 
   const [panelWidth, setPanelWidth] = useState<number>(900);
+  const MIN_PANEL_WIDTH = 520;
+  const MIN_RIGHT_PANEL_WIDTH = 240;
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     const startX = e.clientX;
     const startWidth = panelWidth;
-  
+
     const onMouseMove = (moveEvent: MouseEvent) => {
       const delta = moveEvent.clientX - startX;
-      setPanelWidth(startWidth + delta);
+      const newWidth = startWidth + delta;
+
+      if (newWidth >= MIN_PANEL_WIDTH) {
+        setPanelWidth(newWidth);
+      }
     };
-  
+
     const onMouseUp = () => {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
-  
+
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   };
-  
 
   return (
     <div className={s.statblockGeneratorContainer}>
@@ -359,7 +362,10 @@ export const StatblockGenerator = () => {
 
       <div className={s.resizer} onMouseDown={handleMouseDown} />
 
-      <div className={s.creatureStatblockPanel} style={{ flex: 1 }}>
+      <div className={s.creatureStatblockPanel} style={{
+        flex: 1,
+        minWidth: `${MIN_RIGHT_PANEL_WIDTH}px`, // Устанавливаем минимальную ширину
+      }}>
           <CreatureStatblock creature={generatedCreature} onJump={onJump} triggerGlow={triggerGlow}/>
       </div>
 

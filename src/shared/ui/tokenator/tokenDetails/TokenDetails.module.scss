@@ -3,12 +3,12 @@
     background-color: var(--primary-bg-color);
     display: flex;
     flex-direction: column;
-    padding: 24px;
+    padding-bottom: 24px;
     border: 2px solid var(--border);
     margin-top: 24px;
   
     @media (min-width: 768px) {
-      margin-right: 24px;
+      margin-right: 2px;
     }
   
     &__header {

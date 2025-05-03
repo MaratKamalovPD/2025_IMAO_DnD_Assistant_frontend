@@ -51,9 +51,11 @@ const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, 
           <span className={s.header__nameRus}>{creature.name.rus}</span>
           <span className={s.header__nameEng}>{creature.name.eng}</span>
         </div>
-        <Link to='/bestiary' className={s.header__closeBtn}>
-          <Icon20Cancel />
-        </Link>
+        {!creatureProp && (
+          <Link to='/bestiary' className={s.header__closeBtn}>
+            <Icon20Cancel />
+          </Link>
+        )}
       </div>
       <div className={s.statblockBody}>
         <div className={s.commonContainer}>
