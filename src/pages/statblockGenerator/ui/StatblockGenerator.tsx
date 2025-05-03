@@ -4,7 +4,7 @@ import {
   useGetCreaturesQuery,
   useLazyGetCreatureByNameQuery,
 } from 'pages/statblockGenerator/api';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArmorHitdiceForm } from './armorHitdiceForm';
 import { AttackForm } from './attackForm';
 import { CreatureSaveSection } from './creatureSaveSection';
@@ -18,6 +18,7 @@ import s from './StatblockGenerator.module.scss';
 import { TypeForm } from './typeForm';
 import { toast } from 'react-toastify';
 
+
 import {
   GeneratedCreatureStore,
   SINGLE_CREATURE_ID,
@@ -26,7 +27,11 @@ import {
 } from 'entities/generatedCreature/model';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAddCreatureMutation } from '../api/statblockGenerator.api';
-
+import { CreatureStatblock } from 'pages/bestiary';
+import { CollapsiblePanelRef } from './collapsiblePanel/CollapsiblePanel';
+import { JumpTarget } from 'pages/bestiary/model';
+import clsx from 'clsx';
+import { useGlow } from '../lib';
 
 const requestBody: GetCreaturesRequest = {
   start: 0,
@@ -63,7 +68,35 @@ export const StatblockGenerator = () => {
   const [addCreature, { isSuccess, isError, error }] = useAddCreatureMutation();
   const { data: creatures } = useGetCreaturesQuery(requestBody);
   const [trigger, { data: fullCreatureData }] = useLazyGetCreatureByNameQuery();
+  const { glowActiveMap, glowFadeMap, triggerGlow, clearGlow } = useGlow();
 
+  const getGlowClass = (id: string) =>
+    clsx(
+      glowActiveMap[id] && s.glowHighlight,
+      glowFadeMap[id] && s.glowFading
+    );
+
+
+  const formRefs: Record<JumpTarget, React.RefObject<CollapsiblePanelRef | null>> = {
+    type: useRef<CollapsiblePanelRef | null>(null),
+    armor: useRef<CollapsiblePanelRef | null>(null),
+    speed: useRef<CollapsiblePanelRef | null>(null),
+    stats: useRef<CollapsiblePanelRef | null>(null),
+    properties: useRef<CollapsiblePanelRef | null>(null),
+    damage: useRef<CollapsiblePanelRef | null>(null),
+    senses: useRef<CollapsiblePanelRef | null>(null),
+    attack: useRef<CollapsiblePanelRef | null>(null),
+  };
+  
+  const onJump = (target: JumpTarget) => {
+    const panel = formRefs[target].current;
+    panel?.expand();
+    setTimeout(() => {
+      panel?.rootElement?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+  
+  
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
@@ -277,9 +310,32 @@ export const StatblockGenerator = () => {
     }
   };
 
+  const [panelWidth, setPanelWidth] = useState<number>(900);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = panelWidth;
+  
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const delta = moveEvent.clientX - startX;
+      setPanelWidth(startWidth + delta);
+    };
+  
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+  
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
+  
+
   return (
     <div className={s.statblockGeneratorContainer}>
-      <div className={s.statblockGeneratorPanel}>
+      
+      <div className={s.statblockGeneratorPanel} style={{ width: `${panelWidth}px` }}>
         <PromptSection language='ru' />
         <CreatureSaveSection
           presetOptions={presetOptions}
@@ -290,15 +346,23 @@ export const StatblockGenerator = () => {
           onSave={onSave}
         />
         {/* <ActualStatblock  />  */}
-        <TypeForm language='ru' />
-        <ArmorHitdiceForm language='ru' />
-        <MonsterSpeedForm language='ru' />
-        <MonsterStatsForm language='ru' />
-        <PropertiesListsForm language='ru' />
-        <DamageLanguagesForm language='ru' />
-        <SensesForm language='ru' />
-        <AttackForm />
+        <TypeForm ref={formRefs.type} language='ru' clearGlow={clearGlow} getGlowClass={getGlowClass} />
+        <ArmorHitdiceForm ref={formRefs.armor} language='ru' />
+        <MonsterSpeedForm ref={formRefs.speed} language='ru' />
+        <MonsterStatsForm ref={formRefs.stats} language='ru' clearGlow={clearGlow} getGlowClass={getGlowClass}/>
+        <PropertiesListsForm ref={formRefs.properties} language='ru' />
+        <DamageLanguagesForm ref={formRefs.damage} language='ru' />
+        <SensesForm ref={formRefs.senses} language='ru' />
+        <AttackForm ref={formRefs.attack} />
+        
       </div>
+
+      <div className={s.resizer} onMouseDown={handleMouseDown} />
+
+      <div className={s.creatureStatblockPanel} style={{ flex: 1 }}>
+          <CreatureStatblock creature={generatedCreature} onJump={onJump} triggerGlow={triggerGlow}/>
+      </div>
+
     </div>
   );
 };

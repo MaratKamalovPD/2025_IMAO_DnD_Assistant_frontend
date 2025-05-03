@@ -12,4 +12,6 @@ export interface MonsterStats {
 export interface MonsterStatsFormProps {
   initialStats?: MonsterStats;
   language?: Language;
+  getGlowClass?: (id: string) => string;
+  clearGlow?: (id: string) => void;
 }

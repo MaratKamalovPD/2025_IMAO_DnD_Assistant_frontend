@@ -24,6 +24,12 @@ $additional-border-color: #cfcfcf62;
   }
 }
 
+@container statblock-generator (min-width: 0px) {
+  .statblock {
+    width: 100%;
+  }
+}
+
 .header {
   padding: 1rem;
   position: sticky;

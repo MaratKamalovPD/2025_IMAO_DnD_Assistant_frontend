@@ -8,7 +8,7 @@ import {
 import { CreatureSize, TypeFormProps, TypeFormState } from 'pages/statblockGenerator/model';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { FormElement } from 'pages/statblockGenerator/ui/typeForm/formElement';
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { capitalizeFirstLetter, lowercaseFirstLetter } from 'shared/lib';
 
 import {
@@ -24,12 +24,17 @@ import { useDispatch, useSelector } from 'react-redux';
 // } from 'entities/creature/model';
 
 import s from './TypeForm.module.scss';
+import { CollapsiblePanelRef } from '../collapsiblePanel/CollapsiblePanel';
+import clsx from 'clsx';
 
-export const TypeForm: React.FC<TypeFormProps> = ({ language = 'en' }) => {
+
+
+export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ language = 'en', clearGlow, getGlowClass}, ref) => {
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
 
+  
   const [state, setState] = useState<TypeFormState>({
     name: generatedCreature?.name?.rus || 'Monster',
     size: (['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan'].includes(
@@ -151,14 +156,18 @@ export const TypeForm: React.FC<TypeFormProps> = ({ language = 'en' }) => {
     };
 
   return (
-    <CollapsiblePanel title={t.title}>
+    <CollapsiblePanel ref={ref} title={t.title}>
       <div className={s.creaturePanel__statsContainer}>
         <FormElement label={t.name}>
           <input
             type='text'
             value={state.name}
             onChange={handleChange('name')}
-            className={s.creaturePanel__statsElement__input}
+            onClick={() => clearGlow?.('name')}
+            className={clsx(
+              s.creaturePanel__statsElement__input,
+              getGlowClass?.('name')
+            )}
           />
         </FormElement>
 
@@ -166,7 +175,11 @@ export const TypeForm: React.FC<TypeFormProps> = ({ language = 'en' }) => {
           <select
             value={state.size}
             onChange={handleChange('size')}
-            className={s.creaturePanel__statsElement__select}
+            onClick={() => clearGlow?.('size')}
+            className={clsx(
+              s.creaturePanel__statsElement__select,
+              getGlowClass?.('size')
+            )}
           >
             {Object.entries(t.sizes).map(([key, label]) => (
               <option key={key} value={key}>
@@ -181,7 +194,11 @@ export const TypeForm: React.FC<TypeFormProps> = ({ language = 'en' }) => {
             <select
               value={state.type}
               onChange={handleChange('type')}
-              className={s.creaturePanel__statsElement__select}
+              onClick={() => clearGlow?.('type')}
+              className={clsx(
+                s.creaturePanel__statsElement__select,
+                getGlowClass?.('type')
+              )}
             >
               {Object.entries(t.types).map(([key, label]) => (
                 <option key={key} value={key}>
@@ -216,10 +233,14 @@ export const TypeForm: React.FC<TypeFormProps> = ({ language = 'en' }) => {
             type='text'
             value={state.alignment}
             onChange={handleChange('alignment')}
-            className={s.creaturePanel__statsElement__input}
+            onClick={() => clearGlow?.('alignment')}
+            className={clsx(
+              s.creaturePanel__statsElement__input,
+              getGlowClass?.('alignment')
+            )}
           />
         </FormElement>
       </div>
     </CollapsiblePanel>
   );
-};
+});

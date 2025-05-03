@@ -10,26 +10,44 @@ import s from './CreatureStatblock.module.scss';
 import { DescriptionSection } from './descriptionSection';
 import { FightStatsSection } from './fightStatsSection';
 import { SkillsAndSensesSection } from './skillsAndSensesSection';
+import { useEffect } from 'react';
+import { CreatureFullData } from 'entities/creature/model';
+import { JumpTarget } from 'pages/bestiary/model';
+import { cursorStyle } from 'pages/bestiary/lib';
 
-export const CreatureStatblock = () => {
+interface CreatureStatblockProps {
+  creature?: CreatureFullData;
+  onJump?: (target: JumpTarget) => void;
+  triggerGlow?: (id: string) => void;
+}
+
+export const CreatureStatblock = ({ creature: creatureProp, onJump, triggerGlow  }: CreatureStatblockProps) => {
   const { creatureName } = useParams();
-  if (creatureName === undefined) {
-    const navigate = useNavigate();
-    navigate('/bestiary');
+  const navigate = useNavigate();
 
-    return;
-  }
+  const creatureApiPath = creatureName ? `/bestiary/${creatureName}` : undefined;
 
-  const { data: creature } = useGetCreatureByNameQuery(`/bestiary/${creatureName}`);
+const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, {
+  skip: !!creatureProp || !creatureName,
+});
+
+
+  useEffect(() => {
+    if (!creatureName && !creatureProp) {
+      navigate('/bestiary');
+    }
+  }, [creatureName, creatureProp, navigate]);
+
+  const creature = creatureProp ?? creatureQueryData;
 
   if (!creature) {
-    return;
+    return null;
   }
 
   return (
     <div className={s.statblock}>
       <div className={s.header}>
-        <div className={s.header__nameSection}>
+        <div onClick={() => { onJump?.('type');  triggerGlow?.('name')}} className={s.header__nameSection} style={cursorStyle(onJump != null)}>
           <span className={s.header__nameRus}>{creature.name.rus}</span>
           <span className={s.header__nameEng}>{creature.name.eng}</span>
         </div>
@@ -39,14 +57,29 @@ export const CreatureStatblock = () => {
       </div>
       <div className={s.statblockBody}>
         <div className={s.commonContainer}>
-          <div className={s.commonContainer__typeContainer}>
-            {creature.size.rus} {creature.type.name}
-            {creature.type.tags ? ` (${creature.type.tags})` : ''}, {creature.alignment}
-          </div>
+        <div onClick={() => {
+            onJump?.('type');
+          }}
+          className={s.commonContainer__typeContainer}
+          style={cursorStyle(onJump != null)}
+        >
+          <span onClick={() => triggerGlow?.('size')}>
+            {creature.size.rus}&nbsp;
+          </span>
+
+          <span onClick={() => triggerGlow?.('type')}>
+            {creature.type.name}
+            {creature.type.tags ? ` (${creature.type.tags})` : ''},&nbsp; 
+          </span>
+
+          <span onClick={() => triggerGlow?.('alignment')}>
+            {creature.alignment}
+          </span>
+        </div>
           <div className={s.commonContainer__sourceContainer}>
             Источник:&nbsp;
             <Tippy content={creature.source.name}>
-              <div className={s.commonContainer__shortName}>{creature?.source.shortName}</div>
+              <div className={s.commonContainer__shortName}>{creature.source.shortName}</div>
             </Tippy>
             ,&nbsp;{creature.source.group.shortName}
           </div>
@@ -56,9 +89,9 @@ export const CreatureStatblock = () => {
             <img src={creature.images[1]}></img>
           </div>
           <div className={s.mainContainer__description}>
-            <FightStatsSection creature={creature} conModifier={modifiers[creature.ability.con]} />
-            <AbilitiesSection creature={creature} />
-            <SkillsAndSensesSection creature={creature} />
+            <FightStatsSection creature={creature} conModifier={modifiers[creature.ability.con]} onJump={onJump}/>
+            <AbilitiesSection creature={creature} onJump={onJump} triggerGlow={triggerGlow}/>
+            <SkillsAndSensesSection creature={creature} onJump={onJump}/>
             <div className={s.mainContainer__infoSection}></div>
           </div>
         </div>
@@ -75,7 +108,7 @@ export const CreatureStatblock = () => {
           <DescriptionSection sectionTitle={'Способности'} elements={creature.feats} />
         )}
         {creature.actions && (
-          <DescriptionSection sectionTitle={'Действия'} elements={creature.actions} />
+          <DescriptionSection sectionTitle={'Действия'} elements={creature.actions} onJump={onJump}/>
         )}
         {creature.bonusActions && (
           <DescriptionSection sectionTitle={'Бонусные действия'} elements={creature.bonusActions} />

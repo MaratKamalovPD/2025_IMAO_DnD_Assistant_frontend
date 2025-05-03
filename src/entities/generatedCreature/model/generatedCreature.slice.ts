@@ -78,7 +78,7 @@ type AddAttackPayload = {
     armors: [],
     hits: {
       average: 9,
-      formula: '2d8',
+      formula: '2к8',
     },
     speed: [
       {

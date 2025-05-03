@@ -1,4 +1,6 @@
+import { JumpTarget } from 'pages/bestiary/model';
 import s from './DescriptionSection.module.scss';
+import { cursorStyle } from 'pages/bestiary/lib';
 
 type SectionElement = {
   name: string;
@@ -9,15 +11,19 @@ type SectionElement = {
 type DescriptionSectionProps = {
   sectionTitle: string;
   elements: SectionElement[];
+  onJump?: (target: JumpTarget) => void;
+  jumpTarget?: JumpTarget;
 };
 
 export const DescriptionSection: React.FC<DescriptionSectionProps> = ({
   sectionTitle,
   elements,
+  onJump,
+  jumpTarget,
 }) => {
   return (
     <div className={s.descrptionContainer}>
-      <div className={s.descrptionContainer__sectionTitle}>{sectionTitle}</div>
+      <div onClick={() => onJump?.(jumpTarget || 'attack')} className={s.descrptionContainer__sectionTitle} style={cursorStyle(onJump != null)}>{sectionTitle}</div>
       <div className={s.descrptionContainer__content}>
         {Object.entries(elements).map(([_, el]) => (
           <div key={el.name} className={s.descrptionContainer__line}>

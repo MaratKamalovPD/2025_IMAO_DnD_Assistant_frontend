@@ -8,7 +8,7 @@ import {
   skillToAbilityMap,
 } from 'pages/statblockGenerator/lib';
 import { ProficiencyType, PropertiesListsFormProps } from 'pages/statblockGenerator/model';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 
 import {
   generatedCreatureActions,
@@ -19,17 +19,17 @@ import {
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import { CollapsiblePanel, CollapsiblePanelRef } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { PropertySection } from 'pages/statblockGenerator/ui/propertiesListsForm/propertySection';
 import { capitalizeFirstLetter, lowercaseFirstLetter } from 'shared/lib';
 import s from './PropertiesListsForm.module.scss';
 
-export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
+export const PropertiesListsForm = forwardRef<CollapsiblePanelRef, PropertiesListsFormProps>(({
   initialSavingThrows = [],
   initialSkills = [],
   initialConditionImmunities = [],
   language = 'en',
-}) => {
+}, ref) => {
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
@@ -259,7 +259,7 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
   };
 
   return (
-    <CollapsiblePanel title={t.title}>
+    <CollapsiblePanel ref={ref} title={t.title}>
       <div className={s.propertiesPanel__sections}>
         <PropertySection
           title={t.savingThrows}
@@ -309,4 +309,4 @@ export const PropertiesListsForm: React.FC<PropertiesListsFormProps> = ({
       </div>
     </CollapsiblePanel>
   );
-};
+});

@@ -1,19 +1,24 @@
 import React from 'react';
 import s from './StatInput.module.scss';
 import { calculateStatModifier } from 'shared/lib';
+import clsx from 'clsx';
 
 interface StatInputProps {
   label: string;
   value: number;
   onChange: (value: number) => void;
   modifierPrefix: string;
+  getGlowClass?: (id: string) => string;
+  clearGlow?: (id: string) => void;
 }
 
 export const StatInput: React.FC<StatInputProps> = ({
   label,
   value,
   onChange,
-  modifierPrefix
+  modifierPrefix,
+  getGlowClass,
+  clearGlow,
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const numValue = parseInt(e.target.value, 10);
@@ -26,14 +31,20 @@ export const StatInput: React.FC<StatInputProps> = ({
 
   const increment = () => {
     onChange(Math.min(99, value + 1));
+    clearGlow?.(label)
   };
 
   const decrement = () => {
     onChange(Math.max(1, value - 1));
+    clearGlow?.(label)
   };
 
   return (
-    <div className={s.statsPanel__ability}>
+    
+    <div className={clsx(
+      s.statsPanel__ability,
+      getGlowClass?.(label)
+    )}>
       <div className={s.statsPanel__abilityHeader}>
         {label}
       </div>

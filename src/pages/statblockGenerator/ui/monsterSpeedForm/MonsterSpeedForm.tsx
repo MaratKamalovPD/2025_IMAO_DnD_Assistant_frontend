@@ -6,14 +6,14 @@ import {
 } from 'entities/generatedCreature/model';
 import { MonsterSpeedLocalization } from 'pages/statblockGenerator/lib';
 import { MonsterSpeedFormProps, MonsterSpeedFormState } from 'pages/statblockGenerator/model';
-import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import { CollapsiblePanel, CollapsiblePanelRef } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { SpeedInput } from 'pages/statblockGenerator/ui/monsterSpeedForm/speedInput';
 import { ToggleSwitch } from 'pages/statblockGenerator/ui/monsterSpeedForm/toggleSwitch';
-import React, { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import s from './MonsterSpeedForm.module.scss';
 
-export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
+export const MonsterSpeedForm = forwardRef<CollapsiblePanelRef, MonsterSpeedFormProps>(({
   initialSpeed = 30,
   initialBurrowSpeed = 0,
   initialClimbSpeed = 0,
@@ -21,7 +21,7 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
   initialSwimSpeed = 0,
   initialCustomSpeed = '',
   language = 'en',
-}) => {
+}, ref) => {
   const [_state, _setState] = useState<MonsterSpeedFormState>({
     speed: initialSpeed,
     burrowSpeed: initialBurrowSpeed,
@@ -115,7 +115,7 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
   const t = MonsterSpeedLocalization[language];
 
   return (
-    <CollapsiblePanel title={t.title}>
+    <CollapsiblePanel ref={ref} title={t.title}>
       <div className={s.movementPanel__controls}>
         <ToggleSwitch label={t.customSpeed} checked={useCustomSpeed} onChange={updateUseCustom} />
 
@@ -184,4 +184,4 @@ export const MonsterSpeedForm: React.FC<MonsterSpeedFormProps> = ({
       </div>
     </CollapsiblePanel>
   );
-};
+});
