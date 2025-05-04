@@ -1,8 +1,8 @@
 import { drag as ddrag, select as dselect } from 'd3';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Creature, creatureSelectors, CreaturesStore } from 'entities/creature/model';
+import { Creature, creatureSelectors, CreaturesStore, Size } from 'entities/creature/model';
 import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
 import { CellsCoordinates } from 'entities/encounter/model/types';
 import {
@@ -45,24 +45,26 @@ const createArcPath = (start: { x: number; y: number }, end: { x: number; y: num
 
 export const CreatureToken = ({ transform, id, x, y, cellSize }: CreatureTokenProps) => {
   const dispatch = useDispatch();
-
-  const [imageSize, setImageSize] = useState(cellSize);
-  const [mousePosition, setMousePosition] = useState({ x: 100, y: 100 });
-
   const tokenRef = useRef(null);
 
   const creature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, id || ''),
   ) as Creature;
-
   const { participants } = useSelector<EncounterStore>(
     (state) => state.encounter,
   ) as EncounterState;
-
   const { attackHandleModeActive, currentAttackLLM, selectedCreatureId } =
     useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
 
-  const participant = participants.find((part) => part.id === id);
+  const moveSize = creature.size === Size.tiny ? cellSize / 2 : cellSize;
+  const radius = useMemo(() => (cellSize * creature.size) / 2, [cellSize, creature.size]);
+  const participant = useMemo(
+    () => participants.find((part) => part.id === id),
+    [participants, id],
+  );
+
+  const [imageSize, setImageSize] = useState(radius * 2);
+  const [mousePosition, setMousePosition] = useState({ x: 100, y: 100 });
   const [coords, setCoords] = useState<CellsCoordinates | null>(participant?.cellsCoords || null);
   const debounceCoords = useDebounce(coords, DEBOUNCE_TIME);
 
@@ -93,14 +95,14 @@ export const CreatureToken = ({ transform, id, x, y, cellSize }: CreatureTokenPr
   const circle = dselect(tokenRef.current);
 
   const dragHandler = ddrag<SVGCircleElement, unknown>().on('drag', (event) => {
-    const inverseX = event.x - cellSize / 2;
-    const inverseY = event.y - cellSize / 2;
+    const inverseX = event.x - radius;
+    const inverseY = event.y - radius;
 
-    const snappedX = Math.round(inverseX / cellSize) * cellSize;
-    const snappedY = Math.round(inverseY / cellSize) * cellSize;
+    const snappedX = Math.round(inverseX / moveSize) * moveSize;
+    const snappedY = Math.round(inverseY / moveSize) * moveSize;
 
-    circle.attr('cx', snappedX + cellSize / 2);
-    circle.attr('cy', snappedY + cellSize / 2);
+    circle.attr('cx', snappedX + radius);
+    circle.attr('cy', snappedY + radius);
 
     setCoords({ cellsX: snappedX / cellSize, cellsY: snappedY / cellSize });
   });
@@ -121,16 +123,13 @@ export const CreatureToken = ({ transform, id, x, y, cellSize }: CreatureTokenPr
     dselect(this)
       .transition()
       .duration(100)
-      .attr('r', (cellSize / 2) * 1.1);
+      .attr('r', radius * 1.1);
   });
 
   circle.on('mouseout', function () {
     setImageSize((prev) => prev / 1.1);
 
-    dselect(this)
-      .transition()
-      .duration(100)
-      .attr('r', cellSize / 2);
+    dselect(this).transition().duration(100).attr('r', radius);
   });
 
   return (
@@ -164,9 +163,9 @@ export const CreatureToken = ({ transform, id, x, y, cellSize }: CreatureTokenPr
         onClick={handleClick}
         className={s.token}
         ref={tokenRef}
-        cx={x * cellSize + cellSize / 2}
-        cy={y * cellSize + cellSize / 2}
-        r={cellSize / 2}
+        cx={x * cellSize + radius}
+        cy={y * cellSize + radius}
+        r={radius}
         fill={`url(#image${id})`}
         filter={selectedCreatureId === id ? 'url(#shadow)' : ''}
         stroke={
@@ -182,37 +181,26 @@ export const CreatureToken = ({ transform, id, x, y, cellSize }: CreatureTokenPr
         <>
           <circle
             className={s.attackRadius}
-            cx={x * cellSize + cellSize / 2}
-            cy={y * cellSize + cellSize / 2}
-            r={(Number(keepLeadingDigits(currentAttackLLM.range || '5')) / FT_SIZE_CELL) * cellSize}
-            fill={`#00ff000f`}
-            filter={selectedCreatureId === id ? 'url(#shadow)' : ''}
-            stroke={
-              selectedCreatureId === id
-                ? ACCENT_COLOR
-                : creature.type === 'character'
-                  ? CHARACTER_COLOR
-                  : CREATURE_COLOR
+            cx={x * cellSize + radius}
+            cy={y * cellSize + radius}
+            r={
+              (Number(keepLeadingDigits(currentAttackLLM.range || '5')) / FT_SIZE_CELL) * cellSize +
+              radius
             }
+            fill={`#00ff000f`}
+            filter={'url(#shadow)'}
+            stroke={ACCENT_COLOR}
             strokeWidth='2'
           />
           <path
-            d={createArcPath(
-              { x: x * cellSize + cellSize / 2, y: y * cellSize + cellSize / 2 },
-              mousePosition,
-            )}
+            d={createArcPath({ x: x * cellSize + radius, y: y * cellSize + radius }, mousePosition)}
             stroke='#ec9ded'
             strokeWidth='2'
             fill='none'
           />
 
           {/* Фиксированная точка (начало дуги) */}
-          <circle
-            cx={x * cellSize + cellSize / 2}
-            cy={y * cellSize + cellSize / 2}
-            r='5'
-            fill='red'
-          />
+          <circle cx={x * cellSize + radius} cy={y * cellSize + radius} r='5' fill='red' />
 
           {/* Подвижная точка (конец дуги) */}
           <circle cx={mousePosition.x} cy={mousePosition.y} r='5' fill='green' />

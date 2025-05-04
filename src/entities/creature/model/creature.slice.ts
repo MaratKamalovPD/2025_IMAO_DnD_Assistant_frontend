@@ -5,12 +5,13 @@ import {
   PayloadAction,
   Reducer,
 } from '@reduxjs/toolkit';
-import { AttackLLM, EntityType, SavingThrow } from './types';
+import { AttackLLM, EntityType, SavingThrow, Size } from './types';
 
 export type Creature = {
   _id: string;
   id: string;
   type: EntityType;
+  size: Size;
   name: string;
   hp: {
     current: number;
