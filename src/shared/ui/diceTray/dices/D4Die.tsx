@@ -50,14 +50,14 @@ export const D4Die: React.FC<D4DieProps> = ({
   }
   const anim = useRef<AnimState>({
     spinStartTime: 0,
-    spinDuration: durationSec * 1000,
+    spinDuration: durationSec * 1500,
     axisStart: new THREE.Vector3(1, 0, 0),
     axisEnd: new THREE.Vector3(0, 1, 0),
     speed: 0,
     finalQuat: new THREE.Quaternion(),
     spinEndQuat: new THREE.Quaternion(),
     settleStartTime: 0,
-    settleDuration: 500,       // полсекунды на «подстройку»
+    settleDuration: 200,       // полсекунды на «подстройку»
     state: 'idle',
     animating: false,
   });
@@ -158,8 +158,10 @@ export const D4Die: React.FC<D4DieProps> = ({
             dieRef.current.quaternion.multiply(dq);
           }
 
+          
           // конец спина — сразу переключаемся на «подстройку»
-          if (t === 1) {
+          const threshold = 0.65; // или 0.9 — подберите опытным путём
+          if (t >= threshold) {
             a.state = 'settle';
             a.spinEndQuat.copy(dieRef.current.quaternion);
             a.settleStartTime = time;
