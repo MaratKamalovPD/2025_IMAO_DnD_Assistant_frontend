@@ -58,7 +58,7 @@ type AddAttackPayload = {
       cell: '1',
     },
     type: {
-      name: 'beast',
+      name: 'зверь',
       tags: [],
     },
     challengeRating: '1',

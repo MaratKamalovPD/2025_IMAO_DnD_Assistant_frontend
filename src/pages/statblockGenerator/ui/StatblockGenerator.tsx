@@ -337,7 +337,6 @@ export const StatblockGenerator = () => {
 
   return (
     <div className={s.statblockGeneratorContainer}>
-      
       <div className={s.statblockGeneratorPanel} style={{ width: `${panelWidth}px` }}>
         <PromptSection language='ru' />
         <CreatureSaveSection

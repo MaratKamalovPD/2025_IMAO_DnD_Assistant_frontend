@@ -15,7 +15,9 @@
     "@reduxjs/toolkit": "^2.6.1",
     "@stylistic/eslint-plugin": "^4.2.0",
     "@tippyjs/react": "^4.2.6",
+    "@tweenjs/tween.js": "^25.0.0",
     "@types/d3": "^7.4.3",
+    "@types/three": "^0.176.0",
     "@use-gesture/react": "^10.3.1",
     "@vkid/sdk": "^2.5.2",
     "@vkontakte/icons": "^3.1.1",
@@ -39,6 +41,7 @@
     "react-select": "^5.10.1",
     "react-toastify": "^11.0.5",
     "redux": "^5.0.1",
+    "three": "^0.176.0",
     "tippy.js": "^6.3.7",
     "uniqid": "^5.4.0",
     "use-debounce": "^10.0.4"
