@@ -4,60 +4,67 @@ import * as THREE from 'three';
 type D4DieProps = {
   size?: number;
   onClick?: () => void;
+  // длительность анимации в секундах
+  durationSec?: number;
 };
 
-export const D4Die: React.FC<D4DieProps> = ({ size = 200, onClick }) => {
+export const D4Die: React.FC<D4DieProps> = ({
+  size = 200,
+  onClick,
+  durationSec = 1,
+}) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const sceneRef = useRef<THREE.Scene | null>(null);
   const dieRef = useRef<THREE.Mesh | null>(null);
+  // для управления анимацией
+  const animationRef = useRef<{
+    start: THREE.Quaternion;
+    end: THREE.Quaternion;
+    startTime: number;
+    duration: number;
+    animating: boolean;
+  }>({
+    start: new THREE.Quaternion(),
+    end: new THREE.Quaternion(),
+    startTime: 0,
+    duration: durationSec * 1000,
+    animating: false,
+  });
 
   useEffect(() => {
-    // 1. Сцена и камера
+    // === 1. Сцена, камера, рендерер
     const scene = new THREE.Scene();
-    sceneRef.current = scene;
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
     camera.position.z = 4;
 
-    // 2. Рендерер
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(size, size);
     renderer.setPixelRatio(window.devicePixelRatio);
-    containerRef.current?.appendChild(renderer.domElement);
+    containerRef.current!.appendChild(renderer.domElement);
 
-    // 3. Геометрия и базовый материал
-    const baseGeometry = new THREE.TetrahedronGeometry(1);
+    // === 2. Сам дайс
+    const baseGeo = new THREE.TetrahedronGeometry(1);
     const material = new THREE.MeshStandardMaterial({
       color: 0xff6b6b,
       flatShading: true,
     });
-    const die = new THREE.Mesh(baseGeometry, material);
+    const die = new THREE.Mesh(baseGeo, material);
     scene.add(die);
     dieRef.current = die;
 
-    // 4. Добавляем цифры на грани
+    // === 3. Нумерация граней (как раньше, с прозрачным фоном)
     const labels = ['1', '2', '3', '4'];
-    // неиндексированная геометрия, чтобы по 3 вершины на грань
-    const geo = baseGeometry.clone().toNonIndexed();
+    const geo = baseGeo.clone().toNonIndexed();
     const posAttr = geo.attributes.position;
-
     for (let i = 0; i < posAttr.count; i += 3) {
-      // Вершины грани
       const vA = new THREE.Vector3().fromBufferAttribute(posAttr, i + 0);
       const vB = new THREE.Vector3().fromBufferAttribute(posAttr, i + 1);
       const vC = new THREE.Vector3().fromBufferAttribute(posAttr, i + 2);
-
-      // Центроид и нормаль
-      const centroid = new THREE.Vector3()
-        .add(vA)
-        .add(vB)
-        .add(vC)
-        .divideScalar(3);
+      const centroid = new THREE.Vector3().add(vA).add(vB).add(vC).divideScalar(3);
       const faceNormal = new THREE.Vector3()
         .subVectors(vB, vA)
         .cross(new THREE.Vector3().subVectors(vC, vA))
         .normalize();
 
-      // Canvas с прозрачным фоном и цифрой
       const canvas = document.createElement('canvas');
       canvas.width = canvas.height = 128;
       const ctx = canvas.getContext('2d')!;
@@ -71,7 +78,6 @@ export const D4Die: React.FC<D4DieProps> = ({ size = 200, onClick }) => {
       const texture = new THREE.CanvasTexture(canvas);
       texture.needsUpdate = true;
 
-      // Материал с прозрачностью и альфа-тестом
       const matLabel = new THREE.MeshBasicMaterial({
         map: texture,
         transparent: true,
@@ -79,62 +85,81 @@ export const D4Die: React.FC<D4DieProps> = ({ size = 200, onClick }) => {
         depthTest: true,
       });
 
-      // Плоскость чуть меньше стороны грани
       const sideLen = vA.distanceTo(vB);
       const planeSize = sideLen * 0.6;
       const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
 
       const labelMesh = new THREE.Mesh(planeGeo, matLabel);
-
-      // Выравниваем плоскость по нормали грани
       const q = new THREE.Quaternion().setFromUnitVectors(
         new THREE.Vector3(0, 0, 1),
         faceNormal
       );
       labelMesh.setRotationFromQuaternion(q);
-
-      // Ставим в центр грани и немного отодвигаем
       labelMesh.position.copy(centroid).add(faceNormal.multiplyScalar(0.01));
-
-      // Вешаем на основной объект, чтобы цифры крутились вместе с дайсом
       die.add(labelMesh);
     }
 
-    // 5. Освещение
+    // === 4. Свет
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
     dirLight.position.set(3, 5, 2);
     scene.add(dirLight);
     scene.add(new THREE.AmbientLight(0xffffff, 0.3));
 
-    // 6. Анимация
-    const animate = () => {
+    // === 5. Анимационный цикл
+    const animate = (time: number) => {
+        requestAnimationFrame(animate);
+      
+        if (dieRef.current && animationRef.current.animating) {
+          const { startTime, duration, start, end } = animationRef.current;
+          const elapsed = time - startTime;
+          let t = elapsed / duration;
+          if (t >= 1) t = 1;
+      
+          // Ключевое исправление: копируем старт и делаем instance-slerp
+          dieRef.current.quaternion
+            .copy(start)
+            .slerp(end, t);
+      
+          if (t === 1) {
+            animationRef.current.animating = false;
+          }
+        }
+      
+        renderer.render(scene, camera);
+      };
       requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-    };
-    animate();
+      
 
-    // 7. Clean up
+    // === 6. Cleanup
     return () => {
       renderer.dispose();
       containerRef.current?.removeChild(renderer.domElement);
     };
-  }, [size]);
+  }, [size, durationSec]);
 
-  // Функция броска
+  // === Функция броска с плавной ротацией
   const roll = () => {
     if (!dieRef.current) return;
+    // случайный целевой поворот
     const rand = () => Math.random() * Math.PI * 4;
-    dieRef.current.rotation.set(rand(), rand(), rand());
+    const targetEuler = new THREE.Euler(rand(), rand(), rand());
+    const targetQ = new THREE.Quaternion().setFromEuler(targetEuler);
+
+    // сохраняем стартовую и конечную кватернионы
+    animationRef.current.start = dieRef.current.quaternion.clone();
+    animationRef.current.end = targetQ;
+    animationRef.current.startTime = performance.now();
+    animationRef.current.duration = durationSec * 1000;
+    animationRef.current.animating = true;
+
+    onClick?.();
   };
 
   return (
     <div
       ref={containerRef}
       style={{ width: size, height: size, cursor: 'pointer' }}
-      onClick={() => {
-        roll();
-        onClick?.();
-      }}
+      onClick={roll}
     />
   );
 };
