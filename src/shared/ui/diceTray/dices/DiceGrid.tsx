@@ -2,9 +2,11 @@ import React from 'react';
 import * as THREE from 'three';
 import { GenericDie } from './GenericDie';
 
-// Метки для D6 и D12 (с учётом треугольного разбора)
-const d6Labels = Array.from({ length: 6 }, (_, i) => String(i + 1)).flatMap(l => [l, l]);
-const d12Labels = Array.from({ length: 12 }, (_, i) => String(i + 1)).flatMap(l => [l, l, l]);
+const d4Labels = ['1', '4', '2', '3']
+const d6Labels  =  ['1','6','2','5','3','4']
+const d8Labels  =  ['6','3','1','4','2','7','5','8'];
+const d12Labels =  ['1','12','2','11','3','10','4','9','5','8','6','7']
+const d20Labels =  ['1','20','3','18','5','16','7','14','9','12','10','11','2','19','4','17','6','15','8','13']
 
 export const DiceGrid: React.FC = () => {
   return (
@@ -19,7 +21,7 @@ export const DiceGrid: React.FC = () => {
       {/* D4 */}
       <GenericDie
         size={200}
-        labels={['1','2','3','4']}
+        labels={d4Labels}
         geometryFactory={() => new THREE.TetrahedronGeometry(1)}
         spinDurationSec={1.5}
         settleDurationMs={200}
@@ -43,7 +45,7 @@ export const DiceGrid: React.FC = () => {
       {/* D8 */}
       <GenericDie
         size={200}
-        labels={['1','2','3','4','5','6','7','8']}
+        labels={d8Labels}
         geometryFactory={() => new THREE.OctahedronGeometry(1)}
         spinDurationSec={1.8}
         settleDurationMs={250}
@@ -67,7 +69,7 @@ export const DiceGrid: React.FC = () => {
       {/* D20 */}
       <GenericDie
         size={200}
-        labels={Array.from({ length: 20 }, (_, i) => String(i + 1))}
+        labels={d20Labels}
         geometryFactory={() => new THREE.IcosahedronGeometry(1, 0)}
         spinDurationSec={2}
         settleDurationMs={300}

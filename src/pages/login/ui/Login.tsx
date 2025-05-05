@@ -7,8 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router';
 import s from './Login.module.scss';
 import logo from '/src/shared/assets/images/logo.png';
-import { D4Die, DiceGrid, GenericDie } from 'shared/ui/diceTray/dices';
-import * as THREE from 'three';
+import { DiceGrid } from 'shared/ui/diceTray/dices';
 
 export const Login = () => {
   const [err, setErr] = useState<string>('');
