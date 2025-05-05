@@ -4,29 +4,32 @@ import * as THREE from 'three';
 type D4DieProps = {
   size?: number;
   onClick?: () => void;
-  // длительность анимации в секундах
+  // сколько секунд длится крутилка
   durationSec?: number;
 };
 
 export const D4Die: React.FC<D4DieProps> = ({
   size = 200,
   onClick,
-  durationSec = 1,
+  durationSec = 1.5,
 }) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const dieRef = useRef<THREE.Mesh | null>(null);
-  // для управления анимацией
-  const animationRef = useRef<{
-    start: THREE.Quaternion;
-    end: THREE.Quaternion;
+
+  // параметры анимации
+  const anim = useRef<{
     startTime: number;
     duration: number;
+    axisStart: THREE.Vector3;
+    axisEnd: THREE.Vector3;
+    speed: number;
     animating: boolean;
   }>({
-    start: new THREE.Quaternion(),
-    end: new THREE.Quaternion(),
     startTime: 0,
     duration: durationSec * 1000,
+    axisStart: new THREE.Vector3(1, 0, 0),
+    axisEnd: new THREE.Vector3(0, 1, 0),
+    speed: 0,
     animating: false,
   });
 
@@ -39,19 +42,18 @@ export const D4Die: React.FC<D4DieProps> = ({
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(size, size);
     renderer.setPixelRatio(window.devicePixelRatio);
-    containerRef.current!.appendChild(renderer.domElement);
+    containerRef.current?.appendChild(renderer.domElement);
 
-    // === 2. Сам дайс
+    // === 2. Дайс + цифры
     const baseGeo = new THREE.TetrahedronGeometry(1);
-    const material = new THREE.MeshStandardMaterial({
+    const mat = new THREE.MeshStandardMaterial({
       color: 0xff6b6b,
       flatShading: true,
     });
-    const die = new THREE.Mesh(baseGeo, material);
-    scene.add(die);
+    const die = new THREE.Mesh(baseGeo, mat);
     dieRef.current = die;
+    scene.add(die);
 
-    // === 3. Нумерация граней (как раньше, с прозрачным фоном)
     const labels = ['1', '2', '3', '4'];
     const geo = baseGeo.clone().toNonIndexed();
     const posAttr = geo.attributes.position;
@@ -59,12 +61,18 @@ export const D4Die: React.FC<D4DieProps> = ({
       const vA = new THREE.Vector3().fromBufferAttribute(posAttr, i + 0);
       const vB = new THREE.Vector3().fromBufferAttribute(posAttr, i + 1);
       const vC = new THREE.Vector3().fromBufferAttribute(posAttr, i + 2);
-      const centroid = new THREE.Vector3().add(vA).add(vB).add(vC).divideScalar(3);
-      const faceNormal = new THREE.Vector3()
+
+      const centroid = new THREE.Vector3()
+        .add(vA)
+        .add(vB)
+        .add(vC)
+        .divideScalar(3);
+      const normal = new THREE.Vector3()
         .subVectors(vB, vA)
         .cross(new THREE.Vector3().subVectors(vC, vA))
         .normalize();
 
+      // Canvas с прозрачным фоном
       const canvas = document.createElement('canvas');
       canvas.width = canvas.height = 128;
       const ctx = canvas.getContext('2d')!;
@@ -74,83 +82,102 @@ export const D4Die: React.FC<D4DieProps> = ({
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(labels[i / 3], 64, 64);
-
-      const texture = new THREE.CanvasTexture(canvas);
-      texture.needsUpdate = true;
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.needsUpdate = true;
 
       const matLabel = new THREE.MeshBasicMaterial({
-        map: texture,
+        map: tex,
         transparent: true,
         alphaTest: 0.5,
         depthTest: true,
       });
 
-      const sideLen = vA.distanceTo(vB);
-      const planeSize = sideLen * 0.6;
-      const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
+      const side = vA.distanceTo(vB);
+      const planeGeo = new THREE.PlaneGeometry(side * 0.6, side * 0.6);
+      const meshLabel = new THREE.Mesh(planeGeo, matLabel);
 
-      const labelMesh = new THREE.Mesh(planeGeo, matLabel);
+      // выровняем плоскость по нормали грани
       const q = new THREE.Quaternion().setFromUnitVectors(
         new THREE.Vector3(0, 0, 1),
-        faceNormal
+        normal
       );
-      labelMesh.setRotationFromQuaternion(q);
-      labelMesh.position.copy(centroid).add(faceNormal.multiplyScalar(0.01));
-      die.add(labelMesh);
+      meshLabel.setRotationFromQuaternion(q);
+      meshLabel.position.copy(centroid).add(normal.multiplyScalar(0.01));
+
+      die.add(meshLabel);
     }
 
-    // === 4. Свет
+    // === 3. Свет
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
     dirLight.position.set(3, 5, 2);
     scene.add(dirLight);
     scene.add(new THREE.AmbientLight(0xffffff, 0.3));
 
-    // === 5. Анимационный цикл
+    // === 4. Анимация
+    let prevTime = performance.now();
     const animate = (time: number) => {
-        requestAnimationFrame(animate);
-      
-        if (dieRef.current && animationRef.current.animating) {
-          const { startTime, duration, start, end } = animationRef.current;
-          const elapsed = time - startTime;
-          let t = elapsed / duration;
-          if (t >= 1) t = 1;
-      
-          // Ключевое исправление: копируем старт и делаем instance-slerp
-          dieRef.current.quaternion
-            .copy(start)
-            .slerp(end, t);
-      
-          if (t === 1) {
-            animationRef.current.animating = false;
-          }
-        }
-      
-        renderer.render(scene, camera);
-      };
       requestAnimationFrame(animate);
-      
 
-    // === 6. Cleanup
+      const dt = time - prevTime;
+      prevTime = time;
+
+      if (anim.current.animating && dieRef.current) {
+        const { startTime, duration, axisStart, axisEnd, speed } = anim.current;
+        const elapsed = time - startTime;
+        const t = Math.min(1, elapsed / duration);
+
+        // текущая ось: линейно из axisStart → axisEnd
+        const axis = axisStart.clone().lerp(axisEnd, t).normalize();
+        // затухающая скорость
+        const currentSpeed = speed * (1 - t);
+
+        const dtSec = dt / 1000;
+        const angle = currentSpeed * dtSec;
+        if (angle > 0) {
+          const dq = new THREE.Quaternion().setFromAxisAngle(axis, angle);
+          dieRef.current.quaternion.multiply(dq);
+        }
+
+        if (t === 1) {
+          anim.current.animating = false;
+        }
+      }
+
+      renderer.render(scene, camera);
+    };
+    requestAnimationFrame(animate);
+
+    // === Cleanup
     return () => {
+      if (renderer.domElement.parentNode) {
+        renderer.domElement.parentNode.removeChild(renderer.domElement);
+      }
       renderer.dispose();
-      containerRef.current?.removeChild(renderer.domElement);
     };
   }, [size, durationSec]);
 
-  // === Функция броска с плавной ротацией
+  // функция броска: новые axisStart, axisEnd и speed
   const roll = () => {
     if (!dieRef.current) return;
-    // случайный целевой поворот
-    const rand = () => Math.random() * Math.PI * 4;
-    const targetEuler = new THREE.Euler(rand(), rand(), rand());
-    const targetQ = new THREE.Quaternion().setFromEuler(targetEuler);
 
-    // сохраняем стартовую и конечную кватернионы
-    animationRef.current.start = dieRef.current.quaternion.clone();
-    animationRef.current.end = targetQ;
-    animationRef.current.startTime = performance.now();
-    animationRef.current.duration = durationSec * 1000;
-    animationRef.current.animating = true;
+    const randAxis = () =>
+      new THREE.Vector3(
+        Math.random() - 0.5,
+        Math.random() - 0.5,
+        Math.random() - 0.5
+      ).normalize();
+
+    anim.current.axisStart = randAxis();
+    anim.current.axisEnd = randAxis();
+
+    const minSpeed = 10;
+    const maxSpeed = 20;
+    anim.current.speed =
+      Math.random() * (maxSpeed - minSpeed) + minSpeed;
+
+    anim.current.startTime = performance.now();
+    anim.current.duration = durationSec! * 1000;
+    anim.current.animating = true;
 
     onClick?.();
   };
