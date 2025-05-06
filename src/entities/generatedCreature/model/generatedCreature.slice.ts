@@ -73,7 +73,7 @@ type AddAttackPayload = {
       },
     },
     experience: 200,
-    alignment: 'any alignment',
+    alignment: 'любое мировоззрение',
     armorClass: 10,
     armors: [],
     hits: {

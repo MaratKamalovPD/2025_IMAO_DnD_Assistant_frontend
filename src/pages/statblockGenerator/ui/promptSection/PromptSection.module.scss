@@ -97,6 +97,39 @@
         border-color: var(--primary-btn-color);
       }
     }
+
+    &__uploadContainer {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 10px 0;
+    }
+  
+    &__uploadLabel {
+      padding: 10px 20px;
+      background: #4A4A6A;
+      border-radius: 8px;
+      border: 1px dashed #757575;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: white;
+      font-family: 'ABeeZee', sans-serif;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 300px;
+  
+      &:hover {
+        background: #5A5A7A;
+        border-color: #FF6F61;
+      }
+    }
+  
+    &__uploadInput {
+      display: none;
+    }
   
     @media (max-width: 768px) {
       &__presetsContainer {

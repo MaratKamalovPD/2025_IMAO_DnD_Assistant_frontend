@@ -54,6 +54,7 @@
     border: none;
     border-radius: 6px;
     margin-top: 4px;
+    box-sizing: border-box;
 
     &:focus {
       outline: 2px solid var(--primary-btn-color);

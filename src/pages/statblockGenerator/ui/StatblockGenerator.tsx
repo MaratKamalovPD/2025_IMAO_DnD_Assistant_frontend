@@ -31,7 +31,7 @@ import { CreatureStatblock } from 'pages/bestiary';
 import { CollapsiblePanelRef } from './collapsiblePanel/CollapsiblePanel';
 import { JumpTarget } from 'pages/bestiary/model';
 import clsx from 'clsx';
-import { useGlow } from '../lib';
+import { promptPresetOptions, useGlow } from '../lib';
 
 const requestBody: GetCreaturesRequest = {
   start: 0,
@@ -338,7 +338,7 @@ export const StatblockGenerator = () => {
   return (
     <div className={s.statblockGeneratorContainer}>
       <div className={s.statblockGeneratorPanel} style={{ width: `${panelWidth}px` }}>
-        <PromptSection language='ru' />
+        <PromptSection language='ru' presetOptions={promptPresetOptions}/>
         <CreatureSaveSection
           presetOptions={presetOptions}
           selectedPreset={selectedPreset}

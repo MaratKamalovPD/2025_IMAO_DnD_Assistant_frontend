@@ -1,9 +1,14 @@
+@use '../PromptSection.module.scss';
+
 .promptContainer {
     display: flex;
     flex-direction: column;
     gap: 12px;
     width: 100%;
     max-width: 691px;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
   }
   
   .textarea {
