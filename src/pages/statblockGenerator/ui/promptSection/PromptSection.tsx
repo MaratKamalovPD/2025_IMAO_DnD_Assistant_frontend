@@ -1,5 +1,6 @@
 import React from 'react';
 import s from './PromptSection.module.scss';
+import { PromptTextarea } from './promptTextarea';
 
 interface PromptSectionProps {
   onGenerate?: () => void;
@@ -37,6 +38,7 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
 
   return (
     <div className={s.promptSection}>
+       <PromptTextarea onSubmit={onGenerate}/>
       <textarea 
         className={s.promptSection__textarea}
         onChange={(e) => onTextChange?.(e.target.value)}
