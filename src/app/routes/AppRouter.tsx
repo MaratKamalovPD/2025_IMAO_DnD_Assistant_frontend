@@ -1,7 +1,10 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import { HeaderProviders } from 'app/providers';
-import { EncounterTrackerSaveProvider } from 'app/providers/encounterTrackerSaveProvider';
+import {
+  EncounterTrackerSaveProvider,
+  EncounterTrackerSessionProvider,
+  HeaderProviders,
+} from 'app/providers';
 import { Bestiary, CreatureStatblock } from 'pages/bestiary';
 import { Characters } from 'pages/characters';
 import { EncounterList } from 'pages/encounterList/';
@@ -41,6 +44,16 @@ const router = createBrowserRouter([
         <EncounterTrackerSaveProvider>
           <EncounterTracker />
         </EncounterTrackerSaveProvider>
+      </HeaderProviders>
+    ),
+  },
+  {
+    path: 'encounter_tracker/session/:id',
+    element: (
+      <HeaderProviders>
+        <EncounterTrackerSessionProvider>
+          <EncounterTracker />
+        </EncounterTrackerSessionProvider>
       </HeaderProviders>
     ),
   },
