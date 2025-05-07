@@ -1,4 +1,3 @@
-import { mapFiltersToRequestBody } from 'pages/characters/lib';
 import { useEffect, useState } from 'react';
 import { throttle, useDebounce } from 'shared/lib';
 import { Spinner } from 'shared/ui/spinner';
@@ -11,6 +10,7 @@ import { TopPanel } from './topPanel';
 import { ModalOverlay } from 'shared/ui';
 import s from './Characters.module.scss';
 import { AddNewCard } from './addNewCard';
+import { mapFiltersToRequestBody } from 'pages/bestiary/lib';
 
 const RESPONSE_SIZE = 24;
 const DEBOUNCE_TIME = 500;
@@ -27,7 +27,7 @@ export const Characters = () => {
   const setStartThrottled = throttle(setStart, THROTTLE_TIME);
 
   const [requestBody, setRequestBody] = useState<GetCharactersRequest>(
-    mapFiltersToRequestBody(0, RESPONSE_SIZE, debouncedSearchValue),
+    mapFiltersToRequestBody({}, 0, RESPONSE_SIZE, debouncedSearchValue),
   );
 
   const [trigger, { data: characters, isLoading, isError, status }] = useLazyGetCharactersQuery();
@@ -57,11 +57,11 @@ export const Characters = () => {
   useEffect(() => {
     setStart(0);
     setHasMore(true);
-    setRequestBody(mapFiltersToRequestBody(0, RESPONSE_SIZE, debouncedSearchValue));
+    setRequestBody(mapFiltersToRequestBody({}, 0, RESPONSE_SIZE, debouncedSearchValue));
   }, [debouncedSearchValue]);
 
   useEffect(() => {
-    setRequestBody(mapFiltersToRequestBody(start, RESPONSE_SIZE, debouncedSearchValue));
+    setRequestBody(mapFiltersToRequestBody({}, start, RESPONSE_SIZE, debouncedSearchValue));
   }, [start]);
 
   useEffect(() => {
