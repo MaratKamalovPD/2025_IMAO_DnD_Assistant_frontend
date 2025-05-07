@@ -27,6 +27,7 @@
     "eslint-plugin-react-x": "^1.32.1",
     "isbot": "^5",
     "lucide-react": "^0.486.0",
+    "ml-matrix": "^6.12.1",
     "rc-slider": "^11.1.8",
     "react": "^19.0.0",
     "react-chatbot-kit": "^2.2.2",

@@ -16,6 +16,8 @@ import { AttackModal } from 'pages/encounterTracker/ui/attackModal';
 import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
 import { normalizeString } from 'shared/lib';
 
+import Tippy from '@tippyjs/react';
+import { Icon20ChevronUp, Icon20Dropdown, Icon28SquareSplit4Outline } from '@vkontakte/icons';
 import {
   userInterfaceActions,
   UserInterfaceState,
@@ -30,11 +32,18 @@ enum ModalType {
 }
 
 interface StatblockProps {
+  cells: boolean[][];
+  setCells: React.Dispatch<React.SetStateAction<boolean[][]>>;
   isMinimized: boolean;
   toggleWindow: () => void;
 }
 
-export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow }) => {
+export const Statblock: React.FC<StatblockProps> = ({
+  isMinimized,
+  toggleWindow,
+  cells,
+  setCells,
+}) => {
   const dispatch = useDispatch();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -43,9 +52,8 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
   const [currentAttackData, setCurrentAttackData] = useState<AttackLLM | undefined>(undefined);
 
   const { hasStarted } = useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
-  const { selectedCreatureId, attackedCreatureId } = useSelector<UserInterfaceStore>(
-    (state) => state.userInterface,
-  ) as UserInterfaceState;
+  const { selectedCreatureId, attackHandleModeMulti, attackedCreatureId } =
+    useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
     creatureSelectors.selectById(state, selectedCreatureId || ''),
@@ -66,11 +74,11 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
   }, []);
 
   useEffect(() => {
-    if (attackedCreatureId !== null) {
+    if (attackedCreatureId !== null || attackHandleModeMulti === 'handle') {
       toggleModal(true, ModalType.Attack);
       dispatch(userInterfaceActions.disableAttackHandleMode());
     }
-  }, [attackedCreatureId]);
+  }, [attackedCreatureId, attackHandleModeMulti]);
 
   const handleCreatureDeath = useCallback(() => {
     const id = selectedCreatureId;
@@ -142,7 +150,8 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
     <div className={s.statblockContainer}>
       <div className={s.minimizeContainer}>
         <button onClick={toggleWindow} className={s.minimizeButton}>
-          {isMinimized ? '⯆ Развернуть' : '⯅ Свернуть'}
+          {isMinimized ? <Icon20Dropdown /> : <Icon20ChevronUp />}
+          {isMinimized ? 'Развернуть' : 'Свернуть'}
         </button>
       </div>
 
@@ -151,48 +160,59 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
           <div className={s.creaturePanel__titleContainer}>
             <div className={s.creaturePanel__title}>{selectedCreature.name}</div>
           </div>
+
           <div className={s.creaturePanel__statsContainer}>
-            <div className={s.creaturePanel__statsElement}>
-              <div className={s.creaturePanel__statsElement__image}></div>
-              <div className={s.creaturePanel__statsElement__text}>Инициатива:</div>
-              <input
-                type='text'
-                value={!hasStarted ? '?' : selectedCreature.initiative}
-                onChange={handleInitiativeChange}
-                disabled={!hasStarted}
-                maxLength={2}
-              ></input>
-            </div>
-            <div className={s.creaturePanel__statsElement}>
-              <div className={s.creaturePanel__statsElement__image}></div>
-              <div className={s.creaturePanel__statsElement__text}>HP:</div>
-              <input
-                type='text'
-                value={selectedCreature.hp.current}
-                onChange={handleHpChange}
-                disabled={!hasStarted}
-              ></input>
-            </div>
-            <div className={s.creaturePanel__statsElement}>
-              <div className={s.creaturePanel__statsElement__image}></div>
-              <div className={s.creaturePanel__statsElement__text}>AC:</div>
-              <input
-                type='text'
-                value={selectedCreature.ac}
-                onChange={handleAcChange}
-                disabled={!hasStarted}
-              ></input>
-            </div>
-            <div className={clsx(s.creaturePanel__statsElement, s.creaturePanel__deadElement)}>
-              <input
-                type='checkbox'
-                onClick={handleCreatureDeath}
-                checked={selectedCreature.hp.current <= 0}
-                disabled={!hasStarted}
-              ></input>
-              <div className={s.creaturePanel__statsElement__text}>Мертв</div>
-            </div>
+            <Tippy content={'Для редактирования начните сражение'} disabled={hasStarted}>
+              <div className={s.creaturePanel__statsElement}>
+                <div className={s.creaturePanel__statsElement__image}></div>
+                <div className={s.creaturePanel__statsElement__text}>Инициатива:</div>
+                <input
+                  type='text'
+                  value={!hasStarted ? '?' : selectedCreature.initiative}
+                  onChange={handleInitiativeChange}
+                  disabled={!hasStarted}
+                  maxLength={2}
+                ></input>
+              </div>
+            </Tippy>
+            <Tippy content={'Для редактирования начните сражение'} disabled={hasStarted}>
+              <div className={s.creaturePanel__statsElement}>
+                <div className={s.creaturePanel__statsElement__image}></div>
+                <div className={s.creaturePanel__statsElement__text}>HP:</div>
+
+                <input
+                  type='text'
+                  value={selectedCreature.hp.current}
+                  onChange={handleHpChange}
+                  disabled={!hasStarted}
+                ></input>
+              </div>
+            </Tippy>
+            <Tippy content={'Для редактирования начните сражение'} disabled={hasStarted}>
+              <div className={s.creaturePanel__statsElement}>
+                <div className={s.creaturePanel__statsElement__image}></div>
+                <div className={s.creaturePanel__statsElement__text}>AC:</div>
+                <input
+                  type='text'
+                  value={selectedCreature.ac}
+                  onChange={handleAcChange}
+                  disabled={!hasStarted}
+                ></input>
+              </div>
+            </Tippy>
+            <Tippy content={'Для редактирования начните сражение'} disabled={hasStarted}>
+              <div className={clsx(s.creaturePanel__statsElement, s.creaturePanel__deadElement)}>
+                <input
+                  type='checkbox'
+                  onClick={handleCreatureDeath}
+                  checked={selectedCreature.hp.current <= 0}
+                  disabled={!hasStarted}
+                ></input>
+                <div className={s.creaturePanel__statsElement__text}>Мертв</div>
+              </div>
+            </Tippy>
           </div>
+
           <div className={s.creaturePanel__actionsContainer}>
             <div className={s.creaturePanel__actionsContainer__header}>Действия</div>
             <div className={s.creaturePanel__actionsList}>
@@ -210,6 +230,11 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
                   >
                     {icon && <img src={icon} alt={attack.name} className={s.attackIcon} />}
                     {attack.name}
+                    {attack.type === 'area' && (
+                      <Tippy content={'Атака по площади'}>
+                        <Icon28SquareSplit4Outline />
+                      </Tippy>
+                    )}
                   </button>
                 );
               })}
@@ -284,6 +309,8 @@ export const Statblock: React.FC<StatblockProps> = ({ isMinimized, toggleWindow 
               </button>
               {modalType === ModalType.Attack ? (
                 <AttackModal
+                  cells={cells}
+                  setCells={setCells}
                   attackIndex={currentAttackIndex}
                   attackData={currentAttackData}
                   setIsModalOpen={setIsModalOpen}
