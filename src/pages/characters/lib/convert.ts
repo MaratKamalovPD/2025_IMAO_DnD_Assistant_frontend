@@ -1,8 +1,51 @@
-import { AttackLLM, SavingThrow as DomainSavingThrow } from 'entities/creature/model';
-import { DiceType } from 'shared/lib';
-import { SavingThrows as DataSavingThrows, Weapon } from '../model';
+import uniqid from 'uniqid';
 
-export const convertSavingThrows = (saves: DataSavingThrows): DomainSavingThrow[] => {
+import {
+  AttackLLM,
+  Creature,
+  SavingThrow as DomainSavingThrow,
+  Size,
+} from 'entities/creature/model';
+import { calculateInitiative, DiceType } from 'shared/lib';
+import { Character, SavingThrows as DataSavingThrows, Weapon } from '../model';
+
+import placeholderImage from 'shared/assets/images/placeholder.png';
+
+export const convertCharacterToCreature = (characterData: Character): Creature => {
+  return {
+    _id: characterData.id,
+    id: uniqid(),
+    type: 'character',
+    size: Size.medium,
+    name: characterData.data.name.value,
+    hp: {
+      current: characterData.data.vitality['hp-max'].value,
+      max: characterData.data.vitality['hp-max'].value,
+      temporary: 0,
+    },
+    ac: characterData.data.vitality.ac.value,
+    initiative: calculateInitiative(characterData.data.stats.dex.score),
+    conditions: [],
+    stats: {
+      strength: characterData.data.stats.str.score,
+      dexterity: characterData.data.stats.dex.score,
+      constitution: characterData.data.stats.con.score,
+      intelligence: characterData.data.stats.int.score,
+      wisdom: characterData.data.stats.wis.score,
+      charisma: characterData.data.stats.cha.score,
+    },
+    savingThrows: convertSavingThrows(characterData.data.saves) || [],
+    damageImmunities: [],
+    damageResistances: [],
+    damageVulnerabilities: [],
+    conditionImmunities: [],
+    image: characterData.data.avatar.jpeg || characterData.data.avatar.webp || placeholderImage,
+    notes: '',
+    attacksLLM: convertWeaponsToAttacks(characterData.data.weaponsList),
+  };
+};
+
+const convertSavingThrows = (saves: DataSavingThrows): DomainSavingThrow[] => {
   return Object.entries(saves).map(([shortName, save]) => ({
     name: save.name,
     shortName,
@@ -10,7 +53,7 @@ export const convertSavingThrows = (saves: DataSavingThrows): DomainSavingThrow[
   }));
 };
 
-export const convertWeaponsToAttacks = (weaponsList: Weapon[]): AttackLLM[] => {
+const convertWeaponsToAttacks = (weaponsList: Weapon[]): AttackLLM[] => {
   return weaponsList.map((weapon) => {
     const attackMod =
       weapon.mod.value.startsWith('+') || weapon.mod.value.startsWith('-')

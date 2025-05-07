@@ -2,36 +2,35 @@ export { creatureActions, creatureSelectors, default as creaturesReduser } from 
 
 export type { Creature } from './creature.slice';
 export type {
+  AbilityScores,
+  Action,
+  AdditionalEffectLLM,
+  AreaAttackLLM,
+  Armor,
   AttackLLM,
   CreatureClippedData,
   CreatureFullData,
+  CreatureType,
   CreaturesStore,
   Damage,
   DamageDicesRoll,
   DamageDicesRolls,
   DamageLLM,
-  SavingThrow,
-} from './types';
-
-export type {
-  Reaction,
   Feat,
-  LegendaryAction,
+  HitPoints,
   Legendary,
-  Armor,
+  LegendaryAction,
+  MultiAttackLLM,
   NameTranslations,
+  Reaction,
+  SavingThrow,
+  Senses,
   SizeTranslations,
-  CreatureType,
+  Skill,
   Source,
   SourceGroup,
-  HitPoints,
   Speed,
-  AbilityScores,
-  Skill,
-  Senses,
-  Action,
   Tag,
-  AdditionalEffectLLM,
-  MultiAttackLLM,
-  AreaAttackLLM
 } from './types';
+
+export { Size } from './types';

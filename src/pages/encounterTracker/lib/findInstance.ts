@@ -12,11 +12,7 @@ export const findAttackIcon = (normalizedAttackName: string) => {
   // Если ничего не найдено, но в названии есть "дыхание" — берём случайное дыхание
   const fallbackBreathAttack =
     !weapon && !monsterAttack && normalizedAttackName.includes('дыхание')
-      ? monsterAttacks.filter((a) => a.value.includes('breath'))[
-          Math.floor(
-            Math.random() * monsterAttacks.filter((a) => a.value.includes('breath')).length,
-          )
-        ]
+      ? monsterAttacks.filter((a) => a.value.includes('breath'))[0]
       : null;
 
   const icon = weapon

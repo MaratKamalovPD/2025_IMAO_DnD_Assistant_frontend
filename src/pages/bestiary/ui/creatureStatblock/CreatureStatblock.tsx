@@ -2,18 +2,20 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import Tippy from '@tippyjs/react';
 import { Icon20Cancel } from '@vkontakte/icons';
-import { useGetCreatureByNameQuery } from 'pages/bestiary/api';
+import { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
+
+import { CreatureFullData } from 'entities/creature/model';
+import { useGetCreatureByNameQuery } from 'pages/bestiary/api';
+import { cursorStyle } from 'pages/bestiary/lib';
+import { JumpTarget } from 'pages/bestiary/model';
 import { modifiers } from 'shared/lib';
 import { AbilitiesSection } from './abilitiesSection';
-import s from './CreatureStatblock.module.scss';
 import { DescriptionSection } from './descriptionSection';
 import { FightStatsSection } from './fightStatsSection';
 import { SkillsAndSensesSection } from './skillsAndSensesSection';
-import { useEffect } from 'react';
-import { CreatureFullData } from 'entities/creature/model';
-import { JumpTarget } from 'pages/bestiary/model';
-import { cursorStyle } from 'pages/bestiary/lib';
+
+import s from './CreatureStatblock.module.scss';
 
 interface CreatureStatblockProps {
   creature?: CreatureFullData;
@@ -21,16 +23,19 @@ interface CreatureStatblockProps {
   triggerGlow?: (id: string) => void;
 }
 
-export const CreatureStatblock = ({ creature: creatureProp, onJump, triggerGlow  }: CreatureStatblockProps) => {
+export const CreatureStatblock = ({
+  creature: creatureProp,
+  onJump,
+  triggerGlow,
+}: CreatureStatblockProps) => {
   const { creatureName } = useParams();
   const navigate = useNavigate();
 
   const creatureApiPath = creatureName ? `/bestiary/${creatureName}` : undefined;
 
-const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, {
-  skip: !!creatureProp || !creatureName,
-});
-
+  const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, {
+    skip: !!creatureProp || !creatureName,
+  });
 
   useEffect(() => {
     if (!creatureName && !creatureProp) {
@@ -47,7 +52,14 @@ const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, 
   return (
     <div className={s.statblock}>
       <div className={s.header}>
-        <div onClick={() => { onJump?.('type');  triggerGlow?.('name')}} className={s.header__nameSection} style={cursorStyle(onJump != null)}>
+        <div
+          onClick={() => {
+            onJump?.('type');
+            triggerGlow?.('name');
+          }}
+          className={s.header__nameSection}
+          style={cursorStyle(onJump != null)}
+        >
           <span className={s.header__nameRus}>{creature.name.rus}</span>
           <span className={s.header__nameEng}>{creature.name.eng}</span>
         </div>
@@ -59,25 +71,22 @@ const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, 
       </div>
       <div className={s.statblockBody}>
         <div className={s.commonContainer}>
-        <div onClick={() => {
-            onJump?.('type');
-          }}
-          className={s.commonContainer__typeContainer}
-          style={cursorStyle(onJump != null)}
-        >
-          <span onClick={() => triggerGlow?.('size')}>
-            {creature.size.rus}&nbsp;
-          </span>
+          <div
+            onClick={() => {
+              onJump?.('type');
+            }}
+            className={s.commonContainer__typeContainer}
+            style={cursorStyle(onJump != null)}
+          >
+            <span onClick={() => triggerGlow?.('size')}>{creature.size.rus}&nbsp;</span>
 
-          <span onClick={() => triggerGlow?.('type')}>
-            {creature.type.name}
-            {creature.type.tags ? ` (${creature.type.tags})` : ''},&nbsp; 
-          </span>
+            <span onClick={() => triggerGlow?.('type')}>
+              {creature.type.name}
+              {creature.type.tags ? ` (${creature.type.tags})` : ''},&nbsp;
+            </span>
 
-          <span onClick={() => triggerGlow?.('alignment')}>
-            {creature.alignment}
-          </span>
-        </div>
+            <span onClick={() => triggerGlow?.('alignment')}>{creature.alignment}</span>
+          </div>
           <div className={s.commonContainer__sourceContainer}>
             Источник:&nbsp;
             <Tippy content={creature.source.name}>
@@ -91,9 +100,13 @@ const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, 
             <img src={creature.images[1]}></img>
           </div>
           <div className={s.mainContainer__description}>
-            <FightStatsSection creature={creature} conModifier={modifiers[creature.ability.con]} onJump={onJump}/>
-            <AbilitiesSection creature={creature} onJump={onJump} triggerGlow={triggerGlow}/>
-            <SkillsAndSensesSection creature={creature} onJump={onJump}/>
+            <FightStatsSection
+              creature={creature}
+              conModifier={modifiers[creature.ability.con]}
+              onJump={onJump}
+            />
+            <AbilitiesSection creature={creature} onJump={onJump} triggerGlow={triggerGlow} />
+            <SkillsAndSensesSection creature={creature} onJump={onJump} />
             <div className={s.mainContainer__infoSection}></div>
           </div>
         </div>
@@ -110,7 +123,11 @@ const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, 
           <DescriptionSection sectionTitle={'Способности'} elements={creature.feats} />
         )}
         {creature.actions && (
-          <DescriptionSection sectionTitle={'Действия'} elements={creature.actions} onJump={onJump}/>
+          <DescriptionSection
+            sectionTitle={'Действия'}
+            elements={creature.actions}
+            onJump={onJump}
+          />
         )}
         {creature.bonusActions && (
           <DescriptionSection sectionTitle={'Бонусные действия'} elements={creature.bonusActions} />

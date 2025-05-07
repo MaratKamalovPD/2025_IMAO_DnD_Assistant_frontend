@@ -1,11 +1,16 @@
 type GridLayoutProps = {
+  cells: boolean[][];
   cols?: number;
   rows?: number;
   cellSize?: number;
   gridColor?: string;
+  cellColor?: string;
 };
 
+const ACCENT_COLOR = '#e2c044';
+
 export const GridLayout = ({
+  cells,
   cols = 24,
   rows = 26,
   cellSize = 50,
@@ -14,37 +19,35 @@ export const GridLayout = ({
   const width = cols * cellSize;
   const height = rows * cellSize;
 
-  const gridLines = [];
+  const gridCells = [];
 
-  // Вертикальные линии
-  for (let i = 0; i <= cols; i++) {
-    gridLines.push(
-      <line
-        key={`v${i}`}
-        x1={i * cellSize}
-        y1={0}
-        x2={i * cellSize}
-        y2={height}
-        stroke={gridColor}
-        strokeWidth='1'
-      />,
-    );
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      gridCells.push(
+        <rect
+          key={`cell-${row}-${col}`}
+          x={col * cellSize}
+          y={row * cellSize}
+          width={cellSize}
+          height={cellSize}
+          fill={'transparent'}
+          filter={cells[row][col] ? 'url(#selectFilter)' : undefined}
+          stroke={gridColor}
+          strokeWidth={1}
+        />,
+      );
+    }
   }
 
-  // Горизонтальные линии
-  for (let i = 0; i <= rows; i++) {
-    gridLines.push(
-      <line
-        key={`h${i}`}
-        x1={0}
-        y1={i * cellSize}
-        x2={width}
-        y2={i * cellSize}
-        stroke={gridColor}
-        strokeWidth='1'
-      />,
-    );
-  }
-
-  return <>{...gridLines}</>;
+  return (
+    <svg width={width} height={height}>
+      <defs>
+        <filter id='selectFilter' x='0' y='0' width='100%' height='100%'>
+          <feFlood floodColor={ACCENT_COLOR} floodOpacity={0.3} result='flood' />
+          <feComposite in='SourceGraphic' in2='flood' operator='over' />
+        </filter>
+      </defs>
+      {gridCells}
+    </svg>
+  );
 };

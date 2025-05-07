@@ -30,12 +30,20 @@ import s from './EncounterTracker.module.scss';
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
 const VILLAGE_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-2.png';
 
+const cols = 26;
+const rows = 18;
+
 export const EncounterTracker = () => {
   const dispatch = useDispatch();
 
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [isFirstRender2, setIsFirstRender2] = useState(true);
   const [mapImage, setMapImage] = useState(DANGEON_MAP_IMAGE);
+  const [cells, setCells] = useState<boolean[][]>(() =>
+    Array(rows)
+      .fill(false)
+      .map(() => Array(cols).fill(false)),
+  );
 
   const { lastLog } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
   const { participants, currentTurnIndex } = useSelector<EncounterStore>(
@@ -169,10 +177,11 @@ export const EncounterTracker = () => {
       <CustomCursor />
       {participants.length !== 0 ? (
         <>
-          <BattleMap image={mapImage} />
+          <BattleMap image={mapImage} cells={cells} setCells={setCells} />
           <PopupMenu items={menuItems} />
           {statblockIsVisible && (
             <Rnd
+              minWidth={200}
               style={{ zIndex: 10 }}
               default={{
                 x: statblockCoords.x,
@@ -195,7 +204,12 @@ export const EncounterTracker = () => {
               }}
             >
               {/* Передаём управление внутрь Statblock */}
-              <Statblock isMinimized={statblockIsMinimized} toggleWindow={toggleWindow} />
+              <Statblock
+                isMinimized={statblockIsMinimized}
+                toggleWindow={toggleWindow}
+                cells={cells}
+                setCells={setCells}
+              />
             </Rnd>
           )}
 

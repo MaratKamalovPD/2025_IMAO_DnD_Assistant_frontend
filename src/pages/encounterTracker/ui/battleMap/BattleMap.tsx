@@ -1,5 +1,5 @@
 import { select as dselect, zoom as dzoom, zoomIdentity } from 'd3';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
@@ -13,21 +13,27 @@ import { CreatureToken } from './creatureToken';
 import { GridLayout } from './gridLayout';
 
 import s from './BattleMap.module.scss';
+import { Rule } from './rule';
+
+type BattleMapProps = {
+  image: string;
+  cells: boolean[][];
+  setCells: React.Dispatch<React.SetStateAction<boolean[][]>>;
+};
 
 const cols = 26;
 const rows = 18;
 const cellSize = 50;
 const DEBOUNCE_TIME = 500;
 
-export const BattleMap = ({ image }: { image: string }) => {
+export const BattleMap = ({ image, cells, setCells }: BattleMapProps) => {
   const dispatch = useDispatch();
 
   const { participants } = useSelector<EncounterStore>(
     (state) => state.encounter,
   ) as EncounterState;
-  const { selectedCreatureId, mapTransform } = useSelector<UserInterfaceStore>(
-    (state) => state.userInterface,
-  ) as UserInterfaceState;
+  const { attackHandleModeActive, attackHandleModeMulti, selectedCreatureId, mapTransform } =
+    useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
 
   const [mapSize, setMapSize] = useState({
     width: window.innerWidth,
@@ -35,12 +41,7 @@ export const BattleMap = ({ image }: { image: string }) => {
   });
   const [transform, setTransform] = useState(mapTransform);
   const debouncedTransforme = useDebounce(transform, DEBOUNCE_TIME);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [startPoint, setStartPoint] = useState({ x: 0, y: 0 });
-  const [endPoint, setEndPoint] = useState({ x: 0, y: 0 });
-  const [lines, setLines] = useState<
-    Array<{ start: { x: number; y: number }; end: { x: number; y: number } }>
-  >([]);
+
   const svgRef = useRef<SVGSVGElement>(null);
 
   const zoom = dzoom()
@@ -78,139 +79,22 @@ export const BattleMap = ({ image }: { image: string }) => {
     return () => window.removeEventListener('resize', resizeMap);
   }, []);
 
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    // Правая кнопка мыши
-    if (e.button === 2) {
-      if (!svgRef.current) return;
-
-      const point = svgRef.current.createSVGPoint();
-      point.x = e.clientX;
-      point.y = e.clientY;
-      const svgPoint = point.matrixTransform(svgRef.current.getScreenCTM()?.inverse());
-
-      const x =
-        Math.floor((svgPoint.x - transform.x) / transform.k / cellSize) * cellSize + cellSize / 2;
-      const y =
-        Math.floor((svgPoint.y - transform.y) / transform.k / cellSize) * cellSize + cellSize / 2;
-
-      setIsDrawing(true);
-      setStartPoint({ x, y });
-      setEndPoint({ x, y });
+  const handleClick = useCallback(() => {
+    if (attackHandleModeActive && attackHandleModeMulti === 'select') {
+      dispatch(userInterfaceActions.setAttackHandleModeMulti('handle'));
     }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDrawing || !svgRef.current) return;
-
-    const point = svgRef.current.createSVGPoint();
-    point.x = e.clientX;
-    point.y = e.clientY;
-    const svgPoint = point.matrixTransform(svgRef.current.getScreenCTM()?.inverse());
-
-    setEndPoint({
-      x: Math.floor((svgPoint.x - transform.x) / transform.k / cellSize) * cellSize + cellSize / 2,
-      y: Math.floor((svgPoint.y - transform.y) / transform.k / cellSize) * cellSize + cellSize / 2,
-    });
-  };
-
-  const handleMouseUp = () => {
-    if (isDrawing) {
-      setLines((prev) => [
-        ...prev,
-        {
-          start: startPoint,
-          end: endPoint,
-        },
-      ]);
-      setIsDrawing(false);
-    }
-  };
-
-  useEffect(() => {
-    const handleWindowMouseUp = () => {
-      if (isDrawing) {
-        setLines((prev) => [...prev, { start: startPoint, end: endPoint }]);
-        setIsDrawing(false);
-      }
-    };
-
-    window.addEventListener('mouseup', handleWindowMouseUp);
-    return () => window.removeEventListener('mouseup', handleWindowMouseUp);
-  }, [isDrawing, startPoint, endPoint]);
+  }, [attackHandleModeActive, attackHandleModeMulti]);
 
   return (
     <div
       className={s.mapContainer}
       style={{ width: `${mapSize.width}px`, height: `${mapSize.height}px` }}
     >
-      <svg
-        ref={svgRef}
-        className={s.map}
-        onContextMenu={handleContextMenu}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-      >
-        <defs>
-          <marker
-            id='arrowhead'
-            markerWidth='5'
-            markerHeight='3.5'
-            refX='4.5'
-            refY='1.75'
-            orient='auto'
-          >
-            <polygon points='0 0, 5 1.75, 0 3.5' fill='#ec9ded' />
-          </marker>
-        </defs>
+      <svg ref={svgRef} className={s.map} onClick={handleClick}>
         <g transform={`translate(${transform.x}, ${transform.y}) scale(${transform.k})`}>
+          <Rule transform={transform} cellSize={cellSize} />
           <image href={image} height={rows * cellSize} width={cols * cellSize} />
-          <GridLayout cols={cols} rows={rows} cellSize={cellSize} />
-
-          {/* Сохраненные линии */}
-          {false &&
-            lines.map((line, index) => (
-              <line
-                key={`line-${index}`}
-                x1={line.start.x}
-                y1={line.start.y}
-                x2={line.end.x}
-                y2={line.end.y}
-                stroke='black'
-                strokeWidth={2 / transform.k}
-              />
-            ))}
-
-          {/* Текущая рисуемая линия */}
-          {isDrawing && (
-            <>
-              <line
-                x1={startPoint.x}
-                y1={startPoint.y}
-                x2={endPoint.x}
-                y2={endPoint.y}
-                stroke='#ec9ded'
-                strokeWidth={5 / transform.k}
-                strokeDasharray='5,5'
-                markerEnd='url(#arrowhead)'
-              />
-              <foreignObject x={endPoint.x + 10} y={endPoint.y - 50} width='70' height='100'>
-                <div className={s.ruleTooltip}>
-                  {(Math.max(
-                    Math.abs(endPoint.x - startPoint.x),
-                    Math.abs(endPoint.y - startPoint.y),
-                  ) /
-                    cellSize) *
-                    5}{' '}
-                  Ft
-                </div>
-              </foreignObject>
-            </>
-          )}
+          <GridLayout cells={cells} cols={cols} rows={rows} cellSize={cellSize} />
 
           {participants
             .filter((value) => selectedCreatureId === value.id)
@@ -222,6 +106,7 @@ export const BattleMap = ({ image }: { image: string }) => {
                 x={value.cellsCoords ? value.cellsCoords.cellsX : 0}
                 y={value.cellsCoords ? value.cellsCoords.cellsY : 0}
                 cellSize={cellSize}
+                setCells={setCells}
               />
             ))}
 
@@ -235,6 +120,7 @@ export const BattleMap = ({ image }: { image: string }) => {
                 x={value.cellsCoords ? value.cellsCoords.cellsX : 0}
                 y={value.cellsCoords ? value.cellsCoords.cellsY : index}
                 cellSize={cellSize}
+                setCells={setCells}
               />
             ))}
         </g>

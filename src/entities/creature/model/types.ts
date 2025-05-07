@@ -5,6 +5,16 @@ import { Creature } from './creature.slice';
 
 export type EntityType = 'creature' | 'character';
 
+export enum Size {
+  'tiny' = 0.5,
+  'small' = 1,
+  'medium' = 1,
+  'large' = 2,
+  'huge' = 3,
+  'gargantuan' = 4,
+  default = 1,
+}
+
 export type CreatureClippedData = {
   _id: string;
   name: NameTranslations;
@@ -159,12 +169,11 @@ export type Senses = {
   senses?: Sense[];
 };
 
-
 type Sense = {
   name: string;
   value: number;
   additional?: string;
-}
+};
 
 export type Action = {
   name: string;

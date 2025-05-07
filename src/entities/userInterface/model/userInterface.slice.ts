@@ -5,6 +5,7 @@ import { UUID } from 'shared/lib';
 
 export type UserInterfaceState = {
   attackHandleModeActive: boolean;
+  attackHandleModeMulti: 'idle' | 'select' | 'handle';
   selectedCreatureId: string | null;
   attackedCreatureId: string | null;
   currentAttackLLM: AttackLLM | null;
@@ -17,6 +18,7 @@ export type UserInterfaceState = {
 
 export const initialState: UserInterfaceState = {
   attackHandleModeActive: false,
+  attackHandleModeMulti: 'idle',
   selectedCreatureId: null,
   attackedCreatureId: null,
   currentAttackLLM: null,
@@ -43,6 +45,10 @@ const userInterfaceSlice = createSlice({
     enableAttackHandleMode: (state, action: PayloadAction<AttackLLM>) => {
       state.attackHandleModeActive = true;
       state.currentAttackLLM = action.payload;
+
+      if (action.payload.type === 'area') {
+        state.attackHandleModeMulti = 'select';
+      }
     },
     disableAttackHandleMode: (state) => {
       state.attackHandleModeActive = false;
@@ -53,6 +59,9 @@ const userInterfaceSlice = createSlice({
     },
     selectAttackedCreature: (state, action: PayloadAction<UUID | null>) => {
       state.attackedCreatureId = action.payload;
+    },
+    setAttackHandleModeMulti: (state, action: PayloadAction<'idle' | 'select' | 'handle'>) => {
+      state.attackHandleModeMulti = action.payload;
     },
     setMapTransform: (state, action: PayloadAction<{ x: number; y: number; k: number }>) => {
       state.mapTransform = action.payload;

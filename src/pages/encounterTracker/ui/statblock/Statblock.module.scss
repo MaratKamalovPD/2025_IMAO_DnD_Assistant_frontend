@@ -29,7 +29,8 @@
 .minimizeButton {
   background-color: var(--primary-btn-color);
   color: white;
-  width: 50%;
+  display: flex;
+  flex-direction: row;
 }
 
 .desciptionContainer {

@@ -1,21 +1,22 @@
+import Tippy from '@tippyjs/react';
 import clsx from 'clsx';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 import { Creature, creatureSelectors, CreaturesStore } from 'entities/creature/model';
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
-import { normalizeString, UUID } from 'shared/lib';
-
-import placeholderImage from 'shared/assets/images/placeholder.png';
-
-import Tippy from '@tippyjs/react';
 import {
   userInterfaceActions,
   UserInterfaceState,
   UserInterfaceStore,
 } from 'entities/userInterface/model';
 import { findConditionInstance } from 'pages/encounterTracker/lib';
+import { normalizeString, UUID } from 'shared/lib';
+
 import s from './CreatureCard.module.scss';
+
+import placeholderImage from 'shared/assets/images/placeholder.png';
 
 type CreatureCardProps = {
   id: string;
@@ -32,9 +33,8 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
   const { hasStarted, currentTurnIndex, participants } = useSelector<EncounterStore>(
     (state) => state.encounter,
   ) as EncounterState;
-  const { attackHandleModeActive, selectedCreatureId } = useSelector<UserInterfaceStore>(
-    (state) => state.userInterface,
-  ) as UserInterfaceState;
+  const { attackHandleModeActive, attackHandleModeMulti, selectedCreatureId } =
+    useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
 
   if (!creature) return null;
 
@@ -43,10 +43,12 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
   const handleClick = useCallback(() => {
     if (!attackHandleModeActive) {
       dispatch(userInterfaceActions.selectCreature(id));
+    } else if (attackHandleModeMulti === 'select') {
+      toast('Для проведения атаки по площади выберите область на карте');
     } else {
       dispatch(userInterfaceActions.selectAttackedCreature(id));
     }
-  }, [attackHandleModeActive]);
+  }, [attackHandleModeActive, attackHandleModeMulti]);
 
   const cardClasses = clsx(s.card, {
     [s.card__blue]: creature.type === 'character',
@@ -70,11 +72,13 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
       tabIndex={0}
       aria-label={`Выбрать ${creature.name}`}
     >
-      <div className={s.initiativeContainer}>
-        <span className={s.initiativeContainer__text}>
-          {hasStarted ? creature.initiative : '?'}
-        </span>
-      </div>
+      <Tippy content={'Для проброса инициативы начните сражение'} disabled={hasStarted}>
+        <div className={s.initiativeContainer}>
+          <span className={s.initiativeContainer__text}>
+            {hasStarted ? creature.initiative : '?'}
+          </span>
+        </div>
+      </Tippy>
 
       <div className={s.imageContainer}>
         <img
