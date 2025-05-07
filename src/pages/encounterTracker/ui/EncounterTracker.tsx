@@ -26,6 +26,7 @@ import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
 
 import s from './EncounterTracker.module.scss';
+import { HelpButton } from './helpButton';
 
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
 const VILLAGE_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-2.png';
@@ -61,6 +62,7 @@ export const EncounterTracker = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         dispatch(userInterfaceActions.disableAttackHandleMode());
+        setCells((prev) => prev.map((rows) => rows.map((_cols) => false)));
       }
     };
 
@@ -177,6 +179,7 @@ export const EncounterTracker = () => {
       <CustomCursor />
       {participants.length !== 0 ? (
         <>
+          <HelpButton />
           <BattleMap image={mapImage} cells={cells} setCells={setCells} />
           <PopupMenu items={menuItems} />
           {statblockIsVisible && (
