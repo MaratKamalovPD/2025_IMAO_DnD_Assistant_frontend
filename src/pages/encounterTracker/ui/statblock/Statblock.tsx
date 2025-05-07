@@ -61,10 +61,15 @@ export const Statblock: React.FC<StatblockProps> = ({
 
   const toggleModal = useCallback(
     (isOpen: boolean, type: ModalType = modalType) => {
+      if (modalType === ModalType.Attack && isModalOpen) {
+        setCells((prev) => prev.map((rows) => rows.map((_cols) => false)));
+        dispatch(userInterfaceActions.selectAttackedCreature(null));
+        dispatch(userInterfaceActions.setAttackHandleModeMulti('idle'));
+      }
       setIsModalOpen(isOpen);
       setModalType(type);
     },
-    [modalType],
+    [modalType, isModalOpen],
   );
 
   const handleAttack = useCallback((index: number, attack: AttackLLM) => {
