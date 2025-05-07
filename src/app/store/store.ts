@@ -12,6 +12,8 @@ import { bestiaryApi } from 'pages/bestiary/api';
 import { characterApi } from 'pages/characters/api';
 import { promtApi } from 'pages/encounterTracker/api';
 import { authApi } from 'pages/login/api';
+import llmApi from 'pages/statblockGenerator/api/llm.api';
+import statblockGeneratorApi from 'pages/statblockGenerator/api/statblockGenerator.api';
 
 export const store = configureStore({
   reducer: {
@@ -26,6 +28,9 @@ export const store = configureStore({
     characterApi: characterApi.reducer,
     encounterApi: encounterApi.reducer,
     authApi: authApi.reducer,
+    llmApi: llmApi.reducer,
+    statblockGeneratorApi: statblockGeneratorApi.reducer,
+
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -33,7 +38,9 @@ export const store = configureStore({
       .concat(promtApi.middleware)
       .concat(characterApi.middleware)
       .concat(encounterApi.middleware)
-      .concat(authApi.middleware),
+      .concat(authApi.middleware)
+      .concat(llmApi.middleware)
+      .concat(statblockGeneratorApi.middleware)
 });
 
 setupListeners(store.dispatch);
@@ -52,5 +59,7 @@ export type RootStore = ReturnType<
     characterApi: typeof characterApi.reducer;
     encounterApi: typeof encounterApi.reducer;
     authApi: typeof authApi.reducer;
+    llmApi: typeof llmApi.reducer;
+    statblockGeneratorApi: typeof statblockGeneratorApi.reducer;
   }>
 >;

@@ -11,8 +11,8 @@ export type GetCreaturesRequest = {
   filter: FilterParams;
 };
 
-const bestiaryApi = createApi({
-  reducerPath: 'bestiaryApi',
+const statblockGeneratorApi = createApi({
+  reducerPath: 'statblockGeneratorApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
   tagTypes: ['Creature'],
   endpoints: (builder) => ({
@@ -63,6 +63,6 @@ export const {
     useAddCreatureMutation,
     useUploadStatblockImageMutation,
     useSubmitGenerationPromptMutation
-  } = bestiaryApi;
+  } = statblockGeneratorApi;
 
-export default bestiaryApi;
+export default statblockGeneratorApi;
