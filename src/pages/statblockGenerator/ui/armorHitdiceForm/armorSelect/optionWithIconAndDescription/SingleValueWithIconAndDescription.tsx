@@ -16,7 +16,7 @@ export const SingleValueWithIconAndDescription: React.FC<
         )}
         <div className={s.textGroup}>
           <span className={s.label}>{data.label}</span>
-          {data.description && (
+          {false && data.description && (
             <span className={s.description}>{data.description}</span>
           )}
         </div>

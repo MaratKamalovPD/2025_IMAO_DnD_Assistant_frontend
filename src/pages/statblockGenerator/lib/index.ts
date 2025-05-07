@@ -22,3 +22,5 @@ export { mapLLMToForm } from './mapLLMToForm.ts'
 export { useGlow } from './useGlow'
 
 export { armorIcons } from './armorsIcons'
+
+export { promptPresetOptions } from './promptPresetOptions'

@@ -1,0 +1,101 @@
+.uploadContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 0;
+    gap: 16px;
+  }
+  
+.uploadButton {
+padding: 10px 20px;
+background: #4A4A6A;
+border-radius: 8px;
+border: 1px dashed #757575;
+cursor: pointer;
+transition: all 0.2s;
+color: white;
+font-family: 'ABeeZee', sans-serif;
+font-size: 16px;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 100%;
+max-width: 300px;
+
+&:hover {
+    background: #5A5A7A;
+    border-color: #FF6F61;
+}
+}
+
+.hiddenInput {
+display: none;
+}
+
+.previewContainer {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 10px;
+}
+
+.previewImage {
+max-width: 250px;
+border-radius: 8px;
+border: 1px solid #555;
+}
+
+.extractButton {
+padding: 8px 16px;
+background: var(--primary-btn-color);
+border-radius: 8px;
+border: none;
+cursor: pointer;
+transition: background-color 0.2s;
+color: white;
+font-family: 'ABeeZee', sans-serif;
+font-size: 16px;
+line-height: 20px;
+
+&:hover {
+    background: #E05A4E;
+}
+
+&:active {
+    transform: translateY(1px);
+}
+}
+
+.previewWrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .previewImage {
+    max-width: 250px;
+    border-radius: 8px;
+    border: 1px solid #555;
+  }
+  
+  .removeButton {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+  
+  .removeIcon {
+    color: #ff5f5f;
+    width: 22px;
+    height: 22px;
+  
+    &:hover {
+      color: #ff3a3a;
+    }
+  }
+  
+  

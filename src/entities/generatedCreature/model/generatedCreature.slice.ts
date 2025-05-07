@@ -58,7 +58,7 @@ type AddAttackPayload = {
       cell: '1',
     },
     type: {
-      name: 'beast',
+      name: 'зверь',
       tags: [],
     },
     challengeRating: '1',
@@ -73,7 +73,7 @@ type AddAttackPayload = {
       },
     },
     experience: 200,
-    alignment: 'any alignment',
+    alignment: 'любое мировоззрение',
     armorClass: 10,
     armors: [],
     hits: {

@@ -7,4 +7,4 @@ export type { DamageLanguagesFormProps, DamageListType } from './damageLanguages
 export type { SensesFormProps, SensesFormState, SenseType } from './sensesTypes';
 export type { AttackFormAttack} from './attackFormTypes';
 export { initialDamage, initialAttack} from './attackFormTypes';
-export type { SelectOption } from './types';
+export type { SelectOption, SelectOptionWithDescription, PromptTextareaRef } from './types';
