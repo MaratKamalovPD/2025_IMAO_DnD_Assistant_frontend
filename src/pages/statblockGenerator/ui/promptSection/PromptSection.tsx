@@ -4,6 +4,7 @@ import { PromptTextarea } from './promptTextarea';
 import { PresetSelect } from './promtPresetSelect';
 import { PromptTextareaRef, SelectOptionWithDescription } from 'pages/statblockGenerator/model';
 import { StatblockImageUploadPanel } from './statblockImageUploadPanel';
+import { useSubmitGenerationPromptMutation } from 'pages/statblockGenerator/api/statblockGenerator.api';
 
 interface PromptSectionProps {
   onGenerate?: () => void;
@@ -57,6 +58,21 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
     console.log("🧬 Извлечение характеристик существа...");
     // Здесь будет логика взаимодействия с LLM или backend
   };
+
+  const [submitPrompt, { isLoading, isSuccess, isError, data }] = useSubmitGenerationPromptMutation();
+  void isLoading
+
+  const handleGenerateClick = async () => {
+    const prompt = textareaRef.current?.getValue();
+    if (!prompt) return;
+
+    try {
+      const result = await submitPrompt({ description: prompt }).unwrap();
+      console.log("✅ Промпт отправлен:", result);
+    } catch (err) {
+      console.error("❌ Ошибка при отправке промпта:", err);
+    }
+  };
   
 
   const t = translations[language];
@@ -72,7 +88,7 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
         t={t}
       />
 
-      <PromptTextarea ref={textareaRef} onSubmit={onGenerate}/>
+      <PromptTextarea ref={textareaRef} onSubmit={handleGenerateClick}/>
   
       {/* Поле для загрузки изображения */}
       <StatblockImageUploadPanel
