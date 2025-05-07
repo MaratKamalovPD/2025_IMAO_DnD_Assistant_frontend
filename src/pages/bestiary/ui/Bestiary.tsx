@@ -119,6 +119,8 @@ const BestiaryContent = () => {
   }, [start]);
 
   useEffect(() => {
+    setStart(0);
+    setHasMore(true);
     setRequestBody(
       mapFiltersToRequestBody(filters, start, RESPONSE_SIZE, debouncedSearchValue, orderParams),
     );

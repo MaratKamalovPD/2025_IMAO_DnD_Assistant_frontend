@@ -2,14 +2,12 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { UUID } from 'shared/lib';
 import { Character, CharacterClipped } from '../model';
-import type { FilterParams, OrderParams, SearchParams } from './types';
+import type { SearchParams } from './types';
 
 export type GetCharactersRequest = {
   start: number;
   size: number;
   search: SearchParams;
-  order: OrderParams[];
-  filter: FilterParams;
 };
 
 const characterApi = createApi({
@@ -26,7 +24,7 @@ const characterApi = createApi({
 
     addCharacter: builder.mutation<null, FormData>({
       query: (formData) => ({
-        url: 'add_character',
+        url: '/add_character',
         method: 'POST',
         body: formData,
         formData: true,
