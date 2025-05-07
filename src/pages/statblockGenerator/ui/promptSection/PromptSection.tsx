@@ -17,12 +17,12 @@ interface PromptSectionProps {
 }
 
 export const PromptSection: React.FC<PromptSectionProps> = ({
-  onGenerate,
+  //onGenerate,
   onUsePreset,
-  onTextChange,
+  //onTextChange,
   presetOptions = [],
   selectedPreset = '',
-  onImageUpload,
+  //onImageUpload,
   language = 'ru'
 }) => {
   const translations = {
