@@ -140,8 +140,6 @@ const BestiaryContent = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isLoading, hasMore]);
 
-  if (isError) return <div>Error loading creatures</div>;
-
   return (
     <div
       className={clsx(s.bestiaryContainer, {
@@ -188,6 +186,8 @@ const BestiaryContent = () => {
       {allCreatures.length === 0 && !isLoading && (
         <div className={s.spinnerContainer}>Ничего не найдено</div>
       )}
+
+      {isError && <div className={s.spinnerContainer}>Упс, что-то пошло не так :(</div>}
     </div>
   );
 };
