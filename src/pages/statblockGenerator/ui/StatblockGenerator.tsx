@@ -32,6 +32,7 @@ import { CollapsiblePanelRef } from './collapsiblePanel/CollapsiblePanel';
 import { JumpTarget } from 'pages/bestiary/model';
 import clsx from 'clsx';
 import { promptPresetOptions, useGlow } from '../lib';
+import { CreatureFullData } from 'entities/creature/model';
 
 const requestBody: GetCreaturesRequest = {
   start: 0,
@@ -65,9 +66,10 @@ const requestBody: GetCreaturesRequest = {
 };
 
 export const StatblockGenerator = () => {
+  const [fullCreatureData, setFullCreatureData] = useState<CreatureFullData | null>(null)
   const [addCreature, { isSuccess, isError, error }] = useAddCreatureMutation();
   const { data: creatures } = useGetCreaturesQuery(requestBody);
-  const [trigger, { data: fullCreatureData }] = useLazyGetCreatureByNameQuery();
+  const [trigger, { data: fetchedCreatureData  }] = useLazyGetCreatureByNameQuery();
   const { glowActiveMap, glowFadeMap, triggerGlow, clearGlow } = useGlow();
 
   const getGlowClass = (id: string) =>
@@ -75,6 +77,12 @@ export const StatblockGenerator = () => {
       glowActiveMap[id] && s.glowHighlight,
       glowFadeMap[id] && s.glowFading
     );
+
+    useEffect(() => {
+      if (fetchedCreatureData) {
+        setFullCreatureData(fetchedCreatureData)
+      }
+    }, [fetchedCreatureData])
 
 
   const formRefs: Record<JumpTarget, React.RefObject<CollapsiblePanelRef | null>> = {
@@ -338,7 +346,9 @@ export const StatblockGenerator = () => {
   return (
     <div className={s.statblockGeneratorContainer}>
       <div className={s.statblockGeneratorPanel} style={{ width: `${panelWidth}px` }}>
-        <PromptSection language='ru' presetOptions={promptPresetOptions}/>
+        <PromptSection language='ru' presetOptions={promptPresetOptions} onGenerate={creature => {
+            setFullCreatureData(creature)
+          }}/>
         <CreatureSaveSection
           presetOptions={presetOptions}
           selectedPreset={selectedPreset}

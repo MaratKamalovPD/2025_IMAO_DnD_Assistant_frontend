@@ -12,9 +12,10 @@ import {
   useSubmitGenerationImageMutation,
   useGetGenerationStatusQuery
 } from 'pages/statblockGenerator/api/llm.api'
+import { CreatureFullData } from 'entities/creature/model'
 
 interface PromptSectionProps {
-  onGenerate?: () => void
+  onGenerate?: (creature: CreatureFullData) => void
   onUsePreset?: () => void
   onTextChange?: (text: string) => void
   presetOptions?: SelectOptionWithDescription[]
@@ -79,8 +80,8 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
 
   // Уведомляем родителя, как только статус станет "done"
   useEffect(() => {
-    if (jobStatus?.status === 'done') {
-      onGenerate?.()
+    if (jobStatus?.status === 'done' && jobStatus.result) {
+      onGenerate?.(jobStatus.result)
       setJobId(null)
     }
   }, [jobStatus, onGenerate])
