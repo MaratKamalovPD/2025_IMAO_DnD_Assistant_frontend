@@ -10,31 +10,34 @@ import { UUID } from 'shared/lib';
 import { debounce } from 'shared/lib/debounce';
 import { Props } from './types';
 
-const DEBOUNSE_TIME = 1000;
+const DEBOUNSE_TIME = 200;
 
 export const EncounterTrackerSessionProvider = ({ children }: Props) => {
   const dispatch = useDispatch();
   const { id } = useParams();
 
   const [encounterId, setEncounterId] = useState<UUID | null>(null);
+  const [saveVersionHash, setSaveVersionHash] = useState<UUID>('');
   const wsRef = useRef<WebSocket | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     // Подключаемся к серверу
     wsRef.current = new WebSocket(`ws://localhost:8080/api/table/session/${id}/connect`);
 
     wsRef.current.onopen = () => {
-      setIsConnected(true);
       console.log('WebSocket connected');
     };
 
     // Обработчик входящих сообщений
     wsRef.current.onmessage = (event) => {
       const state: EncounterSave = JSON.parse(event.data);
+
+      if (saveVersionHash && saveVersionHash === state.encounterState.saveVersionHash) return;
+
       dispatch(encounterActions.setState(state.encounterState));
       dispatch(creatureActions.setState(state.creaturesState));
       dispatch(loggerActions.setState(state.loggerState));
+      dispatch(encounterActions.setEncounterId(id || null));
       setEncounterId(state.encounterState.encounterId);
     };
 
@@ -43,15 +46,14 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
     };
 
     wsRef.current.onclose = () => {
-      setIsConnected(false);
       console.log('WebSocket disconnected');
     };
 
-    // Очистка при размонтировании
+    // // Очистка при размонтировании
     // return () => {
     //   wsRef.current?.close();
     // };
-  }, [id, dispatch]);
+  }, []);
 
   const {
     logger: loggerState,
@@ -61,6 +63,7 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
 
   const updateState = useCallback(
     debounce((body: EncounterSave) => {
+      console.log(encounterId, wsRef?.current?.readyState);
       if (encounterId === null || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
         return;
       }
@@ -70,12 +73,10 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
   );
 
   useEffect(() => {
-    const [count, setCount] = useState(0);
-    setCount((prev) => prev++);
-    console.log(count);
-    if (count % 2 == 0) return;
+    setSaveVersionHash(encounterState.saveVersionHash);
+    console.log('что-то было...');
     updateState({ loggerState, encounterState, creaturesState });
-  }, [loggerState, encounterState, creaturesState, updateState]);
+  }, [encounterState.saveVersionHash]);
 
   return <>{children}</>;
 };
