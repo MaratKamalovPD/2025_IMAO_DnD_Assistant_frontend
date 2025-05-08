@@ -10,10 +10,10 @@ import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
 import { useViewSettings } from 'pages/bestiary/lib';
-import { Filters } from 'pages/characters/model';
 import { TopPanelWithSearch } from 'shared/ui';
 
 import s from './TopPanel.module.scss';
+import { Filters } from 'pages/bestiary/model';
 
 type TopPanelProps = {
   isAnyFilterSet: boolean;

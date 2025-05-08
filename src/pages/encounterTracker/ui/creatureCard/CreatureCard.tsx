@@ -72,7 +72,7 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
       tabIndex={0}
       aria-label={`Выбрать ${creature.name}`}
     >
-      <Tippy content={'Для проброса инициативы начните сражение'} disabled={hasStarted}>
+      <Tippy content={hasStarted ? 'Инициатива' : 'Для проброса инициативы начните сражение'}>
         <div className={s.initiativeContainer}>
           <span className={s.initiativeContainer__text}>
             {hasStarted ? creature.initiative : '?'}
@@ -106,9 +106,11 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
       </div>
 
       <div className={infoClasses}>
-        <div className={clsx(s.shield, s.shield__outer)}>
-          <div className={clsx(s.shield, s.shield__inner)}>{creature.ac}</div>
-        </div>
+        <Tippy content={'Класс брони'}>
+          <div className={clsx(s.shield, s.shield__outer)}>
+            <div className={clsx(s.shield, s.shield__inner)}>{creature.ac}</div>
+          </div>
+        </Tippy>
         <div className={s.hpBar}>
           <div className={s.hpFill} style={{ width: `${hpPercentage}%` }} />
         </div>

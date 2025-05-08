@@ -11,8 +11,8 @@ export type GetCreaturesRequest = {
   filter: FilterParams;
 };
 
-const bestiaryApi = createApi({
-  reducerPath: 'bestiaryApi',
+const statblockGeneratorApi = createApi({
+  reducerPath: 'statblockGeneratorApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
   tagTypes: ['Creature'],
   endpoints: (builder) => ({
@@ -37,6 +37,22 @@ const bestiaryApi = createApi({
       }),
       invalidatesTags: ['Creature'],
     }),
+
+    uploadStatblockImage: builder.mutation<{ status: string }, FormData>({
+      query: (formData) => ({
+        url: '/bestiary/statblock-image',
+        method: 'POST',
+        body: formData,
+      }),
+    }),
+  
+    submitGenerationPrompt: builder.mutation<{ status: string }, { description: string }>({
+      query: (body) => ({
+        url: '/bestiary/creature-generation-prompt',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 });
 
@@ -44,7 +60,9 @@ export const {
     useGetCreaturesQuery,
     useLazyGetCreatureByNameQuery,
     useGetCreatureByNameQuery,
-    useAddCreatureMutation 
-  } = bestiaryApi;
+    useAddCreatureMutation,
+    useUploadStatblockImageMutation,
+    useSubmitGenerationPromptMutation
+  } = statblockGeneratorApi;
 
-export default bestiaryApi;
+export default statblockGeneratorApi;

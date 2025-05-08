@@ -1,101 +1,125 @@
-.uploadContainer {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 10px 0;
-    gap: 16px;
-  }
-  
-.uploadButton {
-padding: 10px 20px;
-background: #4A4A6A;
-border-radius: 8px;
-border: 1px dashed #757575;
-cursor: pointer;
-transition: all 0.2s;
-color: white;
-font-family: 'ABeeZee', sans-serif;
-font-size: 16px;
-display: flex;
-align-items: center;
-justify-content: center;
-width: 100%;
-max-width: 300px;
+// StatblockImageUploadPanel.module.scss
 
-&:hover {
-    background: #5A5A7A;
-    border-color: #FF6F61;
+.uploadContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px 0;
+  gap: 16px;
 }
+
+.uploadButton {
+  padding: 10px 20px;
+  background: #4a4a6a;
+  border-radius: 8px;
+  border: 1px dashed #757575;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+  font-family: 'ABeeZee', sans-serif;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 300px;
+
+  // Hover only when enabled
+  &:hover:not(:disabled) {
+    background: #5a5a7a;
+    border-color: #ff6f61;
+  }
+
+  // Disabled state
+  &:disabled,
+  &.disabled {
+    background: #555;
+    border-color: #555;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 }
 
 .hiddenInput {
-display: none;
+  display: none;
 }
 
 .previewContainer {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 10px;
-}
-
-.previewImage {
-max-width: 250px;
-border-radius: 8px;
-border: 1px solid #555;
-}
-
-.extractButton {
-padding: 8px 16px;
-background: var(--primary-btn-color);
-border-radius: 8px;
-border: none;
-cursor: pointer;
-transition: background-color 0.2s;
-color: white;
-font-family: 'ABeeZee', sans-serif;
-font-size: 16px;
-line-height: 20px;
-
-&:hover {
-    background: #E05A4E;
-}
-
-&:active {
-    transform: translateY(1px);
-}
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 .previewWrapper {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
+}
+
+.previewImage {
+  max-width: 250px;
+  border-radius: 8px;
+  border: 1px solid #555;
+}
+
+.removeButton {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  // Disabled state for remove button (if needed)
+  &:disabled,
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
-  
-  .previewImage {
-    max-width: 250px;
-    border-radius: 8px;
-    border: 1px solid #555;
+}
+
+.removeIcon {
+  color: #ff5f5f;
+  width: 22px;
+  height: 22px;
+  transition: color 0.2s;
+
+  // Hover only when parent button is enabled
+  &:hover:not(:disabled) {
+    color: #ff3a3a;
   }
-  
-  .removeButton {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
+}
+
+.extractButton {
+  padding: 8px 16px;
+  background: var(--primary-btn-color);
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  color: white;
+  font-family: 'ABeeZee', sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+
+  // Hover only when enabled
+  &:hover:not(:disabled) {
+    background: #e05a4e;
   }
-  
-  .removeIcon {
-    color: #ff5f5f;
-    width: 22px;
-    height: 22px;
-  
-    &:hover {
-      color: #ff3a3a;
-    }
+
+  // Active only when enabled
+  &:active:not(:disabled) {
+    transform: translateY(1px);
   }
-  
-  
+
+  // Disabled state
+  &:disabled,
+  &.disabled {
+    background: #555;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
