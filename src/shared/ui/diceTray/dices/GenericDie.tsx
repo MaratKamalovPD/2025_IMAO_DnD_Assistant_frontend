@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import * as THREE from 'three';
 
-type GenericDieProps = {
+export type GenericDieProps = {
   /** Размер куба-рендерера (width и height) в пикселях */
   size?: number;
   /** Массив меток для граней (должен совпадать по длине с числом плоских граней) */
@@ -17,6 +17,12 @@ type GenericDieProps = {
   maxSpeed?: number;
   /** Порог перехода от фазы spin к settle (0..1) */
   settleThreshold?: number;
+  /** Цвет куба: любое значение, которое принимает THREE.Color */  
+  color?: THREE.ColorRepresentation;
+  /** Целевое значение (1..facesCount) */
+  value: number;
+  /** Колбэк, который можно вызвать когда анимация «осела» */
+  onSettle?: (value: number) => void;
   onClick?: () => void;
 };
 
@@ -30,6 +36,9 @@ export const GenericDie: React.FC<GenericDieProps> = ({
   maxSpeed = 16,
   settleThreshold = 0.8,
   onClick,
+  color = 0xff6b6b,
+  value,
+  onSettle,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const dieRef = useRef<THREE.Mesh | null>(null);
@@ -143,7 +152,10 @@ export const GenericDie: React.FC<GenericDieProps> = ({
 
     // Создаём саму кость
     const baseGeo = geometryFactory();
-    const mat = new THREE.MeshStandardMaterial({ color: 0xff6b6b, flatShading: true });
+    const mat = new THREE.MeshStandardMaterial({
+      color,
+      flatShading: true
+    });
     const die = new THREE.Mesh(baseGeo, mat);
     dieRef.current = die;
     scene.add(die);
@@ -225,6 +237,7 @@ export const GenericDie: React.FC<GenericDieProps> = ({
           if (t === 1) {
             a.animating = false;
             a.state = 'idle';
+            onSettle?.(value);
           }
         }
       }
@@ -279,11 +292,42 @@ export const GenericDie: React.FC<GenericDieProps> = ({
     onClick?.();
   };
 
+  const animateToValue = (faceIdx: number) => {
+    if (!dieRef.current) return;
+  
+    // 1) инициализируем «хаотичную» часть так же, как в roll()
+    const randAxis = () => new THREE.Vector3(
+      Math.random() - 0.5,
+      Math.random() - 0.5,
+      Math.random() - 0.5
+    ).normalize();
+  
+    anim.current.axisStart = randAxis();
+    anim.current.axisEnd   = randAxis();
+    anim.current.speed     = Math.random() * (maxSpeed - minSpeed) + minSpeed;
+    anim.current.spinStart = performance.now();
+    anim.current.spinDuration = spinDurationSec * 1000;
+    anim.current.state     = 'spin';
+  
+    // 2) задаём финальную кватернион-ориентацию по переданному индексу
+    const { normal } = faceData[faceIdx];
+    anim.current.finalQuat = new THREE.Quaternion()
+      .setFromUnitVectors(normal, new THREE.Vector3(0, 0, 1));
+  
+    anim.current.animating = true;
+  };
+
+  useEffect(() => {
+    // faceData.length = N граней, value от 1 до N
+    const idx = Math.max(0, Math.min(faceData.length - 1, value - 1));
+    animateToValue(idx);
+  }, [value]);
+
   return (
     <div
       ref={containerRef}
       style={{ width: size, height: size, cursor: 'pointer' }}
-      onClick={roll}
+      //onClick={roll}
     />
   );
 };

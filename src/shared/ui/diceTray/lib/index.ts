@@ -1,0 +1,1 @@
+export { d10BufferGeometry } from './d10BufferGeometry'
