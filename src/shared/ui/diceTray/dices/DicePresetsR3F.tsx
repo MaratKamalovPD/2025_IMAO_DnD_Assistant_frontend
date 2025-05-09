@@ -70,7 +70,7 @@ function makeDieR3F(
 // Готовые компоненты
 export const R3F_D4  = makeDieR3F(d4Labels,  () => new THREE.TetrahedronGeometry(1), 1.5, 0.3, 8, 16, 0.8, 0x00ff00);
 export const R3F_D6  = makeDieR3F(d6Labels,  () => new THREE.BoxGeometry(1,1,1),     1.2, 0.3, 8, 14, 0.75, 0x00ffff);
-export const R3F_D8  = makeDieR3F(d8Labels,  () => new THREE.OctahedronGeometry(1),  1.8, 0.3,10, 20, 0.7, 0x8a2be2);
+export const R3F_D8  = makeDieR3F(d8Labels,  () => new THREE.OctahedronGeometry(1),  1.8, 0.3,10, 20, 0.7, 0xa091b5);
 export const R3F_D10 = makeDieR3F(d10Labels, d10BufferGeometry,                     1.8, 0.3,10, 20, 0.7, 0xff0000);
 export const R3F_D12 = makeDieR3F(d12Labels, () => new THREE.DodecahedronGeometry(1),1.7, 0.3, 8, 16, 0.78, 0xee82ee);
 export const R3F_D20 = makeDieR3F(d20Labels, () => new THREE.IcosahedronGeometry(1,0),2.0, 0.3,12, 24, 0.8, 0xffa500);

@@ -99,7 +99,11 @@ export const GenericDieR3F: React.FC<GenericDieR3FProps> = ({
       canvas.width = canvas.height = 128;
       const ctx = canvas.getContext('2d')!;
       ctx.clearRect(0, 0, 128, 128);
-      ctx.font = `${faceData.length <= 12 ? 128 : 64}px Arial`;
+
+      const faceCount = faceData.length;
+      const fontSize = faceCount === 6 || faceCount === 12 ? 128 : 80;
+      ctx.font = `${fontSize}px Arial`;
+      
       ctx.fillStyle = 'black';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
