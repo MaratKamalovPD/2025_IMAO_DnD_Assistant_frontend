@@ -53,11 +53,29 @@ export const ActualDiceTray: React.FC = () => {
 
   // Удаление кубика
   const handleInitRemove = useCallback((id: string) => {
+    setWarning(null);
     setTray(prev => prev.map(d => d.id === id ? { ...d, removing: true } : d));
   }, []);
   const handleFinalizeRemove = useCallback((id: string) => {
-    setTray(prev => prev.filter(d => d.id !== id));
-  }, []);
+    // 1. Вычисляем «новый» лоток и «старую»/«новую» сумму
+    setTray(prevTray => {
+      const newTray = prevTray.filter(d => d.id !== id);
+      const oldSum = displaySum;
+      const newSum = newTray.reduce((acc, d) => acc + d.value, 0);
+  
+      // 2. Сбрасываем отображаемую анимацию на старое значение
+      setAnimatedSum(oldSum);
+  
+      // 3. Запускаем плавный переход
+      animateSum(oldSum, newSum);
+  
+      // 4. Обновляем «истинную» сумму (понадобится, если вы где-то ещё читаете displaySum)
+      setDisplaySum(newSum);
+  
+      return newTray;
+    });
+  }, [displaySum, animateSum]);
+  
 
   // Бросаем все кубики
   const handleRollAll = useCallback(() => {
