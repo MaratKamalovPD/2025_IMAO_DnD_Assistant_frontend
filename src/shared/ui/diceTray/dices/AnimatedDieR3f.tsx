@@ -10,22 +10,23 @@ import {
   R3F_D12,
   R3F_D20,
 } from './DicePresetsR3F';
-import { DieType } from '../ui/diceToolbar';
+import { DiceType } from 'shared/lib';
+
 
 // Маппинг типа → компонент
-const DIE_COMPONENTS: Record<DieType, React.FC<{value: number; spinFlag: number; onSettle?: (v: number) => void;}>> = {
+const DIE_COMPONENTS: Record<DiceType, React.FC<{value: number; spinFlag: number; onSettle?: (v: number) => void;}>> = {
   d4:  R3F_D4,
   d6:  R3F_D6,
   d8:  R3F_D8,
   d10: R3F_D10,
   d12: R3F_D12,
   d20: R3F_D20,
-  custom: R3F_D6,
+  d100: R3F_D10, // ЗАГЛУШКА
 };
 
 type AnimatedDieR3FProps = {
   id: string;
-  type: DieType;
+  type: DiceType;
   value: number;
   spinFlag: number;
   removing: boolean;

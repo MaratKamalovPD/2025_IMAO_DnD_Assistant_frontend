@@ -5,39 +5,13 @@ import uniqid from 'uniqid';
 import { Canvas } from '@react-three/fiber';
 import { OrthographicCamera, OrbitControls } from '@react-three/drei';
 
-import { DiceToolbar, DieType } from '../diceToolbar';
+import { DiceToolbar} from '../diceToolbar';
 import styles from './ActualDiceTray.module.scss';
 import { AnimatedDieR3F } from '../../dices';
+import { DiceType, rollDice } from 'shared/lib';
+import { DieInstance } from '../../model';
+import { layoutConfigs } from '../../lib';
 
-interface DieInstance {
-  id: string;
-  type: DieType;
-  value: number;
-  removing: boolean;
-}
-
-// Генератор случайного значения для кубика по его типу
-const getRandomValue = (type: DieType): number => {
-  const max =
-    type === 'd4'  ? 4 :
-    type === 'd6'  ? 6 :
-    type === 'd8'  ? 8 :
-    type === 'd10' ? 10 :
-    type === 'd12' ? 12 :
-    type === 'd20' ? 20 : 6;
-  return Math.floor(Math.random() * max) + 1;
-};
-
-// Конфиг для layout: до какого числа кубов — сколько столбцов и какой zoom
-const layoutConfigs = [
-  { maxCount: 4,   cols: 2,  zoom: 120 },
-  { maxCount: 8,   cols: 4,  zoom: 100 },
-  { maxCount: 15,  cols: 5,  zoom:  80 },
-  { maxCount: 24,  cols: 6,  zoom:  60 },
-  { maxCount: 35,  cols: 7,  zoom:  50 },
-  { maxCount: 48,  cols: 8,  zoom:  40 },
-  { maxCount: 96,  cols: 12, zoom:  30 },
-];
 
 const MAX_DICE = 96;
 
@@ -47,7 +21,7 @@ export const ActualDiceTray: React.FC = () => {
   const [warning, setWarning] = useState<string | null>(null);
 
   // Добавляем новый кубик, но не более MAX_DICE
-  const handleAdd = useCallback((type: DieType) => {
+  const handleAdd = useCallback((type: DiceType) => {
     if (tray.length >= MAX_DICE) {
       setWarning(`Нельзя добавить более ${MAX_DICE} костей`);
       return;
@@ -55,7 +29,7 @@ export const ActualDiceTray: React.FC = () => {
     setWarning(null);
     setTray(prev => [
       ...prev,
-      { id: uniqid(), type, value: getRandomValue(type), removing: false },
+      { id: uniqid(), type, value: rollDice (type), removing: false },
     ]);
   }, [tray]);
 
@@ -77,7 +51,7 @@ export const ActualDiceTray: React.FC = () => {
     setWarning(null);
     setSpinFlag(f => f + 1);
     setTray(prev =>
-      prev.map(d => ({ ...d, value: getRandomValue(d.type) }))
+      prev.map(d => ({ ...d, value: rollDice(d.type) }))
     );
   }, []);
 

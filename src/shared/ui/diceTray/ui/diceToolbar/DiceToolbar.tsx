@@ -9,24 +9,19 @@ import D10Icon from 'shared/assets/images/dicesAndRolls/d10/D10_Force.png';
 import D12Icon from 'shared/assets/images/dicesAndRolls/d12/D12_Psychic.png';
 import D20Icon from 'shared/assets/images/dicesAndRolls/d20/D20.png';
 import PlusIcon from 'shared/assets/images/dicesAndRolls/d20/D20.png';
+import { DiceType } from 'shared/lib';
+import { DiceToolbarProps } from '../../model';
 
-export type DieType = 'd4' | 'd6' | 'd8' | 'd10' | 'd12' | 'd20' | 'custom';
 
-export interface DiceToolbarProps {
-  /** Добавить кость этого типа в трэй */
-  onAdd: (type: DieType) => void;
-  /** Бросить все кости из трэя */
-  onRoll: () => void;
-}
 
-const DIE_OPTIONS: { type: DieType; icon: string; alt: string }[] = [
-  { type: 'd4',  icon: D4Icon,  alt: 'Добавить D4'  },
-  { type: 'd6',  icon: D6Icon,  alt: 'Добавить D6'  },
-  { type: 'd8',  icon: D8Icon,  alt: 'Добавить D8'  },
-  { type: 'd10', icon: D10Icon, alt: 'Добавить D10' },
-  { type: 'd12', icon: D12Icon, alt: 'Добавить D12' },
-  { type: 'd20', icon: D20Icon, alt: 'Добавить D20' },
-  { type: 'custom', icon: PlusIcon, alt: 'Добавить свой кубик' },
+const DIE_OPTIONS: { type: DiceType; icon: string; alt: string }[] = [
+  { type: DiceType.D4,  icon: D4Icon,  alt: 'Добавить D4'  },
+  { type: DiceType.D6,  icon: D6Icon,  alt: 'Добавить D6'  },
+  { type: DiceType.D8,  icon: D8Icon,  alt: 'Добавить D8'  },
+  { type: DiceType.D10, icon: D10Icon, alt: 'Добавить D10' },
+  { type: DiceType.D12, icon: D12Icon, alt: 'Добавить D12' },
+  { type: DiceType.D20, icon: D20Icon, alt: 'Добавить D20' },
+  
 ];
 
 export const DiceToolbar: React.FC<DiceToolbarProps> = ({ onAdd, onRoll }) => {
