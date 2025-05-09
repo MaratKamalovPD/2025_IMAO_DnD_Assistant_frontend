@@ -36,7 +36,7 @@ function makeDieR3F(
   settleThreshold: number,
   defaultColor: THREE.ColorRepresentation
 ): React.FC<DieR3FProps> {
-  return ({ value, onSettle, onClick, color }) => {
+  return ({ value, onSettle, onClick, color, spinFlag }) => {
     // находим index 0-based по метке
     const idx = labels.findIndex(lbl => lbl === String(value));
     const mapped = idx >= 0 ? idx + 1 : 1;
@@ -59,6 +59,7 @@ function makeDieR3F(
         settleThreshold={settleThreshold}
         color={color ?? defaultColor}
         value={mapped}
+        spinFlag={spinFlag}
         onSettle={handleSettle}
         onClick={onClick}
       />

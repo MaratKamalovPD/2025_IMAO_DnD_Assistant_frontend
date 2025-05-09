@@ -20,6 +20,9 @@ export type GenericDieR3FProps = {
   maxSpeed?: number;
   /** Когда переходить от spin к settle (0…1) */
   settleThreshold?: number;
+  /** Инкрементируемая числовая переменная, которая обозначает, что случилась очередная крутка.
+   *  Нужно для случая, когда value не поменялось (на кубе выпало то же самое значение), чтобы воспроизвелась анимация */
+  spinFlag: number;
   /** Коллбэк, когда анимация завершилась */
   onSettle?: (value: number) => void;
   /** Коллбэк при щелчке */
@@ -36,6 +39,7 @@ export const GenericDieR3F: React.FC<GenericDieR3FProps> = ({
   minSpeed = 8,
   maxSpeed = 16,
   settleThreshold = 0.8,
+  spinFlag,
   onSettle,
   onClick,
 }) => {
@@ -148,7 +152,7 @@ export const GenericDieR3F: React.FC<GenericDieR3FProps> = ({
       new THREE.Vector3(0, 0, 1)
     );
     a.animating = true;
-  }, [value, faceData, minSpeed, maxSpeed]);
+  }, [value, faceData, minSpeed, maxSpeed, spinFlag]);
 
   // useFrame для обновления каждый кадр
   useFrame((state, delta) => {

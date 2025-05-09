@@ -18,7 +18,7 @@ import {
 } from '../../dices';
 
 // Словарь, чтобы по типу кости выбрать нужный компонент
-const DIE_COMPONENTS: Record<DieType, React.FC<{ value: number; onSettle?: (v: number) => void }>> = {
+const DIE_COMPONENTS: Record<DieType, React.FC<{ value: number; spinFlag: number; onSettle?: (v: number) => void }>> = {
   d4:  R3F_D4,
   d6:  R3F_D6,
   d8:  R3F_D8,
@@ -36,6 +36,7 @@ interface DieInstance {
 
 export const ActualDiceTray: React.FC = () => {
   const [tray, setTray] = useState<DieInstance[]>([]);
+  const [spinFlag, setSpinFlag] = useState<number>(0);
 
   const getRandomValue = (type: DieType): number => {
     const max =
@@ -60,6 +61,7 @@ export const ActualDiceTray: React.FC = () => {
   }, []);
 
   const handleRollAll = useCallback(() => {
+    setSpinFlag(prev => prev + 1)
     setTray(prev =>
       prev.map(d => ({ ...d, value: getRandomValue(d.type) }))
     );
@@ -95,6 +97,7 @@ export const ActualDiceTray: React.FC = () => {
               >
                 <DieComp
                   value={die.value}
+                  spinFlag={spinFlag}
                   onSettle={v => {
                     // Если нужно синхронизировать value после анимации
                     setTray(prev =>
