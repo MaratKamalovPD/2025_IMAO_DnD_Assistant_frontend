@@ -38,19 +38,29 @@ export const ActualDiceTray: React.FC = () => {
     requestAnimationFrame(step);
   }, []);
 
-  // Добавление кубика
   const handleAdd = useCallback((type: DiceType) => {
+    // 1) Проверка на максимум
     if (tray.length >= MAX_DICE) {
       setWarning(`Нельзя добавить более ${MAX_DICE} костей`);
       return;
     }
     setWarning(null);
-    setTray(prev => [
-      ...prev,
-      { id: uniqid(), type, value: rollDice(type), removing: false },
-    ]);
-  }, [tray.length]);
-
+  
+    // 2) Сразу вычисляем случайное значение и формируем новый кубик
+    const value = rollDice(type);
+    const newDie = { id: uniqid(), type, value, removing: false };
+  
+    // 3) Вставляем кубик в tray
+    setTray(prev => [...prev, newDie]);
+  
+    // 4) Расчитываем новую сумму и анимируем
+    setDisplaySum(prevSum => {
+      const newSum = prevSum + value;
+      animateSum(prevSum, newSum);
+      return newSum;
+    });
+  }, [tray.length, animateSum]);
+  
   // Удаление кубика
   const handleInitRemove = useCallback((id: string) => {
     setWarning(null);
@@ -104,6 +114,7 @@ export const ActualDiceTray: React.FC = () => {
   // Эффект: когда settleCount === tray.length, считаем и анимируем сумму
   useEffect(() => {
     if (settleCount === 0) return;
+    if (spinFlag === 0) return;
     if (settleCount === tray.length) {
       const sum = tray.reduce((acc, d) => acc + d.value, 0);
       setDisplaySum(sum);
@@ -111,6 +122,15 @@ export const ActualDiceTray: React.FC = () => {
     }
   }, [settleCount, tray, animateSum]);
 
+  useEffect(() => {
+    if (tray.length === 0) {
+      setSpinFlag(0);
+      setDisplaySum(0);
+      setAnimatedSum(0);
+      oldSumRef.current = 0;
+    }
+  }, [tray.length]);
+  
   // Выбор cols и zoom под размер лотка
   const { cols, zoom } = layoutConfigs.find(c => tray.length <= c.maxCount)!;
 
