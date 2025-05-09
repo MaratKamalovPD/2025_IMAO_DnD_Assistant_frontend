@@ -1,24 +1,31 @@
-// src/App.tsx
+// src/components/ActualDiceTray.tsx
 import React, { useState, useCallback } from 'react';
-import uniqid from 'uniqid'
+import uniqid from 'uniqid';
 
-// import { D4, D6, D8, D10, D12, D20 } from './components/DicePresets';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
 
-import styles from './ActualDiceTray.module.scss';
-import { ThreeD4, ThreeD6, ThreeD8, ThreeD10, ThreeD12, ThreeD20 } from '../../dices';
 import { DiceToolbar, DieType } from '../diceToolbar';
+import styles from './ActualDiceTray.module.scss';
 
-// Прототипная функция генерации рандомного значения для каждой кости.
-// Здесь вы можете подставить свою функцию.
-const getRandomValue = (type: DieType): number => {
-  const max = type === 'd4'  ? 4
-            : type === 'd6'  ? 6
-            : type === 'd8'  ? 8
-            : type === 'd10' ? 10
-            : type === 'd12' ? 12
-            : type === 'd20' ? 20
-            : 6;
-  return Math.floor(Math.random() * max) + 1;
+import {
+  R3F_D4,
+  R3F_D6,
+  R3F_D8,
+  R3F_D10,
+  R3F_D12,
+  R3F_D20,
+} from '../../dices';
+
+// Словарь, чтобы по типу кости выбрать нужный компонент
+const DIE_COMPONENTS: Record<DieType, React.FC<{ value: number; onSettle?: (v: number) => void }>> = {
+  d4:  R3F_D4,
+  d6:  R3F_D6,
+  d8:  R3F_D8,
+  d10: R3F_D10,
+  d12: R3F_D12,
+  d20: R3F_D20,
+  custom: R3F_D6, // fallback
 };
 
 interface DieInstance {
@@ -30,26 +37,31 @@ interface DieInstance {
 export const ActualDiceTray: React.FC = () => {
   const [tray, setTray] = useState<DieInstance[]>([]);
 
-  // Добавляем кость заданного типа
-  const handleAdd: (t: DieType) => void = useCallback((type) => {
+  const getRandomValue = (type: DieType): number => {
+    const max =
+      type === 'd4'  ? 4 :
+      type === 'd6'  ? 6 :
+      type === 'd8'  ? 8 :
+      type === 'd10' ? 10 :
+      type === 'd12' ? 12 :
+      type === 'd20' ? 20 : 6;
+    return Math.floor(Math.random() * max) + 1;
+  };
+
+  const handleAdd = useCallback((type: DieType) => {
     setTray(prev => [
       ...prev,
-      { id: uniqid(), type, value: getRandomValue(type) }
+      { id: uniqid(), type, value: getRandomValue(type) },
     ]);
   }, []);
 
-  // Удаляем кость по id
   const handleRemove = useCallback((id: string) => {
     setTray(prev => prev.filter(d => d.id !== id));
   }, []);
 
-  // Бросаем все кости сразу
   const handleRollAll = useCallback(() => {
     setTray(prev =>
-      prev.map(d => ({
-        ...d,
-        value: getRandomValue(d.type)
-      }))
+      prev.map(d => ({ ...d, value: getRandomValue(d.type) }))
     );
   }, []);
 
@@ -57,38 +69,47 @@ export const ActualDiceTray: React.FC = () => {
     <div className={styles.container}>
       <DiceToolbar onAdd={handleAdd} onRoll={handleRollAll} />
 
-      <div className={styles.trayGrid}>
-        {tray.map(die => {
-          // выбираем нужный компонент по типу
-          const DieComp = {
-            d4:  ThreeD4,
-            d6:  ThreeD6,
-            d8:  ThreeD8,
-            d10: ThreeD10,
-            d12: ThreeD12,
-            d20: ThreeD20,
-            custom: ThreeD6, // fallback
-          }[die.type];
+      <div className={styles.canvasWrapper}>
+        <Canvas
+          orthographic
+          camera={{ position: [0, 0, 10], zoom: 50 }}
+          style={{ width: '100%', height: '100%', display: 'block' }}
+        >
+          <ambientLight intensity={0.4} />
+          <directionalLight position={[5, 5, 5]} intensity={0.8} />
 
-          return (
-            <div
-              key={die.id}
-              className={styles.dieWrapper}
-              onClick={() => handleRemove(die.id)}
-              title="Клик — удалить кость"
-            >
-              <DieComp
-                size={150}
-                value={die.value}
-              />
-              <div className={styles.valueOverlay}>{die.value}</div>
-            </div>
-          );
-        })}
+          {tray.map((die, idx) => {
+            const DieComp = DIE_COMPONENTS[die.type];
+            // рассчитываем позицию в сетке 4×N
+            const col = idx % 4;
+            const row = Math.floor(idx / 4);
+            const x = (col - 1.5) * 2;
+            const y = -(row - 0.5) * 2;
 
-        {tray.length === 0 && (
-          <div className={styles.empty}>Перетащите или нажмите +, чтобы добавить кости</div>
-        )}
+            return (
+              <group
+                key={die.id}
+                position={[x, y, 0]}
+                onClick={() => handleRemove(die.id)}
+                scale={[1.2, 1.2, 1.2]}
+              >
+                <DieComp
+                  value={die.value}
+                  onSettle={v => {
+                    // Если нужно синхронизировать value после анимации
+                    setTray(prev =>
+                      prev.map(d =>
+                        d.id === die.id ? { ...d, value: v } : d
+                      )
+                    );
+                  }}
+                />
+              </group>
+            );
+          })}
+
+          <OrbitControls enableZoom={false} />
+        </Canvas>
       </div>
     </div>
   );

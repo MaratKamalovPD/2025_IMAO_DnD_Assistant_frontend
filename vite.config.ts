@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 
 import react from '@vitejs/plugin-react';
 import dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config();
 const domain = process.env.VITE_DOMAIN || '127.0.0.1';
@@ -31,11 +32,16 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      react: path.resolve(__dirname, 'node_modules/react'),
+      'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
+
+      // ваши существующие алиасы
       app: '/src/app',
       entities: '/src/entities',
       pages: '/src/pages',
       shared: '/src/shared',
       widgets: '/src/widgets',
     },
+    dedupe: ['react', 'react-dom'],
   },
 });
