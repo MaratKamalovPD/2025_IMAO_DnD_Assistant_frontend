@@ -179,13 +179,13 @@ export const GenericDieR3F: React.FC<GenericDieR3FProps> = ({
         a.settleStart = now;
       }
     } else if (a.state === 'settle') {
+      onSettle?.(value);  
       const elapsed = now - a.settleStart;
       const t = Math.min(1, elapsed / (settleDurationSec * 1000));
       grp.quaternion.copy(a.spinEndQuat).slerp(a.finalQuat, t);
       if (t === 1) {
         a.animating = false;
         a.state = 'idle';
-        onSettle?.(value);
       }
     }
   });

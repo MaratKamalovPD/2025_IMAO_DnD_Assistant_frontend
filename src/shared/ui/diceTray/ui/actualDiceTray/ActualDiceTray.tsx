@@ -53,7 +53,6 @@ export const ActualDiceTray: React.FC = () => {
 
   // Удаление кубика
   const handleInitRemove = useCallback((id: string) => {
-    setWarning(null);
     setTray(prev => prev.map(d => d.id === id ? { ...d, removing: true } : d));
   }, []);
   const handleFinalizeRemove = useCallback((id: string) => {
@@ -90,7 +89,7 @@ export const ActualDiceTray: React.FC = () => {
     if (settleCount === tray.length) {
       const sum = tray.reduce((acc, d) => acc + d.value, 0);
       setDisplaySum(sum);
-      animateSum(oldSumRef.current, sum);
+      animateSum(0, sum);
     }
   }, [settleCount, tray, animateSum]);
 
