@@ -28,15 +28,31 @@ export const ActualDiceTray: React.FC = () => {
   const oldSumRef = useRef(0);
 
   // Функция для анимации счётчика
-  const animateSum = useCallback((from: number, to: number) => {
-    const start = performance.now();
-    const step = (now: number) => {
-      const t = Math.min((now - start) / ANIMATION_DURATION, 1);
-      setAnimatedSum(Math.floor(from + (to - from) * t));
-      if (t < 1) requestAnimationFrame(step);
+  const animateSum = useCallback((
+    from: number,
+    to: number,
+    delay: number = 0
+  ) => {
+    // сразу выставляем начальное значение, чтобы точно было from
+    setAnimatedSum(from);
+  
+    const startAnim = () => {
+      const start = performance.now();
+      const step = (now: number) => {
+        const t = Math.min((now - start) / ANIMATION_DURATION, 1);
+        setAnimatedSum(Math.floor(from + (to - from) * t));
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
     };
-    requestAnimationFrame(step);
+  
+    if (delay > 0) {
+      setTimeout(startAnim, delay);
+    } else {
+      startAnim();
+    }
   }, []);
+  
 
   const handleAdd = useCallback((type: DiceType) => {
     // 1) Проверка на максимум
@@ -54,9 +70,10 @@ export const ActualDiceTray: React.FC = () => {
     setTray(prev => [...prev, newDie]);
   
     // 4) Расчитываем новую сумму и анимируем
-    setDisplaySum(prevSum => {
-      const newSum = prevSum + value;
-      animateSum(prevSum, newSum);
+    setDisplaySum(prev => {
+      const newSum = prev + value;
+      // ждем 200 мс, чтобы кость точно легла в сцене, и только потом анимируем
+      animateSum(prev, newSum, 1200);
       return newSum;
     });
   }, [tray.length, animateSum]);
