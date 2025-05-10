@@ -159,7 +159,7 @@ export const GenericDieR3F: React.FC<GenericDieR3FProps> = ({
   }, [value, faceData, minSpeed, maxSpeed, spinFlag]);
 
   // useFrame для обновления каждый кадр
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     const a = anim.current;
     const grp = groupRef.current;
     if (!a.animating || !grp) return;

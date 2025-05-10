@@ -1,14 +1,13 @@
 import React from 'react';
 import s from './DiceToolbar.module.scss';
 
-// Заготовка для ваших SVG-иконок
 import D4Icon  from 'shared/assets/images/dicesAndRolls/d4/D4_Poison.png';
 import D6Icon  from 'shared/assets/images/dicesAndRolls/d6/D6_Cold.png';
 import D8Icon  from 'shared/assets/images/dicesAndRolls/d8/D8_Thunder.png';
 import D10Icon from 'shared/assets/images/dicesAndRolls/d10/D10_Force.png';
 import D12Icon from 'shared/assets/images/dicesAndRolls/d12/D12_Psychic.png';
 import D20Icon from 'shared/assets/images/dicesAndRolls/d20/D20.png';
-import PlusIcon from 'shared/assets/images/dicesAndRolls/d20/D20.png';
+//import PlusIcon from 'shared/assets/images/dicesAndRolls/d20/D20.png';
 import { DiceType } from 'shared/lib';
 import { DiceToolbarProps } from '../../model';
 

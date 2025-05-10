@@ -8,3 +8,4 @@ export type { SensesFormProps, SensesFormState, SenseType } from './sensesTypes'
 export type { AttackFormAttack} from './attackFormTypes';
 export { initialDamage, initialAttack} from './attackFormTypes';
 export type { SelectOption, SelectOptionWithDescription, PromptTextareaRef } from './types';
+export { applyCreatureData } from './applyCreatureData'
