@@ -63,3 +63,5 @@ export type RootStore = ReturnType<
     statblockGeneratorApi: typeof statblockGeneratorApi.reducer;
   }>
 >;
+
+export type AppDispatch = typeof store.dispatch;

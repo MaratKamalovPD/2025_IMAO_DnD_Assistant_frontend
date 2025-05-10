@@ -3,6 +3,7 @@ import {
   Icon28DiamondOutline,
   Icon28DocumentListOutline,
   Icon28HomeOutline,
+  Icon28Dice6Outline,
 } from '@vkontakte/icons';
 import { useEffect, useState } from 'react';
 import { createChatBotMessage } from 'react-chatbot-kit';
@@ -27,6 +28,7 @@ import { TrackPanel } from './trackPanel';
 
 import s from './EncounterTracker.module.scss';
 import { HelpButton } from './helpButton';
+import { DiceTrayWidget } from './diceTrayWidget';
 
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
 const VILLAGE_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-2.png';
@@ -56,6 +58,10 @@ export const EncounterTracker = () => {
     statblockIsVisible,
     statblockSize,
     statblockCoords,
+    diceTraySize,
+    diceTrayCoords,
+    diceTrayIsMinimized,
+    diceTrayIsVisible,
   } = useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
 
   useEffect(() => {
@@ -106,13 +112,22 @@ export const EncounterTracker = () => {
     }
   }, [lastLog]);
 
-  const toggleWindow = () => {
+  const toggleStatblockWindow = () => {
     if (statblockIsMinimized) {
       dispatch(userInterfaceActions.setStatblockSize({ width: statblockSize.width, height: 600 }));
     } else {
       dispatch(userInterfaceActions.setStatblockSize({ width: statblockSize.width, height: 40 })); // или вообще height: 0
     }
     dispatch(userInterfaceActions.setStatblockIsMinimized(!statblockIsMinimized));
+  };
+
+  const toggleDiceTrayWindow = () => {
+    if (diceTrayIsMinimized) {
+      dispatch(userInterfaceActions.setDiceTraySize({ width: diceTraySize.width, height: 600 }));
+    } else {
+      dispatch(userInterfaceActions.setStatblockSize({ width: diceTraySize.width, height: 40 })); // или вообще height: 0
+    }
+    dispatch(userInterfaceActions.setDiceTrayIsMinimized(!diceTrayIsMinimized));
   };
 
   const ToggleStatblock = () => {
@@ -127,6 +142,19 @@ export const EncounterTracker = () => {
       </Tippy>
     );
   };
+
+  const ToggleDiceTray = () => {
+    return (
+      <Tippy content={'Броски костей'}>
+        <div
+          className={s.toggleDiceTray}
+          onClick={() => dispatch(userInterfaceActions.setDiceTrayIsVisible(!diceTrayIsVisible))}
+        >
+          <Icon28Dice6Outline fill='black' />
+        </div>
+      </Tippy>
+    );
+  }
 
   const menuItems: MenuItem[] = [
     {
@@ -172,6 +200,13 @@ export const EncounterTracker = () => {
       color: s.green,
       href: '#rocket',
     },
+    {
+      content: {
+        type: 'component',
+        component: <ToggleDiceTray />,
+      },
+      color: s.red,
+    },
   ];
 
   return (
@@ -209,9 +244,41 @@ export const EncounterTracker = () => {
               {/* Передаём управление внутрь Statblock */}
               <Statblock
                 isMinimized={statblockIsMinimized}
-                toggleWindow={toggleWindow}
+                toggleWindow={toggleStatblockWindow}
                 cells={cells}
                 setCells={setCells}
+              />
+            </Rnd>
+          )}
+
+          {diceTrayIsVisible && (
+            <Rnd
+              minWidth={800}
+              style={{ zIndex: 10 }}
+              default={{
+                x: diceTrayCoords.x,
+                y: diceTrayCoords.y,
+                width: diceTraySize.width,
+                height: diceTraySize.height,
+              }}
+              enableResizing={!diceTrayIsMinimized}
+              size={diceTraySize}
+              onResizeStop={(_e, _direction, ref) => {
+                dispatch(
+                  userInterfaceActions.setDiceTraySize({
+                    width: ref.offsetWidth,
+                    height: ref.offsetHeight,
+                  }),
+                );
+              }}
+              onDragStop={(_e, data) => {
+                dispatch(userInterfaceActions.setDiceTrayCoords({ x: data.x, y: data.y }));
+              }}
+            >
+              {/* Передаём управление внутрь DiceTrayWidget */}
+              <DiceTrayWidget
+                isMinimized={diceTrayIsMinimized}
+                toggleWindow={toggleDiceTrayWindow}
               />
             </Rnd>
           )}

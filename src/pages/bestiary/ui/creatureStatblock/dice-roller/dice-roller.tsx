@@ -11,37 +11,33 @@ export class DiceRoller extends HTMLElement {
     const label = this.getAttribute("label") ?? '';
     const formula = this.getAttribute("formula")?.trim() ?? '';
 
-    // Вычисляем текст, который должен отображаться
-    let content = this.textContent?.trim() ?? '';
-
-    if (!content) {
-      if (label === 'Атака') {
-        const match = formula.match(/[+-]\d+/);
-        content = match ? match[0] : '+0'; // Показываем только модификатор
-      } else if (label === 'Урон') {
-        content = formula; // Показываем всю формулу, например 1к6 + 2
-      }
-    }
-
     const wrapper = document.createElement("span");
     wrapper.setAttribute("title", `Нажмите, чтобы бросить ${label.toLowerCase()}`);
 
     const formulaNode = document.createElement("span");
     formulaNode.classList.add("highlight");
 
-    if (label === 'Атака') {
-      formulaNode.appendChild(document.createTextNode(content));
-      wrapper.appendChild(formulaNode);
-    } else if (label === 'Урон') {
-      // 1. Вставляем подсвеченное значение (например: 1к6 + 2)
-      formulaNode.appendChild(document.createTextNode(formula));
-      wrapper.appendChild(formulaNode);
+    let content = this.textContent?.trim() ?? '';
 
-      // 2. Вставляем остальной текст из content, например: ") колющего урона."
-      const restText = content.replace(formula, '').trim();
-      if (restText) {
-        wrapper.appendChild(document.createTextNode(' ' + restText));
-      }
+    if (label === 'Атака') {
+      const normalized = formula.replace(/\s/g, ''); 
+      const match = normalized.match(/[+-]\d+/);
+      content = match ? match[0] : '+0';  
+
+    } else if (label === 'Урон') {
+      content = formula; 
+    }
+
+    formulaNode.textContent = content;
+    formulaNode.addEventListener("click", () => this._roll());
+
+    wrapper.appendChild(formulaNode);
+
+    if (label === 'Урон') {
+      // Клонируем все оригинальные дочерние узлы (текст и вложенные dice-roller)
+      this.childNodes.forEach(node => {
+        wrapper.appendChild(node.cloneNode(true));
+      });
     }
 
     const style = document.createElement("style");
@@ -54,46 +50,50 @@ export class DiceRoller extends HTMLElement {
       }
     `;
 
-    wrapper.addEventListener("click", () => {
-      if (label === "Атака") {
-        const match = content.match(/([+-]?\d+)/);
-        const modifier = match ? parseInt(match[1], 10) : 0;
+    shadow.append(style, wrapper);
+  }
 
-        const roll = rollDice(DiceType.D20);
+  private _roll() {
+    const label = this.getAttribute("label");
+    const formula = this.getAttribute("formula")?.trim() ?? '';
+    
+    console.log(formula)
+
+    if (label === "Атака") {
+      const normalized = formula.replace(/\s/g, ''); 
+      const match = normalized.match(/[+-]\d+/);
+      const modifier = match ? parseInt(match[0], 10) : 0;
+      const roll = rollDice(DiceType.D20);
+      toast(
+        <D20RollToast
+          type={ToastType.Attack}
+          title="Атака"
+          rollResult={roll}
+          modifier={modifier}
+        />
+      );
+    } else if (label === "Урон") {
+      console.log('aboba')
+      try {
+        const parsed = parseDice(formula);
+        const dice = 'dice' in parsed ? parsed.dice : parsed;
+        const modifier = 'modifier' in parsed ? parsed.modifier : 0;
+        const rolls = Array.from({ length: dice.count }, () =>
+          rollDice(dice.type)
+        );
+
         toast(
-          <D20RollToast
-            type={ToastType.Attack}
-            title="Атака"
-            rollResult={roll}
+          <HitRollToast
+            diceRolls={rolls}
             modifier={modifier}
+            maxDiceVal={dice.edgesNum}
+            title="БРОСОК УРОНА"
           />
         );
-      } else if (label === "Урон") {
-        try {
-          const result = parseDice(formula);
-          const dice = "dice" in result ? result.dice : result;
-          const modifier = "modifier" in result ? result.modifier : 0;
-
-          const rolls = Array.from({ length: dice.count }, () =>
-            rollDice(dice.type)
-          );
-
-          toast(
-            <HitRollToast
-              diceRolls={rolls}
-              modifier={modifier}
-              maxDiceVal={dice.edgesNum}
-              title="БРОСОК УРОНА"
-            />
-          );
-        } catch (e) {
-          console.error("Ошибка при парсинге формулы урона:", e);
-        }
+      } catch (e) {
+        console.error('Ошибка при парсинге формулы урона:', e);
       }
-    });
-
-    shadow.appendChild(style);
-    shadow.appendChild(wrapper);
+    }
   }
 }
 
