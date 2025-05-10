@@ -42,11 +42,10 @@ export const DiceToolbar: React.FC<DiceToolbarProps> = ({ onAdd, onRoll }) => {
       </div>
 
       <button
-        type="button"
-        className={s.rollButton}
+        data-variant='accent'
         onClick={onRoll}
       >
-        Roll
+        Прокрутить!
       </button>
     </div>
   );

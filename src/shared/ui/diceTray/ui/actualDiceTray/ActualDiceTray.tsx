@@ -190,13 +190,13 @@ export const ActualDiceTray: React.FC = () => {
             <div
               style={{
                 position: 'absolute',
-                top: 8,
-                left: 8,
+                top: 4,
+                left: 4,
                 padding: '4px 8px',
                 background: 'rgba(0,0,0,0.6)',
                 color: 'white',
                 borderRadius: 4,
-                fontSize: '1rem',
+                fontSize: '1.4rem',
                 userSelect: 'none',
               }}
             >
@@ -204,7 +204,10 @@ export const ActualDiceTray: React.FC = () => {
             </div>
           </Html>
 
-          <OrbitControls enableZoom={false} />
+          <OrbitControls
+            enableZoom={false}
+            enableRotate={false}
+          />
         </Canvas>
       </div>
     </div>

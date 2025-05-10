@@ -7,8 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router';
 import s from './Login.module.scss';
 import logo from '/src/shared/assets/images/logo.png';
-import { ActualDiceTray } from 'shared/ui/diceTray/ui/actualDiceTray';
-//import { DiceGrid } from 'shared/ui/diceTray/dices';
 
 export const Login = () => {
   const [err, setErr] = useState<string>('');
@@ -32,8 +30,6 @@ export const Login = () => {
 
   return (
     <div className={s.pageContent}>
-      <ActualDiceTray />
-      
       <div className={s.authForm}>
         <div className={s.authForm__logoContainer}>
           <Link to='/'>

@@ -35,27 +35,3 @@
     height: 64px;
   }
   
-  .rollButton {
-    margin-top: 16px;
-    background-color: #1a73e8;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 24px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    will-change: background-color, transform;
-  }
-  
-  /* (Опционально) такой же «сжатие» для кнопки Roll */
-  .rollButton:active {
-    transform: scale(0.95);
-  }
-  
-  .rollButton:hover {
-    background-color: #1669c1;
-  }
-  
-  
-  

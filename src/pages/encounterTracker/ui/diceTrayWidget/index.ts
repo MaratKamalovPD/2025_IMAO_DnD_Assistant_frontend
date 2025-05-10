@@ -1,0 +1,1 @@
+export { DiceTrayWidget } from './DiceTrayWidget'
