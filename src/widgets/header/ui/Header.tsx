@@ -4,6 +4,7 @@ import { UserData } from 'entities/auth/model';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import logo from 'shared/assets/images/logo.png';
+import { useSessionURL } from 'shared/lib';
 import s from './Header.module.scss';
 
 type HeaderProps = {
@@ -16,6 +17,7 @@ type HeaderProps = {
 export const Header: React.FC<HeaderProps> = ({ encounterId, isAuth, user, logout }) => {
   const location = useLocation();
   const [visible, setVisible] = useState(false);
+  const sessionUrl = useSessionURL(location.pathname);
 
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -58,7 +60,15 @@ export const Header: React.FC<HeaderProps> = ({ encounterId, isAuth, user, logou
           </div>
         </div>
         <div className={s.rightSection}>
-          <Link to={encounterId ? `/encounter_tracker/${encounterId}` : '/encounter_tracker'}>
+          <Link
+            to={
+              sessionUrl
+                ? sessionUrl
+                : encounterId
+                  ? `/encounter_tracker/${encounterId}`
+                  : '/encounter_tracker'
+            }
+          >
             <button data-variant='accent'>Трекер</button>
           </Link>
           {isAuth ? (

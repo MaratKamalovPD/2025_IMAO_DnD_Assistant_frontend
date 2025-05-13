@@ -1,10 +1,12 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import uniqid from 'uniqid';
 
 import { UUID } from 'shared/lib';
 import { CellsCoordinates, Participant } from './types';
 
 export type EncounterState = {
   encounterId: UUID | null;
+  saveVersionHash: UUID;
   hasStarted: boolean;
   currentRound: number;
   currentTurnIndex: number;
@@ -13,20 +15,32 @@ export type EncounterState = {
 
 export const initialState: EncounterState = {
   encounterId: null,
+  saveVersionHash: uniqid(),
   hasStarted: false,
   currentRound: 1,
   currentTurnIndex: 0,
   participants: [],
 };
 
+export const setNewSaveEncounterVersion = createAsyncThunk<UUID, void>(
+  'encounter/setNewSaveEncounterVersion',
+  () => uniqid(),
+);
+
 const encounterSlice = createSlice({
   name: 'encounter',
   initialState,
+  extraReducers: (builder) => {
+    builder.addCase(setNewSaveEncounterVersion.fulfilled, (state, action) => {
+      state.saveVersionHash = action.payload;
+    });
+  },
   reducers: {
     setEncounterId: (state, action: PayloadAction<UUID | null>) => {
       state.encounterId = action.payload;
     },
     setState: (state, action: PayloadAction<EncounterState>) => {
+      state.saveVersionHash = action.payload?.saveVersionHash;
       state.hasStarted = action.payload.hasStarted;
       state.currentRound = action.payload.currentRound;
       state.currentTurnIndex = action.payload.currentTurnIndex;

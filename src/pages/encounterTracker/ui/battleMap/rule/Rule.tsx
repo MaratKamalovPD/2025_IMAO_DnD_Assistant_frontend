@@ -22,7 +22,6 @@ export const Rule = ({ transform, cellSize }: RuleProps) => {
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    console.log('bbbbbbbbbbbbbbbb');
     // Правая кнопка мыши
     if (e.button === 2) {
       if (!svgRef.current) return;

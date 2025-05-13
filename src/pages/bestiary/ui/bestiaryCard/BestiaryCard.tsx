@@ -1,10 +1,10 @@
 import { FC, useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 
 import { creatureActions, CreatureClippedData } from 'entities/creature/model';
-import { encounterActions } from 'entities/encounter/model';
+import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
 import { useLazyGetCreatureByNameQuery } from 'pages/bestiary/api';
 import { convertCreatureFullDataToCreature } from 'pages/bestiary/lib';
 import { GridCard } from './gridCard';
@@ -20,6 +20,10 @@ type BestiaryCardProps = {
 
 export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSelected }) => {
   const dispatch = useDispatch();
+
+  const { participants } = useSelector<EncounterStore>(
+    (state) => state.encounter,
+  ) as EncounterState;
 
   const [trigger, { data: creatureData, isLoading, isError, isUninitialized, requestId }] =
     useLazyGetCreatureByNameQuery();
@@ -37,6 +41,7 @@ export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSele
           _id: currentCreature._id,
           id: currentCreature.id,
           initiative: currentCreature.initiative,
+          cellsCoords: { cellsX: 0, cellsY: participants.length },
         }),
       );
       dispatch(creatureActions.addCreature(currentCreature));

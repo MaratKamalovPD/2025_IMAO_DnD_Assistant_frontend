@@ -1,10 +1,10 @@
 import { Icon28BookOutline, Icon28CancelAltOutline } from '@vkontakte/icons';
 import { useCallback, useState } from 'react';
-import { Chatbot as Cb } from 'react-chatbot-kit';
-import { useDispatch, useSelector } from 'react-redux';
+import { Chatbot as Cb, createChatBotMessage } from 'react-chatbot-kit';
+import { useSelector } from 'react-redux';
 
-import { IMessage, LoggerStore } from 'entities/logger/model';
-import { loggerActions, LoggerState } from '../../../entities/logger/model/logger.slice';
+import { LoggerStore } from 'entities/logger/model';
+import { LoggerState } from '../../../entities/logger/model/logger.slice';
 import { config } from '../config';
 import { ActionProvider, MessageParser } from '../model';
 
@@ -12,19 +12,18 @@ import Tippy from '@tippyjs/react';
 import s from './Chatbot.module.scss';
 
 export const Chatbot = () => {
-  const disatch = useDispatch();
-
   const [showBot, toggleBot] = useState(false);
 
-  const { messageLogs } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
-
-  const saveMessages = (messages: IMessage[]) => {
-    disatch(loggerActions.saveMessages(messages));
-  };
+  const { logs } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
 
   const loadMessages = useCallback(() => {
-    return messageLogs;
-  }, [messageLogs]);
+    return logs.map((log) => {
+      const botMessage = createChatBotMessage(log, {});
+      botMessage.loading = false;
+
+      return botMessage;
+    });
+  }, [logs]);
 
   return (
     <>
@@ -35,13 +34,12 @@ export const Chatbot = () => {
             messageParser={MessageParser}
             actionProvider={ActionProvider}
             messageHistory={loadMessages()}
-            saveMessages={saveMessages}
             headerText='Журнал Сражения'
             placeholderText='Написать заметку'
           />
         </div>
       )}
-      <Tippy content={'Журнал сражения'}>
+      <Tippy content={'Журнал сражения'} placement='left'>
         <button className={s.chatbotButton} onClick={() => toggleBot((prev) => !prev)}>
           {!showBot ? <Icon28BookOutline /> : <Icon28CancelAltOutline />}
         </button>

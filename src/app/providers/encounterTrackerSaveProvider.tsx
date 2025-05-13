@@ -49,12 +49,20 @@ export const EncounterTrackerSaveProvider = ({ children }: Props) => {
         body: body,
       })?.unwrap();
     }, DEBOUNSE_TIME),
-    [saveEncounter],
+    [saveEncounter, id],
   );
 
   useEffect(
-    () => updateState({ loggerState, encounterState, creaturesState }),
-    [loggerState, creaturesState, encounterState],
+    () =>
+      updateState({
+        loggerState: {
+          lastLogs: [],
+          logs: loggerState.logs,
+        },
+        encounterState,
+        creaturesState,
+      }),
+    [encounterState.saveVersionHash],
   );
 
   return <>{children}</>;

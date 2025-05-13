@@ -44,6 +44,7 @@
     "react-select": "^5.10.1",
     "react-textarea-autosize": "^8.5.9",
     "react-toastify": "^11.0.5",
+    "react-use-websocket": "^4.13.0",
     "redux": "^5.0.1",
     "three": "^0.176.0",
     "tippy.js": "^6.3.7",

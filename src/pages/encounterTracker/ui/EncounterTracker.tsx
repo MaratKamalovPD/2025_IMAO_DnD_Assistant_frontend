@@ -1,12 +1,11 @@
 import Tippy from '@tippyjs/react';
 import {
   Icon28DiamondOutline,
+  Icon28Dice6Outline,
   Icon28DocumentListOutline,
   Icon28HomeOutline,
-  Icon28Dice6Outline,
 } from '@vkontakte/icons';
 import { useEffect, useState } from 'react';
-import { createChatBotMessage } from 'react-chatbot-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { Rnd } from 'react-rnd';
 
@@ -17,18 +16,19 @@ import {
   UserInterfaceState,
   UserInterfaceStore,
 } from 'entities/userInterface/model';
+import { Placeholder } from 'shared/ui';
 import { Chatbot } from 'widgets/chatbot';
 import { BattleMap } from './battleMap';
 import { CardList } from './cardList';
+import CreateSessionDialog from './createSessionDialog/CreateSessionDialog';
 import { CustomCursor } from './customCursor';
-import { Placeholder } from './placeholder';
+import { DiceTrayWidget } from './diceTrayWidget';
+import { HelpButton } from './helpButton';
 import { MenuItem, PopupMenu } from './popupMenu';
 import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
 
 import s from './EncounterTracker.module.scss';
-import { HelpButton } from './helpButton';
-import { DiceTrayWidget } from './diceTrayWidget';
 
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
 const VILLAGE_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-2.png';
@@ -48,7 +48,7 @@ export const EncounterTracker = () => {
       .map(() => Array(cols).fill(false)),
   );
 
-  const { lastLog } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
+  const { lastLogs } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
   const { participants, currentTurnIndex } = useSelector<EncounterStore>(
     (state) => state.encounter,
   ) as EncounterState;
@@ -103,14 +103,17 @@ export const EncounterTracker = () => {
     dispatch(userInterfaceActions.setStatblockIsVisible(!statblockIsVisible));
   }, [selectedCreatureId]);
 
-  useEffect(() => {
-    if (lastLog) {
-      const botMessage = createChatBotMessage(lastLog, {});
-      botMessage.loading = false;
+  let logTimeout: NodeJS.Timeout;
 
-      dispatch(loggerActions.addMessage(botMessage));
+  useEffect(() => {
+    if (lastLogs.length !== 0) {
+      clearTimeout(logTimeout);
+
+      logTimeout = setTimeout(() => {
+        dispatch(loggerActions.addMessageFromLastLog());
+      });
     }
-  }, [lastLog]);
+  }, [lastLogs]);
 
   const toggleStatblockWindow = () => {
     if (statblockIsMinimized) {
@@ -132,7 +135,7 @@ export const EncounterTracker = () => {
 
   const ToggleStatblock = () => {
     return (
-      <Tippy content={'Таблица характкристик'}>
+      <Tippy content={'Таблица характеристик'} placement='left'>
         <div
           className={s.toggleStatblock}
           onClick={() => dispatch(userInterfaceActions.setStatblockIsVisible(!statblockIsVisible))}
@@ -154,7 +157,7 @@ export const EncounterTracker = () => {
         </div>
       </Tippy>
     );
-  }
+  };
 
   const menuItems: MenuItem[] = [
     {
@@ -176,7 +179,7 @@ export const EncounterTracker = () => {
       content: {
         type: 'component',
         component: (
-          <Tippy content={'Установить карту подземелья'}>
+          <Tippy content={'Установить карту подземелья'} placement='left'>
             <div className={s.toggle} onClick={() => setMapImage(DANGEON_MAP_IMAGE)}>
               <Icon28DiamondOutline fill='white' />
             </div>
@@ -190,7 +193,7 @@ export const EncounterTracker = () => {
       content: {
         type: 'component',
         component: (
-          <Tippy content={'Установить карту деревни'}>
+          <Tippy content={'Установить карту деревни'} placement='left'>
             <div className={s.toggle} onClick={() => setMapImage(VILLAGE_MAP_IMAGE)}>
               <Icon28HomeOutline fill='white' />
             </div>
@@ -214,6 +217,7 @@ export const EncounterTracker = () => {
       <CustomCursor />
       {participants.length !== 0 ? (
         <>
+          <CreateSessionDialog />
           <HelpButton />
           <BattleMap image={mapImage} cells={cells} setCells={setCells} />
           <PopupMenu items={menuItems} />
@@ -241,7 +245,6 @@ export const EncounterTracker = () => {
                 dispatch(userInterfaceActions.setStatblockCoords({ x: data.x, y: data.y }));
               }}
             >
-              {/* Передаём управление внутрь Statblock */}
               <Statblock
                 isMinimized={statblockIsMinimized}
                 toggleWindow={toggleStatblockWindow}

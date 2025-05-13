@@ -13,8 +13,9 @@ export { throttle } from './throttle';
 export { DiceType } from './types';
 export type { D20Roll, Dice, Language, UUID } from './types';
 
+export { blobToBase64, getBase64, getBase64FromBlob } from './base64Funcs';
 export { Dice10, Dice100, Dice12, Dice20, Dice4, Dice6, Dice8 } from './dice';
-export { useTokenatorState } from './useTokenatorState'
-export { useTokenatorShared } from './useTokenatorShared'
-export { blobToBase64, getBase64FromBlob, getBase64} from './base64Funcs'
-export { useClamp } from './useClamp'
+export { useClamp } from './useClamp';
+export { useSessionURL } from './useSessionURL';
+export { useTokenatorShared } from './useTokenatorShared';
+export { useTokenatorState } from './useTokenatorState';

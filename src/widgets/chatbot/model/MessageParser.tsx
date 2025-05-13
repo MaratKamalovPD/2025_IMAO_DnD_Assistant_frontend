@@ -4,7 +4,9 @@ import { MessageParserProps } from './types';
 
 export const MessageParser = ({ children, actions }: MessageParserProps) => {
   const parse = (message: string) => {
-    console.log(message);
+    if (import.meta.env.DEV) {
+      console.log(message);
+    }
   };
 
   return (
