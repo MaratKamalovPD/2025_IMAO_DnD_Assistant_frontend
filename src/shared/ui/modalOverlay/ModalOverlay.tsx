@@ -1,5 +1,6 @@
 import { Icon20Cancel } from '@vkontakte/icons';
 
+import clsx from 'clsx';
 import s from './ModalOverlay.module.scss';
 
 type ModalOverlayProps = {
@@ -7,6 +8,7 @@ type ModalOverlayProps = {
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isCloseable?: boolean;
+  isPage?: boolean;
   children: React.ReactNode;
 };
 
@@ -15,13 +17,19 @@ export const ModalOverlay = ({
   isModalOpen,
   setIsModalOpen,
   isCloseable = true,
+  isPage = false,
   children,
 }: ModalOverlayProps) => {
   return (
     <>
       {isModalOpen && (
         <div className={s.modalOverlay} onClick={() => isCloseable && setIsModalOpen(false)}>
-          <div className={s.modalOverlay__content} onClick={(e) => e.stopPropagation()}>
+          <div
+            className={clsx(s.modalOverlay__content, {
+              [s.modalOverlay__content__page]: isPage,
+            })}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className={s.modalOverlay__header}>
               <div className={s.modalOverlay__title}>{title}</div>
               {isCloseable && (
