@@ -11,7 +11,7 @@ import { loggerReduser } from 'entities/logger';
 import { userInterfaceReduser } from 'entities/userInterface';
 import { bestiaryApi } from 'pages/bestiary/api';
 import { characterApi } from 'pages/characters/api';
-import { promtApi } from 'pages/encounterTracker/api';
+import { promtApi, tableApi } from 'pages/encounterTracker/api';
 import { authApi } from 'pages/login/api';
 import llmApi from 'pages/statblockGenerator/api/llm.api';
 import statblockGeneratorApi from 'pages/statblockGenerator/api/statblockGenerator.api';
@@ -31,7 +31,7 @@ export const store = configureStore({
     authApi: authApi.reducer,
     llmApi: llmApi.reducer,
     statblockGeneratorApi: statblockGeneratorApi.reducer,
-
+    tableApi: tableApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -43,6 +43,7 @@ export const store = configureStore({
       .concat(authApi.middleware)
       .concat(llmApi.middleware)
       .concat(statblockGeneratorApi.middleware)
+      .concat(tableApi.middleware),
 });
 
 setupListeners(store.dispatch);

@@ -1,4 +1,8 @@
-export { encounterActions, default as encounterReduser } from './encounter.slice';
+export {
+  encounterActions,
+  default as encounterReduser,
+  setNewSaveEncounterVersion,
+} from './encounter.slice';
 export { encounterSaveInitial } from './encounterSave.types';
 
 export type { EncounterState } from './encounter.slice';
