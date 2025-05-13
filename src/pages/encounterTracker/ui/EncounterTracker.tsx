@@ -182,6 +182,7 @@ export const EncounterTracker = () => {
       <CustomCursor />
       {participants.length !== 0 ? (
         <>
+          <CreateSessionDialog />
           <HelpButton />
           <BattleMap image={mapImage} cells={cells} setCells={setCells} />
           <PopupMenu items={menuItems} />
