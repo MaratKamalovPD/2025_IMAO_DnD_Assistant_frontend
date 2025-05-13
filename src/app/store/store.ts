@@ -1,5 +1,6 @@
 import { configureStore, Reducer } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
+import { saveEncounterVersionMiddleware } from 'app/middleware';
 
 import { authReducer } from 'entities/auth';
 import { creaturesReduser } from 'entities/creature';
@@ -34,6 +35,7 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
+      .prepend(saveEncounterVersionMiddleware.middleware)
       .concat(bestiaryApi.middleware)
       .concat(promtApi.middleware)
       .concat(characterApi.middleware)
