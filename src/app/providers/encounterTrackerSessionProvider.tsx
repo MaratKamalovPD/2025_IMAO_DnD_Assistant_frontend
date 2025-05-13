@@ -1,13 +1,32 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { UnknownAction } from 'redux';
 
 import { RootState, RootStore } from 'app/store';
+import { AuthState } from 'entities/auth/model';
+import { AuthStore } from 'entities/auth/model/types';
 import { creatureActions } from 'entities/creature/model';
-import { encounterActions, EncounterSave } from 'entities/encounter/model';
+import {
+  encounterActions,
+  EncounterSave,
+  EncounterState,
+  EncounterStore,
+  setNewSaveEncounterVersion,
+} from 'entities/encounter/model';
 import { loggerActions } from 'entities/logger/model';
+import {
+  BattleInfoData,
+  Participant,
+  ParticipantsInfoData,
+  SessionContext,
+  SessionMessage,
+} from 'entities/session/model';
+import { ParticipantsSessionContext } from 'entities/session/model/sessionContext';
 import { UUID } from 'shared/lib';
 import { debounce } from 'shared/lib/debounce';
+import { Placeholder } from 'shared/ui';
 import { Props } from './types';
 
 const DEBOUNSE_TIME = 200;
@@ -16,44 +35,94 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
   const dispatch = useDispatch();
   const { id } = useParams();
 
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+    `${import.meta.env.VITE_WS_HOST}/api/table/session/${id}/connect`,
+    {
+      onOpen(_event) {
+        if (import.meta.env.DEV) {
+          console.log('WebSocket connected');
+        }
+      },
+      onClose(_event) {
+        if (import.meta.env.DEV) {
+          console.log('WebSocket disconnected');
+        }
+      },
+      onError(error) {
+        if (import.meta.env.DEV) {
+          console.error('WebSocket error:', error);
+        }
+      },
+    },
+  );
+
+  const { id: userId } = useSelector<AuthStore>((state) => state.auth) as AuthState;
+  const { encounterId: stateEncounterId } = useSelector<EncounterStore>(
+    (state) => state.encounter,
+  ) as EncounterState;
+
+  const [isSaveFirstFetch, setIsSaveFirstFetch] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [encounterId, setEncounterId] = useState<UUID | null>(null);
   const [saveVersionHash, setSaveVersionHash] = useState<UUID>('');
-  const wsRef = useRef<WebSocket | null>(null);
+  const [participants, setParticipants] = useState<Participant[]>([]);
 
   useEffect(() => {
-    // Подключаемся к серверу
-    wsRef.current = new WebSocket(`ws://localhost:8080/api/table/session/${id}/connect`);
+    if (!lastJsonMessage) return;
 
-    wsRef.current.onopen = () => {
-      console.log('WebSocket connected');
-    };
+    const message = lastJsonMessage as SessionMessage;
 
-    // Обработчик входящих сообщений
-    wsRef.current.onmessage = (event) => {
-      const state: EncounterSave = JSON.parse(event.data);
+    switch (message.type) {
+      case 'error':
+        setIsError(true);
+        break;
 
-      if (saveVersionHash && saveVersionHash === state.encounterState.saveVersionHash) return;
+      case 'participantsInfo':
+        if (!message.data) return;
 
-      dispatch(encounterActions.setState(state.encounterState));
-      dispatch(creatureActions.setState(state.creaturesState));
-      dispatch(loggerActions.setState(state.loggerState));
-      dispatch(encounterActions.setEncounterId(id || null));
-      setEncounterId(state.encounterState.encounterId);
-    };
+        const data = message.data as ParticipantsInfoData;
 
-    wsRef.current.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
+        setParticipants(data.participants);
 
-    wsRef.current.onclose = () => {
-      console.log('WebSocket disconnected');
-    };
+        if (isAdmin) return;
 
-    // // Очистка при размонтировании
-    // return () => {
-    //   wsRef.current?.close();
-    // };
-  }, []);
+        const admin = data.participants.find(({ role }) => role === 'admin');
+        if (admin?.id === userId) {
+          setIsAdmin(true);
+        }
+        break;
+
+      case 'battleInfo':
+        if (!message.data) return;
+
+        const state = (message.data as BattleInfoData).encounterData as EncounterSave;
+
+        if (
+          saveVersionHash &&
+          state.encounterState &&
+          saveVersionHash === state.encounterState?.saveVersionHash
+        ) {
+          setEncounterId(state.encounterState.encounterId);
+          setIsSaveFirstFetch(false);
+          return;
+        }
+
+        if (isAdmin && isSaveFirstFetch && state.encounterState.encounterId === stateEncounterId) {
+          setEncounterId(state.encounterState.encounterId);
+          dispatch(setNewSaveEncounterVersion() as any as UnknownAction);
+          setIsSaveFirstFetch(false);
+          return;
+        }
+
+        dispatch(encounterActions.setState(state.encounterState));
+        dispatch(creatureActions.setState(state.creaturesState));
+        dispatch(loggerActions.setState(state.loggerState));
+        dispatch(encounterActions.setEncounterId(state.encounterState.encounterId));
+        setEncounterId(state.encounterState.encounterId);
+        break;
+    }
+  }, [lastJsonMessage]);
 
   const {
     logger: loggerState,
@@ -62,21 +131,33 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
   } = useSelector<RootStore>((state) => state) as RootState;
 
   const updateState = useCallback(
-    debounce((body: EncounterSave) => {
-      console.log(encounterId, wsRef?.current?.readyState);
-      if (encounterId === null || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+    debounce((body: EncounterSave, readyState: ReadyState) => {
+      if (encounterId === null || readyState !== ReadyState.OPEN) {
         return;
       }
-      wsRef.current.send(JSON.stringify(body));
+      sendJsonMessage(body);
     }, DEBOUNSE_TIME),
-    [encounterId],
+    [encounterId, sendJsonMessage],
   );
 
   useEffect(() => {
     setSaveVersionHash(encounterState.saveVersionHash);
-    console.log('что-то было...');
-    updateState({ loggerState, encounterState, creaturesState });
+    updateState({ loggerState, encounterState, creaturesState }, readyState);
   }, [encounterState.saveVersionHash]);
 
-  return <>{children}</>;
+  return (
+    <SessionContext.Provider value={true}>
+      <ParticipantsSessionContext.Provider value={participants}>
+        {isError ? (
+          <Placeholder
+            title='Ошибка'
+            subtitle='Проверьте правильность данных сессии'
+            buttonText='Перейти в бестиарий'
+          ></Placeholder>
+        ) : (
+          children
+        )}
+      </ParticipantsSessionContext.Provider>
+    </SessionContext.Provider>
+  );
 };
