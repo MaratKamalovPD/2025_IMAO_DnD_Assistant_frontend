@@ -13,7 +13,7 @@ type IMessageOptions = {
 
 type IBaseMessage = {
   message: string;
-  type: string;
+  type: string; // 'bot' | 'user'
   id: number;
 };
 

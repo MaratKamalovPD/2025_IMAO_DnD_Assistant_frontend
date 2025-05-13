@@ -1,16 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IMessage } from './types';
+import { createChatBotMessage } from 'react-chatbot-kit';
 
-
+// TODO: Add user logs
 export type LoggerState = {
-  lastLog?: string;
+  lastLogs: string[];
   logs: string[];
-  messageLogs: IMessage[];
 };
 
 export const initialState: LoggerState = {
+  lastLogs: [],
   logs: [],
-  messageLogs: [],
 };
 
 const loggerSlice = createSlice({
@@ -18,19 +17,19 @@ const loggerSlice = createSlice({
   initialState: initialState,
   reducers: {
     setState: (state, action: PayloadAction<LoggerState>) => {
-      state.lastLog = action.payload.lastLog;
-      state.messageLogs = action.payload.messageLogs;
+      state.lastLogs = action.payload.lastLogs;
       state.logs = action.payload.logs;
     },
     addLog: (state, action: PayloadAction<string>) => {
-      state.lastLog = action.payload;
+      state.lastLogs = [...state.lastLogs, action.payload];
       state.logs = [...state.logs, action.payload];
     },
-    saveMessages: (state, action: PayloadAction<IMessage[]>) => {
-      state.messageLogs = action.payload;
-    },
-    addMessage: (state, action: PayloadAction<IMessage>) => {
-      state.messageLogs = [...state.messageLogs, action.payload];
+    addMessageFromLastLog: (state) => {
+      const botMessage = createChatBotMessage(state.lastLogs[0], {});
+      botMessage.loading = false;
+
+      const [_lastLog, ...restLogs] = state.lastLogs;
+      state.lastLogs = restLogs;
     },
   },
 });

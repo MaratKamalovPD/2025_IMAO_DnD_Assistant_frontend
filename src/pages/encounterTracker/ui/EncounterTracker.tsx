@@ -46,7 +46,7 @@ export const EncounterTracker = () => {
       .map(() => Array(cols).fill(false)),
   );
 
-  const { lastLog } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
+  const { lastLogs } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
   const { participants, currentTurnIndex } = useSelector<EncounterStore>(
     (state) => state.encounter,
   ) as EncounterState;
@@ -97,14 +97,17 @@ export const EncounterTracker = () => {
     dispatch(userInterfaceActions.setStatblockIsVisible(!statblockIsVisible));
   }, [selectedCreatureId]);
 
-  useEffect(() => {
-    if (lastLog) {
-      const botMessage = createChatBotMessage(lastLog, {});
-      botMessage.loading = false;
+  let logTimeout: NodeJS.Timeout;
 
-      dispatch(loggerActions.addMessage(botMessage));
+  useEffect(() => {
+    if (lastLogs.length !== 0) {
+      clearTimeout(logTimeout);
+
+      logTimeout = setTimeout(() => {
+        dispatch(loggerActions.addMessageFromLastLog());
+      });
     }
-  }, [lastLog]);
+  }, [lastLogs]);
 
   const toggleWindow = () => {
     if (statblockIsMinimized) {
@@ -206,7 +209,6 @@ export const EncounterTracker = () => {
                 dispatch(userInterfaceActions.setStatblockCoords({ x: data.x, y: data.y }));
               }}
             >
-              {/* Передаём управление внутрь Statblock */}
               <Statblock
                 isMinimized={statblockIsMinimized}
                 toggleWindow={toggleWindow}

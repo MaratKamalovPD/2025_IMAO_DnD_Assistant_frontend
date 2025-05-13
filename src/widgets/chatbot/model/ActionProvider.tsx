@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { LoggerState, LoggerStore } from 'entities/logger/model';
@@ -9,18 +9,22 @@ export const ActionProvider = ({
   setState,
   children,
 }: ActionProviderProps) => {
-  const { lastLog } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
+  const [lastLog, setLastLog] = useState('');
+  const { lastLogs } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
 
   useEffect(() => {
-    if (lastLog) {
-      const botMessage = createChatBotMessage(lastLog, {});
+    if (lastLogs.length === 0) return;
 
-      setState((prev) => ({
-        ...prev,
-        messages: [...prev.messages, botMessage],
-      }));
-    }
-  }, [lastLog]);
+    if (lastLog === lastLogs[0]) return;
+
+    setLastLog(lastLogs[0]);
+    const botMessage = createChatBotMessage(lastLogs[0], {});
+
+    setState((prev) => ({
+      ...prev,
+      messages: [...prev.messages, botMessage],
+    }));
+  }, [lastLogs]);
 
   return (
     <div>
