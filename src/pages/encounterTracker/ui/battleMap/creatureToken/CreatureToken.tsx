@@ -28,7 +28,7 @@ type CreatureTokenProps = {
   setCells: React.Dispatch<React.SetStateAction<boolean[][]>>;
 };
 
-const DEBOUNCE_TIME = 500;
+const DEBOUNCE_TIME = 200;
 const ACCENT_COLOR = '#e2c044';
 const CREATURE_COLOR = '#d47777';
 const CHARACTER_COLOR = '#77b8d4';
@@ -53,7 +53,7 @@ function areClockwise(v1: { x: number; y: number }, v2: { x: number; y: number }
   return -v1.x * v2.y + v1.y * v2.x > 0;
 }
 
-export const CreatureToken = ({ transform, id, x, y, cellSize, setCells }: CreatureTokenProps) => {
+export const CreatureToken = ({ transform, id, cellSize, setCells }: CreatureTokenProps) => {
   const dispatch = useDispatch();
   const tokenRef = useRef(null);
 
@@ -73,25 +73,28 @@ export const CreatureToken = ({ transform, id, x, y, cellSize, setCells }: Creat
     [participants, id],
   );
 
+  const x = participant?.cellsCoords?.cellsX || 0;
+  const y = participant?.cellsCoords?.cellsY || 0;
+
   const [imageSize, setImageSize] = useState(radius * 2);
   const [mousePosition, setMousePosition] = useState({ x: 100, y: 100 });
   const [coords, setCoords] = useState<CellsCoordinates | null>(participant?.cellsCoords || null);
   const debounceCoords = useDebounce(coords, DEBOUNCE_TIME);
 
   useEffect(() => {
-    if (debounceCoords) {
+    if (
+      debounceCoords &&
+      (debounceCoords.cellsX !== participant?.cellsCoords?.cellsX ||
+        debounceCoords.cellsY !== participant?.cellsCoords?.cellsY)
+    ) {
       dispatch(encounterActions.setCellsCoordinates({ ...debounceCoords, id }));
     }
   }, [debounceCoords]);
 
   useEffect(() => {
-    dispatch(encounterActions.setCellsCoordinates({ cellsX: x, cellsY: y, id }));
-  }, []);
-
-  useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      x = (e.clientX - transform.x) / transform.k;
-      y = (e.clientY - transform.y) / transform.k;
+      const x = (e.clientX - transform.x) / transform.k;
+      const y = (e.clientY - transform.y) / transform.k;
       setMousePosition({ x, y });
     };
 
@@ -130,7 +133,7 @@ export const CreatureToken = ({ transform, id, x, y, cellSize, setCells }: Creat
   circle.call(dragHandler as any);
 
   circle.on('mouseover', function () {
-    setImageSize((prev) => prev * 1.1);
+    setImageSize(radius * 2 * 1.1);
 
     dselect(this)
       .transition()
@@ -139,7 +142,7 @@ export const CreatureToken = ({ transform, id, x, y, cellSize, setCells }: Creat
   });
 
   circle.on('mouseout', function () {
-    setImageSize((prev) => prev / 1.1);
+    setImageSize(radius * 2);
 
     dselect(this).transition().duration(100).attr('r', radius);
   });

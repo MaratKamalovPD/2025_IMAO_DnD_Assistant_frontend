@@ -101,8 +101,6 @@ export const AttackModal: React.FC<AttackModalProps> = ({
     });
   }
 
-  console.log(attackedCreatures);
-
   const [attackStatus, setAttackStatus] = useState<AttackStatus>(AttackStatus.None);
 
   const handleCheckboxChange = useCallback(
