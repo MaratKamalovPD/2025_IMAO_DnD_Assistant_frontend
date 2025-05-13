@@ -14,6 +14,10 @@ export type UserInterfaceState = {
   statblockCoords: { x: number; y: number };
   statblockIsMinimized: boolean;
   statblockIsVisible: boolean;
+  diceTraySize: { width: number; height: number };
+  diceTrayCoords: { x: number; y: number };
+  diceTrayIsMinimized: boolean;
+  diceTrayIsVisible: boolean;
 };
 
 export const initialState: UserInterfaceState = {
@@ -27,6 +31,10 @@ export const initialState: UserInterfaceState = {
   statblockCoords: { x: 300, y: 100 },
   statblockIsMinimized: false,
   statblockIsVisible: false,
+  diceTraySize: { width: 850, height: 600 },
+  diceTrayCoords: { x: 300, y: 100 },
+  diceTrayIsMinimized: false,
+  diceTrayIsVisible: false,
 };
 
 const userInterfaceSlice = createSlice({
@@ -41,6 +49,8 @@ const userInterfaceSlice = createSlice({
       state.mapTransform = { x: 0, y: 0, k: 1 };
       state.statblockIsMinimized = false;
       state.statblockIsVisible = false;
+      state.diceTrayIsMinimized = false;
+      state.diceTrayIsVisible = false;
     },
     enableAttackHandleMode: (state, action: PayloadAction<AttackLLM>) => {
       state.attackHandleModeActive = true;
@@ -77,6 +87,18 @@ const userInterfaceSlice = createSlice({
     },
     setStatblockIsVisible: (state, action: PayloadAction<boolean>) => {
       state.statblockIsVisible = action.payload;
+    },
+    setDiceTraySize: (state, action: PayloadAction<{ width: number; height: number }>) => {
+      state.diceTraySize = action.payload;
+    },
+    setDiceTrayCoords: (state, action: PayloadAction<{ x: number; y: number }>) => {
+      state.diceTrayCoords = action.payload;
+    },
+    setDiceTrayIsMinimized: (state, action: PayloadAction<boolean>) => {
+      state.diceTrayIsMinimized = action.payload;
+    },
+    setDiceTrayIsVisible: (state, action: PayloadAction<boolean>) => {
+      state.diceTrayIsVisible = action.payload;
     },
   },
 });

@@ -37,7 +37,7 @@ export const HitRollToast: React.FC<ToastProps> = ({
             </span>
           ))}
           {modifier !== 0 && (
-            <span>&nbsp;{modifier > 0 ? `+${modifier}` : `-${Math.abs(modifier)}`}</span>
+            <span>&nbsp;{modifier > 0 ? `+ ${modifier}` : `-${Math.abs(modifier)}`}</span>
           )}
         </div>
       </div>

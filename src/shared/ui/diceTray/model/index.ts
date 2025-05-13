@@ -1,0 +1,1 @@
+export type { DieInstance, DiceToolbarProps } from './types'

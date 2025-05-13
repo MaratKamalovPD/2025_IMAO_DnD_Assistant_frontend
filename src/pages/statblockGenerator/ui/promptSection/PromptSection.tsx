@@ -67,6 +67,8 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
     { isLoading: isSubmittingImage, error: imageError }
   ] = useSubmitGenerationImageMutation()
 
+  void isSubmittingImage
+
   // Будем пропускать запрос пока нет jobId, а как только jobId появится —
   // сразу сработает первый fetch и далее каждый 1000 мс
   const {
