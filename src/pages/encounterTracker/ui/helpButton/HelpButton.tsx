@@ -1,3 +1,4 @@
+import Tippy from '@tippyjs/react';
 import {
   Icon28CancelCircleOutline,
   Icon28ComputerMouseArrowsOutline,
@@ -19,9 +20,11 @@ export const HelpButton = () => {
 
   return (
     <>
-      <div className={s.helpButtonContainer} onClick={toggleHelp}>
-        <span className={s.questionMark}>?</span>
-      </div>
+      <Tippy content='Справка' placement='right'>
+        <div className={s.helpButtonContainer} onClick={toggleHelp}>
+          <span className={s.questionMark}>?</span>
+        </div>
+      </Tippy>
 
       {isOpen && (
         <div className={s.helpOverlay}>

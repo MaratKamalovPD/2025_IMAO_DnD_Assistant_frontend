@@ -5,7 +5,6 @@ import {
   Icon28HomeOutline,
 } from '@vkontakte/icons';
 import { useEffect, useState } from 'react';
-import { createChatBotMessage } from 'react-chatbot-kit';
 import { useDispatch, useSelector } from 'react-redux';
 import { Rnd } from 'react-rnd';
 
@@ -16,17 +15,18 @@ import {
   UserInterfaceState,
   UserInterfaceStore,
 } from 'entities/userInterface/model';
+import { Placeholder } from 'shared/ui';
 import { Chatbot } from 'widgets/chatbot';
 import { BattleMap } from './battleMap';
 import { CardList } from './cardList';
 import { CustomCursor } from './customCursor';
-import { Placeholder } from './placeholder';
+import { HelpButton } from './helpButton';
 import { MenuItem, PopupMenu } from './popupMenu';
 import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
 
 import s from './EncounterTracker.module.scss';
-import { HelpButton } from './helpButton';
+import CreateSessionDialog from './createSessionDialog/CreateSessionDialog';
 
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
 const VILLAGE_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-2.png';
@@ -120,7 +120,7 @@ export const EncounterTracker = () => {
 
   const ToggleStatblock = () => {
     return (
-      <Tippy content={'Таблица характкристик'}>
+      <Tippy content={'Таблица характеристик'} placement='left'>
         <div
           className={s.toggleStatblock}
           onClick={() => dispatch(userInterfaceActions.setStatblockIsVisible(!statblockIsVisible))}
@@ -151,7 +151,7 @@ export const EncounterTracker = () => {
       content: {
         type: 'component',
         component: (
-          <Tippy content={'Установить карту подземелья'}>
+          <Tippy content={'Установить карту подземелья'} placement='left'>
             <div className={s.toggle} onClick={() => setMapImage(DANGEON_MAP_IMAGE)}>
               <Icon28DiamondOutline fill='white' />
             </div>
@@ -165,7 +165,7 @@ export const EncounterTracker = () => {
       content: {
         type: 'component',
         component: (
-          <Tippy content={'Установить карту деревни'}>
+          <Tippy content={'Установить карту деревни'} placement='left'>
             <div className={s.toggle} onClick={() => setMapImage(VILLAGE_MAP_IMAGE)}>
               <Icon28HomeOutline fill='white' />
             </div>
