@@ -24,3 +24,5 @@ export { useGlow } from './useGlow'
 export { armorIcons } from './armorsIcons'
 
 export { promptPresetOptions } from './promptPresetOptions'
+
+export { htmlTagWrapperActions } from './htmlTagWrapperActions'
