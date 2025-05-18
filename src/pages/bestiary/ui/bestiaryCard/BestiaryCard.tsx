@@ -20,6 +20,7 @@ type BestiaryCardProps = {
 
 export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSelected }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { participants } = useSelector<EncounterStore>(
     (state) => state.encounter,
@@ -51,8 +52,6 @@ export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSele
       toast.error(`Упс, что-то пошло не так :(`);
     }
   }, [creatureData, isLoading, isError, isUninitialized, requestId]);
-
-  const navigate = useNavigate();
 
   return (
     <div
