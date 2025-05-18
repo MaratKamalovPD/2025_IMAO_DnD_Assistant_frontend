@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Outlet, useParams } from 'react-router';
 
 import { CreatureClippedData } from 'entities/creature/model/types';
@@ -7,7 +7,6 @@ import { GetCreaturesRequest, useGetCreaturesQuery } from 'pages/bestiary/api';
 import {
   mapFiltersToRequestBody,
   OutletProvider,
-  useOutletContext,
   useViewSettings,
   ViewSettingsProvider,
 } from 'pages/bestiary/lib';
@@ -25,13 +24,10 @@ const DEBOUNCE_TIME = 500;
 const THROTTLE_TIME = 1000;
 
 export const Bestiary = () => {
-  const { creatureName } = useParams();
-  const hasOutlet = creatureName !== undefined;
-
   return (
     <div className={s.pageContent}>
       <ViewSettingsProvider>
-        <OutletProvider hasOutlet={hasOutlet}>
+        <OutletProvider>
           <BestiaryContent />
         </OutletProvider>
       </ViewSettingsProvider>
@@ -49,6 +45,27 @@ const BestiaryContent = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [filters, setFilters] = useState<Filters>({});
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
+  const hasOutlet = creatureName !== undefined;
+
+  const [selectedCreatureName, setSelectedCreatureName] = useState<string | undefined>('');
+  const [prevCreatureName, setPrevCreatureName] = useState<string | undefined>('');
+
+  useEffect(() => {
+    setPrevCreatureName(selectedCreatureName);
+    setSelectedCreatureName(creatureName);
+  }, [creatureName]);
+
+  const cardRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    console.log('aaa', hasOutlet, cardRef.current);
+    if (cardRef.current) {
+      setTimeout(
+        () => cardRef?.current?.scrollIntoView({ behavior: 'instant', block: 'start' }),
+        200,
+      );
+    }
+  }, [hasOutlet]);
 
   const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
   const setStartThrottled = throttle(setStart, THROTTLE_TIME);
@@ -65,7 +82,6 @@ const BestiaryContent = () => {
   }, []);
 
   const { viewMode, alphabetSort, ratingSort } = useViewSettings();
-  const hasOutlet = useOutletContext();
 
   const isAnyFilterSet = Object.values(filters).some((arr) => Array.isArray(arr) && arr.length > 0);
 
@@ -168,13 +184,22 @@ const BestiaryContent = () => {
         <div className={s.bestiaryContent}>
           {allCreatures.map((creature, ind) => {
             const lastPart = creature.url.split('/').pop();
-            const isSelected = lastPart === creatureName;
+            const isSelected =
+              lastPart === selectedCreatureName ||
+              (selectedCreatureName === undefined && lastPart === prevCreatureName);
 
-            return (
-              <div key={ind} className={clsx({ [s.selectedCard]: isSelected })}>
-                <BestiaryCard creature={creature} viewMode={viewMode} isSelected={isSelected} />
-              </div>
-            );
+            if (isSelected)
+              return (
+                <div key={ind} ref={cardRef} className={s.selectedCard}>
+                  <BestiaryCard creature={creature} viewMode={viewMode} isSelected={true} />
+                </div>
+              );
+            else
+              return (
+                <div key={ind}>
+                  <BestiaryCard creature={creature} viewMode={viewMode} isSelected={false} />
+                </div>
+              );
           })}
         </div>
       )}
