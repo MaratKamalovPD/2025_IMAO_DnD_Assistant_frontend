@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import {
   EncounterTrackerSaveProvider,
   EncounterTrackerSessionProvider,
-  HeaderProviders,
+  LoginRequiredProvider,
 } from 'app/providers';
 import { Bestiary, CreatureStatblock } from 'pages/bestiary';
 import { Characters } from 'pages/characters';
@@ -13,7 +13,8 @@ import { Login } from 'pages/login';
 import { Main } from 'pages/main';
 import { StatblockGenerator } from 'pages/statblockGenerator';
 import { TestPage } from 'pages/test';
-import { Footer } from 'shared/ui';
+import { Footer, Placeholder } from 'shared/ui';
+import { Header } from 'widgets/header';
 
 const router = createBrowserRouter([
   {
@@ -30,40 +31,13 @@ const router = createBrowserRouter([
     element: <TestPage />,
   },
   {
-    path: 'encounter_tracker',
-    element: (
-      <HeaderProviders>
-        <EncounterTracker />
-      </HeaderProviders>
-    ),
-  },
-  {
-    path: 'encounter_tracker/:id',
-    element: (
-      <HeaderProviders>
-        <EncounterTrackerSaveProvider>
-          <EncounterTracker />
-        </EncounterTrackerSaveProvider>
-      </HeaderProviders>
-    ),
-  },
-  {
-    path: 'encounter_tracker/session/:id',
-    element: (
-      <HeaderProviders>
-        <EncounterTrackerSessionProvider>
-          <EncounterTracker />
-        </EncounterTrackerSessionProvider>
-      </HeaderProviders>
-    ),
-  },
-  {
     path: 'bestiary',
     element: (
-      <HeaderProviders>
+      <>
+        <Header />
         <Bestiary />
         <Footer />
-      </HeaderProviders>
+      </>
     ),
     children: [
       {
@@ -73,30 +47,65 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: 'encounter_tracker',
+    element: (
+      <>
+        <Header />
+        <EncounterTracker />
+      </>
+    ),
+  },
+  {
+    path: 'encounter_tracker/:id',
+    element: (
+      <LoginRequiredProvider>
+        <Header />
+        <EncounterTrackerSaveProvider>
+          <EncounterTracker />
+        </EncounterTrackerSaveProvider>
+      </LoginRequiredProvider>
+    ),
+  },
+  {
+    path: 'encounter_tracker/session/:id',
+    element: (
+      <LoginRequiredProvider>
+        <Header />
+        <EncounterTrackerSessionProvider>
+          <EncounterTracker />
+        </EncounterTrackerSessionProvider>
+      </LoginRequiredProvider>
+    ),
+  },
+
+  {
     path: 'characters',
     element: (
-      <HeaderProviders>
+      <LoginRequiredProvider>
+        <Header />
         <Characters />
         <Footer />
-      </HeaderProviders>
+      </LoginRequiredProvider>
     ),
   },
   {
     path: 'login',
     element: (
-      <HeaderProviders>
+      <>
+        <Header />
         <Login />
         <Footer />
-      </HeaderProviders>
+      </>
     ),
   },
   {
     path: 'statblock_generator',
     element: (
-      <HeaderProviders>
+      <>
+        <Header />
         <StatblockGenerator />
         <Footer />
-      </HeaderProviders>
+      </>
     ),
   },
   {

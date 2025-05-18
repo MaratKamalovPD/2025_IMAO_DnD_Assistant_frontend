@@ -2,7 +2,7 @@ import { authActions, AuthState } from 'entities/auth/model';
 import { AuthStore } from 'entities/auth/model/types';
 import { useLazyLoginQuery } from 'pages/login/api';
 import { VKLogin } from 'pages/login/ui/vkLogin';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router';
 import s from './Login.module.scss';
@@ -16,17 +16,20 @@ export const Login = () => {
 
   const { isAuth } = useSelector<AuthStore>((state) => state.auth) as AuthState;
 
+  const hasNavigated = useRef(false);
+
   useEffect(() => {
-    if (isAuth) {
+    if (isAuth && !hasNavigated.current) {
       navigate(-1);
+      hasNavigated.current = true;
     }
-  }, [isAuth, navigate]);
+  }, [isAuth]);
 
   useEffect(() => {
     if (authData && authData.isAuth) {
       dispatch(authActions.login(authData.user));
     }
-  }, [authData, navigate]);
+  }, [authData]);
 
   return (
     <div className={s.pageContent}>

@@ -1,4 +1,4 @@
 export { EncounterTrackerSaveProvider } from './encounterTrackerSaveProvider';
 export { EncounterTrackerSessionProvider } from './encounterTrackerSessionProvider';
-export { HeaderProviders } from './headerProvider';
+export { LoginRequiredProvider } from './loginRequiredProvider';
 export { MainProviders } from './mainProvider';
