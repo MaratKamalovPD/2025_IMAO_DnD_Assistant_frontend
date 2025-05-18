@@ -1,26 +1,44 @@
 import { Icon20ChevronUp } from '@vkontakte/icons';
 import clsx from 'clsx';
-import { UserData } from 'entities/auth/model';
+import { authActions, AuthState, AuthStore, UserData } from 'entities/auth/model';
+import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
+import { useLazyLogoutQuery } from 'pages/login/api';
 import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router';
 import logo from 'shared/assets/images/logo.png';
 import { useSessionURL } from 'shared/lib';
 import s from './Header.module.scss';
 
-type HeaderProps = {
-  encounterId: string | null;
-  isAuth: boolean;
-  user?: UserData;
-  logout?: () => Promise<void>;
-};
-
-export const Header: React.FC<HeaderProps> = ({ encounterId, isAuth, user, logout }) => {
+export const Header = () => {
+  const dispatch = useDispatch();
   const location = useLocation();
   const [visible, setVisible] = useState(false);
   const sessionUrl = useSessionURL(location.pathname);
 
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const [triggerLogout] = useLazyLogoutQuery();
+
+  const { encounterId } = useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
+  const { isAuth, ...storeUserData } = useSelector<AuthStore>((state) => state.auth) as AuthState;
+  let user: UserData | undefined;
+
+  if (storeUserData) {
+    user = {
+      id: storeUserData.id,
+      vkid: storeUserData.vkid,
+      avatar: storeUserData.avatar,
+      name: storeUserData.name,
+    };
+  }
+
+  const logout = async () => {
+    await triggerLogout(null).unwrap();
+    dispatch(authActions.logout());
+    dispatch(encounterActions.setEncounterId(null));
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
