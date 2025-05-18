@@ -102,10 +102,21 @@ const router = createBrowserRouter([
   {
     path: 'encounter_list',
     element: (
-      <HeaderProviders>
+      <LoginRequiredProvider>
+        <Header />
         <EncounterList />
         <Footer />
-      </HeaderProviders>
+      </LoginRequiredProvider>
+    ),
+  },
+  {
+    path: '*',
+    element: (
+      <Placeholder
+        title='404 Страница не найдена'
+        subtitle='К сожалению, cтраница, на которую вы пытаетесь попасть, не существует или была удалена :('
+        buttonText='Вернутся в бестиарий'
+      />
     ),
   },
 ]);
