@@ -1,12 +1,12 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { UserData } from "./types";
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { UserData } from './types';
 
 export type AuthState = {
   id: number;
   vkid: string;
   name: string;
   avatar: string;
-  isAuth: boolean;
+  isAuth: boolean | null;
 };
 
 const initialState: AuthState = {
@@ -14,7 +14,7 @@ const initialState: AuthState = {
   vkid: '',
   name: '',
   avatar: '',
-  isAuth: false
+  isAuth: null,
 };
 
 export const authSlice = createSlice({
@@ -28,7 +28,12 @@ export const authSlice = createSlice({
       state.avatar = action.payload.avatar;
       state.name = action.payload.name;
     },
-    logout: () => initialState,
+    logout: () => {
+      const newState = structuredClone(initialState);
+      newState.isAuth = false;
+
+      return newState;
+    },
   },
 });
 
