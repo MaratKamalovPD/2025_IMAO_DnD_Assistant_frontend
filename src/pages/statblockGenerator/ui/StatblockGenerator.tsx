@@ -74,8 +74,8 @@ export const StatblockGenerator = () => {
   const [trigger, { data: fetchedCreatureData  }] = useLazyGetCreatureByNameQuery();
   const { glowActiveMap, glowFadeMap, triggerGlow, clearGlow } = useGlow();
 
-  //const { isAuth } = useSelector<AuthStore>((state) => state.auth) as AuthState;
-  const isAuth = true;
+  const { isAuth } = useSelector<AuthStore>((state) => state.auth) as AuthState;
+  //const isAuth = true;
 
   const getGlowClass = (id: string) =>
     clsx(

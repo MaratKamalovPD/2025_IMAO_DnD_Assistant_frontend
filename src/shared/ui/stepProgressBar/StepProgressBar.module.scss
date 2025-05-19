@@ -17,7 +17,7 @@
     height: 3px;
     background: #e8dfd8;
     border-radius: 10px;
-    overflow: visible;
+    overflow: hidden;
   
     &__fill {
       background: var(--accent-btn-color);
@@ -34,7 +34,7 @@
       height: 100%;
       z-index: 2;
       pointer-events: none;
-      overflow: visible;
+      overflow: hidden;
   
       // Радужная бегущая волна
       &::after {

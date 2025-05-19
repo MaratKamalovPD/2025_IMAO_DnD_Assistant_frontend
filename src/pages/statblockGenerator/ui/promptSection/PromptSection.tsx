@@ -82,6 +82,8 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
     skip: !jobId,
     pollingInterval: 1000
   })
+  void isPolling
+  void pollingError
 
   // Уведомляем родителя, как только статус станет "done"
   useEffect(() => {
