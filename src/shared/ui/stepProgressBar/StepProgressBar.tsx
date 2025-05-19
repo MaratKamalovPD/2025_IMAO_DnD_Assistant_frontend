@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import styles from './StepProgressBar.module.scss'
+import s from './StepProgressBar.module.scss'
 
 interface Step {
   label: string
@@ -9,18 +9,30 @@ interface Step {
 interface StepProgressBarProps {
   steps: Step[]
   initialStep?: number
+  currentStep?: number  // controlled
   onStepChange?: (stepIndex: number) => void
+  disableClick?: boolean
 }
 
 export const StepProgressBar: React.FC<StepProgressBarProps> = ({
   steps,
   initialStep = 0,
-  onStepChange
+  currentStep: currentStepProp,
+  onStepChange,
+  disableClick = false
 }) => {
-  const [currentStep, setCurrentStep] = useState<number>(initialStep)
+  const [currentStepInternal, setCurrentStepInternal] = useState<number>(initialStep)
+
+  const isControlled = currentStepProp !== undefined
+  const currentStep = isControlled ? currentStepProp! : currentStepInternal
 
   const handleClick = (index: number) => {
-    setCurrentStep(index)
+    if (disableClick) return
+
+    if (!isControlled) {
+      setCurrentStepInternal(index)
+    }
+
     onStepChange?.(index)
   }
 
@@ -29,29 +41,23 @@ export const StepProgressBar: React.FC<StepProgressBarProps> = ({
     if (step?.positionPercent != null) {
       return Math.min(100, Math.max(0, step.positionPercent))
     }
-  
-    // fallback к авторасчёту
     return (stepIndex / (steps.length - 1)) * 100
   }
-  
-  
+
   const prevStep = Math.max(currentStep - 1, 0)
   const pulseLeft = getStepPosition(prevStep)
   const pulseWidth = getStepPosition(currentStep) - pulseLeft
-  
-
-  const progressPercent =
-    steps.length > 1 ? (currentStep / (steps.length - 1)) * 100 : 0
+  const progressPercent = getStepPosition(currentStep)
 
   return (
-    <div className={styles.progress}>
-      <div className={styles.bar}>
+    <div className={s.progress}>
+      <div className={s.bar}>
         <span
-          className={styles.bar__fill}
+          className={s.bar__fill}
           style={{ width: `${progressPercent}%` }}
         />
         <span
-          className={styles.bar__pulseSegment}
+          className={s.bar__pulseSegment}
           style={{
             left: `${pulseLeft}%`,
             width: `${pulseWidth}%`
@@ -59,23 +65,23 @@ export const StepProgressBar: React.FC<StepProgressBarProps> = ({
         />
       </div>
 
-
       {steps.map((step, index) => (
         <div
           key={index}
-          className={`${styles.point} ${
+          className={`${s.point} ${
             index < currentStep
-              ? styles['point--complete']
+              ? s['point--complete']
               : index === currentStep
-              ? styles['point--active']
+              ? s['point--active']
               : ''
           }`}
           onClick={() => handleClick(index)}
         >
-          <span className={styles.bullet} />
-          <label className={styles.label}>{step.label}</label>
+          <span className={s.bullet} />
+          <label className={s.label}>{step.label}</label>
         </div>
       ))}
     </div>
   )
 }
+
