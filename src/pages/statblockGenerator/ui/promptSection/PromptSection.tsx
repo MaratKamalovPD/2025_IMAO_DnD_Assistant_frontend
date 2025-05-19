@@ -58,6 +58,7 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
 
   const textareaRef = useRef<PromptTextareaRef>(null)
   const [jobId, setJobId] = useState<string | null>(null)
+  const [step, setStep] = useState(0)
 
   const [
     submitText,
@@ -124,6 +125,24 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
   isSubmittingText ||             
   (!!jobId && jobStatus?.status !== 'done')
 
+  useEffect(() => {
+    if (!jobStatus?.status) return
+  
+    switch (jobStatus.status) {
+      case 'processing_step_1':
+        setStep(1)
+        break
+      case 'processing_step_2':
+        setStep(2)
+        break
+      case 'done':
+        setStep(3)
+        break
+      default:
+        setStep(0)
+    }
+  }, [jobStatus?.status])
+
   return (
     <div className={s.promptSection}>
       <PresetSelect
@@ -156,19 +175,25 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
       />
       {imageError && <div className={s.error}>Ошибка: {String(imageError)}</div>} */}
 
-      <StepProgressBar
-        steps={[
-          { label: 'Обряд Начат', positionPercent: 5 },
-          { label: 'Плоть Сформирована', positionPercent: 32 },
-          { label: 'Душа Вложена', positionPercent: 60 },
-          { label: 'Существо Пробудилось', positionPercent: 88 }
-        ]}
-        initialStep={0}
-        onStepChange={(i) => console.log('Новый шаг:', i)}
-      />
+      <div
+        className={s.progressWrapper}
+        data-visible={isGenerating}
+      >
+        <StepProgressBar
+          steps={[
+            { label: 'Обряд Начат', positionPercent: 5 },
+            { label: 'Плоть Сформирована', positionPercent: 32 },
+            { label: 'Душа Вложена', positionPercent: 60 },
+            { label: 'Существо Пробудилось', positionPercent: 88 }
+          ]}
+          currentStep={step}
+          onStepChange={(i) => console.log('Новый шаг:', i)}
+          disableClick
+        />
+      </div>
 
 
-      {jobId && (
+      {/* {jobId && (
         <div className={s.status}>
           {isPolling && <p>{t.polling}</p>}
           {!isPolling && jobStatus?.status === 'done' && <p>{t.done}</p>}
@@ -178,7 +203,7 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
             </div>
           )}
         </div>
-      )}
+      )} */}
     </div>
   )
 }

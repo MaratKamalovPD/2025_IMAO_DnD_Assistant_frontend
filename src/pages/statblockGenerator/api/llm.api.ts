@@ -24,7 +24,7 @@ export const llmApi = createApi({
     }),
 
     // GET /api/llm/{job_id} → { status, result? }
-    getGenerationStatus: builder.query<{ status: 'pending'|'processing'|'done'|'error'; result?: CreatureFullData },string >({
+    getGenerationStatus: builder.query<{ status: 'pending'|'processing_step_1'|'processing_step_2'|'done'|'error'; result?: CreatureFullData },string >({
       query: jobId => `/${jobId}`,
     }),
   }),

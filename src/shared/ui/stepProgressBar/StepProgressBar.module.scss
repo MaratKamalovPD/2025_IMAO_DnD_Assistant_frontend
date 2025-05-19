@@ -1,4 +1,5 @@
 .progress {
+    overflow: visible;
     position: relative;
     display: flex;
     justify-content: space-between;
@@ -16,7 +17,7 @@
     height: 3px;
     background: #e8dfd8;
     border-radius: 10px;
-    overflow: hidden;
+    overflow: visible;
   
     &__fill {
       background: var(--accent-btn-color);
@@ -33,7 +34,7 @@
       height: 100%;
       z-index: 2;
       pointer-events: none;
-      overflow: hidden;
+      overflow: visible;
   
       // Радужная бегущая волна
       &::after {
