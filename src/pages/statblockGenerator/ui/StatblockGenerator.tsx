@@ -33,6 +33,7 @@ import clsx from 'clsx';
 import { promptPresetOptions, useGlow } from '../lib';
 import { CreatureFullData } from 'entities/creature/model';
 import { applyCreatureData } from '../model';
+import { AppDispatch } from 'app/store';
 
 const requestBody: GetCreaturesRequest = {
   start: 0,
@@ -138,7 +139,7 @@ export const StatblockGenerator = () => {
     addCreature(generatedCreature); // без unwrap
   };
   
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     if (fullCreatureData) {
