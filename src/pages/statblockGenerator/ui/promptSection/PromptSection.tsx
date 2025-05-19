@@ -158,10 +158,10 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
 
       <StepProgressBar
         steps={[
-          { label: 'Отправлено' },
-          { label: 'Происходит магия' },
+          { label: 'Отправлено', positionPercent: 5 },
+          { label: 'Магия', positionPercent: 36 },
           { label: 'Payment' },
-          { label: 'Success' }
+          { label: 'Success', positionPercent: 95 }
         ]}
         initialStep={1}
         onStepChange={(i) => console.log('Новый шаг:', i)}

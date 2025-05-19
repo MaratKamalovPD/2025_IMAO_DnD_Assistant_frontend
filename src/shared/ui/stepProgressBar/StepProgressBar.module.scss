@@ -11,20 +11,64 @@
     position: absolute;
     top: 23%;
     left: 50%;
-    background: #e8dfd8;
+    transform: translate(-50%, -50%);
     width: 100%;
     height: 3px;
+    background: #e8dfd8;
     border-radius: 10px;
-    transform: translate(-50%, -50%);
     overflow: hidden;
   
     &__fill {
-      display: block;
       background: var(--accent-btn-color);
       height: 100%;
       transition: width 0.3s ease;
+      position: relative;
+      z-index: 1;
+      display: block;
+    }
+  
+    &__pulseSegment {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+  
+      // Радужная бегущая волна
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 300%;
+        height: 100%;
+        background: linear-gradient(
+          120deg,
+          magenta,
+          cyan,
+          yellow,
+          lime,
+          red,
+          magenta
+        );
+        animation: rave-wave 1.2s infinite linear;
+        filter: brightness(3) contrast(2);
+        mix-blend-mode: screen;
+        opacity: 0.9;
+      }
     }
   }
+  
+  @keyframes rave-wave {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+  
   
   .point {
     position: relative;
@@ -151,5 +195,14 @@
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
+  }
+  
+  @keyframes rave-wave {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
   }
   
