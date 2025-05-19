@@ -241,3 +241,28 @@
   border-radius: 50%;
   z-index: -1;
 }
+
+// NO AUTH OVERLAY STYLES
+
+.promptSectionWrapper {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.authOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  height: 94%;
+  background: rgba(20, 20, 20, 0.2);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-radius: 8px;
+  backdrop-filter: blur(1px);
+  font-size: 1.5rem;
+}

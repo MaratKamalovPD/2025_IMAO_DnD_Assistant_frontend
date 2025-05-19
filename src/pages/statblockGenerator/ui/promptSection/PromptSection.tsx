@@ -6,13 +6,14 @@ import {
   PromptTextareaRef,
   SelectOptionWithDescription
 } from 'pages/statblockGenerator/model'
-import { StatblockImageUploadPanel } from './statblockImageUploadPanel'
+//import { StatblockImageUploadPanel } from './statblockImageUploadPanel'
 import {
   useSubmitGenerationPromptMutation,
-  useSubmitGenerationImageMutation,
+  //useSubmitGenerationImageMutation,
   useGetGenerationStatusQuery
 } from 'pages/statblockGenerator/api/llm.api'
 import { CreatureFullData } from 'entities/creature/model'
+import { StepProgressBar } from 'shared/ui/stepProgressBar'
 
 interface PromptSectionProps {
   onGenerate?: (creature: CreatureFullData) => void
@@ -30,7 +31,7 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
   onTextChange,
   presetOptions = [],
   selectedPreset = '',
-  onImageUpload,
+  //onImageUpload,
   language = 'ru'
 }) => {
   const translations = {
@@ -62,12 +63,13 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
     submitText,
     { isLoading: isSubmittingText, error: textError }
   ] = useSubmitGenerationPromptMutation()
-  const [
-    submitImage,
-    { isLoading: isSubmittingImage, error: imageError }
-  ] = useSubmitGenerationImageMutation()
 
-  void isSubmittingImage
+  // const [
+  //   submitImage,
+  //   { isLoading: isSubmittingImage, error: imageError }
+  // ] = useSubmitGenerationImageMutation()
+  // void isSubmittingImage
+  
 
   // Будем пропускать запрос пока нет jobId, а как только jobId появится —
   // сразу сработает первый fetch и далее каждый 1000 мс
@@ -105,18 +107,18 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
     }
   }
 
-  const handleGenerateImage = async (file: File) => {
-    onImageUpload?.(file)
-    const fd = new FormData()
-    fd.append('image', file)
+  // const handleGenerateImage = async (file: File) => {
+  //   onImageUpload?.(file)
+  //   const fd = new FormData()
+  //   fd.append('image', file)
 
-    try {
-      const resp = await submitImage(fd).unwrap()
-      setJobId(resp.job_id)
-    } catch (err) {
-      console.error('❌ Ошибка при загрузке изображения:', err)
-    }
-  }
+  //   try {
+  //     const resp = await submitImage(fd).unwrap()
+  //     setJobId(resp.job_id)
+  //   } catch (err) {
+  //     console.error('❌ Ошибка при загрузке изображения:', err)
+  //   }
+  // }
 
   const isGenerating =
   isSubmittingText ||             
@@ -141,11 +143,10 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
         ref={textareaRef}
         onSubmit={handleGenerateText}
         disabled={isGenerating}
-        placeholder={t.generate}
       />
       {textError && <div className={s.error}>Ошибка: {String(textError)}</div>}
 
-      <StatblockImageUploadPanel
+      {/* <StatblockImageUploadPanel
         onImageSelect={handleGenerateImage}
         disabled={isGenerating}
         t={{
@@ -153,7 +154,19 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
           extract: t.generate
         }}
       />
-      {imageError && <div className={s.error}>Ошибка: {String(imageError)}</div>}
+      {imageError && <div className={s.error}>Ошибка: {String(imageError)}</div>} */}
+
+      <StepProgressBar
+        steps={[
+          { label: 'Отправлено' },
+          { label: 'Происходит магия' },
+          { label: 'Payment' },
+          { label: 'Success' }
+        ]}
+        initialStep={1}
+        onStepChange={(i) => console.log('Новый шаг:', i)}
+      />
+
 
       {jobId && (
         <div className={s.status}>
