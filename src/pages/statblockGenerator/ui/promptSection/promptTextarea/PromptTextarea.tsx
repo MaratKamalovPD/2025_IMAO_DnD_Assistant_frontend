@@ -25,7 +25,7 @@ export const PromptTextarea = forwardRef<
     {
       onSubmit,
       disabled = false, 
-      placeholder = "Введите описание существа для генерации",
+      placeholder = "Введите текстовое описание существа в свободной форме",
     },
     ref
   ) => {

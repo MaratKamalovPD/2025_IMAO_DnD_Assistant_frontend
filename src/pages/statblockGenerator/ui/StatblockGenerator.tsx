@@ -33,6 +33,8 @@ import clsx from 'clsx';
 import { promptPresetOptions, useGlow } from '../lib';
 import { CreatureFullData } from 'entities/creature/model';
 import { applyCreatureData } from '../model';
+import { AppDispatch } from 'app/store';
+import { AuthState, AuthStore } from 'entities/auth/model';
 
 const requestBody: GetCreaturesRequest = {
   start: 0,
@@ -71,6 +73,9 @@ export const StatblockGenerator = () => {
   const { data: creatures } = useGetCreaturesQuery(requestBody);
   const [trigger, { data: fetchedCreatureData  }] = useLazyGetCreatureByNameQuery();
   const { glowActiveMap, glowFadeMap, triggerGlow, clearGlow } = useGlow();
+
+  const { isAuth } = useSelector<AuthStore>((state) => state.auth) as AuthState;
+  //const isAuth = true;
 
   const getGlowClass = (id: string) =>
     clsx(
@@ -138,7 +143,7 @@ export const StatblockGenerator = () => {
     addCreature(generatedCreature); // без unwrap
   };
   
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     if (fullCreatureData) {
@@ -186,9 +191,30 @@ export const StatblockGenerator = () => {
   return (
     <div className={s.statblockGeneratorContainer}>
       <div className={s.statblockGeneratorPanel} style={{ width: `${panelWidth}px` }}>
-        <PromptSection language='ru' presetOptions={promptPresetOptions} onGenerate={creature => {
-            setFullCreatureData(creature)
-          }}/>
+      <div className={s.promptSectionWrapper} style={{ position: 'relative' }}>
+        {!isAuth && (
+          <div className={s.authOverlay}>
+            🔒 Авторизуйтесь, чтобы использовать генератор существа по описанию
+          </div>
+        )}
+
+        <div
+          style={{
+            opacity: isAuth ? 1 : 0.3,
+            pointerEvents: isAuth ? 'auto' : 'none',
+            transition: 'opacity 0.3s ease',
+          }}
+        >
+          <PromptSection 
+            language='ru' 
+            presetOptions={promptPresetOptions} 
+            onGenerate={creature => {
+              setFullCreatureData(creature)
+            }}
+          />
+        </div>
+      </div>
+
         <CreatureSaveSection
           presetOptions={presetOptions}
           selectedPreset={selectedPreset}

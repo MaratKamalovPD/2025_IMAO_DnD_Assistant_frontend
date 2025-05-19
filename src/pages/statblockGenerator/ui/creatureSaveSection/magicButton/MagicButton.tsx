@@ -4,16 +4,18 @@ import s from './MagicButton.module.scss';
 type MagicButtonProps = {
   onClick?: () => void;
   children?: React.ReactNode;
+  disabled?: boolean;
 };
 
 export const MagicButton: React.FC<MagicButtonProps> = ({
   onClick,
   children = 'Cast Spell',
+  disabled = false,
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleClick = () => {
-    if (!buttonRef.current) return;
+    if (disabled || !buttonRef.current) return;
 
     // Запускаем анимацию клика
     buttonRef.current.classList.remove(s.clicked);
@@ -30,6 +32,7 @@ export const MagicButton: React.FC<MagicButtonProps> = ({
       ref={buttonRef}
       className={`${s.magicButton}`}
       onClick={handleClick}
+      disabled={disabled}
     >
       <span className={s.innerGlow} />
       <span className={s.burst} />

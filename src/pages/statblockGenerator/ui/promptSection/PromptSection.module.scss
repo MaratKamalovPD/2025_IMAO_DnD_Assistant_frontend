@@ -1,6 +1,6 @@
 .promptSection {
     
-    gap: 13px;
+    gap: 25px;
     border-radius: 15px;
     background-color: var(--primary-bg-color);
     display: flex;
@@ -142,3 +142,28 @@
       }
     }
   }
+
+  .progressWrapper {
+    overflow: visible;
+    max-height: 300px;
+    opacity: 1;
+    transition-property: opacity, max-height;
+    transition-timing-function: ease;
+  
+    // 👇 Быстрое появление
+    &[data-visible='true'] {
+      transition-duration: 0.2s;
+      opacity: 1;
+      max-height: 300px;
+      pointer-events: auto;
+    }
+  
+    // 👇 Медленное исчезновение
+    &[data-visible='false'] {
+      transition-duration: 3.6s;
+      opacity: 0;
+      max-height: 0;
+      pointer-events: none;
+    }
+  }
+  

@@ -3,6 +3,8 @@ import s from './CreatureSaveSection.module.scss';
 import { MonsterSelect } from './monsterSelect';
 import { TokenatorWidget } from 'shared/ui/tokenator';
 import { MagicButton } from './magicButton';
+import { useSelector } from 'react-redux';
+import { AuthState, AuthStore } from 'entities/auth/model';
 
 interface CreatureSaveSectionProps {
   onSave?: () => void;
@@ -42,6 +44,9 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
 
   const t = translations[language];
 
+  const { isAuth } = useSelector<AuthStore>((state) => state.auth) as AuthState;
+  //const isAuth = true;
+
   return (
     <div className={s.creatureSaveSection}>
       {/* Сохраненная часть с пресетами */}
@@ -60,9 +65,18 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
         </button>
       </div>
 
-      <MagicButton onClick={onSave}>
-        {t.save}
-      </MagicButton>
+      <div className={s.authLockWrapper}>
+        {!isAuth && (
+          <div className={s.authOverlay}>
+            🔒 
+          </div>
+        )}
+
+        <MagicButton onClick={onSave} disabled={!isAuth}>
+          {isAuth ? t.save : 'Войдите, чтобы сохранить'}
+        </MagicButton>
+      </div>
+
 
       <div className={s.creatureSaveSection__layout}>
         <TokenatorWidget /> 
