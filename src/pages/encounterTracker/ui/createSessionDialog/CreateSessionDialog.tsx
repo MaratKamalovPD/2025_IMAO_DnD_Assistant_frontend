@@ -9,6 +9,7 @@ import { SessionContext } from 'entities/session/model';
 import { useLazyCreateSessionQuery } from 'pages/encounterTracker/api';
 import { ModalOverlay, Spinner } from 'shared/ui';
 
+import { Link } from 'react-router';
 import s from './CreateSessionDialog.module.scss';
 
 const buildLink = (schemeAndDomain: string, sessionId: string) =>
@@ -90,6 +91,13 @@ const CreateSessionDialog = () => {
                   </button>
                 </Tippy>
               </div>
+              <Link
+                to={buildLink(schemeAndDomain, data.sessionID)}
+                data-role='btn'
+                data-variant='accent'
+              >
+                Перейти в сессию{' '}
+              </Link>
             </>
           )}
 
