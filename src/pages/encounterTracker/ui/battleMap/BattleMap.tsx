@@ -13,7 +13,7 @@ import { CreatureToken } from './creatureToken';
 import { GridLayout } from './gridLayout';
 
 import s from './BattleMap.module.scss';
-import { Rule } from './rule';
+import { RuleProvider } from './rule';
 
 type BattleMapProps = {
   image: string;
@@ -85,44 +85,48 @@ export const BattleMap = ({ image, cells, setCells }: BattleMapProps) => {
     }
   }, [attackHandleModeActive, attackHandleModeMulti]);
 
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+  };
+
   return (
     <div
       className={s.mapContainer}
       style={{ width: `${mapSize.width}px`, height: `${mapSize.height}px` }}
     >
-      <svg ref={svgRef} className={s.map} onClick={handleClick}>
+      <svg ref={svgRef} className={s.map} onClick={handleClick} onContextMenu={handleContextMenu}>
         <g transform={`translate(${transform.x}, ${transform.y}) scale(${transform.k})`}>
-          <Rule transform={transform} cellSize={cellSize} />
           <image href={image} height={rows * cellSize} width={cols * cellSize} />
           <GridLayout cells={cells} cols={cols} rows={rows} cellSize={cellSize} />
+          <RuleProvider transform={transform} cellSize={cellSize}>
+            {participants
+              .filter((value) => selectedCreatureId === value.id)
+              .map((value) => (
+                <CreatureToken
+                  transform={transform}
+                  key={value.id}
+                  id={value.id}
+                  x={value.cellsCoords ? value.cellsCoords.cellsX : 0}
+                  y={value.cellsCoords ? value.cellsCoords.cellsY : 0}
+                  cellSize={cellSize}
+                  setCells={setCells}
+                />
+              ))}
 
-          {participants
-            .filter((value) => selectedCreatureId === value.id)
-            .map((value) => (
-              <CreatureToken
-                transform={transform}
-                key={value.id}
-                id={value.id}
-                x={value.cellsCoords ? value.cellsCoords.cellsX : 0}
-                y={value.cellsCoords ? value.cellsCoords.cellsY : 0}
-                cellSize={cellSize}
-                setCells={setCells}
-              />
-            ))}
-
-          {participants
-            .filter((value) => selectedCreatureId !== value.id)
-            .map((value, index) => (
-              <CreatureToken
-                transform={transform}
-                key={value.id}
-                id={value.id}
-                x={value.cellsCoords ? value.cellsCoords.cellsX : 0}
-                y={value.cellsCoords ? value.cellsCoords.cellsY : index}
-                cellSize={cellSize}
-                setCells={setCells}
-              />
-            ))}
+            {participants
+              .filter((value) => selectedCreatureId !== value.id)
+              .map((value, index) => (
+                <CreatureToken
+                  transform={transform}
+                  key={value.id}
+                  id={value.id}
+                  x={value.cellsCoords ? value.cellsCoords.cellsX : 0}
+                  y={value.cellsCoords ? value.cellsCoords.cellsY : index}
+                  cellSize={cellSize}
+                  setCells={setCells}
+                />
+              ))}
+          </RuleProvider>
         </g>
       </svg>
     </div>

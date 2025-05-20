@@ -5,7 +5,7 @@ import {
   Icon28DocumentListOutline,
   Icon28HomeOutline,
 } from '@vkontakte/icons';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Rnd } from 'react-rnd';
 
@@ -28,6 +28,7 @@ import { MenuItem, PopupMenu } from './popupMenu';
 import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
 
+import { SessionContext } from 'entities/session/model';
 import s from './EncounterTracker.module.scss';
 
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
@@ -38,6 +39,7 @@ const rows = 18;
 
 export const EncounterTracker = () => {
   const dispatch = useDispatch();
+  const isSession = useContext(SessionContext);
 
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [isFirstRender2, setIsFirstRender2] = useState(true);
@@ -83,7 +85,7 @@ export const EncounterTracker = () => {
   }, []);
 
   useEffect(() => {
-    if (!participants.length) return;
+    if (!participants.length || isSession) return;
     if (isFirstRender) {
       setIsFirstRender(false);
 
@@ -124,39 +126,21 @@ export const EncounterTracker = () => {
     dispatch(userInterfaceActions.setStatblockIsMinimized(!statblockIsMinimized));
   };
 
+  const closeStatblockWindow = () => {
+    dispatch(userInterfaceActions.setStatblockIsVisible(!statblockIsVisible));
+  };
+
   const toggleDiceTrayWindow = () => {
     if (diceTrayIsMinimized) {
       dispatch(userInterfaceActions.setDiceTraySize({ width: diceTraySize.width, height: 600 }));
     } else {
-      dispatch(userInterfaceActions.setStatblockSize({ width: diceTraySize.width, height: 40 })); // или вообще height: 0
+      dispatch(userInterfaceActions.setDiceTraySize({ width: diceTraySize.width, height: 40 })); // или вообще height: 0
     }
     dispatch(userInterfaceActions.setDiceTrayIsMinimized(!diceTrayIsMinimized));
   };
 
-  const ToggleStatblock = () => {
-    return (
-      <Tippy content={'Таблица характеристик'} placement='left'>
-        <div
-          className={s.toggleStatblock}
-          onClick={() => dispatch(userInterfaceActions.setStatblockIsVisible(!statblockIsVisible))}
-        >
-          <Icon28DocumentListOutline fill='white' />
-        </div>
-      </Tippy>
-    );
-  };
-
-  const ToggleDiceTray = () => {
-    return (
-      <Tippy content={'Броски костей'}>
-        <div
-          className={s.toggleDiceTray}
-          onClick={() => dispatch(userInterfaceActions.setDiceTrayIsVisible(!diceTrayIsVisible))}
-        >
-          <Icon28Dice6Outline fill='black' />
-        </div>
-      </Tippy>
-    );
+  const closeDiceTrayWindow = () => {
+    dispatch(userInterfaceActions.setDiceTrayIsVisible(!diceTrayIsVisible));
   };
 
   const menuItems: MenuItem[] = [
@@ -170,7 +154,13 @@ export const EncounterTracker = () => {
     {
       content: {
         type: 'component',
-        component: <ToggleStatblock />,
+        component: (
+          <Tippy content={'Таблица характеристик'} placement='left'>
+            <div className={s.toggleStatblock} onClick={closeStatblockWindow}>
+              <Icon28DocumentListOutline fill='white' />
+            </div>
+          </Tippy>
+        ),
       },
       color: s.green,
       href: '#rocket',
@@ -206,7 +196,13 @@ export const EncounterTracker = () => {
     {
       content: {
         type: 'component',
-        component: <ToggleDiceTray />,
+        component: (
+          <Tippy content={'Броски костей'}>
+            <div className={s.toggleDiceTray} onClick={closeDiceTrayWindow}>
+              <Icon28Dice6Outline fill='black' />
+            </div>
+          </Tippy>
+        ),
       },
       color: s.red,
     },
@@ -223,7 +219,7 @@ export const EncounterTracker = () => {
           <PopupMenu items={menuItems} />
           {statblockIsVisible && (
             <Rnd
-              minWidth={200}
+              minWidth={400}
               style={{ zIndex: 10 }}
               default={{
                 x: statblockCoords.x,
@@ -248,6 +244,7 @@ export const EncounterTracker = () => {
               <Statblock
                 isMinimized={statblockIsMinimized}
                 toggleWindow={toggleStatblockWindow}
+                closeWindow={closeStatblockWindow}
                 cells={cells}
                 setCells={setCells}
               />
@@ -257,6 +254,8 @@ export const EncounterTracker = () => {
           {diceTrayIsVisible && (
             <Rnd
               minWidth={800}
+              minHeight={diceTrayIsMinimized ? 0 : 730}
+              maxHeight={diceTrayIsMinimized ? 0 : 730}
               style={{ zIndex: 10 }}
               default={{
                 x: diceTrayCoords.x,
@@ -278,10 +277,10 @@ export const EncounterTracker = () => {
                 dispatch(userInterfaceActions.setDiceTrayCoords({ x: data.x, y: data.y }));
               }}
             >
-              {/* Передаём управление внутрь DiceTrayWidget */}
               <DiceTrayWidget
                 isMinimized={diceTrayIsMinimized}
                 toggleWindow={toggleDiceTrayWindow}
+                closeWindow={closeDiceTrayWindow}
               />
             </Rnd>
           )}

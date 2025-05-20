@@ -58,13 +58,10 @@ const BestiaryContent = () => {
   const cardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    console.log('aaa', hasOutlet, cardRef.current);
-    if (cardRef.current) {
-      setTimeout(
-        () => cardRef?.current?.scrollIntoView({ behavior: 'instant', block: 'start' }),
-        200,
-      );
-    }
+    setTimeout(
+      () => cardRef?.current?.scrollIntoView({ behavior: 'instant', block: 'start' }),
+      150,
+    );
   }, [hasOutlet]);
 
   const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
