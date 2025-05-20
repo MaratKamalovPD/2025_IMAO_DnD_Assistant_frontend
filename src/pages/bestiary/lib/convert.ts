@@ -11,7 +11,7 @@ export const convertCreatureFullDataToCreature = (creatureData: CreatureFullData
     type: 'creature',
     id: uniqid(),
     name: creatureData.name.rus,
-    size: Size[creatureData.size.eng as keyof typeof Size],
+    size: Size[creatureData.size.eng.toLowerCase() as keyof typeof Size],
     hp: {
       current: creatureData.hits.average,
       max: creatureData.hits.average,
