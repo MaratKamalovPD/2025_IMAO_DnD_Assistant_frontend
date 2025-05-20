@@ -11,6 +11,7 @@ import { Rnd } from 'react-rnd';
 
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { loggerActions, LoggerState, LoggerStore } from 'entities/logger/model';
+import { SessionContext } from 'entities/session/model';
 import {
   userInterfaceActions,
   UserInterfaceState,
@@ -24,11 +25,11 @@ import CreateSessionDialog from './createSessionDialog/CreateSessionDialog';
 import { CustomCursor } from './customCursor';
 import { DiceTrayWidget } from './diceTrayWidget';
 import { HelpButton } from './helpButton';
+import { ParticipantsMenu } from './participantsMenu';
 import { MenuItem, PopupMenu } from './popupMenu';
 import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
 
-import { SessionContext } from 'entities/session/model';
 import s from './EncounterTracker.module.scss';
 
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
@@ -213,6 +214,7 @@ export const EncounterTracker = () => {
       <CustomCursor />
       {participants.length !== 0 ? (
         <>
+          {isSession && <ParticipantsMenu />}
           <CreateSessionDialog />
           <HelpButton />
           <BattleMap image={mapImage} cells={cells} setCells={setCells} />

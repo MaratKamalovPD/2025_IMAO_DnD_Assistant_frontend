@@ -1,0 +1,148 @@
+.container {
+  position: fixed;
+  top: 100px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--secondary-btn-color);
+  color: white;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  }
+
+  &.active {
+    background: var(--secondary-btn-color);
+    transform: scale(0.95);
+  }
+}
+
+.icon {
+  transition: transform 0.2s;
+}
+
+.counter {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ff4757;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Анимация пульсации для счётчика */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.button:hover .counter {
+  animation: pulse 1s infinite;
+}
+
+.menuContainer {
+  background: var(--secondary-bg-color);
+  border-radius: 12px;
+  border: 3px solid black;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  width: 240px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menuTitle {
+  padding: 16px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-btn-color);
+  background: var(--primary-bg-color);
+  border-bottom: 1px solid black;
+}
+
+.menuList {
+  list-style: none;
+  padding: 8px 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  transition: background 0.2s;
+  gap: 12px;
+}
+
+.userIcon {
+  font-size: 16px;
+}
+
+.userName {
+  flex: 1;
+  font-size: 14px;
+  color: whitesmoke;
+}
+
+.adminBadge {
+  margin-left: 8px;
+  padding: 2px 6px;
+  background: #ffebee;
+  color: #d32f2f;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.admin {
+  .userName {
+    font-weight: 600;
+    color: whitesmoke;
+  }
+
+  .userIcon {
+    color: #ff9800;
+  }
+}
