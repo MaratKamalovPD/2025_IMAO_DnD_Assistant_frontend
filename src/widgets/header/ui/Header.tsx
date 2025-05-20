@@ -13,7 +13,8 @@ import s from './Header.module.scss';
 export const Header = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [disabled, setDisabled] = useState(false);
   const sessionUrl = useSessionURL(location.pathname);
 
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -57,13 +58,22 @@ export const Header = () => {
       return;
     }
 
+    if (location.pathname === '/') {
+      setDisabled(true);
+      return;
+    }
+
+    setDisabled(false);
     setVisible(true);
   }, [location]);
 
   return (
     <>
       <div className={s.headerTrigger}></div>
-      <nav className={s.header} style={{ top: visible ? 0 : '-65px' }}>
+      <nav
+        className={clsx(s.header, { [s.header__disabled]: disabled })}
+        style={{ top: visible ? 0 : '-65px' }}
+      >
         <div className={s.leftSection}>
           <Link to='/'>
             <img className={s.leftSection__logo} src={logo} alt='logo' />
