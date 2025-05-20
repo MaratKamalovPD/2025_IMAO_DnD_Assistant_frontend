@@ -34,7 +34,22 @@ const router = createBrowserRouter([
     path: 'bestiary',
     element: (
       <HeaderProvider>
-        <Bestiary />
+        <Bestiary type='moder' />
+        <Footer />
+      </HeaderProvider>
+    ),
+    children: [
+      {
+        path: ':creatureName',
+        element: <CreatureStatblock />,
+      },
+    ],
+  },
+  {
+    path: 'bestiary/user',
+    element: (
+      <HeaderProvider>
+        <Bestiary type='user' />
         <Footer />
       </HeaderProvider>
     ),

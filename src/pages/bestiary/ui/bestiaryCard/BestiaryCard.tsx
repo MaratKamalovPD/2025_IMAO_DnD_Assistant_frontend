@@ -5,8 +5,15 @@ import { toast } from 'react-toastify';
 
 import { creatureActions, CreatureClippedData } from 'entities/creature/model';
 import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
-import { useLazyGetCreatureByNameQuery } from 'pages/bestiary/api';
-import { convertCreatureFullDataToCreature } from 'pages/bestiary/lib';
+import {
+  useLazyGetCreatureByNameQuery,
+  useLazyGetUserCreatureByNameQuery,
+} from 'pages/bestiary/api';
+import {
+  convertCreatureFullDataToCreature,
+  insertAfterSecondSlash,
+  useTypeContext,
+} from 'pages/bestiary/lib';
 import { GridCard } from './gridCard';
 import { ListCard } from './listCard';
 
@@ -21,13 +28,16 @@ type BestiaryCardProps = {
 export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSelected }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const type = useTypeContext();
+  const useLazyGetCreatureByName =
+    type === 'moder' ? useLazyGetCreatureByNameQuery : useLazyGetUserCreatureByNameQuery;
 
   const { participants } = useSelector<EncounterStore>(
     (state) => state.encounter,
   ) as EncounterState;
 
   const [trigger, { data: creatureData, isLoading, isError, isUninitialized, requestId }] =
-    useLazyGetCreatureByNameQuery();
+    useLazyGetCreatureByName();
 
   const handleAddToTtackerClick = useCallback(() => {
     trigger(`${creature.url}`);
@@ -59,7 +69,7 @@ export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSele
         e.stopPropagation();
         e.preventDefault();
         e.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        navigate(creature.url);
+        navigate(type === 'moder' ? creature.url : insertAfterSecondSlash(creature.url, 'user'));
       }}
       className={s.cardLink}
     >

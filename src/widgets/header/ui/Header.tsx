@@ -117,6 +117,9 @@ export const Header = () => {
                   <Link to='/encounter_list'>
                     <div className={s.dropdownContainer__btn}>Список сражений</div>
                   </Link>
+                  <Link to='/bestiary/user'>
+                    <div className={s.dropdownContainer__btn}>Мой бестиарий</div>
+                  </Link>
                   <Link to='/characters'>
                     <div className={s.dropdownContainer__btn}>Персонажи</div>
                   </Link>

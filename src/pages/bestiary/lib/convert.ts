@@ -39,3 +39,15 @@ export const convertCreatureFullDataToCreature = (creatureData: CreatureFullData
     attacksLLM: creatureData.attacksLLM,
   };
 };
+
+export const insertAfterSecondSlash = (path: string, wordToInsert: string): string => {
+  const parts = path.split('/');
+
+  if (parts.length < 3) {
+    return path;
+  }
+
+  parts.splice(2, 0, wordToInsert);
+
+  return parts.join('/');
+};

@@ -3,10 +3,15 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Outlet, useParams } from 'react-router';
 
 import { CreatureClippedData } from 'entities/creature/model/types';
-import { GetCreaturesRequest, useGetCreaturesQuery } from 'pages/bestiary/api';
+import {
+  GetCreaturesRequest,
+  useGetCreaturesQuery,
+  useGetUserCreaturesQuery,
+} from 'pages/bestiary/api';
 import {
   mapFiltersToRequestBody,
-  OutletProvider,
+  TypeProvider,
+  useTypeContext,
   useViewSettings,
   ViewSettingsProvider,
 } from 'pages/bestiary/lib';
@@ -23,21 +28,29 @@ const RESPONSE_SIZE = 24;
 const DEBOUNCE_TIME = 500;
 const THROTTLE_TIME = 1000;
 
-export const Bestiary = () => {
+type BestiaryProps = {
+  type: 'user' | 'moder';
+};
+
+export const Bestiary = ({ type }: BestiaryProps) => {
   return (
     <div className={s.pageContent}>
-      <ViewSettingsProvider>
-        <OutletProvider>
+      <TypeProvider type={type}>
+        <ViewSettingsProvider>
           <BestiaryContent />
-        </OutletProvider>
-      </ViewSettingsProvider>
-      <Outlet />
+        </ViewSettingsProvider>
+        <Outlet />
+      </TypeProvider>
     </div>
   );
 };
 
 const BestiaryContent = () => {
   const { creatureName } = useParams();
+  const type = useTypeContext();
+  const title = type === 'moder' ? 'Бестиарий' : 'Мой Бестиарий';
+  const useGetCreatures = type === 'moder' ? useGetCreaturesQuery : useGetUserCreaturesQuery;
+
   const [start, setStart] = useState(0);
   const [allCreatures, setAllCreatures] = useState<CreatureClippedData[]>([]);
   const [searchValue, setSearchValue] = useState<string>('');
@@ -97,7 +110,7 @@ const BestiaryContent = () => {
     mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue, orderParams),
   );
 
-  const { data: creatures, isLoading, isError, status } = useGetCreaturesQuery(requestBody);
+  const { data: creatures, isLoading, isError, status } = useGetCreatures(requestBody);
 
   const isPending = status === 'pending';
 
@@ -162,6 +175,7 @@ const BestiaryContent = () => {
       })}
     >
       <TopPanel
+        title={title}
         isAnyFilterSet={isAnyFilterSet}
         setFilters={setFilters}
         setSearchValue={setSearchValue}

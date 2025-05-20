@@ -66,8 +66,9 @@ export const CreatureToken = ({ transform, id, cellSize, setCells }: CreatureTok
   const { attackHandleModeActive, attackHandleModeMulti, currentAttackLLM, selectedCreatureId } =
     useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
 
-  const moveSize = creature.size === Size.tiny ? cellSize / 2 : cellSize;
-  const radius = useMemo(() => (cellSize * creature.size) / 2, [cellSize, creature.size]);
+  const creatureSize = creature.size || Size.default;
+  const moveSize = creatureSize === Size.tiny ? cellSize / 2 : cellSize;
+  const radius = useMemo(() => (cellSize * creatureSize) / 2, [cellSize, creatureSize]);
   const participant = useMemo(
     () => participants.find((part) => part.id === id),
     [participants, id],
