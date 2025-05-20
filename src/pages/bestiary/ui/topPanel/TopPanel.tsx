@@ -12,10 +12,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useViewSettings } from 'pages/bestiary/lib';
 import { TopPanelWithSearch } from 'shared/ui';
 
-import s from './TopPanel.module.scss';
 import { Filters } from 'pages/bestiary/model';
+import s from './TopPanel.module.scss';
 
 type TopPanelProps = {
+  title: string;
   isAnyFilterSet: boolean;
   setSearchValue: React.Dispatch<React.SetStateAction<string>>;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,6 +24,7 @@ type TopPanelProps = {
 };
 
 export const TopPanel: React.FC<TopPanelProps> = ({
+  title,
   isAnyFilterSet,
   setSearchValue,
   setIsModalOpen,
@@ -46,7 +48,7 @@ export const TopPanel: React.FC<TopPanelProps> = ({
   }, []);
 
   return (
-    <TopPanelWithSearch title='Бестиарий' setSearchValue={setSearchValue}>
+    <TopPanelWithSearch title={title} setSearchValue={setSearchValue}>
       <Tippy content={'Показать фильтры существ'}>
         <button
           onClick={() => setIsModalOpen(true)}

@@ -1,0 +1,31 @@
+.container {
+  height: 100%;
+  container-type: inline-size;
+
+  .headerTitle {
+    position: absolute;
+    text-overflow: ellipsis;
+    top: -8px;
+    left: 50%;
+    translate: -50%;
+
+    @container (max-width:600px ) {
+      left: 10%;
+      translate: -10%;
+    }
+  }
+}
+
+.minimizeContainer {
+  box-sizing: border-box;
+  border-radius: 15px;
+  background-color: var(--primary-bg-color);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 5px;
+  border: 3px solid black;
+  margin-bottom: 5px;
+  z-index: 3;
+  gap: 0.5rem;
+}

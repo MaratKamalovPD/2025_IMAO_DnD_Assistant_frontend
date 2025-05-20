@@ -1,0 +1,1 @@
+export { TrayWidget } from './TrayWidget';

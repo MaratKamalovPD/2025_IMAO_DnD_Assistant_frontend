@@ -6,8 +6,8 @@ import { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 
 import { CreatureFullData } from 'entities/creature/model';
-import { useGetCreatureByNameQuery } from 'pages/bestiary/api';
-import { cursorStyle } from 'pages/bestiary/lib';
+import { useGetCreatureByNameQuery, useGetUserCreatureByNameQuery } from 'pages/bestiary/api';
+import { cursorStyle, useTypeContext } from 'pages/bestiary/lib';
 import { JumpTarget } from 'pages/bestiary/model';
 import { modifiers } from 'shared/lib';
 import { AbilitiesSection } from './abilitiesSection';
@@ -30,16 +30,20 @@ export const CreatureStatblock = ({
 }: CreatureStatblockProps) => {
   const { creatureName } = useParams();
   const navigate = useNavigate();
+  const type = useTypeContext();
+  const useGetCreatureByName =
+    type === 'moder' ? useGetCreatureByNameQuery : useGetUserCreatureByNameQuery;
 
   const creatureApiPath = creatureName ? `/bestiary/${creatureName}` : undefined;
+  const bestiaryPath = type === 'moder' ? '/bestiary' : '/bestiary/user';
 
-  const { data: creatureQueryData } = useGetCreatureByNameQuery(creatureApiPath!, {
+  const { data: creatureQueryData } = useGetCreatureByName(creatureApiPath!, {
     skip: !!creatureProp || !creatureName,
   });
 
   useEffect(() => {
     if (!creatureName && !creatureProp) {
-      navigate('/bestiary');
+      navigate(bestiaryPath);
     }
   }, [creatureName, creatureProp, navigate]);
 
@@ -64,7 +68,7 @@ export const CreatureStatblock = ({
           <span className={s.header__nameEng}>{creature.name.eng}</span>
         </div>
         {!creatureProp && (
-          <Link to='/bestiary' className={s.header__closeBtn}>
+          <Link to={bestiaryPath} className={s.header__closeBtn}>
             <Icon20Cancel />
           </Link>
         )}

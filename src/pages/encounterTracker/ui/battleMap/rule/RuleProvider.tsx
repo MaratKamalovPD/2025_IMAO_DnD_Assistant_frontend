@@ -1,15 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-
-import s from './Rule.module.scss';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import s from './RuleProvider.module.scss';
 
 type RuleProps = {
-  svgRef?: React.RefObject<SVGSVGElement | null>;
   transform: { x: number; y: number; k: number };
   cellSize: number;
+  children: ReactNode;
 };
 
-export const Rule = ({ transform, cellSize }: RuleProps) => {
-  const svgRef = useRef<SVGSVGElement>(null);
+export const RuleProvider = ({ transform, cellSize, children }: RuleProps) => {
+  const gRef = useRef<SVGGElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPoint, setStartPoint] = useState({ x: 0, y: 0 });
   const [endPoint, setEndPoint] = useState({ x: 0, y: 0 });
@@ -19,17 +18,21 @@ export const Rule = ({ transform, cellSize }: RuleProps) => {
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    // Правая кнопка мыши
     if (e.button === 2) {
-      if (!svgRef.current) return;
+      e.preventDefault();
+      e.stopPropagation();
 
-      const point = svgRef.current.createSVGPoint();
+      const svg = gRef.current?.ownerSVGElement;
+      if (!svg) return;
+
+      const point = svg.createSVGPoint();
       point.x = e.clientX;
       point.y = e.clientY;
-      const svgPoint = point.matrixTransform(svgRef.current.getScreenCTM()?.inverse());
+      const svgPoint = point.matrixTransform(svg.getScreenCTM()?.inverse());
 
       const x =
         Math.floor((svgPoint.x - transform.x) / transform.k / cellSize) * cellSize + cellSize / 2;
@@ -43,12 +46,16 @@ export const Rule = ({ transform, cellSize }: RuleProps) => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDrawing || !svgRef.current) return;
+    if (!isDrawing) return;
+    e.stopPropagation();
 
-    const point = svgRef.current.createSVGPoint();
+    const svg = gRef.current?.ownerSVGElement;
+    if (!svg) return;
+
+    const point = svg.createSVGPoint();
     point.x = e.clientX;
     point.y = e.clientY;
-    const svgPoint = point.matrixTransform(svgRef.current.getScreenCTM()?.inverse());
+    const svgPoint = point.matrixTransform(svg.getScreenCTM()?.inverse());
 
     setEndPoint({
       x: Math.floor((svgPoint.x - transform.x) / transform.k / cellSize) * cellSize + cellSize / 2,
@@ -56,8 +63,9 @@ export const Rule = ({ transform, cellSize }: RuleProps) => {
     });
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: React.MouseEvent) => {
     if (isDrawing) {
+      e.stopPropagation();
       setLines((prev) => [
         ...prev,
         {
@@ -82,12 +90,8 @@ export const Rule = ({ transform, cellSize }: RuleProps) => {
   }, [isDrawing, startPoint, endPoint]);
 
   return (
-    <svg
-      width='100'
-      height='100'
-      viewBox='0 0 100 100'
-      style={{ width: '100px', height: '100px' }}
-      ref={svgRef}
+    <g
+      ref={gRef}
       onContextMenu={handleContextMenu}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -106,7 +110,21 @@ export const Rule = ({ transform, cellSize }: RuleProps) => {
         </marker>
       </defs>
 
-      {/* Сохраненные линии */}
+      {/* Прозрачный прямоугольник для захвата событий */}
+      <rect
+        x='0'
+        y='0'
+        width='100%'
+        height='100%'
+        fill='transparent'
+        stroke='none'
+        pointerEvents='all'
+      />
+
+      {/* Внутренние элементы */}
+      {children}
+
+      {/* Сохраненные линии (временно выключено) */}
       {false &&
         lines.map((line, index) => (
           <line
@@ -119,16 +137,6 @@ export const Rule = ({ transform, cellSize }: RuleProps) => {
             strokeWidth={2 / transform.k}
           />
         ))}
-
-      <line
-        key={`line-${'fdfd'}`}
-        x1={0}
-        y1={0}
-        x2={1300}
-        y2={900}
-        stroke='transparent'
-        strokeWidth={2 / transform.k}
-      />
 
       {/* Текущая рисуемая линия */}
       {isDrawing && (
@@ -153,6 +161,6 @@ export const Rule = ({ transform, cellSize }: RuleProps) => {
           </foreignObject>
         </>
       )}
-    </svg>
+    </g>
   );
 };

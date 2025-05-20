@@ -43,6 +43,7 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
   const handleClick = useCallback(() => {
     if (!attackHandleModeActive) {
       dispatch(userInterfaceActions.selectCreature(id));
+      dispatch(userInterfaceActions.setStatblockIsVisible(true));
     } else if (attackHandleModeMulti === 'select') {
       toast('Для проведения атаки по площади выберите область на карте');
     } else {

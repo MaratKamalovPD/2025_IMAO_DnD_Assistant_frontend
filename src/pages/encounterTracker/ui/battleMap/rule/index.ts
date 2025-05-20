@@ -1,1 +1,1 @@
-export { Rule } from './Rule';
+export { RuleProvider } from './RuleProvider';

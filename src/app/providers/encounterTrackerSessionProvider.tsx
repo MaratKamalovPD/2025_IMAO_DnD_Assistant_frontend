@@ -24,6 +24,7 @@ import {
   SessionMessage,
 } from 'entities/session/model';
 import { ParticipantsSessionContext } from 'entities/session/model/sessionContext';
+import { toast } from 'react-toastify';
 import { UUID } from 'shared/lib';
 import { debounce } from 'shared/lib/debounce';
 import { Placeholder } from 'shared/ui';
@@ -35,6 +36,13 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
   const dispatch = useDispatch();
   const { id } = useParams();
 
+  const [isSaveFirstFetch, setIsSaveFirstFetch] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [encounterId, setEncounterId] = useState<UUID | null>(null);
+  const [saveVersionHash, setSaveVersionHash] = useState<UUID>('');
+  const [participants, setParticipants] = useState<Participant[]>([]);
+
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     `${import.meta.env.VITE_WS_HOST}/api/table/session/${id}/connect`,
     {
@@ -42,6 +50,7 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
         if (import.meta.env.DEV) {
           console.log('WebSocket connected');
         }
+        toast.success('Соединение установлено');
       },
       onClose(_event) {
         if (import.meta.env.DEV) {
@@ -52,7 +61,11 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
         if (import.meta.env.DEV) {
           console.error('WebSocket error:', error);
         }
+        toast.error('Упс, произогла ошибка');
       },
+      shouldReconnect: () => !isError,
+      reconnectAttempts: 5,
+      reconnectInterval: 2000,
     },
   );
 
@@ -61,13 +74,6 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
     (state) => state.encounter,
   ) as EncounterState;
 
-  const [isSaveFirstFetch, setIsSaveFirstFetch] = useState(true);
-  const [isError, setIsError] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [encounterId, setEncounterId] = useState<UUID | null>(null);
-  const [saveVersionHash, setSaveVersionHash] = useState<UUID>('');
-  const [participants, setParticipants] = useState<Participant[]>([]);
-
   useEffect(() => {
     if (!lastJsonMessage) return;
 
@@ -75,6 +81,7 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
 
     switch (message.type) {
       case 'error':
+        toast.error('Упс, произогла ошибка');
         setIsError(true);
         break;
 
