@@ -3,65 +3,69 @@
 .container {
   /* Теперь .container знает, откуда ему брать 100% */
   width: 100%;
-  max-width: 100vw;    /* или любое другое ограничение */
+  max-width: 100vw; /* или любое другое ограничение */
   margin: 0 auto;
 
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-  
-  .trayGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 8px;
-    width: 100%;
-    margin-top: 24px;
-  }
-  
-  .dieWrapper {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-bottom: 100%; /* квадратная ячейка */
-    cursor: pointer;
-    transition: transform 0.1s ease;
-  }
-  
-  .dieWrapper:hover {
-    transform: scale(1.05);
-  }
-  
-  /* сам Canvas внутри GenericDie — он адаптируется под width/height контейнера */
-  .dieWrapper > div {
-    position: absolute !important;
-    top: 0; left: 0; right: 0; bottom: 0;
-  }
-  
-  /* опциональный оверлей числа */
-  .valueOverlay {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    color: #fff;
-    font-size: 12px;
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
-  
-  /* когда нет костей */
-  .empty {
-    grid-column: 1 / -1;
-    text-align: center;
-    color: #777;
-    font-style: italic;
-  }
-  
-  .canvasWrapper {
-    width: 100%;           // тянем на всю ширину родителя
-    max-width: 800px;      // или любой другой предел, по желанию
-    height: 500px;         // фиксированная высота
-    margin-top: 24px;
-    border: 1px solid #333;
-    overflow: hidden;      // чтобы ничего не вылезало
-  }
+
+.trayGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+  width: 100%;
+  margin-top: 24px;
+}
+
+.dieWrapper {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%; /* квадратная ячейка */
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.dieWrapper:hover {
+  transform: scale(1.05);
+}
+
+/* сам Canvas внутри GenericDie — он адаптируется под width/height контейнера */
+.dieWrapper > div {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* опциональный оверлей числа */
+.valueOverlay {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* когда нет костей */
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
+
+.canvasWrapper {
+  width: 100%; // тянем на всю ширину родителя
+  max-width: 800px; // или любой другой предел, по желанию
+  height: 500px; // фиксированная высота
+  margin-top: 24px;
+  border-radius: 15px;
+  border: 3px solid #333;
+  overflow: hidden; // чтобы ничего не вылезало
+}

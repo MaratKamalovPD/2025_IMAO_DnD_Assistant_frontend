@@ -1,36 +1,11 @@
-.statblockContainer {
-  height: 100%;
-
-  textarea {
-    margin-top: 5px;
-    font-size: 14px;
-    padding: 15px;
-    border-radius: 8px;
-    border: none;
-    background-color: var(--secondary-bg-color);
-    resize: none;
-  }
-}
-
-.minimizeContainer {
-  box-sizing: border-box;
-  border-radius: 15px;
-  background-color: var(--primary-bg-color);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 5px;
-  border: 3px solid black;
-  margin-bottom: 5px;
-  z-index: 3;
-}
-
-.minimizeButton {
-  background-color: var(--primary-btn-color);
-  color: white;
-  display: flex;
-  flex-direction: row;
+textarea {
+  margin-top: 5px;
+  font-size: 14px;
+  padding: 15px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--secondary-bg-color);
+  resize: none;
 }
 
 .desciptionContainer {

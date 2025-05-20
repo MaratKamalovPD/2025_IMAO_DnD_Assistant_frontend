@@ -7,5 +7,6 @@ export { SingleValueWithIcon } from './singleValueWithIcon';
 export { Spinner } from './spinner';
 export { ThreeStateCheckbox } from './threeStateCheckbox';
 export { TopPanelWithSearch } from './topPanelWithSearch';
+export { TrayWidget } from './trayWidget';
 
 export type { CheckboxState } from './threeStateCheckbox';

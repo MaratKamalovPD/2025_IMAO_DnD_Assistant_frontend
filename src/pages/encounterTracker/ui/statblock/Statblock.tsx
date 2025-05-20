@@ -1,3 +1,5 @@
+import Tippy from '@tippyjs/react';
+import { Icon28SquareSplit4Outline } from '@vkontakte/icons';
 import clsx from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,19 +12,18 @@ import {
   CreaturesStore,
 } from 'entities/creature/model';
 import { encounterActions, EncounterState, EncounterStore } from 'entities/encounter/model';
-import { findAttackIcon, findConditionInstance } from 'pages/encounterTracker/lib';
-import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
-import { AttackModal } from 'pages/encounterTracker/ui/attackModal';
-import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
-import { normalizeString } from 'shared/lib';
-
-import Tippy from '@tippyjs/react';
-import { Icon20ChevronUp, Icon20Dropdown, Icon28SquareSplit4Outline } from '@vkontakte/icons';
 import {
   userInterfaceActions,
   UserInterfaceState,
   UserInterfaceStore,
 } from 'entities/userInterface/model';
+import { findAttackIcon, findConditionInstance } from 'pages/encounterTracker/lib';
+import { ApplyConditionModal } from 'pages/encounterTracker/ui/applyCondition';
+import { AttackModal } from 'pages/encounterTracker/ui/attackModal';
+import { DamageTypesForm } from 'pages/encounterTracker/ui/dealDamage';
+import { normalizeString } from 'shared/lib';
+import { TrayWidget } from 'shared/ui';
+
 import s from './Statblock.module.scss';
 
 enum ModalType {
@@ -36,11 +37,13 @@ interface StatblockProps {
   setCells: React.Dispatch<React.SetStateAction<boolean[][]>>;
   isMinimized: boolean;
   toggleWindow: () => void;
+  closeWindow: () => void;
 }
 
 export const Statblock: React.FC<StatblockProps> = ({
   isMinimized,
   toggleWindow,
+  closeWindow,
   cells,
   setCells,
 }) => {
@@ -152,14 +155,12 @@ export const Statblock: React.FC<StatblockProps> = ({
     );
 
   return (
-    <div className={s.statblockContainer}>
-      <div className={s.minimizeContainer}>
-        <button onClick={toggleWindow} className={s.minimizeButton}>
-          {isMinimized ? <Icon20Dropdown /> : <Icon20ChevronUp />}
-          {isMinimized ? 'Развернуть' : 'Свернуть'}
-        </button>
-      </div>
-
+    <TrayWidget
+      title='Таблица характеристик'
+      isMinimized={isMinimized}
+      toggleWindow={toggleWindow}
+      closeWindow={closeWindow}
+    >
       {!isMinimized && (
         <div className={s.creaturePanel}>
           <div className={s.creaturePanel__titleContainer}>
@@ -329,6 +330,6 @@ export const Statblock: React.FC<StatblockProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </TrayWidget>
   );
 };
