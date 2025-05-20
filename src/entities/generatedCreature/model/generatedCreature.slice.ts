@@ -115,6 +115,7 @@ type AddAttackPayload = {
     attacksLLM: [],
     useCustomSpeed: false,
     imageBase64: '',
+    imageBase64Circle: '',
   };
   
   

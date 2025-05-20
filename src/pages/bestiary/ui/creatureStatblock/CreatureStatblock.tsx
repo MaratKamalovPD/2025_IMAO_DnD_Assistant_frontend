@@ -17,6 +17,8 @@ import { SkillsAndSensesSection } from './skillsAndSensesSection';
 
 import s from './CreatureStatblock.module.scss';
 
+import imgPlaceholder from 'shared/assets/images/logo.png';
+
 interface CreatureStatblockProps {
   creature?: CreatureFullData;
   onJump?: (target: JumpTarget) => void;
@@ -96,9 +98,27 @@ export const CreatureStatblock = ({
           </div>
         </div>
         <div className={s.mainContainer}>
-          <div className={s.mainContainer__image}>
-            <img src={creature.images[1]}></img>
-          </div>
+        <div className={s.mainContainer__image}>
+          {creature.images[0] ? (
+            <img src={creature.images[0]} alt={creature.name.rus} />
+          ) : creature.imageBase64Circle ? (
+            creature.imageBase64Circle.trim() !== '' ? (
+              <img
+                src={
+                  creature.imageBase64Circle.startsWith('data:')
+                    ? creature.imageBase64Circle
+                    : `data:image/png;base64,${creature.imageBase64Circle}`
+                }
+                alt={creature.name.rus}
+              />
+            ) : (
+              <img src={imgPlaceholder} alt="Изображение отсутствует" />
+            )
+          ) : (
+            <img src={imgPlaceholder} alt="Изображение отсутствует" />
+          )}
+        </div>
+
           <div className={s.mainContainer__description}>
             <FightStatsSection
               creature={creature}
