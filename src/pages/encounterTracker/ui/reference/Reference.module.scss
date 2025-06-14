@@ -41,12 +41,8 @@
 
 .helpBox {
   position: relative;
-  width: 80%;
-  max-width: 600px;
-  max-height: 80vh;
   background: var(--secondary-bg-color);
-  border-radius: 12px;
-  padding: 30px;
+  padding-inline: 30px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   overflow-y: auto;
 }
