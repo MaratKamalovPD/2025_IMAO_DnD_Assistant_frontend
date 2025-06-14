@@ -179,7 +179,7 @@ export const TrackPanel = () => {
           )}
 
           <animated.div style={turnContainerProps}>
-            <Tippy content='Текущий раунд' placement='right' disabled={isExpanded}>
+            <Tippy content='Текущий раунд' placement='right' disabled={isExpanded || !hasStarted}>
               <div className={s.roundInfo}>
                 <span className={s.roundNumber}>{currentRound}</span>
                 <animated.span style={textProps} className={s.roundText}>
@@ -230,7 +230,7 @@ export const TrackPanel = () => {
               <animated.span style={textProps}>Справка</animated.span>
             </button>
           </Tippy>
-          <Tippy content='Скрыть' placement='right' disabled={isExpanded}>
+          <Tippy content='Раскрыть' placement='right' disabled={isExpanded}>
             <button
               className={s.menuElement}
               onClick={() => dispatch(userInterfaceActions.setTrackPanelIsExpanded(!isExpanded))}
