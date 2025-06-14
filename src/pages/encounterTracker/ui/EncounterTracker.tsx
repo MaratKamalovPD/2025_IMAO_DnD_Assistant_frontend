@@ -21,11 +21,8 @@ import { Placeholder } from 'shared/ui';
 import { Chatbot } from 'widgets/chatbot';
 import { BattleMap } from './battleMap';
 import { CardList } from './cardList';
-import CreateSessionDialog from './createSessionDialog/CreateSessionDialog';
 import { CustomCursor } from './customCursor';
 import { DiceTrayWidget } from './diceTrayWidget';
-import { HelpButton } from './helpButton';
-import { ParticipantsMenu } from './participantsMenu';
 import { MenuItem, PopupMenu } from './popupMenu';
 import { Statblock } from './statblock';
 import { TrackPanel } from './trackPanel';
@@ -214,11 +211,16 @@ export const EncounterTracker = () => {
       <CustomCursor />
       {participants.length !== 0 ? (
         <>
-          {isSession && <ParticipantsMenu />}
-          <CreateSessionDialog />
-          <HelpButton />
-          <BattleMap image={mapImage} cells={cells} setCells={setCells} />
-          <PopupMenu items={menuItems} />
+          <TrackPanel />
+
+          <div className={s.trackerPanel}>
+            <BattleMap image={mapImage} cells={cells} setCells={setCells} />
+            <PopupMenu items={menuItems} />
+            <div className={s.stickyPanel}>
+              <CardList />
+            </div>
+          </div>
+
           {statblockIsVisible && (
             <Rnd
               minWidth={400}
@@ -286,11 +288,6 @@ export const EncounterTracker = () => {
               />
             </Rnd>
           )}
-
-          <div className={s.stickyPanel}>
-            <TrackPanel />
-            <CardList />
-          </div>
         </>
       ) : (
         <Placeholder />

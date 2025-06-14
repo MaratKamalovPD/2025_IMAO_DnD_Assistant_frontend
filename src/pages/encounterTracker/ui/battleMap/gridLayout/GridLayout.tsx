@@ -30,9 +30,10 @@ export const GridLayout = ({
           y={row * cellSize}
           width={cellSize}
           height={cellSize}
-          fill={'transparent'}
+          fill='transparent'
           filter={cells[row][col] ? 'url(#selectFilter)' : undefined}
           stroke={gridColor}
+          strokeDasharray='2 4'
           strokeWidth={1}
         />,
       );

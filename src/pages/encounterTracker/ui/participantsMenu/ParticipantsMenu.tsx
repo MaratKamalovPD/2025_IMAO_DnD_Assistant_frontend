@@ -1,12 +1,16 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { Icon28Users3Outline } from '@vkontakte/icons';
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 
 import { ParticipantsSessionContext } from 'entities/session/model';
 import { ContextMenu } from 'shared/ui';
 
-import { Icon24Users3Outline } from '@vkontakte/icons';
 import s from './ParticipantsMenu.module.scss';
 
-export const ParticipantsMenu = () => {
+type ParticipantsMenuProps = {
+  children?: ReactNode;
+};
+
+export const ParticipantsMenu = ({ children }: ParticipantsMenuProps) => {
   const participants = useContext(ParticipantsSessionContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
@@ -30,16 +34,17 @@ export const ParticipantsMenu = () => {
   }, []);
 
   return (
-    <div className={s.container}>
+    <div>
       <button
         ref={buttonRef}
         className={`${s.button} ${isMenuOpen ? s.active : ''}`}
         onClick={toggleMenu}
         aria-label='Участники'
+        data-variant='secondary'
       >
-        <span className={s.icon}>
-          <Icon24Users3Outline />
-        </span>
+        <Icon28Users3Outline />
+        {children}
+
         <span className={s.counter}>{participants.length}</span>
       </button>
 

@@ -1,28 +1,26 @@
-.container {
-  position: fixed;
-  top: 100px;
-  left: 20px;
-  z-index: 1000;
-}
-
 .button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
+
   background: var(--secondary-btn-color);
   color: white;
-  border: none;
-  font-size: 20px;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: relative;
+  display: flex;
+  height: 50px;
+  width: 100%;
+  background-color: var(--primary-bg-color);
+  justify-content: start;
+  align-items: center;
+  padding-inline-start: 18px !important;
+  gap: 10px;
+  margin-bottom: 5px;
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
   }
 

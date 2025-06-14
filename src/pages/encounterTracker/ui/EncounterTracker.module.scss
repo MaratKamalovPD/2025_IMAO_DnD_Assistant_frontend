@@ -3,14 +3,25 @@ body[data-page='tracker'] {
 }
 
 .encounterTrackerContainer {
-  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
   height: 100vh;
-  flex-direction: column;
+  width: 100vw;
+  display: flex;
+}
+
+.trackerPanel {
+  position: relative;
+  flex-grow: 1;
 }
 
 .stickyPanel {
   margin-top: auto;
-  position: sticky;
+  position: absolute;
+  width: 80%;
+  left: 50%;
+  transform: translateX(-50%);
   bottom: 0;
 }
 

@@ -35,10 +35,6 @@ export const BattleMap = ({ image, cells, setCells }: BattleMapProps) => {
   const { attackHandleModeActive, attackHandleModeMulti, selectedCreatureId, mapTransform } =
     useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
 
-  const [mapSize, setMapSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
   const [transform, setTransform] = useState(mapTransform);
   const debouncedTransforme = useDebounce(transform, DEBOUNCE_TIME);
 
@@ -69,16 +65,6 @@ export const BattleMap = ({ image, cells, setCells }: BattleMapProps) => {
     );
   }, [debouncedTransforme]);
 
-  useEffect(() => {
-    const resizeMap = () => {
-      setMapSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-
-    window.addEventListener('resize', resizeMap);
-
-    return () => window.removeEventListener('resize', resizeMap);
-  }, []);
-
   const handleClick = useCallback(() => {
     if (attackHandleModeActive && attackHandleModeMulti === 'select') {
       dispatch(userInterfaceActions.setAttackHandleModeMulti('handle'));
@@ -90,10 +76,7 @@ export const BattleMap = ({ image, cells, setCells }: BattleMapProps) => {
   };
 
   return (
-    <div
-      className={s.mapContainer}
-      style={{ width: `${mapSize.width}px`, height: `${mapSize.height}px` }}
-    >
+    <div className={s.mapContainer}>
       <svg ref={svgRef} className={s.map} onClick={handleClick} onContextMenu={handleContextMenu}>
         <g transform={`translate(${transform.x}, ${transform.y}) scale(${transform.k})`}>
           <image href={image} height={rows * cellSize} width={cols * cellSize} />

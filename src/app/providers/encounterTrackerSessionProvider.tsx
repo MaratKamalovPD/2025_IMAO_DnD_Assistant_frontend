@@ -61,7 +61,7 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
         if (import.meta.env.DEV) {
           console.error('WebSocket error:', error);
         }
-        toast.error('Упс, произогла ошибка');
+        toast.error('Упс, произошла ошибка');
       },
       shouldReconnect: () => !isError,
       reconnectAttempts: 5,
@@ -81,7 +81,7 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
 
     switch (message.type) {
       case 'error':
-        toast.error('Упс, произогла ошибка');
+        toast.error('Упс, произошла ошибка');
         setIsError(true);
         break;
 

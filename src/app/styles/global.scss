@@ -100,7 +100,7 @@ span[data-role='btn'] {
   font-size: 1em;
   box-sizing: border-box;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: ease-in-out 0.25s;
   border: 2px solid transparent;
   text-align: center;
   line-height: 1;
@@ -123,6 +123,7 @@ span[data-role='btn'] {
     opacity: 1;
 
     &:hover {
+      transform: scale(1.02);
       filter: brightness(110%);
       border: 2px solid #1e4d69;
       opacity: 0.8;
