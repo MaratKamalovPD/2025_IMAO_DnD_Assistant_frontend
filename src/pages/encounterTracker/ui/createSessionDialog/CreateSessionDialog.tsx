@@ -1,33 +1,35 @@
 import Tippy from '@tippyjs/react';
-import { Icon28ChainOutline, Icon28CopyOutline } from '@vkontakte/icons';
-import { useContext, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { Icon28CopyOutline } from '@vkontakte/icons';
+import { Link } from 'react-router';
 import { toast } from 'react-toastify';
 
-import { EncounterState, EncounterStore } from 'entities/encounter/model';
-import { SessionContext } from 'entities/session/model';
 import { useLazyCreateSessionQuery } from 'pages/encounterTracker/api';
+import { UUID } from 'shared/lib';
 import { ModalOverlay, Spinner } from 'shared/ui';
 
-import { Link } from 'react-router';
 import s from './CreateSessionDialog.module.scss';
+
+type CreateSessionDialog = {
+  encounterId: UUID;
+  isModalOpen: boolean;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 const buildLink = (schemeAndDomain: string, sessionId: string) =>
   `${schemeAndDomain}/encounter_tracker/session/${sessionId}`;
 
-const CreateSessionDialog = () => {
-  const isSession = useContext(SessionContext);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const { encounterId } = useSelector<EncounterStore>((state) => state.encounter) as EncounterState;
-
+export const CreateSessionDialog = ({
+  encounterId,
+  isModalOpen,
+  setIsModalOpen,
+}: CreateSessionDialog) => {
   const [trigger, { data, isLoading, isError }] = useLazyCreateSessionQuery();
 
   const urlObj = new URL(window.location.href);
   const schemeAndDomain = `${urlObj.protocol}//${urlObj.hostname}`;
 
   const handleTrigger = () => {
-    trigger({ encounterID: encounterId as string });
+    trigger({ encounterID: encounterId });
   };
 
   const handleCopy = () => {
@@ -44,68 +46,52 @@ const CreateSessionDialog = () => {
   };
 
   return (
-    <>
-      {encounterId && !isSession && (
-        <Tippy content='Создать сессию' placement='right'>
-          <div className={s.ButtonContainer} onClick={() => setIsModalOpen(true)}>
-            <Icon28ChainOutline />
-          </div>
-        </Tippy>
-      )}
+    <ModalOverlay title='Создать сессию' isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
+      <div className={s.container}>
+        {encounterId && !data && !isLoading && (
+          <>
+            <div className={s.text} style={{ textAlign: 'center', marginBottom: '20px' }}>
+              Подтвердите создание сессии
+            </div>
+            <button onClick={handleTrigger} data-variant='accent'>
+              Создать сессию
+            </button>
+          </>
+        )}
 
-      <ModalOverlay
-        title='Создать сессию'
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-      >
-        <div className={s.container}>
-          {encounterId && !data && !isLoading && (
-            <>
-              <div className={s.text} style={{ textAlign: 'center', marginBottom: '20px' }}>
-                Подтвердите создание сессии
-              </div>
-              <button onClick={handleTrigger} data-variant='accent'>
-                Создать сессию
-              </button>
-            </>
-          )}
+        {encounterId && !data && isLoading && <Spinner size={100} />}
 
-          {encounterId && !data && isLoading && <Spinner size={100} />}
+        {encounterId && data && !isError && (
+          <>
+            <div className={s.text}>
+              Отправьте эту информацию тем, кого хотите пригласить. Сохраните ее, если планируете
+              сессию позже.
+            </div>
+            <div className={s.linkContainer}>
+              <input
+                className={s.linkInput}
+                type='text'
+                value={buildLink(schemeAndDomain, data.sessionID)}
+                readOnly
+              />
+              <Tippy content='Копировать ссылку'>
+                <button onClick={handleCopy} data-variant='primary'>
+                  <Icon28CopyOutline />
+                </button>
+              </Tippy>
+            </div>
+            <Link
+              to={buildLink(schemeAndDomain, data.sessionID)}
+              data-role='btn'
+              data-variant='accent'
+            >
+              Перейти в сессию{' '}
+            </Link>
+          </>
+        )}
 
-          {encounterId && data && !isError && (
-            <>
-              <div className={s.text}>
-                Отправьте эту информацию тем, кого хотите пригласить. Сохраните ее, если планируете
-                сессию позже.
-              </div>
-              <div className={s.linkContainer}>
-                <input
-                  className={s.linkInput}
-                  type='text'
-                  value={buildLink(schemeAndDomain, data.sessionID)}
-                  readOnly
-                />
-                <Tippy content='Копировать ссылку'>
-                  <button onClick={handleCopy} data-variant='primary'>
-                    <Icon28CopyOutline />
-                  </button>
-                </Tippy>
-              </div>
-              <Link
-                to={buildLink(schemeAndDomain, data.sessionID)}
-                data-role='btn'
-                data-variant='accent'
-              >
-                Перейти в сессию{' '}
-              </Link>
-            </>
-          )}
-
-          {isError && <div className={s.text}>Упс, что-то пошло не так :(</div>}
-        </div>
-      </ModalOverlay>
-    </>
+        {isError && <div className={s.text}>Упс, что-то пошло не так :(</div>}
+      </div>
+    </ModalOverlay>
   );
 };
-
-export default CreateSessionDialog;
