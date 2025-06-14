@@ -1,9 +1,11 @@
 .placeholderContainer {
   display: flex;
-  padding: 15px;
+  padding: 10%;
+  padding-top: 5%;
   justify-content: center;
   flex-direction: column;
   height: 70vh;
+  flex-grow: 1;
 }
 
 .placeholderPanel {
