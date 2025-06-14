@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { AttackLLM } from 'entities/creature/model';
-import { UUID } from 'shared/lib';
+import { getFromLocalStorage, saveToLocalStorage, UUID } from 'shared/lib';
+import { LOCAL_STORAGE_NAMES } from '../lib';
 
 export type UserInterfaceState = {
   attackHandleModeActive: boolean;
@@ -18,6 +19,7 @@ export type UserInterfaceState = {
   diceTrayCoords: { x: number; y: number };
   diceTrayIsMinimized: boolean;
   diceTrayIsVisible: boolean;
+  trackPanelIsExpanded: boolean;
 };
 
 export const initialState: UserInterfaceState = {
@@ -35,6 +37,8 @@ export const initialState: UserInterfaceState = {
   diceTrayCoords: { x: 300, y: 100 },
   diceTrayIsMinimized: false,
   diceTrayIsVisible: false,
+  trackPanelIsExpanded:
+    (getFromLocalStorage(LOCAL_STORAGE_NAMES.TRACK_PANEL_IS_EXPANDED) as boolean) || false,
 };
 
 const userInterfaceSlice = createSlice({
@@ -99,6 +103,10 @@ const userInterfaceSlice = createSlice({
     },
     setDiceTrayIsVisible: (state, action: PayloadAction<boolean>) => {
       state.diceTrayIsVisible = action.payload;
+    },
+    setTrackPanelIsExpanded: (state, action: PayloadAction<boolean>) => {
+      state.trackPanelIsExpanded = action.payload;
+      saveToLocalStorage(LOCAL_STORAGE_NAMES.TRACK_PANEL_IS_EXPANDED, action.payload);
     },
   },
 });
