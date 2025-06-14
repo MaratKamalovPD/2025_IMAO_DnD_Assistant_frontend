@@ -3,6 +3,7 @@ export { calculateInitiative } from './calculateInitiative';
 export { capitalizeFirstLetter } from './capitalizeFirstLetter';
 export { useDebounce } from './debounce';
 export { keepLeadingDigits } from './keepLeadingDigits';
+export { getFromLocalStorage, saveToLocalStorage } from './localStorage';
 export { lowercaseFirstLetter } from './lowercaseFirstLetter';
 export { modifiers } from './modifier';
 export { normalizeString } from './normalizeString';
