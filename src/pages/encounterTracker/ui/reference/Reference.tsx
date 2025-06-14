@@ -7,6 +7,7 @@ import {
   Icon28ScreenGridHorizon2LineOutline,
   Icon28VideoFillOutline,
 } from '@vkontakte/icons';
+
 import s from './Reference.module.scss';
 
 export const Reference = () => {
