@@ -63,8 +63,13 @@ export const CreatureToken = ({ transform, id, cellSize, setCells }: CreatureTok
   const { participants } = useSelector<EncounterStore>(
     (state) => state.encounter,
   ) as EncounterState;
-  const { attackHandleModeActive, attackHandleModeMulti, currentAttackLLM, selectedCreatureId } =
-    useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
+  const {
+    attackHandleModeActive,
+    attackHandleModeMulti,
+    currentAttackLLM,
+    selectedCreatureId,
+    trackPanelIsExpanded,
+  } = useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
 
   const creatureSize = creature.size || Size.default;
   const moveSize = creatureSize === Size.tiny ? cellSize / 2 : cellSize;
@@ -94,7 +99,8 @@ export const CreatureToken = ({ transform, id, cellSize, setCells }: CreatureTok
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX - transform.x) / transform.k;
+      const mousePositionCorrection = trackPanelIsExpanded ? 250 : 85;
+      const x = (e.clientX - transform.x - mousePositionCorrection) / transform.k;
       const y = (e.clientY - transform.y) / transform.k;
       setMousePosition({ x, y });
     };
@@ -104,7 +110,7 @@ export const CreatureToken = ({ transform, id, cellSize, setCells }: CreatureTok
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [transform]);
+  }, [transform, trackPanelIsExpanded]);
 
   const circle = dselect(tokenRef.current);
 
