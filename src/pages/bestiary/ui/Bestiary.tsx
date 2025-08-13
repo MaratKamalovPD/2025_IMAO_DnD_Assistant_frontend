@@ -48,6 +48,12 @@ export const Bestiary = ({ type }: BestiaryProps) => {
 const BestiaryContent = () => {
   const { creatureName } = useParams();
   const type = useTypeContext();
+
+  const [memoType, setMemoType] = useState(type);
+  if (memoType !== type) {
+    setMemoType(type);
+  }
+
   const title = type === 'moder' ? 'Бестиарий' : 'Мой Бестиарий';
   const useGetCreatures = type === 'moder' ? useGetCreaturesQuery : useGetUserCreaturesQuery;
 
@@ -136,21 +142,13 @@ const BestiaryContent = () => {
     setRequestBody(
       mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue, orderParams),
     );
-  }, [debouncedSearchValue, filters]);
+  }, [debouncedSearchValue, filters, memoType, alphabetSort, ratingSort]);
 
   useEffect(() => {
     setRequestBody(
       mapFiltersToRequestBody(filters, start, RESPONSE_SIZE, debouncedSearchValue, orderParams),
     );
   }, [start]);
-
-  useEffect(() => {
-    setStart(0);
-    setHasMore(true);
-    setRequestBody(
-      mapFiltersToRequestBody(filters, start, RESPONSE_SIZE, debouncedSearchValue, orderParams),
-    );
-  }, [alphabetSort, ratingSort]);
 
   useEffect(() => {
     const handleScroll = () => {
