@@ -1,5 +1,6 @@
 .checkbox {
   width: 75px;
+  min-width: 75px;
   height: 30px;
   border-radius: 15px;
   background: var(--accent-btn-color);
@@ -38,17 +39,17 @@
 .indeterminateLine {
   width: 12px;
   height: 2px;
-  background: #8e8e93; // Серый цвет линии для indeterminate
+  background: #8e8e93;
 }
 
 .checkmark {
-  color: #34c759; // Зеленый цвет галочки
+  color: #34c759;
   font-weight: bold;
   font-size: 14px;
 }
 
 .cross {
-  color: #ff3b30; // Красный цвет крестика
+  color: #ff3b30;
   font-weight: bold;
   font-size: 14px;
 }
