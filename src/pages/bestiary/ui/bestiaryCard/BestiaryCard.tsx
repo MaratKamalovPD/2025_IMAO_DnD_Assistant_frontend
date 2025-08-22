@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect } from 'react';
+import { FC, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
@@ -36,32 +36,30 @@ export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSele
     (state) => state.encounter,
   ) as EncounterState;
 
-  const [trigger, { data: creatureData, isLoading, isError, isUninitialized, requestId }] =
-    useLazyGetCreatureByName();
+  const [trigger] = useLazyGetCreatureByName();
 
   const handleAddToTtackerClick = useCallback(() => {
-    trigger(`${creature.url}`);
-  }, [creature.url]);
+    trigger(`${creature.url}`)
+      .then(({ data: creatureData }) => {
+        if (!creatureData) return;
 
-  useEffect(() => {
-    if (!isLoading && !isError && creatureData) {
-      const currentCreature = convertCreatureFullDataToCreature(creatureData);
+        const currentCreature = convertCreatureFullDataToCreature(creatureData);
+        dispatch(
+          encounterActions.addParticipant({
+            _id: currentCreature._id,
+            id: currentCreature.id,
+            initiative: currentCreature.initiative,
+            cellsCoords: { cellsX: 0, cellsY: participants.length },
+          }),
+        );
+        dispatch(creatureActions.addCreature(currentCreature));
 
-      dispatch(
-        encounterActions.addParticipant({
-          _id: currentCreature._id,
-          id: currentCreature.id,
-          initiative: currentCreature.initiative,
-          cellsCoords: { cellsX: 0, cellsY: participants.length },
-        }),
-      );
-      dispatch(creatureActions.addCreature(currentCreature));
-
-      toast.success(`${currentCreature.name} успешно добавлен!`);
-    } else if (isError && !isUninitialized) {
-      toast.error(`Упс, что-то пошло не так :(`);
-    }
-  }, [creatureData, isLoading, isError, isUninitialized, requestId]);
+        toast.success(`${currentCreature.name} успешно добавлен!`);
+      })
+      .catch(() => {
+        toast.error(`Упс, что-то пошло не так :(`);
+      });
+  }, [creature.url, trigger]);
 
   return (
     <div
