@@ -1,1 +1,1 @@
-export { ActualDiceTray } from './ActualDiceTray'
+export { ActualDiceTray } from './ActualDiceTray';

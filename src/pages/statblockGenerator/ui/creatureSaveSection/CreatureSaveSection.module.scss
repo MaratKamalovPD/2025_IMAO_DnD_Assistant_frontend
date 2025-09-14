@@ -1,155 +1,153 @@
 .creatureSaveSection {
-    gap: 20px;
-    border-radius: 15px;
-    background-color: var(--primary-bg-color);
-    display: flex;
-    flex-direction: column;
-    padding: 25px 5px;
-    border: 3px solid black;
-    margin-bottom: 20px;
-    align-items: center;
-  
-    &__presetsContainer {
-      width: 100%;
-      max-width: 864px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-  
-    &__presetsLabel {
-      font-family: 'ABeeZee', sans-serif;
-      font-size: 16px;
-      color: #FDF6F6;
-      line-height: 20px;
-    }
-  
-    &__presetsDropdown {
-      flex-grow: 1;
-      max-width: 300px;
-    }
-  
-    &__presetSelect {
-      width: 100%;
-      height: 24px;
-      padding: 0 8px;
-      background: #3A3A50;
-      border-radius: 8px;
-      border: 1px solid #757575;
-      color: white;
-      font-family: 'ABeeZee', sans-serif;
-      font-size: 12.8px;
-      cursor: pointer;
-  
-      &:focus {
-        outline: none;
-        border-color: #FF6F61;
-      }
-    }
-  
-    &__button {
-      padding: 8px 16px;
-      background: #FF6F61;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      color: white;
-      font-family: 'ABeeZee', sans-serif;
-      font-size: 16px;
-      line-height: 20px;
-  
-      &:hover {
-        background: #E05A4E;
-      }
-  
-      &:active {
-        transform: translateY(1px);
-      }
-    }
-  
-    &__saveButtonContainer {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
-  
-    &__saveButton {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: #FF6F61;
-      border: none;
-      color: white;
-      font-family: 'ABeeZee', sans-serif;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  
-      &:hover {
-        background: #E05A4E;
-        transform: scale(1.05);
-      }
-  
-      &:active {
-        transform: scale(0.98) translateY(2px);
-      }
-    }
-  
-    @media (max-width: 768px) {
-      &__presetsContainer {
-        flex-direction: column;
-        align-items: stretch;
-      }
-  
-      &__presetsDropdown {
-        max-width: 100%;
-      }
-  
-      &__saveButton {
-        width: 100px;
-        height: 100px;
-        font-size: 14px;
-      }
-    }
+  gap: 20px;
+  border-radius: 15px;
+  background-color: var(--primary-bg-color);
+  display: flex;
+  flex-direction: column;
+  padding: 25px 5px;
+  border: 3px solid black;
+  margin-bottom: 20px;
+  align-items: center;
 
-    .creatureSaveSection__layout {
-      display: flex;
-      align-items: center;
-      flex-direction: row;
-      gap: 1rem;
-    }
-    
-  }
-
-  .authLockWrapper {
-    position: relative;
-    display: inline-block; // подгонка по размеру кнопки
-  }
-  
-  .authOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
+  &__presetsContainer {
     width: 100%;
-    height: 100%;
-    background: rgba(20, 20, 20, 0.5);
-    color: var(--primary-btn-color);
-    font-size: 1.2rem;
+    max-width: 864px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 50%; // если кнопка круглая
-    z-index: 10;
-    pointer-events: none;
-    text-align: center;
+    gap: 10px;
+    flex-wrap: wrap;
   }
-  
+
+  &__presetsLabel {
+    font-family: 'ABeeZee', sans-serif;
+    font-size: 16px;
+    color: #fdf6f6;
+    line-height: 20px;
+  }
+
+  &__presetsDropdown {
+    flex-grow: 1;
+    max-width: 300px;
+  }
+
+  &__presetSelect {
+    width: 100%;
+    height: 24px;
+    padding: 0 8px;
+    background: #3a3a50;
+    border-radius: 8px;
+    border: 1px solid #757575;
+    color: white;
+    font-family: 'ABeeZee', sans-serif;
+    font-size: 12.8px;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: #ff6f61;
+    }
+  }
+
+  &__button {
+    padding: 8px 16px;
+    background: #ff6f61;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: white;
+    font-family: 'ABeeZee', sans-serif;
+    font-size: 16px;
+    line-height: 20px;
+
+    &:hover {
+      background: #e05a4e;
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  &__saveButtonContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  &__saveButton {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #ff6f61;
+    border: none;
+    color: white;
+    font-family: 'ABeeZee', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+    &:hover {
+      background: #e05a4e;
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.98) translateY(2px);
+    }
+  }
+
+  @media (max-width: 768px) {
+    &__presetsContainer {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__presetsDropdown {
+      max-width: 100%;
+    }
+
+    &__saveButton {
+      width: 100px;
+      height: 100px;
+      font-size: 14px;
+    }
+  }
+
+  .creatureSaveSection__layout {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 1rem;
+  }
+}
+
+.authLockWrapper {
+  position: relative;
+  display: inline-block; // подгонка по размеру кнопки
+}
+
+.authOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(20, 20, 20, 0.5);
+  color: var(--primary-btn-color);
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%; // если кнопка круглая
+  z-index: 10;
+  pointer-events: none;
+  text-align: center;
+}

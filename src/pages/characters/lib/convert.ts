@@ -60,15 +60,15 @@ const convertWeaponsToAttacks = (weaponsList: Weapon[]): AttackLLM[] => {
         ? weapon.mod.value
         : `+${weapon.mod.value}`;
 
-    const damageMatch = weapon.dmg.value.match(
-      /^(\d+)[кКkK](\d+)(?:\s*([+-]\s*\d+))?(?:\s*\((.*?)\))?/,
+    const damageMatch = /^(\d+)[кКkK](\d+)(?:\s*([+-]\s*\d+))?(?:\s*\((.*?)\))?/.exec(
+      weapon.dmg.value,
     );
 
     const diceCount = damageMatch?.[1] ? parseInt(damageMatch[1]) : 1;
     const diceType = damageMatch?.[2] ? `d${damageMatch[2]}` : 'd6';
     const damageBonus = damageMatch?.[3] ? parseInt(damageMatch[3].replace(/\s+/g, '')) : 0;
 
-    const damageTypeFromDmg = damageMatch?.[4]?.toLowerCase() || '';
+    const damageTypeFromDmg = damageMatch?.[4]?.toLowerCase() ?? '';
     const damageType = damageTypeFromDmg || getDamageType(weapon.name.value);
 
     const weaponName = weapon.name.value.toLowerCase();

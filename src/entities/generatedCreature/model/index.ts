@@ -1,3 +1,7 @@
-export { generatedCreatureActions, generatedCreatureSelectors, default as generatedCreatureReduser } from './generatedCreature.slice.ts';
-export type { GeneratedCreatureStore } from './generatedCreature.slice';
 export { SINGLE_CREATURE_ID } from './generatedCreature.slice';
+export type { GeneratedCreatureStore } from './generatedCreature.slice';
+export {
+  generatedCreatureActions,
+  default as generatedCreatureReduser,
+  generatedCreatureSelectors,
+} from './generatedCreature.slice.ts';

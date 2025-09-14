@@ -1,8 +1,8 @@
+import clsx from 'clsx';
 import { useState } from 'react';
 import reactLogo from 'shared/assets/images/react.svg';
 import viteLogo from '/vite.svg';
 
-import clsx from 'clsx';
 import s from './Test.module.scss';
 
 export const TestPage = () => {
@@ -14,7 +14,7 @@ export const TestPage = () => {
         <a href='https://vite.dev' target='blank'>
           <img src={viteLogo} className={s.logo} alt='Vite logo' />
         </a>
-        <a href='https://react.dev' target='_blank'>
+        <a href='https://react.dev' target='_blank' rel='noreferrer noopener'>
           <img src={reactLogo} className={clsx(s.logo, s.react)} alt='React logo' />
         </a>
       </div>

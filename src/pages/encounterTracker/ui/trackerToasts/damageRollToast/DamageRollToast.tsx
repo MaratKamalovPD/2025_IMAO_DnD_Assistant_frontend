@@ -19,6 +19,7 @@ export const DamageRollToast: React.FC<CustomToastProps> = ({ damageRolls }) => 
               <div className={s.hitText}>БРОСОК УРОНА</div>
               <div className={s.dicesDetails}>
                 {damageRolls.dices.map((dice, index) => (
+                  // eslint-disable-next-line react-x/no-array-index-key
                   <div key={index} className={s.diceRoll}>
                     {dice.on_dice_damage} ({dice.damage.count}
                     {dice.damage.dice})

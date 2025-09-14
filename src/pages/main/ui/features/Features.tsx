@@ -9,8 +9,11 @@ export const Features = () => {
     <section className={s.features}>
       <h2>Основные функции</h2>
       <div className={s.featuresGrid}>
-        {features.map((feature, index) => (
-          <VideoTooltipWrapper key={index} videoSrc={feature.video}>
+        {features.map((feature) => (
+          <VideoTooltipWrapper
+            key={`${feature.title}-${feature.description}`}
+            videoSrc={feature.video}
+          >
             <div className={s.featureCard}>
               <h3>{feature.title}</h3>
               <p>{feature.description}</p>

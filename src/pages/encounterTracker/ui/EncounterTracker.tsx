@@ -5,7 +5,7 @@ import {
   Icon28DocumentListOutline,
   Icon28HomeOutline,
 } from '@vkontakte/icons';
-import { useContext, useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Rnd } from 'react-rnd';
 
@@ -37,7 +37,7 @@ const rows = 18;
 
 export const EncounterTracker = () => {
   const dispatch = useDispatch();
-  const isSession = useContext(SessionContext);
+  const isSession = use(SessionContext);
 
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [isFirstRender2, setIsFirstRender2] = useState(true);
@@ -45,7 +45,7 @@ export const EncounterTracker = () => {
   const [cells, setCells] = useState<boolean[][]>(() =>
     Array(rows)
       .fill(false)
-      .map(() => Array(cols).fill(false)),
+      .map(() => Array<boolean>(cols).fill(false)),
   );
 
   const { lastLogs } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
@@ -68,7 +68,7 @@ export const EncounterTracker = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         dispatch(userInterfaceActions.disableAttackHandleMode());
-        setCells((prev) => prev.map((rows) => rows.map((_cols) => false)));
+        setCells((prev) => prev.map((rows) => rows.map(() => false)));
       }
     };
 
@@ -103,26 +103,26 @@ export const EncounterTracker = () => {
     dispatch(userInterfaceActions.setStatblockIsVisible(!statblockIsVisible));
   }, [selectedCreatureId]);
 
-  let logTimeout: NodeJS.Timeout;
+  const logTimeout = useRef<NodeJS.Timeout>(undefined);
 
   useEffect(() => {
     if (lastLogs.length !== 0) {
-      clearTimeout(logTimeout);
+      clearTimeout(logTimeout.current);
 
-      logTimeout = setTimeout(() => {
+      logTimeout.current = setTimeout(() => {
         dispatch(loggerActions.addMessageFromLastLog());
       });
     }
   }, [lastLogs]);
 
-  const toggleStatblockWindow = () => {
+  const toggleStatblockWindow = useCallback(() => {
     if (statblockIsMinimized) {
       dispatch(userInterfaceActions.setStatblockSize({ width: statblockSize.width, height: 600 }));
     } else {
-      dispatch(userInterfaceActions.setStatblockSize({ width: statblockSize.width, height: 40 })); // или вообще height: 0
+      dispatch(userInterfaceActions.setStatblockSize({ width: statblockSize.width, height: 40 }));
     }
     dispatch(userInterfaceActions.setStatblockIsMinimized(!statblockIsMinimized));
-  };
+  }, [dispatch, statblockIsMinimized, statblockSize.width]);
 
   const closeStatblockWindow = () => {
     dispatch(userInterfaceActions.setStatblockIsVisible(!statblockIsVisible));
@@ -132,7 +132,7 @@ export const EncounterTracker = () => {
     if (diceTrayIsMinimized) {
       dispatch(userInterfaceActions.setDiceTraySize({ width: diceTraySize.width, height: 600 }));
     } else {
-      dispatch(userInterfaceActions.setDiceTraySize({ width: diceTraySize.width, height: 40 })); // или вообще height: 0
+      dispatch(userInterfaceActions.setDiceTraySize({ width: diceTraySize.width, height: 40 }));
     }
     dispatch(userInterfaceActions.setDiceTrayIsMinimized(!diceTrayIsMinimized));
   };
@@ -147,62 +147,57 @@ export const EncounterTracker = () => {
         type: 'component',
         component: <Chatbot />,
       },
-      color: s.red,
     },
     {
       content: {
         type: 'component',
         component: (
-          <Tippy content={'Таблица характеристик'} placement='left'>
+          <Tippy content='Таблица характеристик' placement='left'>
             <div className={s.toggleStatblock} onClick={closeStatblockWindow}>
               <Icon28DocumentListOutline fill='white' />
             </div>
           </Tippy>
         ),
       },
-      color: s.green,
       href: '#rocket',
     },
     {
       content: {
         type: 'component',
         component: (
-          <Tippy content={'Установить карту подземелья'} placement='left'>
+          <Tippy content='Установить карту подземелья' placement='left'>
             <div className={s.toggle} onClick={() => setMapImage(DANGEON_MAP_IMAGE)}>
               <Icon28DiamondOutline fill='white' />
             </div>
           </Tippy>
         ),
       },
-      color: s.green,
       href: '#rocket',
     },
     {
       content: {
         type: 'component',
         component: (
-          <Tippy content={'Установить карту деревни'} placement='left'>
+          <Tippy content='Установить карту деревни' placement='left'>
             <div className={s.toggle} onClick={() => setMapImage(VILLAGE_MAP_IMAGE)}>
               <Icon28HomeOutline fill='white' />
             </div>
           </Tippy>
         ),
       },
-      color: s.green,
       href: '#rocket',
     },
     {
       content: {
         type: 'component',
         component: (
-          <Tippy content={'Броски костей'}>
+          <Tippy content='Броски костей'>
             <div className={s.toggleDiceTray} onClick={closeDiceTrayWindow}>
               <Icon28Dice6Outline fill='black' />
             </div>
           </Tippy>
         ),
       },
-      color: s.red,
     },
   ];
 

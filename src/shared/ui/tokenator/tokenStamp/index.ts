@@ -1,1 +1,1 @@
-export { TokenStamp } from './TokenStamp'
+export { TokenStamp } from './TokenStamp';

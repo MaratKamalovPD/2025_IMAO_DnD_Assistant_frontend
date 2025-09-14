@@ -38,12 +38,11 @@ export const GridCard: FC<GridCardProps> = ({ creature, handleAddToTtackerClick,
 
           <div className={s.header__tags}>
             <span className={s.header__typeTag}>{creature.type.name}</span>
-            {creature.type?.tags &&
-              creature.type?.tags.map((tag, index) => (
-                <span key={index} className={s.header__subTag}>
-                  {tag}
-                </span>
-              ))}
+            {creature.type?.tags?.map((tag) => (
+              <span key={tag} className={s.header__subTag}>
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
 

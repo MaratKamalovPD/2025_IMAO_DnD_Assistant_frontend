@@ -1,7 +1,6 @@
-import React from 'react';
 import s from './SenseInput.module.scss';
 
-interface SenseInputProps {
+type SenseInputProps = {
   label: string;
   value: number;
   onChange: (value: number) => void;
@@ -12,7 +11,7 @@ interface SenseInputProps {
     label: string;
   };
   className?: string;
-}
+};
 
 export const SenseInput: React.FC<SenseInputProps> = ({
   label,
@@ -20,16 +19,16 @@ export const SenseInput: React.FC<SenseInputProps> = ({
   onChange,
   units,
   withCheckbox,
-  className = ''
+  className = '',
 }) => (
   <div className={`${s.sensesPanel__sense} ${className}`}>
     <label className={s.sensesPanel__label}>
       {label}
       <input
-        type="number"
-        min="0"
-        max="995"
-        step="5"
+        type='number'
+        min='0'
+        max='995'
+        step='5'
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value) || 0)}
         className={s.sensesPanel__input}
@@ -40,7 +39,7 @@ export const SenseInput: React.FC<SenseInputProps> = ({
       <div className={s.sensesPanel__checkbox}>
         <label className={s.sensesPanel__checkboxLabel}>
           <input
-            type="checkbox"
+            type='checkbox'
             checked={withCheckbox.checked}
             onChange={(e) => withCheckbox.onChange(e.target.checked)}
             className={s.sensesPanel__checkboxInput}

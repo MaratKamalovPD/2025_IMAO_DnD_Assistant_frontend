@@ -1,16 +1,16 @@
-import React from 'react';
-import Slider from 'rc-slider';
-import 'rc-slider/assets/index.css';
 import {
   Icon28FlipHorizontalOutline,
-  Icon28TargetOutline,
-  Icon28MagnifierPlus,
   Icon28MagnifierMinus,
+  Icon28MagnifierPlus,
+  Icon28TargetOutline,
 } from '@vkontakte/icons';
-import s from './ZoomControls.module.scss';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
+import React from 'react';
 import { IconButtonWithTooltip } from '../iconButtonWithTooltip';
+import s from './ZoomControls.module.scss';
 
-interface ZoomControlsProps {
+type ZoomControlsProps = {
   scale: number;
   scaleConfig: { min: number; max: number; step: number };
   setScaleWithAnchor: (val: number) => void;
@@ -18,7 +18,7 @@ interface ZoomControlsProps {
   setReflectImage: (val: boolean) => void;
   centerImage: () => void;
   file?: string;
-}
+};
 
 export const ZoomControls: React.FC<ZoomControlsProps> = ({
   scale,
@@ -41,7 +41,7 @@ export const ZoomControls: React.FC<ZoomControlsProps> = ({
     <div className={s.details__controls}>
       <div className={s.details__controls__sliderWrapper}>
         <IconButtonWithTooltip
-          title="Уменьшить масштаб"
+          title='Уменьшить масштаб'
           icon={<Icon28MagnifierMinus />}
           onClick={handleZoomOut}
           disabled={scale <= scaleConfig.min}
@@ -60,9 +60,7 @@ export const ZoomControls: React.FC<ZoomControlsProps> = ({
           <div className={s.details__controls__slider}>
             <Slider
               value={scale}
-              onChange={(value) =>
-                setScaleWithAnchor(typeof value === 'number' ? value : value[0])
-              }
+              onChange={(value) => setScaleWithAnchor(typeof value === 'number' ? value : value[0])}
               min={scaleConfig.min}
               max={scaleConfig.max}
               step={scaleConfig.step}
@@ -82,7 +80,7 @@ export const ZoomControls: React.FC<ZoomControlsProps> = ({
         </div>
 
         <IconButtonWithTooltip
-          title="Увеличить масштаб"
+          title='Увеличить масштаб'
           icon={<Icon28MagnifierPlus />}
           onClick={handleZoomIn}
           disabled={scale >= scaleConfig.max}
@@ -90,14 +88,14 @@ export const ZoomControls: React.FC<ZoomControlsProps> = ({
       </div>
 
       <IconButtonWithTooltip
-        title="Отразить изображение"
+        title='Отразить изображение'
         icon={<Icon28FlipHorizontalOutline />}
         onClick={() => setReflectImage(!reflectImage)}
         disabled={!file}
       />
 
       <IconButtonWithTooltip
-        title="Центрировать изображение"
+        title='Центрировать изображение'
         icon={<Icon28TargetOutline />}
         onClick={() => centerImage()}
         disabled={!file}

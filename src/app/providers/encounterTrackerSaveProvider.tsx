@@ -1,4 +1,5 @@
-import { useCallback, useEffect } from 'react';
+import { QueryStatus } from '@reduxjs/toolkit/query';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 
@@ -27,8 +28,8 @@ export const EncounterTrackerSaveProvider = ({ children }: Props) => {
 
   const [saveEncounter] = useUpdateEncounterMutation();
 
-  if (encounterState.encounterId !== id && status === 'uninitialized') {
-    trigger(id as string);
+  if (encounterState.encounterId !== id && status === QueryStatus.uninitialized) {
+    void trigger(id!);
     dispatch(userInterfaceActions.resetState());
   }
 
@@ -37,20 +38,17 @@ export const EncounterTrackerSaveProvider = ({ children }: Props) => {
       dispatch(encounterActions.setState(encounter.data.encounterState));
       dispatch(creatureActions.setState(encounter.data.creaturesState));
       dispatch(loggerActions.setState(encounter.data.loggerState));
-      dispatch(encounterActions.setEncounterId(id || null));
+      dispatch(encounterActions.setEncounterId(id ?? null));
     }
   }, [isLoading, isError, encounter]);
 
-  const updateState = useCallback(
-    debounce((body: EncounterSave) => {
-      if (body.encounterState.encounterId !== id) return;
-      saveEncounter({
-        id: id,
-        body: body,
-      })?.unwrap();
-    }, DEBOUNSE_TIME),
-    [saveEncounter, id],
-  );
+  const updateState = debounce((body: EncounterSave) => {
+    if (body.encounterState.encounterId !== id) return;
+    void saveEncounter({
+      id: id,
+      body: body,
+    })?.unwrap();
+  }, DEBOUNSE_TIME);
 
   useEffect(
     () =>

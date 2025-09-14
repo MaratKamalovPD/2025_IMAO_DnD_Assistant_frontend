@@ -1,262 +1,264 @@
 .statBlock {
-    text-align: left;
+  text-align: left;
+  font-size: 12.5px;
+  line-height: 1.2em;
+  display: inline-block;
+  vertical-align: top;
+  width: 400px;
+  background: #fdf1dc;
+  background-size: cover;
+  background-position: center;
+  background-image: url('../dndimages/statblockparch.jpg');
+  padding: 10px 10px 20px;
+  box-sizing: border-box;
+  font-family: 'Noto Sans', 'Myriad Pro', Calibri, Helvetica, Arial, sans-serif;
+
+  &.wide {
+    width: 800px;
+    text-align: center;
+
+    .sectionLeft,
+    .sectionRight {
+      display: inline-block;
+      vertical-align: top;
+      width: 48%;
+      text-align: left;
+    }
+
+    .sectionLeft {
+      margin-right: 1.5%;
+    }
+
+    .sectionRight {
+      margin-left: 1.5%;
+    }
+  }
+}
+
+.orangeBorder {
+  display: block;
+  background: #e69a28;
+  background-size: cover;
+  background-position: center;
+  background-image: url('../dndimages/statblockbar.jpg');
+  border: 1px solid #000;
+  height: 5px;
+  padding: 0 10px 0;
+  margin: -10px -10px 0;
+  box-sizing: initial;
+
+  &.bottom {
+    margin: 15px -10px -20px;
+  }
+}
+
+.taperedRule {
+  display: block;
+  width: 100%;
+  height: 5px;
+  border: none;
+  color: #922610;
+  fill: #922610;
+}
+
+.creatureHeading {
+  margin: 0 0 10px;
+
+  h1 {
+    font-family:
+      'Libre Baskerville', 'Lora', 'Calisto MT', 'Bookman Old Style', Bookman, 'Goudy Old Style',
+      Garamond, 'Hoefler Text', 'Bitstream Charter', Georgia, serif;
+    color: #922610;
+    font-size: 21px;
+    line-height: 1.2em;
+    margin: 10px 0 0;
+    letter-spacing: 1px;
+    font-variant: small-caps;
+    font-weight: bold;
+  }
+
+  h2 {
+    font-family: 'Noto Sans', 'Myriad Pro', Calibri, Helvetica, Arial, sans-serif;
+    font-weight: normal;
+    font-style: italic;
+    font-size: 12px;
+    line-height: 1.2em;
+    margin: 0;
+  }
+}
+
+.propertyLine {
+  text-indent: -1em;
+  padding-left: 1.1em;
+  line-height: 1.4em;
+
+  h4,
+  p {
+    display: inline;
+    margin: 0;
+    color: #922610;
     font-size: 12.5px;
     line-height: 1.2em;
+  }
+
+  h4 {
+    color: #7a200d;
+  }
+
+  &.first {
+    margin: 8px 0 0;
+  }
+
+  &.last {
+    margin: 0 0 10px;
+  }
+}
+
+.scores {
+  text-align: center;
+  color: #922610;
+
+  > div {
     display: inline-block;
-    vertical-align: top;
-    width: 400px;
-    background: #FDF1DC;
-    background-size: cover;
-    background-position: center; 
-    background-image: url('../dndimages/statblockparch.jpg');
-    padding: 10px 10px 20px;
-    box-sizing: border-box;
-    font-family: 'Noto Sans', 'Myriad Pro', Calibri, Helvetica, Arial, sans-serif;
-  
-    &.wide {
-      width: 800px;
-      text-align: center;
-  
-      .sectionLeft,
-      .sectionRight {
-        display: inline-block;
-        vertical-align: top;
-        width: 48%;
-        text-align: left;
-      }
-  
-      .sectionLeft {
-        margin-right: 1.5%;
-      }
-  
-      .sectionRight {
-        margin-left: 1.5%;
+    vertical-align: middle;
+    width: 15.5%;
+    min-width: 40px;
+    font-size: 12px;
+    line-height: 1em;
+  }
+
+  h4 {
+    margin: 10px 0 2px;
+    font-size: 14px;
+    line-height: 1.2em;
+    text-transform: uppercase;
+    color: #7a200d;
+  }
+
+  p {
+    margin: 0 0 10px;
+    line-height: 1.2em;
+  }
+}
+
+.scoresStrength,
+.scoresDexterity,
+.scoresConstitution,
+.scoresIntelligence,
+.scoresWisdom,
+.scoresCharisma {
+  // Individual score styles if needed
+}
+
+.propertyBlock {
+  padding: 10px 2px 0;
+
+  h4,
+  p {
+    font-size: 12.5px;
+    line-height: 1.2em;
+    display: inline;
+    margin: 0;
+  }
+
+  h4 {
+    font-style: italic;
+  }
+
+  &.legendary {
+    padding-top: 0;
+
+    h4 {
+      padding-left: 2px;
+      font-style: normal;
+    }
+
+    p {
+      font-style: normal;
+    }
+  }
+
+  &.lairregional {
+    padding-top: 0;
+
+    p {
+      font-style: normal;
+    }
+  }
+}
+
+#traitsListRight {
+  > :first-child {
+    &.propertyBlock {
+      &.legendary,
+      &.lairregional {
+        padding-top: 10px;
       }
     }
   }
-  
-  .orangeBorder {
-    display: block;
-    background: #E69A28;
-    background-size: cover;
-    background-position: center; 
-    background-image: url('../dndimages/statblockbar.jpg');
-    border: 1px solid #000;
-    height: 5px;
-    padding: 0 10px 0;
-    margin: -10px -10px 0;
-    box-sizing: initial;
-  
-    &.bottom {
-      margin: 15px -10px -20px;
-    }
+}
+
+.actions {
+  margin: 0 0 20px;
+
+  &:last-child {
+    margin: 0;
   }
-  
+
+  h3 {
+    border-bottom: 2px solid #7a200d;
+    color: #7a200d;
+    font-size: 21px;
+    font-variant: small-caps;
+    font-weight: normal;
+    letter-spacing: 1px;
+    margin: 20px 0 0;
+    padding: 0 0 10px;
+    text-indent: 5px;
+  }
+}
+
+.indent {
+  text-indent: 1em;
+}
+
+.reverseIndent {
+  text-indent: -1em;
+  padding-left: 1em;
+}
+
+.topStats {
+  margin: 0 0 10px;
+}
+
+.sectionLeft,
+.sectionRight {
+  // Section styles if needed
+}
+
+// Print styles
+#printBlock {
+  h1,
+  h3,
+  h4,
+  p {
+    color: black;
+  }
+
+  h3 {
+    border-bottom-color: black;
+  }
+
   .taperedRule {
-    display: block;
-    width: 100%;
-    height: 5px;
-    border: none;
-    color: #922610;
-    fill: #922610;
+    color: black;
+    fill: black;
   }
-  
-  .creatureHeading {
-    margin: 0 0 10px;
-  
-    h1 {
-      font-family: 'Libre Baskerville', 'Lora', 'Calisto MT', 'Bookman Old Style', Bookman, 'Goudy Old Style', Garamond, 'Hoefler Text', 'Bitstream Charter', Georgia, serif;
-      color: #922610;
-      font-size: 21px;
-      line-height: 1.2em;
-      margin: 10px 0 0;
-      letter-spacing: 1px;
-      font-variant: small-caps;
-      font-weight: bold;
-    }
-  
-    h2 {
-      font-family: 'Noto Sans', 'Myriad Pro', Calibri, Helvetica, Arial, sans-serif;
-      font-weight: normal;
-      font-style: italic;
-      font-size: 12px;
-      line-height: 1.2em;
-      margin: 0;
-    }
+
+  .statBlock {
+    background: none;
   }
-  
-  .propertyLine {
-    text-indent: -1em;
-    padding-left: 1.1em;
-    line-height: 1.4em;
-  
-    h4,
-    p {
-      display: inline;
-      margin: 0;
-      color: #922610;
-      font-size: 12.5px;
-      line-height: 1.2em;
-    }
-  
-    h4 {
-      color: #7A200D;
-    }
-  
-    &.first {
-      margin: 8px 0 0;
-    }
-  
-    &.last {
-      margin: 0 0 10px;
-    }
+
+  .orangeBorder {
+    display: none;
   }
-  
-  .scores {
-    text-align: center;
-    color: #922610;
-  
-    > div {
-      display: inline-block;
-      vertical-align: middle;
-      width: 15.5%;
-      min-width: 40px;
-      font-size: 12px;
-      line-height: 1em;
-    }
-  
-    h4 {
-      margin: 10px 0 2px;
-      font-size: 14px;
-      line-height: 1.2em;
-      text-transform: uppercase;
-      color: #7A200D;
-    }
-  
-    p {
-      margin: 0 0 10px;
-      line-height: 1.2em;
-    }
-  }
-  
-  .scoresStrength,
-  .scoresDexterity,
-  .scoresConstitution,
-  .scoresIntelligence,
-  .scoresWisdom,
-  .scoresCharisma {
-    // Individual score styles if needed
-  }
-  
-  .propertyBlock {
-    padding: 10px 2px 0;
-  
-    h4,
-    p {
-      font-size: 12.5px;
-      line-height: 1.2em;
-      display: inline;
-      margin: 0;
-    }
-  
-    h4 {
-      font-style: italic;
-    }
-  
-    &.legendary {
-      padding-top: 0;
-  
-      h4 {
-        padding-left: 2px;
-        font-style: normal;
-      }
-  
-      p {
-        font-style: normal;
-      }
-    }
-  
-    &.lairregional {
-      padding-top: 0;
-  
-      p {
-        font-style: normal;
-      }
-    }
-  }
-  
-  #traitsListRight {
-    > :first-child {
-      &.propertyBlock {
-        &.legendary,
-        &.lairregional {
-          padding-top: 10px;
-        }
-      }
-    }
-  }
-  
-  .actions {
-    margin: 0 0 20px;
-  
-    &:last-child {
-      margin: 0;
-    }
-  
-    h3 {
-      border-bottom: 2px solid #7A200D;
-      color: #7A200D;
-      font-size: 21px;
-      font-variant: small-caps;
-      font-weight: normal;
-      letter-spacing: 1px;
-      margin: 20px 0 0;
-      padding: 0 0 10px;
-      text-indent: 5px;
-    }
-  }
-  
-  .indent {
-    text-indent: 1em;
-  }
-  
-  .reverseIndent {
-    text-indent: -1em;
-    padding-left: 1em;
-  }
-  
-  .topStats {
-    margin: 0 0 10px;
-  }
-  
-  .sectionLeft,
-  .sectionRight {
-    // Section styles if needed
-  }
-  
-  // Print styles
-  #printBlock {
-    h1,
-    h3,
-    h4,
-    p {
-      color: black;
-    }
-  
-    h3 {
-      border-bottom-color: black;
-    }
-  
-    .taperedRule {
-      color: black;
-      fill: black;
-    }
-  
-    .statBlock {
-      background: none;
-    }
-  
-    .orangeBorder {
-      display: none;
-    }
-  }
+}

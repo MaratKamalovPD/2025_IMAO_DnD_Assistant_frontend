@@ -1,15 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGesture } from '@use-gesture/react';
-import { useDropzone } from 'react-dropzone';
 import clsx from 'clsx';
-import s from './TokenStamp.module.scss';
+import { SINGLE_CREATURE_ID, generatedCreatureActions } from 'entities/generatedCreature/model';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { useDispatch } from 'react-redux';
 import { blobToBase64 } from 'shared/lib';
 import { useDebouncedCallback } from 'use-debounce';
-import {
-  SINGLE_CREATURE_ID,
-  generatedCreatureActions,
-} from 'entities/generatedCreature/model';
-import { useDispatch } from 'react-redux';
+
+import s from './TokenStamp.module.scss';
 
 // Обновлённый тип пропсов
 type Props = {
@@ -18,7 +16,7 @@ type Props = {
   background?: string;
   border?: string;
   reflectImage?: boolean;
-  processFile: (file: File) => void;
+  processFile: (file?: File) => Promise<void>;
   tokenRef: React.RefObject<SVGSVGElement | null>;
   imageRef: React.RefObject<SVGImageElement | null>;
   scale: number;
@@ -59,7 +57,7 @@ export const TokenStamp: React.FC<Props> = ({
   shape = 'rect',
   setScaleWithAnchor,
 }) => {
-  void border
+  void border;
 
   const containerRef = useRef<SVGGElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -88,14 +86,14 @@ export const TokenStamp: React.FC<Props> = ({
           event.preventDefault();
           const step = scaleConfig.step * d;
           const next = scale + step;
-          setScaleWithAnchor(next)
+          setScaleWithAnchor(next);
         },
       }),
     },
     {
       target: tokenRef,
       eventOptions: { passive: false },
-    }
+    },
   );
 
   useEffect(() => {
@@ -110,15 +108,15 @@ export const TokenStamp: React.FC<Props> = ({
       e.preventDefault();
       const delta = -Math.sign(e.deltaY) * scaleConfig.step;
       const next = scale + delta;
-      setScaleWithAnchor(next)
+      setScaleWithAnchor(next);
     };
 
     el.addEventListener('wheel', handler, { passive: false });
     return () => el.removeEventListener('wheel', handler);
-  }, [tokenRef, scale, file, scaleConfig, setScale]);
+  }, [tokenRef, scale, file, scaleConfig, setScale, setScaleWithAnchor]);
 
   const onDrop = (accepted: File[]) => {
-    if (accepted[0]) processFile(accepted[0]);
+    if (accepted[0]) void processFile(accepted[0]);
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -139,14 +137,14 @@ export const TokenStamp: React.FC<Props> = ({
           generatedCreatureActions.setCreatureImage({
             id: SINGLE_CREATURE_ID,
             imageBase64: base64,
-          })
+          }),
         );
       } else {
         dispatch(
           generatedCreatureActions.setCreatureImageCircle({
             id: SINGLE_CREATURE_ID,
             imageBase64Circle: base64,
-          })
+          }),
         );
       }
     } catch (e) {
@@ -155,8 +153,8 @@ export const TokenStamp: React.FC<Props> = ({
   }, 500);
 
   useEffect(() => {
-    saveImageToRedux();
-  }, [scale, file, reflectImage, offsetPos]);
+    void saveImageToRedux();
+  }, [scale, file, reflectImage, offsetPos, saveImageToRedux]);
 
   return (
     <div {...getRootProps()} className={clsx(s.wrapper, shape === 'circle' && s.circle)}>
@@ -164,14 +162,14 @@ export const TokenStamp: React.FC<Props> = ({
       <svg
         ref={tokenRef}
         className={clsx(s.container, file && s.draggable, isDragging && s.dragging)}
-        xmlns="http://www.w3.org/2000/svg"
+        xmlns='http://www.w3.org/2000/svg'
         width={CANVAS_WIDTH}
         height={CANVAS_HEIGHT}
         viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`}
       >
         {shape === 'circle' && (
           <defs>
-            <clipPath id="circleClip">
+            <clipPath id='circleClip'>
               <circle
                 cx={CANVAS_WIDTH / 2}
                 cy={CANVAS_HEIGHT / 2}
@@ -180,10 +178,7 @@ export const TokenStamp: React.FC<Props> = ({
             </clipPath>
           </defs>
         )}
-        <g
-          ref={containerRef}
-          clipPath={shape === 'circle' ? 'url(#circleClip)' : undefined}
-        >
+        <g ref={containerRef} clipPath={shape === 'circle' ? 'url(#circleClip)' : undefined}>
           {background && (
             <image
               href={background}
@@ -191,7 +186,7 @@ export const TokenStamp: React.FC<Props> = ({
               y={-(Math.max(CANVAS_WIDTH, CANVAS_HEIGHT) - CANVAS_HEIGHT) / 2}
               width={Math.max(CANVAS_WIDTH, CANVAS_HEIGHT)}
               height={Math.max(CANVAS_WIDTH, CANVAS_HEIGHT)}
-              preserveAspectRatio="xMidYMid slice"
+              preserveAspectRatio='xMidYMid slice'
             />
           )}
           {!file && (

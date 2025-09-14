@@ -1,2 +1,2 @@
 export { Bestiary } from './Bestiary';
-export { CreatureStatblock } from './creatureStatblock'
+export { CreatureStatblock } from './creatureStatblock';

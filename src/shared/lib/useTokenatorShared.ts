@@ -1,4 +1,3 @@
-// shared/lib/useTokenatorShared.ts
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -35,15 +34,14 @@ const checkFile = async (fileItem?: File): Promise<void> => {
 
 export const useTokenatorShared = () => {
   const [file, setFile] = useState<string>();
-  
- 
+
   const processFile = async (fileItem?: File) => {
     try {
       await checkFile(fileItem);
       const base64 = await getBase64(fileItem);
       setFile(base64);
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err: unknown) {
+      toast.error((err as { message: string }).message);
       console.error(err);
     }
   };

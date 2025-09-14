@@ -1,1 +1,1 @@
-export { authReducer } from './model'
+export { authReducer } from './model';

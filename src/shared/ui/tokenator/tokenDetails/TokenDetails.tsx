@@ -1,13 +1,14 @@
 import React from 'react';
 
-import s from './TokenDetails.module.scss';
+import { DownloadButton } from './downloadButton';
+import { UploadButton } from './uploadButton';
 import { UploadInfo } from './uploadInfo';
 import { ZoomControls } from './zoomControls';
-import { UploadButton } from './uploadButton';
-import { DownloadButton } from './downloadButton';
+
+import s from './TokenDetails.module.scss';
 
 // Тип пропсов для TokenDetails
-interface Props {
+type Props = {
   shape: 'rect' | 'circle';
   file?: string;
   processFile: (file: File) => void;
@@ -17,14 +18,14 @@ interface Props {
   scale: number;
   setScale: (val: number) => void;
   setScaleWithAnchor: (val: number) => void;
-  download: (format: "webp" | "png", shape: 'rect' | 'circle') => void;
+  download: (format: 'webp' | 'png', shape: 'rect' | 'circle') => void;
   scaleConfig: {
     min: number;
     max: number;
     step: number;
   };
   showHeaderAndInfo?: boolean;
-}
+};
 
 export const TokenDetails: React.FC<Props> = ({
   file,
@@ -60,7 +61,7 @@ export const TokenDetails: React.FC<Props> = ({
 
       <div className={s.details__actionsRow}>
         <UploadButton processFile={processFile} />
-        <DownloadButton file={file} download={download} shape={shape}/>
+        <DownloadButton file={file} download={download} shape={shape} />
       </div>
     </div>
   );

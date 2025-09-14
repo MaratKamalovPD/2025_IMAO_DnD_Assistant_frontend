@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import { createChatBotMessage } from 'react-chatbot-kit';
 
@@ -29,7 +30,7 @@ type IChatProps = {
   headerText: string;
   customMessages: ICustomMessage;
   placeholderText: string;
-  validator: (input: string) => Boolean;
+  validator: (input: string) => boolean;
   state: any;
   disableScrollToBottom: boolean;
   messageHistory: IMessage[] | string;
@@ -55,6 +56,4 @@ type IBackgroundColor = {
   backgroundColor: string;
 };
 
-type ICustomMessage = {
-  [index: string]: (props: any) => ReactElement;
-};
+type ICustomMessage = Record<string, (props: any) => ReactElement>;

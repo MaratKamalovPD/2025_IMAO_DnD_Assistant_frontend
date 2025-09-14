@@ -8,7 +8,7 @@ import {
   Icon28PlayOutline,
   Icon28SkipNext,
 } from '@vkontakte/icons';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router';
 import { animated, useSpring } from 'react-spring';
@@ -38,8 +38,8 @@ import s from './TrackPanel.module.scss';
 
 export const TrackPanel = () => {
   const dispatch = useDispatch();
-  const isSession = useContext(SessionContext);
-  const userParticipants = useContext(ParticipantsSessionContext);
+  const isSession = use(SessionContext);
+  const userParticipants = use(ParticipantsSessionContext);
   const [nextTurnTriggered, setNextTurnTriggered] = useState(false);
   const [isModalCharactersPageOpen, setIsModalCharactersPageOpen] = useState(false);
   const [isReferenceOpen, setIsReferenceOpen] = useState(false);
@@ -104,13 +104,15 @@ export const TrackPanel = () => {
     toast.success(`Инициатива успешно проброшена!`);
     dispatch(loggerActions.addLog(`НАЧАЛО СРАЖЕНИЯ!\n Инициатива успешно проброшена!`));
     setNextTurnTriggered(true);
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (hasStarted && nextTurnTriggered) {
       dispatch(loggerActions.addLog(`СЛЕДУЮЩИЙ РAУНД: ${currentRound}`));
       setNextTurnTriggered(false);
     }
+    // TODO - fix
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasStarted, currentRound]);
 
   useEffect(() => {
@@ -118,6 +120,8 @@ export const TrackPanel = () => {
       dispatch(loggerActions.addLog(`CЛЕДУЮЩИЙ ХОД: ${name}`));
       setNextTurnTriggered(false);
     }
+    // TODO - fix
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasStarted, name]);
 
   return (
@@ -263,11 +267,13 @@ export const TrackPanel = () => {
         </div>
       </ModalOverlay>
 
-      <CreateSessionDialog
-        encounterId={encounterId as string}
-        isModalOpen={isCreateSessionDialogOpen}
-        setIsModalOpen={setIsCreateSessionDialogOpen}
-      />
+      {encounterId && (
+        <CreateSessionDialog
+          encounterId={encounterId}
+          isModalOpen={isCreateSessionDialogOpen}
+          setIsModalOpen={setIsCreateSessionDialogOpen}
+        />
+      )}
     </>
   );
 };

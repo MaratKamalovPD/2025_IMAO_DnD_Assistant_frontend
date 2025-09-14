@@ -28,9 +28,9 @@ export const EncounterCard: FC<EncounterCardProps> = ({
   const handleDeleteClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.stopPropagation();
-      trigger(encounter.id);
+      void trigger(encounter.id);
     },
-    [encounter.id],
+    [encounter.id, trigger],
   );
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export const EncounterCard: FC<EncounterCardProps> = ({
         onClick={(e) => {
           e.stopPropagation();
           e.preventDefault();
-          navigate(`/encounter_tracker/${encounter.id}`);
+          void navigate(`/encounter_tracker/${encounter.id}`);
         }}
       >
         <Tippy content={encounter.name}>

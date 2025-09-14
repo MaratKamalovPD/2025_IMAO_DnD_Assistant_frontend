@@ -1,29 +1,27 @@
-import React from 'react';
-import s from './CreatureSaveSection.module.scss';
-import { MonsterSelect } from './monsterSelect';
-import { TokenatorWidget } from 'shared/ui/tokenator';
-import { MagicButton } from './magicButton';
-import { useSelector } from 'react-redux';
 import { AuthState, AuthStore } from 'entities/auth/model';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { TokenatorWidget } from 'shared/ui/tokenator';
+import s from './CreatureSaveSection.module.scss';
+import { MagicButton } from './magicButton';
+import { MonsterSelect } from './monsterSelect';
 
-interface CreatureSaveSectionProps {
+type CreatureSaveSectionProps = {
   onSave?: () => void;
   onUsePreset?: () => void;
-  
+
   onTextChange?: (text: string) => void;
-  onTriggerPreset?: (name: string) => void;
-  presetOptions?: Array<{ label: string; value: string }>;
+  onTriggerPreset?: (name: string) => Promise<void>;
+  presetOptions?: { label: string; value: string }[];
   selectedPreset?: string;
   language?: 'en' | 'ru';
   isLoading?: boolean;
-}
+};
 
 export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
   onSave,
-  //onUsePreset,
   onTextChange,
   onTriggerPreset,
-  //presetOptions = [],
   selectedPreset = '',
   language = 'ru',
 }) => {
@@ -45,7 +43,6 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
   const t = translations[language];
 
   const { isAuth } = useSelector<AuthStore>((state) => state.auth) as AuthState;
-  //const isAuth = true;
 
   return (
     <div className={s.creatureSaveSection}>
@@ -59,29 +56,25 @@ export const CreatureSaveSection: React.FC<CreatureSaveSectionProps> = ({
 
         <button
           className={s.creatureSaveSection__button}
-          onClick={() => selectedPreset && onTriggerPreset?.(selectedPreset)}
+          onClick={() => {
+            if (selectedPreset) void onTriggerPreset?.(selectedPreset);
+          }}
         >
           {t.usePreset}
         </button>
       </div>
 
       <div className={s.authLockWrapper}>
-        {!isAuth && (
-          <div className={s.authOverlay}>
-            🔒 
-          </div>
-        )}
+        {!isAuth && <div className={s.authOverlay}>🔒</div>}
 
         <MagicButton onClick={onSave} disabled={!isAuth}>
           {isAuth ? t.save : 'Войдите, чтобы сохранить'}
         </MagicButton>
       </div>
 
-
       <div className={s.creatureSaveSection__layout}>
-        <TokenatorWidget /> 
+        <TokenatorWidget />
       </div>
-
     </div>
   );
 };

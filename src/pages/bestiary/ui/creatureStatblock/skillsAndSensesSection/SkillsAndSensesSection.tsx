@@ -1,11 +1,12 @@
 import Tippy from '@tippyjs/react';
 import { CreatureFullData } from 'entities/creature/model';
+import { cursorStyle } from 'pages/bestiary/lib';
 import { JumpTarget, ToastType } from 'pages/bestiary/model';
 import { D20RollToast } from 'pages/bestiary/ui/creatureStatblock/statblockToasts';
 import { toast } from 'react-toastify';
 import { DiceType, rollDice } from 'shared/lib';
+
 import s from './SkillsAndSensesSection.module.scss';
-import { cursorStyle } from 'pages/bestiary/lib';
 
 type SkillsProps = {
   creature: CreatureFullData;
@@ -43,12 +44,18 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature, onJump
     <div className={s.skillsContainer}>
       {creature.savingThrows && (
         <div className={s.skillsContainer__line}>
-          <span onClick={() => onJump?.('properties')} className={s.skillsContainer__title} style={cursorStyle(onJump != null)}>Спасброски:&nbsp;</span>
+          <span
+            onClick={() => onJump?.('properties')}
+            className={s.skillsContainer__title}
+            style={cursorStyle(onJump != null)}
+          >
+            Спасброски:&nbsp;
+          </span>
           <div className={s.skillsContainer__text}>
             {Object.entries(creature.savingThrows).map(([_, thr], index, arr) => (
               <div key={thr.shortName} className={s.skillsContainer__listElement}>
                 <span>{thr.shortName.toUpperCase()}</span>{' '}
-                <Tippy content={'Нажмите для броска 1к20'}>
+                <Tippy content='Нажмите для броска 1к20'>
                   <span
                     className={s.skillsContainer__formula}
                     onClick={() =>
@@ -67,12 +74,18 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature, onJump
 
       {creature.skills && (
         <div className={s.skillsContainer__line}>
-          <span onClick={() => onJump?.('properties')} className={s.skillsContainer__title} style={cursorStyle(onJump != null)}>Навыки&nbsp;</span>
+          <span
+            onClick={() => onJump?.('properties')}
+            className={s.skillsContainer__title}
+            style={cursorStyle(onJump != null)}
+          >
+            Навыки&nbsp;
+          </span>
           <div className={s.skillsContainer__text}>
             {Object.entries(creature.skills).map(([_, skill], index, arr) => (
               <div key={skill.name} className={s.skillsContainer__listElement}>
                 <span>{skill.name}</span>&nbsp;
-                <Tippy content={'Нажмите для броска 1к20'}>
+                <Tippy content='Нажмите для броска 1к20'>
                   <span
                     className={s.skillsContainer__formula}
                     onClick={() => handleSkillRoll(skill.name.toUpperCase(), skill.value)}
@@ -89,7 +102,13 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature, onJump
 
       {creature.damageResistances && (
         <div className={s.skillsContainer__line}>
-          <span onClick={() => onJump?.('damage')} className={s.skillsContainer__title} style={cursorStyle(onJump != null)}>Сопротивление к урону&nbsp;</span>
+          <span
+            onClick={() => onJump?.('damage')}
+            className={s.skillsContainer__title}
+            style={cursorStyle(onJump != null)}
+          >
+            Сопротивление к урону&nbsp;
+          </span>
           <div className={s.skillsContainer__text}>
             {Object.entries(creature.damageResistances).map(([_, dmg], index, arr) => (
               <div key={dmg} className={s.skillsContainer__listElement}>
@@ -102,7 +121,13 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature, onJump
 
       {creature.damageImmunities && (
         <div className={s.skillsContainer__line}>
-          <span onClick={() => onJump?.('damage')} className={s.skillsContainer__title} style={cursorStyle(onJump != null)}>Иммунитет к урону&nbsp;</span>
+          <span
+            onClick={() => onJump?.('damage')}
+            className={s.skillsContainer__title}
+            style={cursorStyle(onJump != null)}
+          >
+            Иммунитет к урону&nbsp;
+          </span>
           <div className={s.skillsContainer__text}>
             {Object.entries(creature.damageImmunities).map(([_, dmg], index, arr) => (
               <div key={dmg} className={s.skillsContainer__listElement}>
@@ -115,7 +140,13 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature, onJump
 
       {creature.damageVulnerabilities && (
         <div className={s.skillsContainer__line}>
-          <span onClick={() => onJump?.('damage')} className={s.skillsContainer__title} style={cursorStyle(onJump != null)}>Уязвимость к урону&nbsp;</span>
+          <span
+            onClick={() => onJump?.('damage')}
+            className={s.skillsContainer__title}
+            style={cursorStyle(onJump != null)}
+          >
+            Уязвимость к урону&nbsp;
+          </span>
           <div className={s.skillsContainer__text}>
             {Object.entries(creature.damageVulnerabilities).map(([_, dmg], index, arr) => (
               <div key={dmg} className={s.skillsContainer__listElement}>
@@ -128,7 +159,13 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature, onJump
 
       {creature.conditionImmunities && (
         <div className={s.skillsContainer__line}>
-          <span onClick={() => onJump?.('properties')} className={s.skillsContainer__title} style={cursorStyle(onJump != null)}>Иммунитет к состояниям&nbsp;</span>
+          <span
+            onClick={() => onJump?.('properties')}
+            className={s.skillsContainer__title}
+            style={cursorStyle(onJump != null)}
+          >
+            Иммунитет к состояниям&nbsp;
+          </span>
           <div className={s.skillsContainer__text}>
             {Object.entries(creature.conditionImmunities).map(([_, cond], index, arr) => (
               <div key={cond} className={s.skillsContainer__listElement}>
@@ -140,7 +177,13 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature, onJump
       )}
 
       <div className={s.skillsContainer__line}>
-        <span onClick={() => onJump?.('senses')} className={s.skillsContainer__title} style={cursorStyle(onJump != null)}>Чувства&nbsp;</span>
+        <span
+          onClick={() => onJump?.('senses')}
+          className={s.skillsContainer__title}
+          style={cursorStyle(onJump != null)}
+        >
+          Чувства&nbsp;
+        </span>
         <div className={s.skillsContainer__text}>
           <div className={s.skillsContainer__listElement}>
             пассивная внимательность {creature.senses.passivePerception}
@@ -156,7 +199,13 @@ export const SkillsAndSensesSection: React.FC<SkillsProps> = ({ creature, onJump
       </div>
 
       <div className={s.skillsContainer__line}>
-        <span onClick={() => onJump?.('damage')} className={s.skillsContainer__title} style={cursorStyle(onJump != null)}>Языки&nbsp;</span>
+        <span
+          onClick={() => onJump?.('damage')}
+          className={s.skillsContainer__title}
+          style={cursorStyle(onJump != null)}
+        >
+          Языки&nbsp;
+        </span>
         <div className={s.skillsContainer__text}>
           {creature.languages && Object.entries(creature.languages).length > 0 ? (
             Object.entries(creature.languages).map(([_, lang], index, arr) => (

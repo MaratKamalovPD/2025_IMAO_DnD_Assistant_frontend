@@ -1,38 +1,36 @@
-import React, { useRef, useState, useEffect } from 'react'
-import s from './PromptSection.module.scss'
-import { PromptTextarea } from './promptTextarea'
-import { PresetSelect } from './promtPresetSelect'
+import { SerializedError } from '@reduxjs/toolkit';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { CreatureFullData } from 'entities/creature/model';
 import {
-  PromptTextareaRef,
-  SelectOptionWithDescription
-} from 'pages/statblockGenerator/model'
-//import { StatblockImageUploadPanel } from './statblockImageUploadPanel'
-import {
+  useGetGenerationStatusQuery,
   useSubmitGenerationPromptMutation,
-  //useSubmitGenerationImageMutation,
-  useGetGenerationStatusQuery
-} from 'pages/statblockGenerator/api/llm.api'
-import { CreatureFullData } from 'entities/creature/model'
-import { StepProgressBar } from 'shared/ui/stepProgressBar'
+} from 'pages/statblockGenerator/api/llm.api';
+import { PromptTextareaRef, SelectOptionWithDescription } from 'pages/statblockGenerator/model';
+import React, { useEffect, useRef, useState } from 'react';
+import { StepProgressBar } from 'shared/ui/stepProgressBar';
+import s from './PromptSection.module.scss';
+import { PromptTextarea } from './promptTextarea';
+import { PresetSelect } from './promtPresetSelect';
 
-interface PromptSectionProps {
-  onGenerate?: (creature: CreatureFullData) => void
-  onUsePreset?: () => void
-  onTextChange?: (text: string) => void
-  presetOptions?: SelectOptionWithDescription[]
-  selectedPreset?: string
-  onImageUpload?: (file: File) => void
-  language?: 'en' | 'ru'
-}
+type PromptSectionProps = {
+  onGenerate?: (creature: CreatureFullData) => void;
+  onUsePreset?: () => void;
+  onTextChange?: (text: string) => void;
+  presetOptions?: SelectOptionWithDescription[];
+  selectedPreset?: string;
+  onImageUpload?: (file: File) => void;
+  language?: 'en' | 'ru';
+};
+
+const defaultpresetOptions: SelectOptionWithDescription[] = [];
 
 export const PromptSection: React.FC<PromptSectionProps> = ({
   onGenerate,
   onUsePreset,
   onTextChange,
-  presetOptions = [],
+  presetOptions = defaultpresetOptions,
   selectedPreset = '',
-  //onImageUpload,
-  language = 'ru'
+  language = 'ru',
 }) => {
   const translations = {
     ru: {
@@ -42,7 +40,7 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
       usePreset: 'Использовать пресет',
       uploadImage: 'Загрузить изображение',
       polling: 'Ожидаем результат…',
-      done: 'Готово!'
+      done: 'Готово!',
     },
     en: {
       generate: 'Generate statblock',
@@ -51,64 +49,53 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
       usePreset: 'Use preset',
       uploadImage: 'Upload image',
       polling: 'Waiting for result…',
-      done: 'Done!'
-    }
-  }
-  const t = translations[language]
+      done: 'Done!',
+    },
+  };
+  const t = translations[language];
 
-  const textareaRef = useRef<PromptTextareaRef>(null)
-  const [jobId, setJobId] = useState<string | null>(null)
-  const [step, setStep] = useState(0)
+  const textareaRef = useRef<PromptTextareaRef>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [step, setStep] = useState(0);
 
-  const [
-    submitText,
-    { isLoading: isSubmittingText, error: textError }
-  ] = useSubmitGenerationPromptMutation()
+  const [submitText, { isLoading: isSubmittingText, error: textError }] =
+    useSubmitGenerationPromptMutation();
 
-  // const [
-  //   submitImage,
-  //   { isLoading: isSubmittingImage, error: imageError }
-  // ] = useSubmitGenerationImageMutation()
-  // void isSubmittingImage
-  
-
-  // Будем пропускать запрос пока нет jobId, а как только jobId появится —
-  // сразу сработает первый fetch и далее каждый 1000 мс
   const {
     data: jobStatus,
     isFetching: isPolling,
-    error: pollingError
+    error: pollingError,
   } = useGetGenerationStatusQuery(jobId ?? '', {
     skip: !jobId,
-    pollingInterval: 1000
-  })
-  void isPolling
-  void pollingError
+    pollingInterval: 1000,
+  });
+  void isPolling;
+  void pollingError;
 
   // Уведомляем родителя, как только статус станет "done"
   useEffect(() => {
     if (jobStatus?.status === 'done' && jobStatus.result) {
-      onGenerate?.(jobStatus.result)
-      setJobId(null)
+      onGenerate?.(jobStatus.result);
+      setJobId(null);
     }
-  }, [jobStatus, onGenerate])
+  }, [jobStatus, onGenerate]);
 
   const handlePresetSelect = (description: string) => {
-    textareaRef.current?.setValue(description)
-    onTextChange?.(description)
-  }
+    textareaRef.current?.setValue(description);
+    onTextChange?.(description);
+  };
 
   const handleGenerateText = async () => {
-    const desc = textareaRef.current?.getValue()
-    if (!desc) return
+    const desc = textareaRef.current?.getValue();
+    if (!desc) return;
 
     try {
-      const resp = await submitText({ description: desc }).unwrap()
-      setJobId(resp.job_id)  
+      const resp = await submitText({ description: desc }).unwrap();
+      setJobId(resp.job_id);
     } catch (err) {
-      console.error('❌ Ошибка при отправке генерации:', err)
+      console.error('❌ Ошибка при отправке генерации:', err);
     }
-  }
+  };
 
   // const handleGenerateImage = async (file: File) => {
   //   onImageUpload?.(file)
@@ -123,32 +110,30 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
   //   }
   // }
 
-  const isGenerating =
-  isSubmittingText ||             
-  (!!jobId && jobStatus?.status !== 'done')
+  const isGenerating = isSubmittingText || (!!jobId && jobStatus?.status !== 'done');
 
   useEffect(() => {
-    if (!jobStatus?.status) return
-  
+    if (!jobStatus?.status) return;
+
     switch (jobStatus.status) {
       case 'processing_step_1':
-        setStep(1)
-        break
+        setStep(1);
+        break;
       case 'processing_step_2':
-        setStep(2)
-        break
+        setStep(2);
+        break;
       case 'done':
-        setStep(3)
-        break
+        setStep(3);
+        break;
       default:
-        setStep(0)
+        setStep(0);
     }
-  }, [jobStatus?.status])
+  }, [jobStatus?.status]);
 
   return (
     <div className={s.promptSection}>
       <PresetSelect
-        className="presetSelect"
+        className='presetSelect'
         presetOptions={presetOptions}
         selectedPreset={selectedPreset}
         onTextChange={handlePresetSelect}
@@ -156,16 +141,17 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
         t={{
           presets: t.presets,
           select: t.select,
-          usePreset: t.usePreset
+          usePreset: t.usePreset,
         }}
       />
 
-      <PromptTextarea
-        ref={textareaRef}
-        onSubmit={handleGenerateText}
-        disabled={isGenerating}
-      />
-      {textError && <div className={s.error}>Ошибка: {String(textError)}</div>}
+      <PromptTextarea ref={textareaRef} onSubmit={handleGenerateText} disabled={isGenerating} />
+      {textError && (
+        <div className={s.error}>
+          Ошибка:{' '}
+          {(textError as SerializedError)?.message ?? (textError as FetchBaseQueryError)?.status}
+        </div>
+      )}
 
       {/* <StatblockImageUploadPanel
         onImageSelect={handleGenerateImage}
@@ -177,35 +163,18 @@ export const PromptSection: React.FC<PromptSectionProps> = ({
       />
       {imageError && <div className={s.error}>Ошибка: {String(imageError)}</div>} */}
 
-      <div
-        className={s.progressWrapper}
-        data-visible={isGenerating}
-      >
+      <div className={s.progressWrapper} data-visible={isGenerating}>
         <StepProgressBar
           steps={[
             { label: 'Обряд Начат', positionPercent: 5 },
             { label: 'Плоть Сформирована', positionPercent: 32 },
             { label: 'Душа Вложена', positionPercent: 60 },
-            { label: 'Существо Пробудилось', positionPercent: 88 }
+            { label: 'Существо Пробудилось', positionPercent: 88 },
           ]}
           currentStep={step}
-          onStepChange={(i) => console.log('Новый шаг:', i)}
           disableClick
         />
       </div>
-
-
-      {/* {jobId && (
-        <div className={s.status}>
-          {isPolling && <p>{t.polling}</p>}
-          {!isPolling && jobStatus?.status === 'done' && <p>{t.done}</p>}
-          {pollingError && (
-            <div className={s.error}>
-              Ошибка получения статуса: {String(pollingError)}
-            </div>
-          )}
-        </div>
-      )} */}
     </div>
-  )
-}
+  );
+};

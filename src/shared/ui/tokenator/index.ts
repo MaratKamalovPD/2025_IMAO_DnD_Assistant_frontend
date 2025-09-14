@@ -1,1 +1,1 @@
-export { TokenatorWidget } from './TokenatorWidget'
+export { TokenatorWidget } from './TokenatorWidget';

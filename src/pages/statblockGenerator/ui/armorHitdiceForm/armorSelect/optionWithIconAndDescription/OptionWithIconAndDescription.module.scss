@@ -1,34 +1,33 @@
 .optionContainer {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-  }
-  
-  .focused {
-    background-color: var(--secondary-bg-color-hover);
-  }
-  
-  .icon {
-    margin-right: 8px;
-    flex-shrink: 0;
-  }
-  
-  .textGroup {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-  }
-  
-  .label {
-    color: white;
-    font-size: 15px;
-  }
-  
-  .description {
-    color: gray;
-    font-size: 13px;
-    margin-left: auto;
-    text-align: right;
-  }
-  
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+}
+
+.focused {
+  background-color: var(--secondary-bg-color-hover);
+}
+
+.icon {
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.textGroup {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.label {
+  color: white;
+  font-size: 15px;
+}
+
+.description {
+  color: gray;
+  font-size: 13px;
+  margin-left: auto;
+  text-align: right;
+}

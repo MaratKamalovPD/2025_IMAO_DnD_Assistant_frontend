@@ -20,8 +20,8 @@ export const CharacterCard: FC<CharacterCardProps> = ({ character }) => {
     useLazyGetCharacterByIdQuery();
 
   const handleAddToTtackerClick = useCallback(() => {
-    trigger(`${character.id}`);
-  }, [character.id]);
+    void trigger(`${character.id}`);
+  }, [character.id, trigger]);
 
   useEffect(() => {
     if (!isLoading && !isError && characterData) {

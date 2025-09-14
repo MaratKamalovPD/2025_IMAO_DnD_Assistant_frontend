@@ -45,22 +45,25 @@ export const VKLogin: React.FC<VKLoginProps> = ({ setErr, login }) => {
         .on(VKID.WidgetEvents.ERROR, () => {
           setErr('Упс, что-то пошло не так...');
         })
-        .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, (payload: any) => {
-          const { code, device_id } = payload;
+        .on(
+          VKID.OneTapInternalEvents.LOGIN_SUCCESS,
+          (payload: { code: string; device_id: string }) => {
+            const { code, device_id } = payload;
 
-          const requestBody: LoginRequest = {
-            code: code,
-            deviceID: device_id,
-            state: state,
-            codeVerifier: codeVerifierRef.current,
-          };
+            const requestBody: LoginRequest = {
+              code: code,
+              deviceID: device_id,
+              state: state,
+              codeVerifier: codeVerifierRef.current,
+            };
 
-          login(requestBody);
-        });
+            void login(requestBody);
+          },
+        );
     };
 
-    init();
-  }, []);
+    void init();
+  }, [login, setErr]);
 
   return <div ref={containerRef} />;
 };

@@ -1,7 +1,10 @@
 import React from 'react';
 import Select, { StylesConfig } from 'react-select';
 import s from './ArmorSelect.module.scss';
-import { OptionWithIconAndDescription, SingleValueWithIconAndDescription } from './optionWithIconAndDescription';
+import {
+  OptionWithIconAndDescription,
+  SingleValueWithIconAndDescription,
+} from './optionWithIconAndDescription';
 
 export type OptionType = {
   value: string;
@@ -10,11 +13,11 @@ export type OptionType = {
   description?: string;
 };
 
-interface ArmorSelectProps {
+type ArmorSelectProps = {
   value: string;
   options: OptionType[];
   onChange: (value: string) => void;
-}
+};
 
 const customStyles: StylesConfig<OptionType, false> = {
   control: (base) => ({
@@ -37,20 +40,14 @@ const customStyles: StylesConfig<OptionType, false> = {
   }),
   option: (base, state) => ({
     ...base,
-    backgroundColor: state.isFocused
-      ? 'var(--primary-btn-color)'
-      : 'var(--secondary-bg-color)',
+    backgroundColor: state.isFocused ? 'var(--primary-btn-color)' : 'var(--secondary-bg-color)',
     color: 'white',
     cursor: 'pointer',
   }),
 };
 
-export const ArmorSelect: React.FC<ArmorSelectProps> = ({
-  value,
-  options,
-  onChange,
-}) => {
-  const selectedOption = options.find((option) => option.value === value) || null;
+export const ArmorSelect: React.FC<ArmorSelectProps> = ({ value, options, onChange }) => {
+  const selectedOption = options.find((option) => option.value === value) ?? null;
 
   return (
     <Select

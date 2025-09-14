@@ -99,7 +99,9 @@
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
+  transition:
+    background-color 0.2s,
+    transform 0.1s;
   color: white;
   font-family: 'ABeeZee', sans-serif;
   font-size: 16px;

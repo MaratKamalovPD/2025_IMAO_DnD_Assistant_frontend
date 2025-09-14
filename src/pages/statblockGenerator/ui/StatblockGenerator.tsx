@@ -1,12 +1,29 @@
-//import { ActualStatblock } from './actualStatblock';
+import clsx from 'clsx';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+
+import { AppDispatch } from 'app/store';
+import { AuthState, AuthStore } from 'entities/auth/model';
+import { CreatureFullData } from 'entities/creature/model';
+import {
+  GeneratedCreatureStore,
+  SINGLE_CREATURE_ID,
+  generatedCreatureSelectors,
+} from 'entities/generatedCreature/model';
+import { CreatureStatblock } from 'pages/bestiary';
+import { JumpTarget } from 'pages/bestiary/model';
 import {
   GetCreaturesRequest,
   useGetCreaturesQuery,
   useLazyGetCreatureByNameQuery,
 } from 'pages/statblockGenerator/api';
-import { useEffect, useRef, useState } from 'react';
+import { useAddCreatureMutation } from '../api/statblockGenerator.api';
+import { promptPresetOptions, useGlow } from '../lib';
+import { applyCreatureData } from '../model';
 import { ArmorHitdiceForm } from './armorHitdiceForm';
 import { AttackForm } from './attackForm';
+import { CollapsiblePanelRef } from './collapsiblePanel/CollapsiblePanel';
 import { CreatureSaveSection } from './creatureSaveSection';
 import { DamageLanguagesForm } from './damageLanguagesForm';
 import { MonsterSpeedForm } from './monsterSpeedForm';
@@ -14,27 +31,9 @@ import { MonsterStatsForm } from './monsterStatsForm';
 import { PromptSection } from './promptSection';
 import { PropertiesListsForm } from './propertiesListsForm';
 import { SensesForm } from './sensesForm';
-import s from './StatblockGenerator.module.scss';
 import { TypeForm } from './typeForm';
-import { toast } from 'react-toastify';
 
-
-import {
-  GeneratedCreatureStore,
-  SINGLE_CREATURE_ID,
-  generatedCreatureSelectors,
-} from 'entities/generatedCreature/model';
-import { useDispatch, useSelector } from 'react-redux';
-import { useAddCreatureMutation } from '../api/statblockGenerator.api';
-import { CreatureStatblock } from 'pages/bestiary';
-import { CollapsiblePanelRef } from './collapsiblePanel/CollapsiblePanel';
-import { JumpTarget } from 'pages/bestiary/model';
-import clsx from 'clsx';
-import { promptPresetOptions, useGlow } from '../lib';
-import { CreatureFullData } from 'entities/creature/model';
-import { applyCreatureData } from '../model';
-import { AppDispatch } from 'app/store';
-import { AuthState, AuthStore } from 'entities/auth/model';
+import s from './StatblockGenerator.module.scss';
 
 const requestBody: GetCreaturesRequest = {
   start: 0,
@@ -68,27 +67,22 @@ const requestBody: GetCreaturesRequest = {
 };
 
 export const StatblockGenerator = () => {
-  const [fullCreatureData, setFullCreatureData] = useState<CreatureFullData | null>(null)
+  const [fullCreatureData, setFullCreatureData] = useState<CreatureFullData | null>(null);
   const [addCreature, { isSuccess, isError, error }] = useAddCreatureMutation();
   const { data: creatures } = useGetCreaturesQuery(requestBody);
-  const [trigger, { data: fetchedCreatureData  }] = useLazyGetCreatureByNameQuery();
+  const [trigger, { data: fetchedCreatureData }] = useLazyGetCreatureByNameQuery();
   const { glowActiveMap, glowFadeMap, triggerGlow, clearGlow } = useGlow();
 
   const { isAuth } = useSelector<AuthStore>((state) => state.auth) as AuthState;
-  //const isAuth = true;
 
   const getGlowClass = (id: string) =>
-    clsx(
-      glowActiveMap[id] && s.glowHighlight,
-      glowFadeMap[id] && s.glowFading
-    );
+    clsx(glowActiveMap[id] && s.glowHighlight, glowFadeMap[id] && s.glowFading);
 
-    useEffect(() => {
-      if (fetchedCreatureData) {
-        setFullCreatureData(fetchedCreatureData)
-      }
-    }, [fetchedCreatureData])
-
+  useEffect(() => {
+    if (fetchedCreatureData) {
+      setFullCreatureData(fetchedCreatureData);
+    }
+  }, [fetchedCreatureData]);
 
   const formRefs: Record<JumpTarget, React.RefObject<CollapsiblePanelRef | null>> = {
     type: useRef<CollapsiblePanelRef | null>(null),
@@ -100,7 +94,7 @@ export const StatblockGenerator = () => {
     senses: useRef<CollapsiblePanelRef | null>(null),
     attack: useRef<CollapsiblePanelRef | null>(null),
   };
-  
+
   const onJump = (target: JumpTarget) => {
     const panel = formRefs[target].current;
     panel?.expand();
@@ -108,8 +102,7 @@ export const StatblockGenerator = () => {
       panel?.rootElement?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
   };
-  
-  
+
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
@@ -140,24 +133,27 @@ export const StatblockGenerator = () => {
       return;
     }
 
-    addCreature(generatedCreature); // без unwrap
+    void addCreature(generatedCreature); // без unwrap
   };
-  
+
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     if (fullCreatureData) {
       if (fullCreatureData) {
-        applyCreatureData(dispatch, fullCreatureData, SINGLE_CREATURE_ID)
+        applyCreatureData(dispatch, fullCreatureData, SINGLE_CREATURE_ID);
       }
     }
   }, [fullCreatureData, dispatch]);
 
   const handleUsePreset = () => {
     if (selectedPreset) {
-      trigger(selectedPreset);
+      void trigger(selectedPreset);
 
-      console.log('Применен пресет:', selectedPreset);
+      if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
+        console.log('Применен пресет:', selectedPreset);
+      }
     }
   };
 
@@ -191,29 +187,29 @@ export const StatblockGenerator = () => {
   return (
     <div className={s.statblockGeneratorContainer}>
       <div className={s.statblockGeneratorPanel} style={{ width: `${panelWidth}px` }}>
-      <div className={s.promptSectionWrapper} style={{ position: 'relative' }}>
-        {!isAuth && (
-          <div className={s.authOverlay}>
-            🔒 Авторизуйтесь, чтобы использовать генератор существа по описанию
-          </div>
-        )}
+        <div className={s.promptSectionWrapper} style={{ position: 'relative' }}>
+          {!isAuth && (
+            <div className={s.authOverlay}>
+              🔒 Авторизуйтесь, чтобы использовать генератор существа по описанию
+            </div>
+          )}
 
-        <div
-          style={{
-            opacity: isAuth ? 1 : 0.3,
-            pointerEvents: isAuth ? 'auto' : 'none',
-            transition: 'opacity 0.3s ease',
-          }}
-        >
-          <PromptSection 
-            language='ru' 
-            presetOptions={promptPresetOptions} 
-            onGenerate={creature => {
-              setFullCreatureData(creature)
+          <div
+            style={{
+              opacity: isAuth ? 1 : 0.3,
+              pointerEvents: isAuth ? 'auto' : 'none',
+              transition: 'opacity 0.3s ease',
             }}
-          />
+          >
+            <PromptSection
+              language='ru'
+              presetOptions={promptPresetOptions}
+              onGenerate={(creature) => {
+                setFullCreatureData(creature);
+              }}
+            />
+          </div>
         </div>
-      </div>
 
         <CreatureSaveSection
           presetOptions={presetOptions}
@@ -224,26 +220,37 @@ export const StatblockGenerator = () => {
           onSave={onSave}
         />
         {/* <ActualStatblock  />  */}
-        <TypeForm ref={formRefs.type} language='ru' clearGlow={clearGlow} getGlowClass={getGlowClass} />
+        <TypeForm
+          ref={formRefs.type}
+          language='ru'
+          clearGlow={clearGlow}
+          getGlowClass={getGlowClass}
+        />
         <ArmorHitdiceForm ref={formRefs.armor} language='ru' />
         <MonsterSpeedForm ref={formRefs.speed} language='ru' />
-        <MonsterStatsForm ref={formRefs.stats} language='ru' clearGlow={clearGlow} getGlowClass={getGlowClass}/>
+        <MonsterStatsForm
+          ref={formRefs.stats}
+          language='ru'
+          clearGlow={clearGlow}
+          getGlowClass={getGlowClass}
+        />
         <PropertiesListsForm ref={formRefs.properties} language='ru' />
         <DamageLanguagesForm ref={formRefs.damage} language='ru' />
         <SensesForm ref={formRefs.senses} language='ru' />
         <AttackForm ref={formRefs.attack} />
-        
       </div>
 
       <div className={s.resizer} onMouseDown={handleMouseDown} />
 
-      <div className={s.creatureStatblockPanel} style={{
-        flex: 1,
-        minWidth: `${MIN_RIGHT_PANEL_WIDTH}px`, // Устанавливаем минимальную ширину
-      }}>
-          <CreatureStatblock creature={generatedCreature} onJump={onJump} triggerGlow={triggerGlow}/>
+      <div
+        className={s.creatureStatblockPanel}
+        style={{
+          flex: 1,
+          minWidth: `${MIN_RIGHT_PANEL_WIDTH}px`, // Устанавливаем минимальную ширину
+        }}
+      >
+        <CreatureStatblock creature={generatedCreature} onJump={onJump} triggerGlow={triggerGlow} />
       </div>
-
     </div>
   );
 };

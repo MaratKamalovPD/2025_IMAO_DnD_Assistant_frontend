@@ -1,9 +1,8 @@
 import React from 'react';
-//import s from './UploadButton.module.scss';
 
-interface UploadButtonProps {
+type UploadButtonProps = {
   processFile: (file: File) => void;
-}
+};
 
 export const UploadButton: React.FC<UploadButtonProps> = ({ processFile }) => {
   const handleUploadClick = () => {
@@ -19,7 +18,7 @@ export const UploadButton: React.FC<UploadButtonProps> = ({ processFile }) => {
   };
 
   return (
-    <button type="button" data-variant="secondary" onClick={handleUploadClick}>
+    <button type='button' data-variant='secondary' onClick={handleUploadClick}>
       Загрузить картинку
     </button>
   );

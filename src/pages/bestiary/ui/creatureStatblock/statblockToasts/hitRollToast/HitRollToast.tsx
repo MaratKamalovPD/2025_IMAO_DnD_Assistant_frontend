@@ -5,14 +5,14 @@ type ToastProps = {
   diceRolls: number[];
   modifier: number;
   maxDiceVal: number;
-  title?: string; 
+  title?: string;
 };
 
 export const HitRollToast: React.FC<ToastProps> = ({
   diceRolls,
   modifier,
   maxDiceVal,
-  title = 'ПРОВЕРКА ХИТОВ', 
+  title = 'ПРОВЕРКА ХИТОВ',
 }) => {
   const total = diceRolls.reduce((acc, val) => acc + val, 0) + modifier;
 
@@ -20,9 +20,10 @@ export const HitRollToast: React.FC<ToastProps> = ({
     <div className={s.toastContainer}>
       <div className={s.toastContainer__leftSection}>{total}</div>
       <div className={s.toastContainer__rightSection}>
-        <span>{title}</span> 
+        <span>{title}</span>
         <div className={s.toastContainer__diceRolls}>
           {diceRolls.map((num, idx) => (
+            // eslint-disable-next-line react-x/no-array-index-key
             <span key={idx}>
               [
               <span

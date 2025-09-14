@@ -6,14 +6,18 @@ import {
 } from 'entities/generatedCreature/model';
 import { MonsterSpeedLocalization } from 'pages/statblockGenerator/lib';
 import { MonsterSpeedFormProps, MonsterSpeedFormState } from 'pages/statblockGenerator/model';
-import { CollapsiblePanel, CollapsiblePanelRef } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import {
+  CollapsiblePanel,
+  CollapsiblePanelRef,
+} from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { SpeedInput } from 'pages/statblockGenerator/ui/monsterSpeedForm/speedInput';
 import { ToggleSwitch } from 'pages/statblockGenerator/ui/monsterSpeedForm/toggleSwitch';
-import { forwardRef, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import s from './MonsterSpeedForm.module.scss';
 
-export const MonsterSpeedForm = forwardRef<CollapsiblePanelRef, MonsterSpeedFormProps>(({
+export const MonsterSpeedForm = ({
+  ref,
   initialSpeed = 30,
   initialBurrowSpeed = 0,
   initialClimbSpeed = 0,
@@ -21,7 +25,7 @@ export const MonsterSpeedForm = forwardRef<CollapsiblePanelRef, MonsterSpeedForm
   initialSwimSpeed = 0,
   initialCustomSpeed = '',
   language = 'en',
-}, ref) => {
+}: MonsterSpeedFormProps & { ref?: React.RefObject<CollapsiblePanelRef | null> }) => {
   const [_state, _setState] = useState<MonsterSpeedFormState>({
     speed: initialSpeed,
     burrowSpeed: initialBurrowSpeed,
@@ -184,4 +188,4 @@ export const MonsterSpeedForm = forwardRef<CollapsiblePanelRef, MonsterSpeedForm
       </div>
     </CollapsiblePanel>
   );
-});
+};

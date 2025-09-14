@@ -35,17 +35,14 @@ export const ApplyConditionModal: React.FC = () => {
   ) as UserInterfaceState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
-    creatureSelectors.selectById(state, selectedCreatureId || ''),
+    creatureSelectors.selectById(state, selectedCreatureId ?? ''),
   ) as Creature;
 
-  const handleConditionChange = useCallback(
-    (option: ConditionOption | null) => {
-      if (option) {
-        setSelectedCondition(option.value);
-      }
-    },
-    [selectedCondition],
-  );
+  const handleConditionChange = useCallback((option: ConditionOption | null) => {
+    if (option) {
+      setSelectedCondition(option.value);
+    }
+  }, []);
 
   const handleApplyCondition = useCallback(() => {
     const hasConditionImmunityFlag = hasConditionImmunity(selectedCreature, selectedCondition);
@@ -53,7 +50,7 @@ export const ApplyConditionModal: React.FC = () => {
     if (!hasConditionImmunityFlag) {
       dispatch(
         creatureActions.addCondition({
-          id: selectedCreatureId || '',
+          id: selectedCreatureId ?? '',
           condition: selectedCondition,
         }),
       );
@@ -67,7 +64,7 @@ export const ApplyConditionModal: React.FC = () => {
         ${selectedCreature?.name} >> ${conditionOptions.find((option) => option.value === selectedCondition)?.label}`,
       ),
     );
-  }, [selectedCondition, selectedCreatureId]);
+  }, [dispatch, selectedCondition, selectedCreature, selectedCreatureId]);
 
   return (
     <div className={s.damageTypesForm}>

@@ -5,17 +5,17 @@ import { D20Roll, DiceType, modifiers, normalizeString, rollDice } from 'shared/
 export const rollSavingThrow = (
   creature: Creature,
   savingThrow: AbilitySavingThrow,
-  advantage: boolean = false,
-  disadvantage: boolean = false,
+  advantage = false,
+  disadvantage = false,
 ): {
   successSavingThrow: boolean;
   criticalSavingThrow: boolean;
   d20RollsSavingThrow: D20Roll[];
 } => {
-  let roll1 = rollDice(DiceType.D20);
-  let roll2 = rollDice(DiceType.D20);
+  const roll1 = rollDice(DiceType.D20);
+  const roll2 = rollDice(DiceType.D20);
   let roll: number;
-  let d20Rolls: D20Roll[] = [];
+  const d20Rolls: D20Roll[] = [];
 
   const maxRoll = Math.max(roll1, roll2);
   const minRoll = Math.min(roll1, roll2);
@@ -99,6 +99,6 @@ const getStatName = (ability: AbilityValueRu): keyof Creature['stats'] => {
     case 'харизма':
       return 'charisma';
     default:
-      throw new Error(`Unknown ability: ${ability}`);
+      throw new Error(`Unknown ability: ${ability as string}`);
   }
 };

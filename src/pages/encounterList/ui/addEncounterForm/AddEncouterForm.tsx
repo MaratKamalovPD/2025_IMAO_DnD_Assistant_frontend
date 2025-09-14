@@ -53,6 +53,7 @@ export const AddEncounterForm = ({ reloadTrigger, requestBody }: AddEncounterFor
       {success && <div className={s.successLabel}>{success}</div>}
 
       <button
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onClick={handleSubmit}
         disabled={isLoading || name.length === 0}
         data-variant='primary'

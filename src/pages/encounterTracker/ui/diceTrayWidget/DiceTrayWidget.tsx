@@ -1,11 +1,11 @@
 import { TrayWidget } from 'shared/ui';
 import { ActualDiceTray } from 'shared/ui/diceTray/ui/actualDiceTray';
 
-interface DiceTrayWidgetProps {
+type DiceTrayWidgetProps = {
   isMinimized: boolean;
   toggleWindow: () => void;
   closeWindow: () => void;
-}
+};
 
 export const DiceTrayWidget: React.FC<DiceTrayWidgetProps> = ({
   isMinimized,

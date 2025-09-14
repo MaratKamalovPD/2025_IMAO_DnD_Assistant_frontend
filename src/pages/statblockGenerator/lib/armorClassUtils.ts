@@ -32,7 +32,7 @@ const armorBaseAC: Record<ArmorType, number> = {
   chainMail: 16,
   splint: 17,
   plate: 18,
-  other: 10
+  other: 10,
 };
 
 const allowsDexMod: Record<ArmorType, number | 'full' | false> = {
@@ -51,7 +51,7 @@ const allowsDexMod: Record<ArmorType, number | 'full' | false> = {
   chainMail: false,
   splint: false,
   plate: false,
-  other: 'full'
+  other: 'full',
 };
 
 /**
@@ -66,7 +66,7 @@ export function calculateArmorClass(
   type: ArmorType,
   dexMod: number,
   hasShield: boolean,
-  natArmorBonus: number = 0
+  natArmorBonus = 0,
 ): number {
   const base = armorBaseAC[type] ?? 10;
   const dexRule = allowsDexMod[type];

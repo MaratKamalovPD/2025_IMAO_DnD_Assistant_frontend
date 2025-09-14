@@ -1,5 +1,5 @@
-import React from 'react';
 import Tippy from '@tippyjs/react';
+import React from 'react';
 import 'tippy.js/dist/tippy.css';
 
 type Props = {
@@ -21,12 +21,7 @@ export const IconButtonWithTooltip: React.FC<Props> = ({
   return (
     <Tippy content={title}>
       <div>
-        <button
-          type="button"
-          onClick={onClick}
-          disabled={disabled}
-          aria-label={ariaLabel || title}
-        >
+        <button type='button' onClick={onClick} disabled={disabled} aria-label={ariaLabel ?? title}>
           {icon}
         </button>
       </div>

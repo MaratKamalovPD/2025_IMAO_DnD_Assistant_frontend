@@ -1,23 +1,18 @@
-import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import React, { useRef } from 'react';
 import * as THREE from 'three';
 
-import {
-  R3F_D4,
-  R3F_D6,
-  R3F_D8,
-  R3F_D10,
-  R3F_D12,
-  R3F_D20,
-} from './DicePresetsR3F';
 import { DiceType } from 'shared/lib';
-
+import { R3F_D10, R3F_D12, R3F_D20, R3F_D4, R3F_D6, R3F_D8 } from './DicePresetsR3F';
 
 // Маппинг типа → компонент
-const DIE_COMPONENTS: Record<DiceType, React.FC<{value: number; spinFlag: number; onSettle?: (v: number) => void;}>> = {
-  d4:  R3F_D4,
-  d6:  R3F_D6,
-  d8:  R3F_D8,
+const DIE_COMPONENTS: Record<
+  DiceType,
+  React.FC<{ value: number; spinFlag: number; onSettle?: (v: number) => void }>
+> = {
+  d4: R3F_D4,
+  d6: R3F_D6,
+  d8: R3F_D8,
   d10: R3F_D10,
   d12: R3F_D12,
   d20: R3F_D20,
@@ -67,11 +62,7 @@ export const AnimatedDieR3F: React.FC<AnimatedDieR3FProps> = ({
 
   return (
     <group ref={groupRef} onClick={onClick}>
-      <DieComp
-        value={value}
-        spinFlag={spinFlag}
-        onSettle={(v) => onSettle?.(v)}
-      />
+      <DieComp value={value} spinFlag={spinFlag} onSettle={(v) => onSettle?.(v)} />
     </group>
   );
 };

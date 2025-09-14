@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Icon28DownloadOutline } from '@vkontakte/icons';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import s from './DownloadButton.module.scss';
 import { IconButtonWithTooltip } from '../iconButtonWithTooltip';
+import s from './DownloadButton.module.scss';
 
-interface DownloadButtonProps {
-  shape: 'rect' | 'circle';  
+type DownloadButtonProps = {
+  shape: 'rect' | 'circle';
   download: (format: 'webp' | 'png', shape: 'rect' | 'circle') => void;
   file?: string;
-}
+};
 
 export const DownloadButton: React.FC<DownloadButtonProps> = ({ download, file, shape }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -32,7 +32,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({ download, file, 
   return (
     <div className={s.downloadDropdown} ref={dropdownRef}>
       <IconButtonWithTooltip
-        title="Скачать изображение"
+        title='Скачать изображение'
         icon={<Icon28DownloadOutline />}
         onClick={() => setDropdownOpen(true)}
         disabled={!file}
@@ -41,7 +41,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({ download, file, 
       {dropdownOpen && (
         <div className={s.downloadDropdown__menu}>
           <button
-            type="button"
+            type='button'
             disabled={!file}
             onClick={() => {
               download('webp', shape);
@@ -51,7 +51,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({ download, file, 
             WEBP
           </button>
           <button
-            type="button"
+            type='button'
             disabled={!file}
             onClick={() => {
               download('png', shape);

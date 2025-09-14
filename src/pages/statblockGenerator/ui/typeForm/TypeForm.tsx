@@ -1,3 +1,13 @@
+import clsx from 'clsx';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import {
+  GeneratedCreatureStore,
+  SINGLE_CREATURE_ID,
+  generatedCreatureActions,
+  generatedCreatureSelectors,
+} from 'entities/generatedCreature/model';
 import {
   TypeFormLocalization,
   getCellSizeDescription,
@@ -8,33 +18,22 @@ import {
 import { CreatureSize, TypeFormProps, TypeFormState } from 'pages/statblockGenerator/model';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { FormElement } from 'pages/statblockGenerator/ui/typeForm/formElement';
-import React, { forwardRef, useEffect, useState } from 'react';
 import { capitalizeFirstLetter, lowercaseFirstLetter } from 'shared/lib';
 
-import {
-  GeneratedCreatureStore,
-  SINGLE_CREATURE_ID,
-  generatedCreatureActions,
-  generatedCreatureSelectors,
-} from 'entities/generatedCreature/model';
-import { useDispatch, useSelector } from 'react-redux';
-
-// import type {
-//   CreatureFullData
-// } from 'entities/creature/model';
+import { CollapsiblePanelRef } from '../collapsiblePanel/CollapsiblePanel';
 
 import s from './TypeForm.module.scss';
-import { CollapsiblePanelRef } from '../collapsiblePanel/CollapsiblePanel';
-import clsx from 'clsx';
 
-
-
-export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ language = 'en', clearGlow, getGlowClass}, ref) => {
+export const TypeForm = ({
+  ref,
+  language = 'en',
+  clearGlow,
+  getGlowClass,
+}: TypeFormProps & { ref?: React.RefObject<CollapsiblePanelRef | null> }) => {
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
 
-  
   const [state, setState] = useState<TypeFormState>({
     name: generatedCreature?.name?.rus || 'Monster',
     size: (['tiny', 'small', 'medium', 'large', 'huge', 'gargantuan'].includes(
@@ -72,7 +71,7 @@ export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ langua
         )
           ? generatedCreature.size.eng
           : 'medium') as CreatureSize,
-        type: getKeyByLocalizedValue(generatedCreature.type?.name, 'types') || prev.type,
+        type: getKeyByLocalizedValue(generatedCreature.type?.name, 'types') ?? prev.type,
         tag: generatedCreature.tags?.[0]?.name || prev.tag,
         alignment: generatedCreature.alignment || prev.alignment,
         showOtherType: generatedCreature.type?.name === '*',
@@ -103,9 +102,9 @@ export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ langua
             generatedCreatureActions.updateCreatureSize({
               id: SINGLE_CREATURE_ID,
               size: {
-                rus: mapCreatureSize(capitalizeFirstLetter(newValue), 'en', 'ru') || '',
+                rus: mapCreatureSize(capitalizeFirstLetter(newValue), 'en', 'ru') ?? '',
                 eng: newValue,
-                cell: getCellSizeDescription(newValue) || '1 клетка',
+                cell: getCellSizeDescription(newValue) ?? '1 клетка',
               },
             }),
           );
@@ -116,7 +115,7 @@ export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ langua
               id: SINGLE_CREATURE_ID,
               type: {
                 name: lowercaseFirstLetter(
-                  mapCreatureType(capitalizeFirstLetter(newValue), 'en', 'ru') || '',
+                  mapCreatureType(capitalizeFirstLetter(newValue), 'en', 'ru') ?? '',
                 ),
                 tags: [],
               },
@@ -164,10 +163,7 @@ export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ langua
             value={state.name}
             onChange={handleChange('name')}
             onClick={() => clearGlow?.('name')}
-            className={clsx(
-              s.creaturePanel__statsElement__input,
-              getGlowClass?.('name')
-            )}
+            className={clsx(s.creaturePanel__statsElement__input, getGlowClass?.('name'))}
           />
         </FormElement>
 
@@ -176,10 +172,7 @@ export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ langua
             value={state.size}
             onChange={handleChange('size')}
             onClick={() => clearGlow?.('size')}
-            className={clsx(
-              s.creaturePanel__statsElement__select,
-              getGlowClass?.('size')
-            )}
+            className={clsx(s.creaturePanel__statsElement__select, getGlowClass?.('size'))}
           >
             {Object.entries(t.sizes).map(([key, label]) => (
               <option key={key} value={key}>
@@ -195,10 +188,7 @@ export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ langua
               value={state.type}
               onChange={handleChange('type')}
               onClick={() => clearGlow?.('type')}
-              className={clsx(
-                s.creaturePanel__statsElement__select,
-                getGlowClass?.('type')
-              )}
+              className={clsx(s.creaturePanel__statsElement__select, getGlowClass?.('type'))}
             >
               {Object.entries(t.types).map(([key, label]) => (
                 <option key={key} value={key}>
@@ -234,13 +224,10 @@ export const TypeForm = forwardRef<CollapsiblePanelRef, TypeFormProps>(({ langua
             value={state.alignment}
             onChange={handleChange('alignment')}
             onClick={() => clearGlow?.('alignment')}
-            className={clsx(
-              s.creaturePanel__statsElement__input,
-              getGlowClass?.('alignment')
-            )}
+            className={clsx(s.creaturePanel__statsElement__input, getGlowClass?.('alignment'))}
           />
         </FormElement>
       </div>
     </CollapsiblePanel>
   );
-});
+};

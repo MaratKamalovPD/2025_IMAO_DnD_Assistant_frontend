@@ -25,11 +25,12 @@ type SpellsInfo = {
   mod: LabeledNameValuePair;
 };
 
-type SpellsSlots = {
-  [key: `slots-${number}`]: {
+type SpellsSlots = Record<
+  `slots-${number}`,
+  {
     value: number | null;
-  };
-};
+  }
+>;
 
 type Vitality = {
   'hp-dice-current': { value: number };

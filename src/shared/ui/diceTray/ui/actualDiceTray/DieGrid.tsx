@@ -12,8 +12,12 @@ type DieGridProps = {
 };
 
 export const DieGrid: React.FC<DieGridProps> = ({
-  tray, cols, spinFlag,
-  onInitRemove, onFinalizeRemove, setTrayValue
+  tray,
+  cols,
+  spinFlag,
+  onInitRemove,
+  onFinalizeRemove,
+  setTrayValue,
 }) => (
   <>
     {tray.map((die, idx) => {
@@ -30,7 +34,7 @@ export const DieGrid: React.FC<DieGridProps> = ({
             spinFlag={spinFlag}
             removing={die.removing}
             onRemoved={onFinalizeRemove}
-            onSettle={v => setTrayValue(die.id, v)}
+            onSettle={(v) => setTrayValue(die.id, v)}
             onClick={() => onInitRemove(die.id)}
           />
         </group>

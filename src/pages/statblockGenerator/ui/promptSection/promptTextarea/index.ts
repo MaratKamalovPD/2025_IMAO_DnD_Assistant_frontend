@@ -1,1 +1,1 @@
-export { PromptTextarea } from './PromptTextarea'
+export { PromptTextarea } from './PromptTextarea';

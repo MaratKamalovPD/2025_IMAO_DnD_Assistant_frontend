@@ -21,16 +21,16 @@ const authApi = createApi({
       }),
     }),
     checkAuth: builder.query<AuthData, null>({
-      query: () => ({ 
-        url: '/auth/check', 
+      query: () => ({
+        url: '/auth/check',
         method: 'GET',
-      })
+      }),
     }),
     logout: builder.query<AuthData, null>({
-      query: () => ({ 
-        url: '/auth/logout', 
+      query: () => ({
+        url: '/auth/logout',
         method: 'POST',
-      })
+      }),
     }),
   }),
 });

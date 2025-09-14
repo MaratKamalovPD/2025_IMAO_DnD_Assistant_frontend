@@ -1,1 +1,1 @@
-export { DiceTrayWidget } from './DiceTrayWidget'
+export { DiceTrayWidget } from './DiceTrayWidget';

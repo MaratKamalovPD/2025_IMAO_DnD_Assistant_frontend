@@ -8,6 +8,7 @@ import {
   creatureActions,
   creatureSelectors,
   CreaturesStore,
+  Size,
 } from 'entities/creature/model';
 import { loggerActions } from 'entities/logger/model';
 import {
@@ -71,11 +72,11 @@ export const AttackModal: React.FC<AttackModalProps> = ({
     creatureSelectors.selectEntities(state),
   ) as Record<string, Creature>;
 
-  const selectedCreature = allCreatures[selectedCreatureId || ''];
+  const selectedCreature = allCreatures[selectedCreatureId ?? ''];
   const attackedCreatures: Creature[] = [];
 
   if (attackHandleModeMulti !== 'handle') {
-    attackedCreatures.push(allCreatures[rowAttackedCreatureId || '']);
+    attackedCreatures.push(allCreatures[rowAttackedCreatureId ?? '']);
   } else {
     participants.forEach((participant) => {
       const { id, cellsCoords } = participant;
@@ -84,7 +85,7 @@ export const AttackModal: React.FC<AttackModalProps> = ({
 
       const creature = allCreatures[id];
       let resolved = false;
-      const size = creature.size < 1 ? 1 : creature.size;
+      const size = creature.size < Size.small ? 1 : (creature.size as number);
 
       for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {

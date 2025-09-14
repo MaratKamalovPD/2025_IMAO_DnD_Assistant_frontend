@@ -11,7 +11,7 @@ export const MonsterSpeedLocalization = {
     hover: 'Hover',
     customSpeed: 'Custom Speed',
     units: 'ft.',
-    customSpeedPlaceholder: 'e.g. 30 ft., fly 60 ft.'
+    customSpeedPlaceholder: 'e.g. 30 ft., fly 60 ft.',
   },
   ru: {
     title: 'Скорости передвижения',
@@ -23,17 +23,20 @@ export const MonsterSpeedLocalization = {
     hover: 'Парение',
     customSpeed: 'Своя скорость',
     units: 'фт.',
-    customSpeedPlaceholder: 'напр. 30 фт., полёт 60 фт.'
+    customSpeedPlaceholder: 'напр. 30 фт., полёт 60 фт.',
+  },
+} as const satisfies Record<
+  Language,
+  {
+    title: string;
+    speed: string;
+    burrowSpeed: string;
+    climbSpeed: string;
+    flySpeed: string;
+    swimSpeed: string;
+    hover: string;
+    customSpeed: string;
+    units: string;
+    customSpeedPlaceholder: string;
   }
-} as const satisfies Record<Language, {
-  title: string;
-  speed: string;
-  burrowSpeed: string;
-  climbSpeed: string;
-  flySpeed: string;
-  swimSpeed: string;
-  hover: string;
-  customSpeed: string;
-  units: string;
-  customSpeedPlaceholder: string;
-}>;
+>;

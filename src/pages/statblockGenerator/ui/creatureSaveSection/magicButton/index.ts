@@ -1,1 +1,1 @@
-export { MagicButton } from './MagicButton'
+export { MagicButton } from './MagicButton';

@@ -18,6 +18,6 @@ export const rollDice = (diceType: DiceType): number => {
     case DiceType.D100:
       return Dice100.roll();
     default:
-      throw new Error(`Unknown dice type: ${diceType}`);
+      throw new Error('Unknown dice type');
   }
 };

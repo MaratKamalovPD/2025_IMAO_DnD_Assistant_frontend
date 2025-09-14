@@ -75,7 +75,7 @@ export const creatureSlice = createSlice({
       let hpCurrent = creature.hp.current;
 
       if (!creature) {
-        console.warn(`Creature with id ${id} not found.`);
+        console.error(`Creature with id ${id} not found.`);
         return;
       }
 
@@ -97,7 +97,7 @@ export const creatureSlice = createSlice({
       const creature = state.entities[id];
 
       if (!creature) {
-        console.warn(`Creature with id ${id} not found.`);
+        console.error(`Creature with id ${id} not found.`);
         return;
       }
 
@@ -136,7 +136,7 @@ export const creatureSlice = createSlice({
       const creature = state.entities[id];
 
       if (!creature) {
-        console.warn(`Creature with id ${id} not found.`);
+        console.error(`Creature with id ${id} not found.`);
 
         return;
       }

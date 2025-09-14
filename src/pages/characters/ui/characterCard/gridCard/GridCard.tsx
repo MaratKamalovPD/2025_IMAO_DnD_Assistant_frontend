@@ -21,7 +21,7 @@ export const GridCard: FC<GridCardProps> = ({ character, handleAddToTtackerClick
     <div className={s.card}>
       <div className={s.imageContainer}>
         <img
-          src={character.avatar.jpeg || character.avatar.webp || placeholderImage}
+          src={character.avatar.jpeg ?? character.avatar.webp ?? placeholderImage}
           alt={character.name.value}
         />
       </div>

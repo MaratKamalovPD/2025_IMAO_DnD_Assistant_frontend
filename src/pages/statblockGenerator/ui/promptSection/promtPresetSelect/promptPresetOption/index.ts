@@ -1,1 +1,1 @@
-export { PromptPresetOption } from './PromptPresetOption'
+export { PromptPresetOption } from './PromptPresetOption';

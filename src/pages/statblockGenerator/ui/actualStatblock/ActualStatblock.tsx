@@ -1,5 +1,5 @@
-import s from './ActualStatblock.module.scss';
 import clsx from 'clsx';
+import s from './ActualStatblock.module.scss';
 
 export const ActualStatblock = () => {
   return (
@@ -11,8 +11,8 @@ export const ActualStatblock = () => {
             <h1 id={s.monsterName}>Monster</h1>
             <h2 id={s.monsterType}>Size, type, alignment</h2>
           </div>
-          <svg height="5" width="100%" className={s.taperedRule}>
-            <polyline points="0,0 400,2.5 0,5"></polyline>
+          <svg height='5' width='100%' className={s.taperedRule}>
+            <polyline points='0,0 400,2.5 0,5'></polyline>
           </svg>
           <div className={s.topStats}>
             <div className={clsx(s.propertyLine, s.first)}>
@@ -27,8 +27,8 @@ export const ActualStatblock = () => {
               <h4>Speed</h4>
               <p id={s.speed}></p>
             </div>
-            <svg height="5" width="100%" className={s.taperedRule}>
-              <polyline points="0,0 400,2.5 0,5"></polyline>
+            <svg height='5' width='100%' className={s.taperedRule}>
+              <polyline points='0,0 400,2.5 0,5'></polyline>
             </svg>
             <div className={s.scores}>
               <div className={s.scoresStrength}>
@@ -56,8 +56,8 @@ export const ActualStatblock = () => {
                 <p id={s.chapts}></p>
               </div>
             </div>
-            <svg height="5" width="100%" className={s.taperedRule}>
-              <polyline points="0,0 400,2.5 0,5"></polyline>
+            <svg height='5' width='100%' className={s.taperedRule}>
+              <polyline points='0,0 400,2.5 0,5'></polyline>
             </svg>
             <div id={s.propertiesList}></div>
             <div id={s.challengeRatingLine} className={clsx(s.propertyLine, s.last)}>
@@ -65,8 +65,8 @@ export const ActualStatblock = () => {
               <p id={s.challengeRating}></p>
             </div>
           </div>
-          <svg height="5" width="100%" className={s.taperedRule}>
-            <polyline points="0,0 400,2.5 0,5"></polyline>
+          <svg height='5' width='100%' className={s.taperedRule}>
+            <polyline points='0,0 400,2.5 0,5'></polyline>
           </svg>
           <div className={s.actions}>
             <div id={s.traitsListLeft}></div>
@@ -82,4 +82,3 @@ export const ActualStatblock = () => {
     </div>
   );
 };
- 

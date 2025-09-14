@@ -1,3 +1,4 @@
+import { QueryStatus } from '@reduxjs/toolkit/query';
 import { useEffect, useState } from 'react';
 
 import { GetEncounterListRequest, useLazyGetEncounterListQuery } from 'entities/encounter/api';
@@ -33,10 +34,10 @@ export const EncounterList = () => {
     useLazyGetEncounterListQuery();
 
   useEffect(() => {
-    trigger(requestBody);
+    void trigger(requestBody);
   }, [requestBody]);
 
-  const isPending = status === 'pending';
+  const isPending = status === QueryStatus.pending;
 
   useEffect(() => {
     if (characters) {
@@ -72,7 +73,7 @@ export const EncounterList = () => {
         !isLoading &&
         hasMore
       ) {
-        setStartThrottled((prev: any) => prev + RESPONSE_SIZE);
+        setStartThrottled((prev: number) => prev + RESPONSE_SIZE);
       }
     };
 

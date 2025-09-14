@@ -1,6 +1,6 @@
 import { Language } from 'shared/lib';
 
-export interface MonsterSpeedFormProps {
+export type MonsterSpeedFormProps = {
   initialSpeed?: number;
   initialBurrowSpeed?: number;
   initialClimbSpeed?: number;
@@ -8,9 +8,9 @@ export interface MonsterSpeedFormProps {
   initialSwimSpeed?: number;
   initialCustomSpeed?: string;
   language?: Language;
-}
+};
 
-export interface MonsterSpeedFormState {
+export type MonsterSpeedFormState = {
   speed: number;
   burrowSpeed: number;
   climbSpeed: number;
@@ -19,4 +19,4 @@ export interface MonsterSpeedFormState {
   customSpeed: string;
   useCustomSpeed: boolean;
   hover: boolean;
-}
+};

@@ -9,9 +9,9 @@ export const MonsterStatsLocalization = {
       con: 'CON',
       int: 'INT',
       wis: 'WIS',
-      cha: 'CHA'
+      cha: 'CHA',
     },
-    modifierPrefix: 'Mod'
+    modifierPrefix: 'Mod',
   },
   ru: {
     title: 'Характеристики',
@@ -21,12 +21,15 @@ export const MonsterStatsLocalization = {
       con: 'ТЕЛ',
       int: 'ИНТ',
       wis: 'МДР',
-      cha: 'ХАР'
+      cha: 'ХАР',
     },
-    modifierPrefix: 'Мод'
+    modifierPrefix: 'Мод',
+  },
+} as const satisfies Record<
+  Language,
+  {
+    title: string;
+    abilities: Record<string, string>;
+    modifierPrefix: string;
   }
-} as const satisfies Record<Language, {
-  title: string;
-  abilities: Record<string, string>;
-  modifierPrefix: string;
-}>;
+>;
