@@ -12,7 +12,7 @@ type TopPanelProps = {
 export const TopPanel: React.FC<TopPanelProps> = ({ setSearchValue, setIsModalOpen }) => {
   return (
     <TopPanelWithSearch title='Мои персонажи' setSearchValue={setSearchValue}>
-      <Tippy content={'Добавить новый лист персонажа'}>
+      <Tippy content='Добавить новый лист персонажа'>
         <button onClick={() => setIsModalOpen(true)} data-variant='secondary' className={s.btn}>
           <Icon20DocumentPlusOutline width={19} height={19} />
           <span>Добавить персонажа</span>

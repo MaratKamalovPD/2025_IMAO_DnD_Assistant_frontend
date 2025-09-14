@@ -1,7 +1,7 @@
 import { GetCreaturesRequest } from 'pages/bestiary/api';
 import { Filters, OrderParams } from 'pages/bestiary/model';
 
-const filterMapping: { [key: string]: keyof GetCreaturesRequest['filter'] } = {
+const filterMapping: Record<string, keyof GetCreaturesRequest['filter']> = {
   'Иммунитет к урону': 'immunityDamage',
   'Иммунитет к состояниям': 'immunityCondition',
   'Сопротивление к урону': 'resistanceDamage',
@@ -29,7 +29,7 @@ export const mapFiltersToRequestBody = (
       value: searchValue,
       exact: false,
     },
-    order: orderParams || [],
+    order: orderParams ?? [],
     filter: {
       book: [], // фильтр по книгам
       npc: [], // фильтр по NPC

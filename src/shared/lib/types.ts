@@ -22,4 +22,4 @@ export type Dice = {
   count: number;
   type: DiceType;
   edgesNum: number;
-}
+};

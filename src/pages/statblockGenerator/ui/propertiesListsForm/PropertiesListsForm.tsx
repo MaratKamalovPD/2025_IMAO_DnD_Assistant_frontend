@@ -8,7 +8,7 @@ import {
   skillToAbilityMap,
 } from 'pages/statblockGenerator/lib';
 import { ProficiencyType, PropertiesListsFormProps } from 'pages/statblockGenerator/model';
-import React, { forwardRef, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
   generatedCreatureActions,
@@ -19,30 +19,45 @@ import {
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { CollapsiblePanel, CollapsiblePanelRef } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import {
+  CollapsiblePanel,
+  CollapsiblePanelRef,
+} from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { PropertySection } from 'pages/statblockGenerator/ui/propertiesListsForm/propertySection';
 import { capitalizeFirstLetter, lowercaseFirstLetter } from 'shared/lib';
 import s from './PropertiesListsForm.module.scss';
 
-export const PropertiesListsForm = forwardRef<CollapsiblePanelRef, PropertiesListsFormProps>(({
-  initialSavingThrows = [],
-  initialSkills = [],
-  initialConditionImmunities = [],
+const defaultInitialSavingThrows: string[] = [];
+const defaultInitialSkills: string[] = [];
+const defaultInitialConditionImmunities: string[] = [];
+
+export const PropertiesListsForm = ({
+  ref,
+  initialSavingThrows = defaultInitialSavingThrows,
+  initialSkills = defaultInitialSkills,
+  initialConditionImmunities = defaultInitialConditionImmunities,
   language = 'en',
-}, ref) => {
+}: PropertiesListsFormProps & { ref?: React.RefObject<CollapsiblePanelRef | null> }) => {
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
 
-  const proficiencyBonus = Number(generatedCreature?.proficiencyBonus ?? 2);
-  const abilityScores = generatedCreature.ability ?? {
-    str: 10,
-    dex: 10,
-    con: 10,
-    int: 10,
-    wis: 10,
-    cha: 10,
-  };
+  const proficiencyBonus = useMemo(
+    () => Number(generatedCreature?.proficiencyBonus ?? 2),
+    [generatedCreature.proficiencyBonus],
+  );
+  const abilityScores = useMemo(
+    () =>
+      generatedCreature.ability ?? {
+        str: 10,
+        dex: 10,
+        con: 10,
+        int: 10,
+        wis: 10,
+        cha: 10,
+      },
+    [generatedCreature.ability],
+  );
 
   const dispatch = useDispatch();
 
@@ -61,7 +76,7 @@ export const PropertiesListsForm = forwardRef<CollapsiblePanelRef, PropertiesLis
   const conditionOptions = getConditionOptions(language);
 
   useEffect(() => {
-    if (generatedCreature && generatedCreature.savingThrows) {
+    if (generatedCreature?.savingThrows) {
       const initialNames = generatedCreature.savingThrows.map((st) => st.name);
       setSavingThrows(initialNames);
     }
@@ -79,7 +94,7 @@ export const PropertiesListsForm = forwardRef<CollapsiblePanelRef, PropertiesLis
 
       setSkills(formattedSkills);
     }
-  }, [generatedCreature]);
+  }, [generatedCreature, proficiencyBonus]);
 
   const formattedSkills = useMemo(() => {
     if (!generatedCreature?.skills) return [];
@@ -125,7 +140,7 @@ export const PropertiesListsForm = forwardRef<CollapsiblePanelRef, PropertiesLis
           savingThrow: {
             name: selected.label,
             shortName: shortName,
-            value: 0, //TBU
+            value: 0, // TBU
           },
         }),
       );
@@ -221,7 +236,7 @@ export const PropertiesListsForm = forwardRef<CollapsiblePanelRef, PropertiesLis
         );
         break;
 
-      case 'skill':
+      case 'skill': {
         const baseName = itemToRemove.split(' ')[0];
         dispatch(
           generatedCreatureActions.removeSkill({
@@ -230,14 +245,15 @@ export const PropertiesListsForm = forwardRef<CollapsiblePanelRef, PropertiesLis
           }),
         );
         break;
+      }
 
       default:
-        console.warn(`Unknown item type: ${type}`);
+        console.error('Unknown item type');
     }
   };
 
   const getSelectedSkillLabel = () => {
-    return skillOptions.find((opt) => opt.value === selectedSkill)?.label || '';
+    return skillOptions.find((opt) => opt.value === selectedSkill)?.label ?? '';
   };
 
   const isSkillExpert = (skillName: string) => {
@@ -278,7 +294,7 @@ export const PropertiesListsForm = forwardRef<CollapsiblePanelRef, PropertiesLis
           selectedValue={selectedSkill}
           options={skillOptions}
           onSelectChange={setSelectedSkill}
-          onAddItem={(prof) => addSkill(prof || 'proficient')}
+          onAddItem={(prof) => addSkill(prof ?? 'proficient')}
           items={formattedSkills}
           onRemoveItem={(index) => removeItem(skills, setSkills, index, 'skill')}
           buttonText={t.proficient}
@@ -309,4 +325,4 @@ export const PropertiesListsForm = forwardRef<CollapsiblePanelRef, PropertiesLis
       </div>
     </CollapsiblePanel>
   );
-});
+};

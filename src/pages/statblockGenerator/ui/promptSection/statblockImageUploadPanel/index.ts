@@ -1,1 +1,1 @@
-export { StatblockImageUploadPanel } from './StatblockImageUploadPanel'
+export { StatblockImageUploadPanel } from './StatblockImageUploadPanel';

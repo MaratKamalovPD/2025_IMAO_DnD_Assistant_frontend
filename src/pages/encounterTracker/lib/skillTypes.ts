@@ -1,5 +1,3 @@
-import { Language, Option } from 'shared/lib';
-import { AbilityValue } from './abilityTypes';
 import acrobaticsIcon from 'shared/assets/images/skills/40px-Acrobatics_Icon.png';
 import arcanaIcon from 'shared/assets/images/skills/40px-Arcana_Icon.png';
 import athleticsIcon from 'shared/assets/images/skills/40px-Athletics_Icon.png';
@@ -17,6 +15,8 @@ import religionIcon from 'shared/assets/images/skills/40px-Religion_Icon.png';
 import sleightOfHandIcon from 'shared/assets/images/skills/40px-Sleight_of_Hand_Icon.png';
 import stealthIcon from 'shared/assets/images/skills/40px-Stealth_Icon.png';
 import survivalIcon from 'shared/assets/images/skills/40px-Survival_Icon.png';
+import { Language, Option } from 'shared/lib';
+import { AbilityValue } from './abilityTypes';
 
 export type Skill = {
   value: SkillValue;

@@ -1,6 +1,6 @@
 import { drag as ddrag, select as dselect } from 'd3';
 import { Matrix } from 'ml-matrix';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Creature, creatureSelectors, CreaturesStore, Size } from 'entities/creature/model';
@@ -79,12 +79,12 @@ export const CreatureToken = ({ transform, id, cellSize, setCells }: CreatureTok
     [participants, id],
   );
 
-  const x = participant?.cellsCoords?.cellsX || 0;
-  const y = participant?.cellsCoords?.cellsY || 0;
+  const x = participant?.cellsCoords?.cellsX ?? 0;
+  const y = participant?.cellsCoords?.cellsY ?? 0;
 
   const [imageSize, setImageSize] = useState(radius * 2);
   const [mousePosition, setMousePosition] = useState({ x: 100, y: 100 });
-  const [coords, setCoords] = useState<CellsCoordinates | null>(participant?.cellsCoords || null);
+  const [coords, setCoords] = useState<CellsCoordinates | null>(participant?.cellsCoords ?? null);
   const debounceCoords = useDebounce(coords, DEBOUNCE_TIME);
 
   useEffect(() => {
@@ -114,20 +114,23 @@ export const CreatureToken = ({ transform, id, cellSize, setCells }: CreatureTok
 
   const circle = dselect(tokenRef.current);
 
-  const dragHandler = ddrag<SVGCircleElement, unknown>().on('drag', (event) => {
-    const inverseX = event.x - radius;
-    const inverseY = event.y - radius;
+  const dragHandler = ddrag<SVGCircleElement, unknown>().on(
+    'drag',
+    (event: { x: number; y: number }) => {
+      const inverseX = event.x - radius;
+      const inverseY = event.y - radius;
 
-    const snappedX = Math.round(inverseX / moveSize) * moveSize;
-    const snappedY = Math.round(inverseY / moveSize) * moveSize;
+      const snappedX = Math.round(inverseX / moveSize) * moveSize;
+      const snappedY = Math.round(inverseY / moveSize) * moveSize;
 
-    circle.attr('cx', snappedX + radius);
-    circle.attr('cy', snappedY + radius);
+      circle.attr('cx', snappedX + radius);
+      circle.attr('cy', snappedY + radius);
 
-    setCoords({ cellsX: snappedX / cellSize, cellsY: snappedY / cellSize });
-  });
+      setCoords({ cellsX: snappedX / cellSize, cellsY: snappedY / cellSize });
+    },
+  );
 
-  const handleClick = useCallback(() => {
+  const handleClick = () => {
     if (!attackHandleModeActive) {
       dispatch(userInterfaceActions.selectCreature(id));
     } else if (attackHandleModeMulti === 'select') {
@@ -135,9 +138,9 @@ export const CreatureToken = ({ transform, id, cellSize, setCells }: CreatureTok
     } else {
       dispatch(userInterfaceActions.selectAttackedCreature(id));
     }
-  }, [attackHandleModeActive, attackHandleModeMulti]);
+  };
 
-  circle.call(dragHandler as any);
+  circle.call(dragHandler as never);
 
   circle.on('mouseover', function () {
     setImageSize(radius * 2 * 1.1);
@@ -169,13 +172,15 @@ export const CreatureToken = ({ transform, id, cellSize, setCells }: CreatureTok
       return;
     }
 
-    const isCone = currentAttackLLM?.type === 'area' && /конус/.test(currentAttackLLM.shape || '');
-    const isSphere = currentAttackLLM?.type === 'area' && /сфер/.test(currentAttackLLM.shape || '');
+    const isCone =
+      currentAttackLLM?.type === 'area' && (currentAttackLLM.shape ?? '').includes('конус');
+    const isSphere =
+      currentAttackLLM?.type === 'area' && (currentAttackLLM.shape ?? '').includes('сфер');
 
     const range =
       Number(
         keepLeadingDigits(
-          (isSphere ? currentAttackLLM?.range || '60' : currentAttackLLM.shape) || '5',
+          (isSphere ? (currentAttackLLM?.range ?? '60') : currentAttackLLM.shape) ?? '5',
         ),
       ) /
         FT_SIZE_CELL +
@@ -235,7 +240,7 @@ export const CreatureToken = ({ transform, id, cellSize, setCells }: CreatureTok
                   ? Math.floor(sphereDistance)
                   : Math.ceil(sphereDistance);
               const sphereRange =
-                Number(keepLeadingDigits(currentAttackLLM.shape || '5')) / FT_SIZE_CELL;
+                Number(keepLeadingDigits(currentAttackLLM.shape ?? '5')) / FT_SIZE_CELL;
 
               return roundedDistance <= range && roundedSphereDistance < sphereRange;
             }
@@ -262,7 +267,7 @@ export const CreatureToken = ({ transform, id, cellSize, setCells }: CreatureTok
         <pattern id={`image${id}`} x='0%' y='0%' height='100%' width='100%'>
           <image
             className={s.image}
-            href={creature.imageToken || creature.image || ''}
+            href={creature.imageToken ?? creature.image ?? ''}
             height={imageSize}
             width={imageSize}
             filter={creature.hp.current <= 0 ? 'url(#grayscale)' : ''}
@@ -313,18 +318,18 @@ export const CreatureToken = ({ transform, id, cellSize, setCells }: CreatureTok
                   (currentAttackLLM?.type === 'melee'
                     ? currentAttackLLM.reach
                     : currentAttackLLM?.type === 'area' &&
-                        !/сфер/.test(currentAttackLLM.shape || '')
+                        !(currentAttackLLM.shape ?? '').includes('сфер')
                       ? currentAttackLLM.shape
-                      : currentAttackLLM.range) ||
-                    (/сфер/.test(currentAttackLLM.shape || '') ? '60' : '5'),
+                      : currentAttackLLM.range) ??
+                    ((currentAttackLLM.shape ?? '').includes('сфер') ? '60' : '5'),
                 ),
               ) /
                 FT_SIZE_CELL) *
                 cellSize +
               radius
             }
-            fill={`#00ff000f`}
-            filter={'url(#shadow)'}
+            fill='#00ff000f'
+            filter='url(#shadow)'
             stroke={ACCENT_COLOR}
             strokeWidth='2'
           />

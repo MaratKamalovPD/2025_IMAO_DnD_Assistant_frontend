@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
@@ -48,12 +48,14 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
     {
       onOpen(_event) {
         if (import.meta.env.DEV) {
+          // eslint-disable-next-line no-console
           console.log('WebSocket connected');
         }
         toast.success('Соединение установлено');
       },
       onClose(_event) {
         if (import.meta.env.DEV) {
+          // eslint-disable-next-line no-console
           console.log('WebSocket disconnected');
         }
       },
@@ -85,7 +87,7 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
         setIsError(true);
         break;
 
-      case 'participantsInfo':
+      case 'participantsInfo': {
         if (!message.data) return;
 
         const data = message.data as ParticipantsInfoData;
@@ -99,11 +101,12 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
           setIsAdmin(true);
         }
         break;
+      }
 
-      case 'battleInfo':
+      case 'battleInfo': {
         if (!message.data) return;
 
-        const state = (message.data as BattleInfoData).encounterData as EncounterSave;
+        const state = (message.data as BattleInfoData).encounterData;
 
         if (
           saveVersionHash &&
@@ -117,7 +120,7 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
 
         if (isAdmin && isSaveFirstFetch && state.encounterState.encounterId === stateEncounterId) {
           setEncounterId(state.encounterState.encounterId);
-          dispatch(setNewSaveEncounterVersion() as any as UnknownAction);
+          dispatch(setNewSaveEncounterVersion() as unknown as UnknownAction);
           setIsSaveFirstFetch(false);
           return;
         }
@@ -128,6 +131,7 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
         dispatch(encounterActions.setEncounterId(state.encounterState.encounterId));
         setEncounterId(state.encounterState.encounterId);
         break;
+      }
     }
   }, [lastJsonMessage]);
 
@@ -137,15 +141,12 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
     creatures: creaturesState,
   } = useSelector<RootStore>((state) => state) as RootState;
 
-  const updateState = useCallback(
-    debounce((body: EncounterSave, readyState: ReadyState) => {
-      if (encounterId === null || readyState !== ReadyState.OPEN) {
-        return;
-      }
-      sendJsonMessage(body);
-    }, DEBOUNSE_TIME),
-    [encounterId, sendJsonMessage],
-  );
+  const updateState = debounce((body: EncounterSave, readyState: ReadyState) => {
+    if (encounterId === null || readyState !== ReadyState.OPEN) {
+      return;
+    }
+    sendJsonMessage(body);
+  }, DEBOUNSE_TIME);
 
   useEffect(() => {
     setSaveVersionHash(encounterState.saveVersionHash);
@@ -153,8 +154,8 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
   }, [encounterState.saveVersionHash]);
 
   return (
-    <SessionContext.Provider value={true}>
-      <ParticipantsSessionContext.Provider value={participants}>
+    <SessionContext value={true}>
+      <ParticipantsSessionContext value={participants}>
         {isError ? (
           <Placeholder
             title='Ошибка'
@@ -164,7 +165,7 @@ export const EncounterTrackerSessionProvider = ({ children }: Props) => {
         ) : (
           children
         )}
-      </ParticipantsSessionContext.Provider>
-    </SessionContext.Provider>
+      </ParticipantsSessionContext>
+    </SessionContext>
   );
 };

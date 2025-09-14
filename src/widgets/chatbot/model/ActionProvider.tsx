@@ -24,11 +24,14 @@ export const ActionProvider = ({
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastLogs]);
 
   return (
     <div>
+      {/* eslint-disable-next-line react-x/no-children-map */}
       {React.Children.map(children, (child) => {
+        // eslint-disable-next-line react-x/no-clone-element
         return React.cloneElement(child, {
           actions: {},
         });

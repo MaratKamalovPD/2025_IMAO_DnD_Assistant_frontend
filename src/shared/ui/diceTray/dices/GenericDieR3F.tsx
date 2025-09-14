@@ -1,5 +1,5 @@
-import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
 export type GenericDieR3FProps = {
@@ -47,7 +47,7 @@ export const GenericDieR3F: React.FC<GenericDieR3FProps> = ({
 
   // Предвычисляем данные граней (face normals, centroids, side length)
   const faceData = useMemo(() => {
-    const geo = geometryFactory().clone().toNonIndexed() as THREE.BufferGeometry;
+    const geo = geometryFactory().clone().toNonIndexed();
     const pos = geo.attributes.position;
     const triCount = pos.count / 3;
     const centroids: THREE.Vector3[] = [];
@@ -82,7 +82,7 @@ export const GenericDieR3F: React.FC<GenericDieR3FProps> = ({
         }
       }
       const centroid = groupIdxs
-        .map(k => centroids[k])
+        .map((k) => centroids[k])
         .reduce((acc, v) => acc.add(v), new THREE.Vector3())
         .divideScalar(groupIdxs.length);
       faces.push({ normal: normals[i], centroid, side: sides[i] });
@@ -103,7 +103,7 @@ export const GenericDieR3F: React.FC<GenericDieR3FProps> = ({
       const faceCount = faceData.length;
       const fontSize = faceCount === 6 || faceCount === 12 ? 128 : 80;
       ctx.font = `${fontSize}px Arial`;
-      
+
       ctx.fillStyle = 'black';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -116,9 +116,7 @@ export const GenericDieR3F: React.FC<GenericDieR3FProps> = ({
       const plane = new THREE.PlaneGeometry(f.side * 0.6, f.side * 0.6);
       const mesh = new THREE.Mesh(plane, mat);
       // ориентация
-      const q = new THREE.Quaternion().setFromUnitVectors(
-        new THREE.Vector3(0, 0, 1), f.normal
-      );
+      const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), f.normal);
       mesh.setRotationFromQuaternion(q);
       mesh.position.copy(f.centroid).add(f.normal.clone().multiplyScalar(0.01));
       return mesh;
@@ -146,14 +144,14 @@ export const GenericDieR3F: React.FC<GenericDieR3FProps> = ({
 
     // настройка спина
     a.axisStart = new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize();
-    a.axisEnd   = new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize();
-    a.speed     = Math.random() * (maxSpeed! - minSpeed!) + minSpeed!;
+    a.axisEnd = new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize();
+    a.speed = Math.random() * (maxSpeed - minSpeed) + minSpeed;
     a.spinStart = performance.now();
-    a.state     = 'spin';
+    a.state = 'spin';
     // финальная кватернион
     a.finalQuat = new THREE.Quaternion().setFromUnitVectors(
       faceData[idx].normal,
-      new THREE.Vector3(0, 0, 1)
+      new THREE.Vector3(0, 0, 1),
     );
     a.animating = true;
   }, [value, faceData, minSpeed, maxSpeed, spinFlag]);
@@ -170,16 +168,14 @@ export const GenericDieR3F: React.FC<GenericDieR3FProps> = ({
       const t = Math.min(1, elapsed / (spinDurationSec * 1000));
       const axis = a.axisStart.clone().lerp(a.axisEnd, t).normalize();
       const speed = a.speed * (1 - t);
-      grp.quaternion.multiply(
-        new THREE.Quaternion().setFromAxisAngle(axis, speed * delta)
-      );
-      if (t >= settleThreshold!) {
+      grp.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(axis, speed * delta));
+      if (t >= settleThreshold) {
         a.state = 'settle';
         a.spinEndQuat.copy(grp.quaternion);
         a.settleStart = now;
       }
     } else if (a.state === 'settle') {
-      onSettle?.(value);  
+      onSettle?.(value);
       const elapsed = now - a.settleStart;
       const t = Math.min(1, elapsed / (settleDurationSec * 1000));
       grp.quaternion.copy(a.spinEndQuat).slerp(a.finalQuat, t);
@@ -199,8 +195,8 @@ export const GenericDieR3F: React.FC<GenericDieR3FProps> = ({
       <mesh geometry={geometryFactory()}>
         <meshStandardMaterial color={color} flatShading />
       </mesh>
-      {labelMeshes.map((m, i) => (
-        <primitive key={i} object={m} />
+      {labelMeshes.map((m) => (
+        <primitive key={m.id} object={m} />
       ))}
     </group>
   );

@@ -11,15 +11,11 @@ export const MultiAttackParams: React.FC<MultiAttackParamsProps> = ({
   originalName,
 }) => {
   const handleChangeType = (index: number, value: string) => {
-    setData((prev) =>
-      prev.map((entry, i) => (i === index ? { ...entry, type: value } : entry))
-    );
+    setData((prev) => prev.map((entry, i) => (i === index ? { ...entry, type: value } : entry)));
   };
 
   const handleChangeCount = (index: number, value: number) => {
-    setData((prev) =>
-      prev.map((entry, i) => (i === index ? { ...entry, count: value } : entry))
-    );
+    setData((prev) => prev.map((entry, i) => (i === index ? { ...entry, count: value } : entry)));
   };
 
   const handleAddEntry = () => {
@@ -32,13 +28,8 @@ export const MultiAttackParams: React.FC<MultiAttackParamsProps> = ({
 
   const normalizedName = name.trim().toLowerCase();
   const nameError = existingNames
-  .filter(existing => existing !== originalName)
-  .includes(normalizedName);
-
-  console.log({ existingNames, originalName, currentName: name, nameError });
-
-
-
+    .filter((existing) => existing !== originalName)
+    .includes(normalizedName);
 
   return (
     <div className={s.multiAttackForm}>
@@ -50,39 +41,37 @@ export const MultiAttackParams: React.FC<MultiAttackParamsProps> = ({
         <label className={s.multiAttackForm__label}>Название</label>
         <input
           className={s.multiAttackForm__input}
-          type="text"
+          type='text'
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
         />
         {nameError && (
-          <div className={s.multiAttackForm__error}>
-            Атака с таким названием уже существует.
-          </div>
+          <div className={s.multiAttackForm__error}>Атака с таким названием уже существует.</div>
         )}
       </div>
 
       {data.map((entry, index) => (
-        <div key={index} className={s.multiAttackForm__group}>
+        <div key={`${entry.type}-${entry.count}`} className={s.multiAttackForm__group}>
           <input
             className={s.multiAttackForm__input}
-            type="text"
-            placeholder="Название атаки"
+            type='text'
+            placeholder='Название атаки'
             value={entry.type}
             onChange={(e) => handleChangeType(index, e.target.value)}
             required
           />
           <input
             className={s.multiAttackForm__input}
-            type="number"
+            type='number'
             min={1}
-            placeholder="Кол-во"
+            placeholder='Кол-во'
             value={entry.count}
             onChange={(e) => handleChangeCount(index, parseInt(e.target.value) || 1)}
             required
           />
           <button
-            type="button"
+            type='button'
             onClick={() => handleRemoveEntry(index)}
             className={s.multiAttackForm__removeButton}
           >
@@ -91,11 +80,7 @@ export const MultiAttackParams: React.FC<MultiAttackParamsProps> = ({
         </div>
       ))}
 
-      <button
-        type="button"
-        onClick={handleAddEntry}
-        className={s.multiAttackForm__addButton}
-      >
+      <button type='button' onClick={handleAddEntry} className={s.multiAttackForm__addButton}>
         Добавить ещё атаку
       </button>
     </div>

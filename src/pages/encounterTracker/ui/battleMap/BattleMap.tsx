@@ -42,17 +42,17 @@ export const BattleMap = ({ image, cells, setCells }: BattleMapProps) => {
 
   const zoom = dzoom()
     .scaleExtent([0.1, 20])
-    .on('zoom', (event) => {
+    .on('zoom', (event: { transform: typeof mapTransform }) => {
       setTransform(event.transform);
     });
 
   useEffect(() => {
-    const svg = dselect(svgRef.current);
-    svg.call(
-      zoom.transform as any,
-      zoomIdentity.translate(transform.x, transform.y).scale(transform.k),
-    );
-    svg.call(zoom as any);
+    if (svgRef.current) {
+      const svg = dselect(svgRef.current as Element);
+      svg
+        .call(zoom)
+        .call(zoom.transform, zoomIdentity.translate(transform.x, transform.y).scale(transform.k));
+    }
   }, []);
 
   useEffect(() => {
@@ -63,13 +63,13 @@ export const BattleMap = ({ image, cells, setCells }: BattleMapProps) => {
         k: debouncedTransforme.k,
       }),
     );
-  }, [debouncedTransforme]);
+  }, [debouncedTransforme, dispatch]);
 
   const handleClick = useCallback(() => {
     if (attackHandleModeActive && attackHandleModeMulti === 'select') {
       dispatch(userInterfaceActions.setAttackHandleModeMulti('handle'));
     }
-  }, [attackHandleModeActive, attackHandleModeMulti]);
+  }, [attackHandleModeActive, attackHandleModeMulti, dispatch]);
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();

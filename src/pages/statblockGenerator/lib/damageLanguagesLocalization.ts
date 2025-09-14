@@ -19,7 +19,7 @@ export const DamageLanguagesLocalization = {
     vulnerabilitiesTitle: 'Vulnerabilities',
     resistancesTitle: 'Resistances',
     immunitiesTitle: 'Immunities',
-    knownLanguages: 'Known Languages'
+    knownLanguages: 'Known Languages',
   },
   ru: {
     title: 'Уязвимости и языки',
@@ -39,25 +39,28 @@ export const DamageLanguagesLocalization = {
     vulnerabilitiesTitle: 'Уязвимости',
     resistancesTitle: 'Устойчивости',
     immunitiesTitle: 'Иммунитеты',
-    knownLanguages: 'Известные языки'
+    knownLanguages: 'Известные языки',
+  },
+} as const satisfies Record<
+  Language,
+  {
+    title: string;
+    damageTypes: string;
+    vulnerabilities: string;
+    resistances: string;
+    immunities: string;
+    customDamagePlaceholder: string;
+    languages: string;
+    telepathy: string;
+    speaks: string;
+    understands: string;
+    understandsBut: string;
+    addLanguage: string;
+    remove: string;
+    units: string;
+    vulnerabilitiesTitle: string;
+    resistancesTitle: string;
+    immunitiesTitle: string;
+    knownLanguages: string;
   }
-} as const satisfies Record<Language, {
-  title: string;
-  damageTypes: string;
-  vulnerabilities: string;
-  resistances: string;
-  immunities: string;
-  customDamagePlaceholder: string;
-  languages: string;
-  telepathy: string;
-  speaks: string;
-  understands: string;
-  understandsBut: string;
-  addLanguage: string;
-  remove: string;
-  units: string;
-  vulnerabilitiesTitle: string;
-  resistancesTitle: string;
-  immunitiesTitle: string;
-  knownLanguages: string;
-}>;
+>;

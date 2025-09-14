@@ -6,17 +6,23 @@ import {
 } from 'entities/generatedCreature/model';
 import { MonsterStatsLocalization } from 'pages/statblockGenerator/lib';
 import { MonsterStats, MonsterStatsFormProps } from 'pages/statblockGenerator/model';
-import { CollapsiblePanel, CollapsiblePanelRef } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import {
+  CollapsiblePanel,
+  CollapsiblePanelRef,
+} from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { StatInput } from 'pages/statblockGenerator/ui/monsterStatsForm/statInput';
-import { forwardRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
 import s from './MonsterStatsForm.module.scss';
 
-
-
-export const MonsterStatsForm = forwardRef<CollapsiblePanelRef, MonsterStatsFormProps>(({ language = 'en', clearGlow, getGlowClass }, ref) => {
+export const MonsterStatsForm = ({
+  ref,
+  language = 'en',
+  clearGlow,
+  getGlowClass,
+}: MonsterStatsFormProps & { ref?: React.RefObject<CollapsiblePanelRef | null> }) => {
   const generatedCreature = useSelector((state: GeneratedCreatureStore) =>
     generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID),
   );
@@ -69,7 +75,7 @@ export const MonsterStatsForm = forwardRef<CollapsiblePanelRef, MonsterStatsForm
           <StatInput
             key={stat}
             label={t.abilities[stat as keyof typeof t.abilities]}
-            value={value as number}
+            value={value}
             onChange={(value) => handleStatChange(stat as keyof MonsterStats, value)}
             modifierPrefix={t.modifierPrefix}
             getGlowClass={getGlowClass}
@@ -79,4 +85,4 @@ export const MonsterStatsForm = forwardRef<CollapsiblePanelRef, MonsterStatsForm
       </div>
     </CollapsiblePanel>
   );
-});
+};

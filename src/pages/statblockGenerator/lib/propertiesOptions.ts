@@ -1,5 +1,5 @@
-import { Language } from 'shared/lib';
 import { MonsterStats, SelectOption } from 'pages/statblockGenerator/model';
+import { Language } from 'shared/lib';
 
 export const getSavingThrowOptions = (language: Language): SelectOption[] => [
   { value: 'str', label: language === 'ru' ? 'Сила' : 'Strength' },
@@ -7,7 +7,7 @@ export const getSavingThrowOptions = (language: Language): SelectOption[] => [
   { value: 'con', label: language === 'ru' ? 'Телосложение' : 'Constitution' },
   { value: 'int', label: language === 'ru' ? 'Интеллект' : 'Intelligence' },
   { value: 'wis', label: language === 'ru' ? 'Мудрость' : 'Wisdom' },
-  { value: 'cha', label: language === 'ru' ? 'Харизма' : 'Charisma' }
+  { value: 'cha', label: language === 'ru' ? 'Харизма' : 'Charisma' },
 ];
 
 export const getSkillOptions = (language: Language): SelectOption[] => [
@@ -28,7 +28,7 @@ export const getSkillOptions = (language: Language): SelectOption[] => [
   { value: 'religion', label: language === 'ru' ? 'Религия' : 'Religion' },
   { value: 'sleight of hand', label: language === 'ru' ? 'Ловкость рук' : 'Sleight of Hand' },
   { value: 'stealth', label: language === 'ru' ? 'Скрытность' : 'Stealth' },
-  { value: 'survival', label: language === 'ru' ? 'Выживание' : 'Survival' }
+  { value: 'survival', label: language === 'ru' ? 'Выживание' : 'Survival' },
 ];
 
 export const getConditionOptions = (language: Language): SelectOption[] => [
@@ -46,13 +46,13 @@ export const getConditionOptions = (language: Language): SelectOption[] => [
   { value: 'prone', label: language === 'ru' ? 'Распластание' : 'Prone' },
   { value: 'restrained', label: language === 'ru' ? 'Сковывание' : 'Restrained' },
   { value: 'stunned', label: language === 'ru' ? 'Оглушение' : 'Stunned' },
-  { value: 'unconscious', label: language === 'ru' ? 'Бессознательное состояние' : 'Unconscious' }
+  { value: 'unconscious', label: language === 'ru' ? 'Бессознательное состояние' : 'Unconscious' },
 ];
 
 export const getProficiencyLabel = (type: 'proficient' | 'expert', language: Language): string => {
   const labels = {
     proficient: language === 'ru' ? 'Владение' : 'Proficient',
-    expert: language === 'ru' ? 'Эксперт' : 'Expert'
+    expert: language === 'ru' ? 'Эксперт' : 'Expert',
   };
   return labels[type];
 };
@@ -62,31 +62,31 @@ export const getExpertSuffix = (language: Language): string => {
 };
 
 export const savingThrowShortNames: Record<string, string> = {
-  'Сила': 'Сил',
-  'Ловкость': 'Лов',
-  'Телосложение': 'Тел',
-  'Интеллект': 'Инт',
-  'Мудрость': 'Мдр',
-  'Харизма': 'Хар',
+  Сила: 'Сил',
+  Ловкость: 'Лов',
+  Телосложение: 'Тел',
+  Интеллект: 'Инт',
+  Мудрость: 'Мдр',
+  Харизма: 'Хар',
 };
 
 export const skillToAbilityMap: Record<string, keyof MonsterStats> = {
-  'acrobatics': 'dex',
+  acrobatics: 'dex',
   'animal handling': 'wis',
-  'arcana': 'int',
-  'athletics': 'str',
-  'deception': 'cha',
-  'history': 'int',
-  'insight': 'wis',
-  'intimidation': 'cha',
-  'investigation': 'int',
-  'medicine': 'wis',
-  'nature': 'int',
-  'perception': 'wis',
-  'performance': 'cha',
-  'persuasion': 'cha',
-  'religion': 'int',
+  arcana: 'int',
+  athletics: 'str',
+  deception: 'cha',
+  history: 'int',
+  insight: 'wis',
+  intimidation: 'cha',
+  investigation: 'int',
+  medicine: 'wis',
+  nature: 'int',
+  perception: 'wis',
+  performance: 'cha',
+  persuasion: 'cha',
+  religion: 'int',
   'sleight of hand': 'dex',
-  'stealth': 'dex',
-  'survival': 'wis'
+  stealth: 'dex',
+  survival: 'wis',
 };

@@ -1,37 +1,36 @@
 /* src/components/DiceToolbar.module.css */
 
 .toolbar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 8px;
-  }
-  
-  .iconList {
-    display: flex;
-    gap: 8px;
-  }
-  
-  .dieButton {
-    background: none;
-    border: none;
-    padding: 4px;
-    cursor: pointer;
-    transition: transform 0.1s;
-    will-change: transform;
-  }
-  
-  .dieButton:hover {
-    transform: scale(1.1);
-  }
-  
-  /* Вот добавленный эффект «сжатия» при клике */
-  .dieButton:active {
-    transform: scale(0.85);
-  }
-  
-  .icon {
-    width: 64px;
-    height: 64px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+}
+
+.iconList {
+  display: flex;
+  gap: 8px;
+}
+
+.dieButton {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  transition: transform 0.1s;
+  will-change: transform;
+}
+
+.dieButton:hover {
+  transform: scale(1.1);
+}
+
+/* Вот добавленный эффект «сжатия» при клике */
+.dieButton:active {
+  transform: scale(0.85);
+}
+
+.icon {
+  width: 64px;
+  height: 64px;
+}

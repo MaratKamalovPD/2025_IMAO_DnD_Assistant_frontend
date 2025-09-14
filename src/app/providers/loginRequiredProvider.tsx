@@ -11,7 +11,7 @@ export const LoginRequiredProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (isAuth === false) {
-      navigate('/login');
+      void navigate('/login');
     }
   }, [isAuth]);
 

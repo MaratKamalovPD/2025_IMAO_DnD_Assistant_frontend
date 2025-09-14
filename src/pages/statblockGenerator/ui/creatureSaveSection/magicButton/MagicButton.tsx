@@ -38,15 +38,11 @@ export const MagicButton: React.FC<MagicButtonProps> = ({
       <span className={s.burst} />
       <span className={s.vortex} />
       {runes.map((rune, i) => (
-        <span
-          key={i}
-          className={`${s.rune} ${s[`rune${i}`]}`}
-        >
+        <span key={rune.charCodeAt(0)} className={`${s.rune} ${s[`rune${i}`]}`}>
           {rune}
         </span>
       ))}
       {children}
     </button>
   );
-  
 };

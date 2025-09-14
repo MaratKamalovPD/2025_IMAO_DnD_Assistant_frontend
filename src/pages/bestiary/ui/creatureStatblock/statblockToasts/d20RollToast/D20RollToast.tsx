@@ -43,7 +43,7 @@ export const D20RollToast: React.FC<ToastProps> = ({ title, type, rollResult, mo
               case ToastType.SkillCheck:
                 return `${ToastType.SkillCheck} ${title}`;
               case ToastType.Attack:
-              return `${ToastType.Attack}`;
+                return `${ToastType.Attack}`;
             }
           })()}
         </span>

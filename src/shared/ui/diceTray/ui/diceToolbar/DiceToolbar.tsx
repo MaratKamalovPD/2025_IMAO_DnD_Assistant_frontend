@@ -7,7 +7,7 @@ import D20Icon from 'shared/assets/images/dicesAndRolls/d20/D20.png';
 import D4Icon from 'shared/assets/images/dicesAndRolls/d4/D4_Poison.png';
 import D6Icon from 'shared/assets/images/dicesAndRolls/d6/D6_Cold.png';
 import D8Icon from 'shared/assets/images/dicesAndRolls/d8/D8_Thunder.png';
-//import PlusIcon from 'shared/assets/images/dicesAndRolls/d20/D20.png';
+
 import { DiceType } from 'shared/lib';
 import { DiceToolbarProps } from '../../model';
 
@@ -30,7 +30,7 @@ export const DiceToolbar: React.FC<DiceToolbarProps> = ({ onAdd, onRoll }) => {
             type='button'
             className={s.dieButton}
             onClick={(e) => {
-              e.stopPropagation;
+              e.stopPropagation();
               onAdd(type);
             }}
             aria-label={alt}
@@ -43,7 +43,7 @@ export const DiceToolbar: React.FC<DiceToolbarProps> = ({ onAdd, onRoll }) => {
       <button
         data-variant='accent'
         onClick={(e) => {
-          e.stopPropagation;
+          e.stopPropagation();
           onRoll();
         }}
       >

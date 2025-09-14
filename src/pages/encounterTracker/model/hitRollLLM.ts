@@ -4,19 +4,19 @@ import { D20Roll, DiceType, rollDice } from 'shared/lib';
 export const rollToHitLLM = (
   defender: Creature,
   attack: AttackLLM,
-  advantage: boolean = false,
-  disadvantage: boolean = false,
+  advantage = false,
+  disadvantage = false,
 ): { hit: boolean; critical: boolean; d20Roll: D20Roll[] } => {
   // Бросок d20 с учетом преимущества или помехи
-  let roll1 = rollDice(DiceType.D20);
-  let roll2 = rollDice(DiceType.D20);
+  const roll1 = rollDice(DiceType.D20);
+  const roll2 = rollDice(DiceType.D20);
   let roll: number;
-  let d20Rolls: D20Roll[] = [];
+  const d20Rolls: D20Roll[] = [];
 
   const maxRoll = Math.max(roll1, roll2);
   const minRoll = Math.min(roll1, roll2);
 
-  const attackBonus = Number(attack.attackBonus || 0);
+  const attackBonus = Number(attack.attackBonus ?? 0);
 
   if (advantage && !disadvantage) {
     // Преимущество: выбираем наибольший результат

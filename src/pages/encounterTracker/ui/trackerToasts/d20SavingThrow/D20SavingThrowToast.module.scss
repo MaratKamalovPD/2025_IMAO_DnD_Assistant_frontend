@@ -1,42 +1,42 @@
 .toastContainer {
-    display: flex;
-    flex-direction: column;
-    background: #121212;
-    color: #ffffff;
-    padding: 10px 15px;
-    font-family: Arial, sans-serif;
-    max-width: 280px;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .toastContent {
-    display: flex;
-    align-items: center;
-  }
-  
-  .toastTotal {
-    font-size: 32px;
-    font-weight: bold;
-    margin-right: 20px;
-  }
-  
-  .toastText {
-    font-size: 20px;
-  }
-  
-  .toastDetails {
-    font-size: 20px;
-    color: #ffffff;
-  }
-  
-  .icon {
-    width: 47px;
-    height: 35px;
-    margin-left: 10px;
-  }
-  
-  .hitText {
-    display: flex; // Добавляем flex для выравнивания в строку
-    align-items: center; // Выравниваем элементы по центру
-  }
+  display: flex;
+  flex-direction: column;
+  background: #121212;
+  color: #ffffff;
+  padding: 10px 15px;
+  font-family: Arial, sans-serif;
+  max-width: 280px;
+  position: relative;
+  overflow: hidden;
+}
+
+.toastContent {
+  display: flex;
+  align-items: center;
+}
+
+.toastTotal {
+  font-size: 32px;
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.toastText {
+  font-size: 20px;
+}
+
+.toastDetails {
+  font-size: 20px;
+  color: #ffffff;
+}
+
+.icon {
+  width: 47px;
+  height: 35px;
+  margin-left: 10px;
+}
+
+.hitText {
+  display: flex; // Добавляем flex для выравнивания в строку
+  align-items: center; // Выравниваем элементы по центру
+}

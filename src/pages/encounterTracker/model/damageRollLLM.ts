@@ -1,13 +1,18 @@
-import { AttackLLM, DamageDicesRoll, DamageDicesRolls, DamageLLM } from 'entities/creature/model';
+import {
+  AttackLLM,
+  Creature,
+  DamageDicesRoll,
+  DamageDicesRolls,
+  DamageLLM,
+} from 'entities/creature/model';
 import { rollDice } from 'shared/lib/rollDice';
-import { getDamageCalculationOptions } from './getDamageCalculationOptions'
-import { calculateDndDamage } from './calculateDndDamage'
-import { Creature } from 'entities/creature/model';
+import { calculateDndDamage } from './calculateDndDamage';
+import { getDamageCalculationOptions } from './getDamageCalculationOptions';
 
 export const rollDamageLLM = (
   attack: AttackLLM,
-  isCriticalHit: boolean = false,
-  attackedCreature: Creature
+  isCriticalHit = false,
+  attackedCreature: Creature,
 ): DamageDicesRolls => {
   let totalDamage = 0;
   const dices: DamageDicesRoll[] = [];
@@ -43,7 +48,11 @@ export const rollDamageLLM = (
   };
 };
 
-const calculateDamage = (damage: DamageLLM, isCriticalHit: boolean, attackedCreature: Creature): DamageDicesRoll => {
+const calculateDamage = (
+  damage: DamageLLM,
+  isCriticalHit: boolean,
+  attackedCreature: Creature,
+): DamageDicesRoll => {
   let damageRoll = 0;
 
   const diceCount = isCriticalHit ? (damage.count ?? 1) * 2 : (damage.count ?? 1);
@@ -52,11 +61,11 @@ const calculateDamage = (damage: DamageLLM, isCriticalHit: boolean, attackedCrea
     damageRoll += rollDice(damage.dice);
   }
 
-  const damageCalculationOptions = getDamageCalculationOptions(attackedCreature, damage.type)
+  const damageCalculationOptions = getDamageCalculationOptions(attackedCreature, damage.type);
 
   const bonus = damage.bonus ?? 0;
-  
-  const calculatedDndDamage = calculateDndDamage(damageRoll + bonus, damageCalculationOptions)
+
+  const calculatedDndDamage = calculateDndDamage(damageRoll + bonus, damageCalculationOptions);
 
   return {
     final_damage: calculatedDndDamage,

@@ -1,16 +1,18 @@
+import { QueryStatus } from '@reduxjs/toolkit/query';
 import { useEffect, useState } from 'react';
+
+import { mapFiltersToRequestBody } from 'pages/bestiary/lib';
 import { throttle, useDebounce } from 'shared/lib';
+import { ModalOverlay } from 'shared/ui';
 import { Spinner } from 'shared/ui/spinner';
 import { GetCharactersRequest, useLazyGetCharactersQuery } from '../api';
 import { CharacterClipped } from '../model';
 import { AddCharacterListForm } from './addCharacterListForm';
+import { AddNewCard } from './addNewCard';
 import { CharacterCard } from './characterCard';
 import { TopPanel } from './topPanel';
 
-import { ModalOverlay } from 'shared/ui';
 import s from './Characters.module.scss';
-import { AddNewCard } from './addNewCard';
-import { mapFiltersToRequestBody } from 'pages/bestiary/lib';
 
 const RESPONSE_SIZE = 24;
 const DEBOUNCE_TIME = 500;
@@ -33,10 +35,10 @@ export const Characters = () => {
   const [trigger, { data: characters, isLoading, isError, status }] = useLazyGetCharactersQuery();
 
   useEffect(() => {
-    trigger(requestBody);
+    void trigger(requestBody);
   }, [requestBody]);
 
-  const isPending = status === 'pending';
+  const isPending = status === QueryStatus.pending;
 
   useEffect(() => {
     if (characters) {
@@ -72,7 +74,7 @@ export const Characters = () => {
         !isLoading &&
         hasMore
       ) {
-        setStartThrottled((prev: any) => prev + RESPONSE_SIZE);
+        setStartThrottled((prev: number) => prev + RESPONSE_SIZE);
       }
     };
 

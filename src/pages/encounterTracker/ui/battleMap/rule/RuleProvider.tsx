@@ -12,9 +12,6 @@ export const RuleProvider = ({ transform, cellSize, children }: RuleProps) => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPoint, setStartPoint] = useState({ x: 0, y: 0 });
   const [endPoint, setEndPoint] = useState({ x: 0, y: 0 });
-  const [lines, setLines] = useState<
-    Array<{ start: { x: number; y: number }; end: { x: number; y: number } }>
-  >([]);
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -66,13 +63,6 @@ export const RuleProvider = ({ transform, cellSize, children }: RuleProps) => {
   const handleMouseUp = (e: React.MouseEvent) => {
     if (isDrawing) {
       e.stopPropagation();
-      setLines((prev) => [
-        ...prev,
-        {
-          start: startPoint,
-          end: endPoint,
-        },
-      ]);
       setIsDrawing(false);
     }
   };
@@ -80,7 +70,6 @@ export const RuleProvider = ({ transform, cellSize, children }: RuleProps) => {
   useEffect(() => {
     const handleWindowMouseUp = () => {
       if (isDrawing) {
-        setLines((prev) => [...prev, { start: startPoint, end: endPoint }]);
         setIsDrawing(false);
       }
     };
@@ -123,20 +112,6 @@ export const RuleProvider = ({ transform, cellSize, children }: RuleProps) => {
 
       {/* Внутренние элементы */}
       {children}
-
-      {/* Сохраненные линии (временно выключено) */}
-      {false &&
-        lines.map((line, index) => (
-          <line
-            key={`line-${index}`}
-            x1={line.start.x}
-            y1={line.start.y}
-            x2={line.end.x}
-            y2={line.end.y}
-            stroke='black'
-            strokeWidth={2 / transform.k}
-          />
-        ))}
 
       {/* Текущая рисуемая линия */}
       {isDrawing && (

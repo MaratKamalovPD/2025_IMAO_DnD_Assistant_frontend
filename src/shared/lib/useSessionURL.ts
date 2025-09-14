@@ -4,7 +4,7 @@ export const useSessionURL = (pathname: string) => {
   const [url, setUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (/encounter_tracker\/session/.test(pathname)) {
+    if (pathname.includes('encounter_tracker/session')) {
       setUrl(pathname);
     }
   }, [pathname]);

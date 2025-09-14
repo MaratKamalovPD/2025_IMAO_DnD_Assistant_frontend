@@ -49,7 +49,7 @@ export const TopPanel: React.FC<TopPanelProps> = ({
 
   return (
     <TopPanelWithSearch title={title} setSearchValue={setSearchValue}>
-      <Tippy content={'Показать фильтры существ'}>
+      <Tippy content='Показать фильтры существ'>
         <button
           onClick={() => setIsModalOpen(true)}
           data-variant={isAnyFilterSet ? 'accent' : 'secondary'}

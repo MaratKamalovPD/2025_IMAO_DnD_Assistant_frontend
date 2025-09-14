@@ -8,10 +8,12 @@ export type EntityType = 'creature' | 'character';
 export enum Size {
   'tiny' = 0.5,
   'small' = 1,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   'medium' = 1,
   'large' = 2,
   'huge' = 3,
   'gargantuan' = 4,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   default = 1,
 }
 

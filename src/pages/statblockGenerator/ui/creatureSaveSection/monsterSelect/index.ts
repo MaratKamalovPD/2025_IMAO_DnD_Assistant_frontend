@@ -1,1 +1,1 @@
-export { MonsterSelect } from './MonsterSelect'
+export { MonsterSelect } from './MonsterSelect';

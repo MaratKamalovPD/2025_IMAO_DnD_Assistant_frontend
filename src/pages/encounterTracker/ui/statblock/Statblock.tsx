@@ -32,13 +32,13 @@ enum ModalType {
   Attack,
 }
 
-interface StatblockProps {
+type StatblockProps = {
   cells: boolean[][];
   setCells: React.Dispatch<React.SetStateAction<boolean[][]>>;
   isMinimized: boolean;
   toggleWindow: () => void;
   closeWindow: () => void;
-}
+};
 
 export const Statblock: React.FC<StatblockProps> = ({
   isMinimized,
@@ -59,7 +59,7 @@ export const Statblock: React.FC<StatblockProps> = ({
     useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
-    creatureSelectors.selectById(state, selectedCreatureId || ''),
+    creatureSelectors.selectById(state, selectedCreatureId ?? ''),
   ) as Creature;
 
   const toggleModal = useCallback(
@@ -72,14 +72,17 @@ export const Statblock: React.FC<StatblockProps> = ({
       setIsModalOpen(isOpen);
       setModalType(type);
     },
-    [modalType, isModalOpen],
+    [modalType, isModalOpen, setCells, dispatch],
   );
 
-  const handleAttack = useCallback((index: number, attack: AttackLLM) => {
-    setCurrentAttackIndex(index);
-    setCurrentAttackData(attack);
-    dispatch(userInterfaceActions.enableAttackHandleMode(attack));
-  }, []);
+  const handleAttack = useCallback(
+    (index: number, attack: AttackLLM) => {
+      setCurrentAttackIndex(index);
+      setCurrentAttackData(attack);
+      dispatch(userInterfaceActions.enableAttackHandleMode(attack));
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     if (attackedCreatureId !== null || attackHandleModeMulti === 'handle') {
@@ -91,8 +94,8 @@ export const Statblock: React.FC<StatblockProps> = ({
   const handleCreatureDeath = useCallback(() => {
     const id = selectedCreatureId;
 
-    dispatch(creatureActions.updateCurrentHp({ id: id || '', newHp: 0 }));
-  }, [selectedCreatureId]);
+    dispatch(creatureActions.updateCurrentHp({ id: id ?? '', newHp: 0 }));
+  }, [dispatch, selectedCreatureId]);
 
   const handleInitiativeChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,11 +103,11 @@ export const Statblock: React.FC<StatblockProps> = ({
       const id = selectedCreatureId;
 
       if (!isNaN(newInitiative)) {
-        dispatch(creatureActions.updateInitiative({ id: id || '', newInitiative: newInitiative }));
-        dispatch(encounterActions.updateInitiative({ id: id || '', newInitiative: newInitiative }));
+        dispatch(creatureActions.updateInitiative({ id: id ?? '', newInitiative: newInitiative }));
+        dispatch(encounterActions.updateInitiative({ id: id ?? '', newInitiative: newInitiative }));
       }
     },
-    [selectedCreatureId],
+    [dispatch, selectedCreatureId],
   );
 
   const handleHpChange = useCallback(
@@ -113,10 +116,10 @@ export const Statblock: React.FC<StatblockProps> = ({
       const id = selectedCreatureId;
 
       if (!isNaN(newHp)) {
-        dispatch(creatureActions.updateCurrentHp({ id: id || '', newHp: newHp }));
+        dispatch(creatureActions.updateCurrentHp({ id: id ?? '', newHp: newHp }));
       }
     },
-    [selectedCreatureId],
+    [dispatch, selectedCreatureId],
   );
 
   const handleAcChange = useCallback(
@@ -125,10 +128,10 @@ export const Statblock: React.FC<StatblockProps> = ({
       const id = selectedCreatureId;
 
       if (!isNaN(newAc)) {
-        dispatch(creatureActions.updateAc({ id: id || '', newAc: newAc }));
+        dispatch(creatureActions.updateAc({ id: id ?? '', newAc: newAc }));
       }
     },
-    [selectedCreatureId],
+    [dispatch, selectedCreatureId],
   );
 
   const handleNtChange = useCallback(
@@ -137,10 +140,10 @@ export const Statblock: React.FC<StatblockProps> = ({
       const id = selectedCreatureId;
 
       if (text != undefined) {
-        dispatch(creatureActions.updateNotes({ id: id || '', text: text }));
+        dispatch(creatureActions.updateNotes({ id: id ?? '', text: text }));
       }
     },
-    [selectedCreatureId],
+    [dispatch, selectedCreatureId],
   );
 
   if (!selectedCreature)
@@ -168,7 +171,7 @@ export const Statblock: React.FC<StatblockProps> = ({
           </div>
 
           <div className={s.creaturePanel__statsContainer}>
-            <Tippy content={'Для редактирования начните сражение'} disabled={hasStarted}>
+            <Tippy content='Для редактирования начните сражение' disabled={hasStarted}>
               <div className={s.creaturePanel__statsElement}>
                 <div className={s.creaturePanel__statsElement__image}></div>
                 <div className={s.creaturePanel__statsElement__text}>Инициатива:</div>
@@ -181,7 +184,7 @@ export const Statblock: React.FC<StatblockProps> = ({
                 ></input>
               </div>
             </Tippy>
-            <Tippy content={'Для редактирования начните сражение'} disabled={hasStarted}>
+            <Tippy content='Для редактирования начните сражение' disabled={hasStarted}>
               <div className={s.creaturePanel__statsElement}>
                 <div className={s.creaturePanel__statsElement__image}></div>
                 <div className={s.creaturePanel__statsElement__text}>HP:</div>
@@ -194,7 +197,7 @@ export const Statblock: React.FC<StatblockProps> = ({
                 ></input>
               </div>
             </Tippy>
-            <Tippy content={'Для редактирования начните сражение'} disabled={hasStarted}>
+            <Tippy content='Для редактирования начните сражение' disabled={hasStarted}>
               <div className={s.creaturePanel__statsElement}>
                 <div className={s.creaturePanel__statsElement__image}></div>
                 <div className={s.creaturePanel__statsElement__text}>AC:</div>
@@ -206,7 +209,7 @@ export const Statblock: React.FC<StatblockProps> = ({
                 ></input>
               </div>
             </Tippy>
-            <Tippy content={'Для редактирования начните сражение'} disabled={hasStarted}>
+            <Tippy content='Для редактирования начните сражение' disabled={hasStarted}>
               <div className={clsx(s.creaturePanel__statsElement, s.creaturePanel__deadElement)}>
                 <input
                   type='checkbox'
@@ -230,14 +233,14 @@ export const Statblock: React.FC<StatblockProps> = ({
                 return (
                   <button
                     className={s.creaturePanel__actionsList__element}
-                    key={ind}
+                    key={attack.name}
                     disabled={isMultiAttack}
                     onClick={isMultiAttack ? undefined : () => handleAttack(ind, attack)}
                   >
                     {icon && <img src={icon} alt={attack.name} className={s.attackIcon} />}
                     {attack.name}
                     {attack.type === 'area' && (
-                      <Tippy content={'Атака по площади'}>
+                      <Tippy content='Атака по площади'>
                         <Icon28SquareSplit4Outline />
                       </Tippy>
                     )}
@@ -257,12 +260,12 @@ export const Statblock: React.FC<StatblockProps> = ({
           <div className={s.creaturePanel__actionsContainer}>
             <div className={s.creaturePanel__actionsContainer__header}>Состояния</div>
             <div className={s.creaturePanel__actionsList}>
-              {selectedCreature.conditions?.map((condition, ind) => {
+              {selectedCreature.conditions?.map((condition) => {
                 const normalizedConditionName = normalizeString(condition);
                 const { icon, instance } = findConditionInstance(normalizedConditionName);
 
                 return (
-                  <div className={s.creaturePanel__actionsList__element} key={ind}>
+                  <div className={s.creaturePanel__actionsList__element} key={condition}>
                     {icon && <img src={icon} alt={condition} className={s.attackIcon} />}
                     {instance ? instance.label.ru : condition}
                     <button

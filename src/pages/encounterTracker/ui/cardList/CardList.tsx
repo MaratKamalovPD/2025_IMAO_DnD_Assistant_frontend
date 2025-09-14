@@ -55,7 +55,7 @@ export const CardList = () => {
   const handleDeleteClick = useCallback(() => {
     dispatch(encounterActions.removeParticipant(contextId));
     dispatch(creatureActions.removeCreature(contextId));
-  }, [contextId]);
+  }, [contextId, dispatch]);
 
   return (
     <>

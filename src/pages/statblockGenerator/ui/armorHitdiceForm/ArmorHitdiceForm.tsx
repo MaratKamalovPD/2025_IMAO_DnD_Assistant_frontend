@@ -3,11 +3,14 @@ import { ArmorHitDiceFormProps } from 'pages/statblockGenerator/model';
 import { ArmorSection } from 'pages/statblockGenerator/ui/armorHitdiceForm/armorSection';
 import { HitPointsSection } from 'pages/statblockGenerator/ui/armorHitdiceForm/hitPointsSection';
 import { CollapsiblePanel } from 'pages/statblockGenerator/ui/collapsiblePanel';
-import { forwardRef } from 'react';
-import s from './ArmorHitdiceForm.module.scss';
 import { CollapsiblePanelRef } from '../collapsiblePanel/CollapsiblePanel';
 
-export const ArmorHitdiceForm = forwardRef<CollapsiblePanelRef, ArmorHitDiceFormProps>(({ language = 'en' }, ref) => {
+import s from './ArmorHitdiceForm.module.scss';
+
+export const ArmorHitdiceForm = ({
+  ref,
+  language = 'en',
+}: ArmorHitDiceFormProps & { ref?: React.RefObject<CollapsiblePanelRef | null> }) => {
   const t = ArmorHitDiceLocalization[language];
 
   return (
@@ -18,5 +21,4 @@ export const ArmorHitdiceForm = forwardRef<CollapsiblePanelRef, ArmorHitDiceForm
       </div>
     </CollapsiblePanel>
   );
-});
-
+};

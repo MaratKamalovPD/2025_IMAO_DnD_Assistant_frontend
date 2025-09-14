@@ -1,19 +1,20 @@
+import {
+  GeneratedCreatureStore,
+  SINGLE_CREATURE_ID,
+  generatedCreatureActions,
+  generatedCreatureSelectors,
+} from 'entities/generatedCreature/model';
+import { mapLLMToForm } from 'pages/statblockGenerator/lib';
+import { AttackFormAttack, initialAttack } from 'pages/statblockGenerator/model';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  SINGLE_CREATURE_ID,
-  GeneratedCreatureStore,
-  generatedCreatureActions,
-  generatedCreatureSelectors
-} from 'entities/generatedCreature/model';
-import { AttackFormAttack, initialAttack } from 'pages/statblockGenerator/model';
-import { mapLLMToForm } from 'pages/statblockGenerator/lib';
 
 export const useAttackFormState = () => {
   const dispatch = useDispatch();
 
-  const attacksList = useSelector((state: GeneratedCreatureStore) =>
-    generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)?.attacksLLM ?? []
+  const attacksList = useSelector(
+    (state: GeneratedCreatureStore) =>
+      generatedCreatureSelectors.selectById(state, SINGLE_CREATURE_ID)?.attacksLLM ?? [],
   );
 
   const [attack, setAttack] = useState<AttackFormAttack>({
@@ -21,19 +22,19 @@ export const useAttackFormState = () => {
     type: 'melee',
     reach: '5 фт.',
     target: 'одна цель',
-    range: undefined
+    range: undefined,
   });
 
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setAttack(prev => ({ ...prev, [name]: value }));
+    setAttack((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleDamageInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setAttack(prev => ({
+    setAttack((prev) => ({
       ...prev,
       damage: {
         ...prev.damage,
@@ -43,23 +44,27 @@ export const useAttackFormState = () => {
   };
 
   const handleRangeChange = (effective: string, max: string) => {
-    setAttack(prev => ({ ...prev, range: `${effective}/${max} фт.` }));
+    setAttack((prev) => ({ ...prev, range: `${effective}/${max} фт.` }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (editIndex !== null) {
-      dispatch(generatedCreatureActions.updateAttackLLM({
-        id: SINGLE_CREATURE_ID,
-        index: editIndex,
-        data: attack
-      }));
+      dispatch(
+        generatedCreatureActions.updateAttackLLM({
+          id: SINGLE_CREATURE_ID,
+          index: editIndex,
+          data: attack,
+        }),
+      );
     } else {
-      dispatch(generatedCreatureActions.addAttackLLM({
-        id: SINGLE_CREATURE_ID,
-        data: attack
-      }));
+      dispatch(
+        generatedCreatureActions.addAttackLLM({
+          id: SINGLE_CREATURE_ID,
+          data: attack,
+        }),
+      );
     }
 
     setAttack({
@@ -67,7 +72,7 @@ export const useAttackFormState = () => {
       type: 'melee',
       reach: '5 фт.',
       target: 'одна цель',
-      range: undefined
+      range: undefined,
     });
     setEditIndex(null);
   };
@@ -78,10 +83,12 @@ export const useAttackFormState = () => {
   };
 
   const handleRemoveAttack = (index: number) => {
-    dispatch(generatedCreatureActions.removeAttackLLM({
-      id: SINGLE_CREATURE_ID,
-      index
-    }));
+    dispatch(
+      generatedCreatureActions.removeAttackLLM({
+        id: SINGLE_CREATURE_ID,
+        index,
+      }),
+    );
 
     if (editIndex === index) {
       setEditIndex(null);
@@ -98,6 +105,6 @@ export const useAttackFormState = () => {
     handleRangeChange,
     handleSubmit,
     handleEditAttack,
-    handleRemoveAttack
+    handleRemoveAttack,
   };
 };

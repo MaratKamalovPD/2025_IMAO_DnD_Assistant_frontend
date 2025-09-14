@@ -36,11 +36,11 @@ export const DamageTypesForm: React.FC = () => {
   ) as UserInterfaceState;
 
   const selectedCreature = useSelector<CreaturesStore>((state) =>
-    creatureSelectors.selectById(state, selectedCreatureId || ''),
+    creatureSelectors.selectById(state, selectedCreatureId ?? ''),
   ) as Creature | undefined;
 
   const currentTurnCreature = useSelector<CreaturesStore>((state) =>
-    creatureSelectors.selectById(state, participants[currentTurnIndex]?.id || ''),
+    creatureSelectors.selectById(state, participants[currentTurnIndex]?.id ?? ''),
   ) as Creature | undefined;
 
   const handleDamageTypeChange = useCallback((option: DamageTypeOption | null) => {
@@ -57,11 +57,11 @@ export const DamageTypesForm: React.FC = () => {
   const handleDealDamage = useCallback(() => {
     dispatch(
       creatureActions.updateCurrentByDelta({
-        id: selectedCreatureId || '',
+        id: selectedCreatureId ?? '',
         delta: damageAmount,
       }),
     );
-  }, [selectedCreatureId, damageAmount]);
+  }, [dispatch, selectedCreatureId, damageAmount]);
 
   return (
     <div className={s.damageTypesForm}>
@@ -92,8 +92,8 @@ export const DamageTypesForm: React.FC = () => {
       </label>
 
       <div className={s.debugInfo}>
-        <p>Текущий участник: {currentTurnCreature?.name || 'Не выбрано'}</p>
-        <p>Выбранное существо: {selectedCreature?.name || 'Не выбрано'}</p>
+        <p>Текущий участник: {currentTurnCreature?.name ?? 'Не выбрано'}</p>
+        <p>Выбранное существо: {selectedCreature?.name ?? 'Не выбрано'}</p>
       </div>
 
       <button type='button' data-variant='primary' onClick={handleDealDamage}>

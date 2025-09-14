@@ -1,14 +1,14 @@
 import React from 'react';
 import s from './DamageLanguageSection.module.scss';
 
-interface DamageLanguageSectionProps {
+type DamageLanguageSectionProps = {
   title: string;
   children: React.ReactNode;
-}
+};
 
-export const DamageLanguageSection: React.FC<DamageLanguageSectionProps> = ({ 
-  title, 
-  children 
+export const DamageLanguageSection: React.FC<DamageLanguageSectionProps> = ({
+  title,
+  children,
 }) => (
   <div className={s.damageLanguagesPanel__section}>
     <h3 className={s.damageLanguagesPanel__sectionTitle}>{title}</h3>

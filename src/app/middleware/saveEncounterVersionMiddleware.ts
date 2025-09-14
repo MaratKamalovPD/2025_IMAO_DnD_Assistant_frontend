@@ -22,15 +22,17 @@ saveEncounterVersionMiddleware.startListening({
 
     if (state.encounter.encounterId === null) {
       if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
         console.log('Отмена обновления saveVersion');
       }
       listenerApi.cancel();
     }
 
     if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
       console.log('Обновлен saveVersion');
     }
     listenerApi.cancelActiveListeners();
-    listenerApi.dispatch(setNewSaveEncounterVersion());
+    void listenerApi.dispatch(setNewSaveEncounterVersion());
   },
 });

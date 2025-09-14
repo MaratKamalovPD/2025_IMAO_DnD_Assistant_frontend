@@ -39,7 +39,7 @@ export const Chatbot = () => {
           />
         </div>
       )}
-      <Tippy content={'Журнал сражения'} placement='left'>
+      <Tippy content='Журнал сражения' placement='left'>
         <button className={s.chatbotButton} onClick={() => toggleBot((prev) => !prev)}>
           {!showBot ? <Icon28BookOutline /> : <Icon28CancelAltOutline />}
         </button>

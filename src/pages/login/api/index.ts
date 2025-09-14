@@ -1,7 +1,7 @@
 export {
   default as authApi,
+  useCheckAuthQuery,
   useLazyLoginQuery,
-  useCheckAuthQuery, 
   useLazyLogoutQuery,
 } from './auth.api';
 

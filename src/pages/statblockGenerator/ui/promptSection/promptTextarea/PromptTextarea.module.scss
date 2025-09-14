@@ -20,7 +20,9 @@
   font-size: 16px;
   resize: none;
   outline: none;
-  transition: border-color 0.2s, background-color 0.2s;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
 
   &:focus {
     border-color: var(--primary-btn-color);

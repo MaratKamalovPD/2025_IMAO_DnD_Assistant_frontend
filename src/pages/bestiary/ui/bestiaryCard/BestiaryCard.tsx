@@ -59,7 +59,7 @@ export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSele
       .catch(() => {
         toast.error(`Упс, что-то пошло не так :(`);
       });
-  }, [creature.url, trigger]);
+  }, [creature.url, dispatch, participants.length, trigger]);
 
   return (
     <div
@@ -67,7 +67,9 @@ export const BestiaryCard: FC<BestiaryCardProps> = ({ creature, viewMode, isSele
         e.stopPropagation();
         e.preventDefault();
         e.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        navigate(type === 'moder' ? creature.url : insertAfterSecondSlash(creature.url, 'user'));
+        void navigate(
+          type === 'moder' ? creature.url : insertAfterSecondSlash(creature.url, 'user'),
+        );
       }}
       className={s.cardLink}
     >

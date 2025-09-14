@@ -1,12 +1,12 @@
-import React from 'react';
-import s from './AnimatedCheckbox.module.scss';
-import { ShieldIcon } from './icons/ShieldIcon';
 import { CheckShieldIcon } from './icons/CheckShieldIcon';
+import { ShieldIcon } from './icons/ShieldIcon';
 
-interface AnimatedCheckboxProps {
+import s from './AnimatedCheckbox.module.scss';
+
+type AnimatedCheckboxProps = {
   checked: boolean;
   onChange: (value: boolean) => void;
-}
+};
 
 export const AnimatedCheckbox: React.FC<AnimatedCheckboxProps> = ({ checked, onChange }) => {
   return (

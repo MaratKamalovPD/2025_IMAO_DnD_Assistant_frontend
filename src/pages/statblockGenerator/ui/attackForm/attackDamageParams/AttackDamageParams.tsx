@@ -1,14 +1,25 @@
+import clsx from 'clsx';
 import { DamageLLM } from 'entities/creature/model';
 import s from './AttackDamageParams.module.scss';
-import clsx from 'clsx';
 
 const diceOptions = ['d4', 'd6', 'd8', 'd10', 'd12', 'd20'];
-const damageTypes = ['колющий', 'рубящий', 'дробящий', 'огонь', 'холод', 'электричество', 'кислота', 'яд', 'психический', 'силовое'];
+const damageTypes = [
+  'колющий',
+  'рубящий',
+  'дробящий',
+  'огонь',
+  'холод',
+  'электричество',
+  'кислота',
+  'яд',
+  'психический',
+  'силовое',
+];
 
-interface AttackDamageParamsProps {
+type AttackDamageParamsProps = {
   damage: DamageLLM;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-}
+};
 
 export const AttackDamageParams = ({ damage, onInputChange }: AttackDamageParamsProps) => {
   return (
@@ -22,9 +33,9 @@ export const AttackDamageParams = ({ damage, onInputChange }: AttackDamageParams
           <span className={s.attackForm__statsElement__text}>Количество костей</span>
           <input
             className={s.attackForm__statsElement__input}
-            type="number"
-            name="count"
-            min="1"
+            type='number'
+            name='count'
+            min='1'
             value={damage.count}
             onChange={onInputChange}
             required
@@ -34,13 +45,18 @@ export const AttackDamageParams = ({ damage, onInputChange }: AttackDamageParams
         <div className={s.attackForm__statsElement}>
           <span className={s.attackForm__statsElement__text}>Тип кости</span>
           <select
-            className={clsx(s.attackForm__statsElement__select, s.attackForm__statsElement__selectDice)}
-            name="dice"
+            className={clsx(
+              s.attackForm__statsElement__select,
+              s.attackForm__statsElement__selectDice,
+            )}
+            name='dice'
             value={damage.dice}
             onChange={onInputChange}
           >
-            {diceOptions.map(dice => (
-              <option key={dice} value={dice}>{dice}</option>
+            {diceOptions.map((dice) => (
+              <option key={dice} value={dice}>
+                {dice}
+              </option>
             ))}
           </select>
         </div>
@@ -48,13 +64,18 @@ export const AttackDamageParams = ({ damage, onInputChange }: AttackDamageParams
         <div className={s.attackForm__statsElement}>
           <span className={s.attackForm__statsElement__text}>Тип урона</span>
           <select
-            className={clsx(s.attackForm__statsElement__select, s.attackForm__statsElement__selectDamage)}
-            name="type"
+            className={clsx(
+              s.attackForm__statsElement__select,
+              s.attackForm__statsElement__selectDamage,
+            )}
+            name='type'
             value={damage.type}
             onChange={onInputChange}
           >
-            {damageTypes.map(type => (
-              <option key={type} value={type}>{type}</option>
+            {damageTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
             ))}
           </select>
         </div>
@@ -63,8 +84,8 @@ export const AttackDamageParams = ({ damage, onInputChange }: AttackDamageParams
           <span className={s.attackForm__statsElement__text}>Бонус к урону</span>
           <input
             className={s.attackForm__statsElement__input}
-            type="number"
-            name="bonus"
+            type='number'
+            name='bonus'
             value={damage.bonus}
             onChange={onInputChange}
             required

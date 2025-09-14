@@ -1,13 +1,14 @@
 import { Link } from 'react-router';
+
 import s from './Placeholder.module.scss';
 
-interface PlaceholderProps {
+type PlaceholderProps = {
   title?: string;
   subtitle?: string;
   buttonText?: string;
   buttonLink?: string;
   variant?: 'primary' | 'secondary';
-}
+};
 
 export const Placeholder = ({
   title = 'В трекере пусто :(',

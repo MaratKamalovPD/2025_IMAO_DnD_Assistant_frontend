@@ -1,1 +1,1 @@
-export { FightStatsSection } from './FightStatsSection' 
+export { FightStatsSection } from './FightStatsSection';

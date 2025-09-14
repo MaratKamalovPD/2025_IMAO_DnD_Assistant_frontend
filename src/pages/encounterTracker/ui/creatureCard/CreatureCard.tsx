@@ -36,10 +36,6 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
   const { attackHandleModeActive, attackHandleModeMulti, selectedCreatureId } =
     useSelector<UserInterfaceStore>((state) => state.userInterface) as UserInterfaceState;
 
-  if (!creature) return null;
-
-  const hpPercentage = Math.floor((creature.hp.current / creature.hp.max) * 100);
-
   const handleClick = useCallback(() => {
     if (!attackHandleModeActive) {
       dispatch(userInterfaceActions.selectCreature(id));
@@ -49,7 +45,11 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
     } else {
       dispatch(userInterfaceActions.selectAttackedCreature(id));
     }
-  }, [attackHandleModeActive, attackHandleModeMulti]);
+  }, [attackHandleModeActive, attackHandleModeMulti, dispatch, id]);
+
+  if (!creature) return null;
+
+  const hpPercentage = Math.floor((creature.hp.current / creature.hp.max) * 100);
 
   const cardClasses = clsx(s.card, {
     [s.card__blue]: creature.type === 'character',
@@ -83,7 +83,7 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
 
       <div className={s.imageContainer}>
         <img
-          src={creature.image || placeholderImage}
+          src={creature.image ?? placeholderImage}
           alt={creature.name}
           className={s.image}
           onError={(e) => {
@@ -91,23 +91,25 @@ export const CreatureCard = ({ id, handleContextMenu }: CreatureCardProps) => {
           }}
         />
         <div className={s.conditionsContainer}>
-          {creature.conditions?.map((condition, ind) => {
+          {creature.conditions?.map((condition) => {
             const normalizedConditionName = normalizeString(condition);
             const { icon, instance } = findConditionInstance(normalizedConditionName);
 
             return (
-              <Tippy content={instance ? instance.label.ru : condition}>
-                <div key={ind}>
-                  {icon && <img src={icon} alt={condition} className={s.conditionIcon} />}
-                </div>
-              </Tippy>
+              <div key={normalizedConditionName}>
+                <Tippy content={instance ? instance.label.ru : condition}>
+                  <div>
+                    {icon && <img src={icon} alt={condition} className={s.conditionIcon} />}
+                  </div>
+                </Tippy>
+              </div>
             );
           })}
         </div>
       </div>
 
       <div className={infoClasses}>
-        <Tippy content={'Класс брони'}>
+        <Tippy content='Класс брони'>
           <div className={clsx(s.shield, s.shield__outer)}>
             <div className={clsx(s.shield, s.shield__inner)}>{creature.ac}</div>
           </div>

@@ -1,2 +1,2 @@
 export { PopupMenu } from './PopupMenu';
-export type { MenuItemContent, MenuItem } from './PopupMenu';
+export type { MenuItem, MenuItemContent } from './PopupMenu';

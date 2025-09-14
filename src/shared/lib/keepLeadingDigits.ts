@@ -1,5 +1,5 @@
 export const keepLeadingDigits = (str: string) => {
-  const match = str.match(/\d+/);
+  const match = /\d+/.exec(str);
 
   return match ? match[0] : '';
 };

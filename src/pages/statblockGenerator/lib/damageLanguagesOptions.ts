@@ -1,5 +1,5 @@
-import { Language } from 'shared/lib';
 import { SelectOption } from 'pages/statblockGenerator/model';
+import { Language } from 'shared/lib';
 
 export const getDamageTypeOptions = (language: Language): SelectOption[] => [
   { value: 'acid', label: language === 'ru' ? 'Кислота' : 'Acid' },
@@ -15,19 +15,19 @@ export const getDamageTypeOptions = (language: Language): SelectOption[] => [
   { value: 'radiant', label: language === 'ru' ? 'Излучение' : 'Radiant' },
   { value: 'slashing', label: language === 'ru' ? 'Режущий' : 'Slashing' },
   { value: 'thunder', label: language === 'ru' ? 'Гром' : 'Thunder' },
-  { 
-    value: 'bludgeoning, piercing, and slashing from nonmagical attacks', 
-    label: language === 'ru' ? 'Немагические атаки' : 'Nonmagical Attacks' 
+  {
+    value: 'bludgeoning, piercing, and slashing from nonmagical attacks',
+    label: language === 'ru' ? 'Немагические атаки' : 'Nonmagical Attacks',
   },
-  { 
-    value: "bludgeoning, piercing, and slashing from nonmagical attacks that aren't silvered", 
-    label: language === 'ru' ? 'Несеребряные атаки' : 'Non-Silvered Attacks' 
+  {
+    value: "bludgeoning, piercing, and slashing from nonmagical attacks that aren't silvered",
+    label: language === 'ru' ? 'Несеребряные атаки' : 'Non-Silvered Attacks',
   },
-  { 
-    value: "bludgeoning, piercing, and slashing from nonmagical attacks that aren't adamantine", 
-    label: language === 'ru' ? 'Неадамантиновые атаки' : 'Non-Adamantine Attacks' 
+  {
+    value: "bludgeoning, piercing, and slashing from nonmagical attacks that aren't adamantine",
+    label: language === 'ru' ? 'Неадамантиновые атаки' : 'Non-Adamantine Attacks',
   },
-  { value: '*', label: language === 'ru' ? 'Другое' : 'Other' }
+  { value: '*', label: language === 'ru' ? 'Другое' : 'Other' },
 ];
 
 export const getLanguageOptions = (language: Language): SelectOption[] => [
@@ -52,19 +52,19 @@ export const getLanguageOptions = (language: Language): SelectOption[] => [
   { value: 'Sylvan', label: language === 'ru' ? 'Сильван' : 'Sylvan' },
   { value: 'Terran', label: language === 'ru' ? 'Терран' : 'Terran' },
   { value: 'Undercommon', label: language === 'ru' ? 'Подземный' : 'Undercommon' },
-  { value: '*', label: language === 'ru' ? 'Другой' : 'Other' }
+  { value: '*', label: language === 'ru' ? 'Другой' : 'Other' },
 ];
 
 export const getUnderstandsSuffix = (language: Language, understandsBut: string): string => {
-  return language === 'ru' 
-    ? ` (понимает, но ${understandsBut})` 
+  return language === 'ru'
+    ? ` (понимает, но ${understandsBut})`
     : ` (understands but ${understandsBut})`;
 };
 
 export const DAMAGE_DISPLAY_MAP: Record<string, string> = {
-  'дробящий, колющий и рубящий урон от немагических атак': 'Немагические атаки'
+  'дробящий, колющий и рубящий урон от немагических атак': 'Немагические атаки',
 };
 
 export const DAMAGE_INTERNAL_MAP = Object.fromEntries(
-  Object.entries(DAMAGE_DISPLAY_MAP).map(([key, value]) => [value, key])
+  Object.entries(DAMAGE_DISPLAY_MAP).map(([key, value]) => [value, key]),
 );

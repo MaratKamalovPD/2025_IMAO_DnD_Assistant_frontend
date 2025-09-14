@@ -19,11 +19,11 @@ import s from './CreatureStatblock.module.scss';
 
 import imgPlaceholder from 'shared/assets/images/logo.png';
 
-interface CreatureStatblockProps {
+type CreatureStatblockProps = {
   creature?: CreatureFullData;
   onJump?: (target: JumpTarget) => void;
   triggerGlow?: (id: string) => void;
-}
+};
 
 export const CreatureStatblock = ({
   creature: creatureProp,
@@ -45,7 +45,7 @@ export const CreatureStatblock = ({
 
   useEffect(() => {
     if (!creatureName && !creatureProp) {
-      navigate(bestiaryPath);
+      void navigate(bestiaryPath);
     }
   }, [creatureName, creatureProp, navigate]);
 
@@ -88,7 +88,7 @@ export const CreatureStatblock = ({
 
             <span onClick={() => triggerGlow?.('type')}>
               {creature.type.name}
-              {creature.type.tags ? ` (${creature.type.tags})` : ''},&nbsp;
+              {creature.type.tags ? <> ({creature.type.tags})</> : ''},&nbsp;
             </span>
 
             <span onClick={() => triggerGlow?.('alignment')}>{creature.alignment}</span>
@@ -102,26 +102,26 @@ export const CreatureStatblock = ({
           </div>
         </div>
         <div className={s.mainContainer}>
-        <div className={s.mainContainer__image}>
-          {creature.images[0] ? (
-            <img src={creature.images[0]} alt={creature.name.rus} />
-          ) : creature.imageBase64Circle ? (
-            creature.imageBase64Circle.trim() !== '' ? (
-              <img
-                src={
-                  creature.imageBase64Circle.startsWith('data:')
-                    ? creature.imageBase64Circle
-                    : `data:image/png;base64,${creature.imageBase64Circle}`
-                }
-                alt={creature.name.rus}
-              />
+          <div className={s.mainContainer__image}>
+            {creature.images[0] ? (
+              <img src={creature.images[0]} alt={creature.name.rus} />
+            ) : creature.imageBase64Circle ? (
+              creature.imageBase64Circle.trim() !== '' ? (
+                <img
+                  src={
+                    creature.imageBase64Circle.startsWith('data:')
+                      ? creature.imageBase64Circle
+                      : `data:image/png;base64,${creature.imageBase64Circle}`
+                  }
+                  alt={creature.name.rus}
+                />
+              ) : (
+                <img src={imgPlaceholder} alt='Изображение отсутствует' />
+              )
             ) : (
-              <img src={imgPlaceholder} alt="Изображение отсутствует" />
-            )
-          ) : (
-            <img src={imgPlaceholder} alt="Изображение отсутствует" />
-          )}
-        </div>
+              <img src={imgPlaceholder} alt='Изображение отсутствует' />
+            )}
+          </div>
 
           <div className={s.mainContainer__description}>
             <FightStatsSection
@@ -144,28 +144,24 @@ export const CreatureStatblock = ({
           </div>
         )}
         {creature.feats && (
-          <DescriptionSection sectionTitle={'Способности'} elements={creature.feats} />
+          <DescriptionSection sectionTitle='Способности' elements={creature.feats} />
         )}
         {creature.actions && (
-          <DescriptionSection
-            sectionTitle={'Действия'}
-            elements={creature.actions}
-            onJump={onJump}
-          />
+          <DescriptionSection sectionTitle='Действия' elements={creature.actions} onJump={onJump} />
         )}
         {creature.bonusActions && (
-          <DescriptionSection sectionTitle={'Бонусные действия'} elements={creature.bonusActions} />
+          <DescriptionSection sectionTitle='Бонусные действия' elements={creature.bonusActions} />
         )}
-        {creature.legendary && creature.legendary.list && (
+        {creature.legendary?.list && (
           <DescriptionSection
-            sectionTitle={'Легендарные действия'}
+            sectionTitle='Легендарные действия'
             elements={creature.legendary.list}
           />
         )}
         {creature.reactions && (
-          <DescriptionSection sectionTitle={'Реакции'} elements={creature.reactions} />
+          <DescriptionSection sectionTitle='Реакции' elements={creature.reactions} />
         )}
-        {creature.tags && <DescriptionSection sectionTitle={'Теги'} elements={creature.tags} />}
+        {creature.tags && <DescriptionSection sectionTitle='Теги' elements={creature.tags} />}
       </div>
     </div>
   );

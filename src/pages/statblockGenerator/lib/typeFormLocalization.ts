@@ -15,7 +15,7 @@ export const TypeFormLocalization = {
       medium: 'Medium',
       large: 'Large',
       huge: 'Huge',
-      gargantuan: 'Gargantuan'
+      gargantuan: 'Gargantuan',
     },
     types: {
       aberration: 'Aberration',
@@ -32,8 +32,8 @@ export const TypeFormLocalization = {
       ooze: 'Ooze',
       plant: 'Plant',
       undead: 'Undead',
-      other: 'Other'
-    }
+      other: 'Other',
+    },
   },
   ru: {
     title: 'Тип существа',
@@ -49,7 +49,7 @@ export const TypeFormLocalization = {
       medium: 'Средний',
       large: 'Большой',
       huge: 'Огромный',
-      gargantuan: 'Громадный'
+      gargantuan: 'Громадный',
     },
     types: {
       aberration: 'Аберрация',
@@ -66,32 +66,33 @@ export const TypeFormLocalization = {
       ooze: 'Слизь',
       plant: 'Растение',
       undead: 'Нежить',
-      other: 'Другое'
-    }
+      other: 'Другое',
+    },
+  },
+} as const satisfies Record<
+  Language,
+  {
+    title: string;
+    name: string;
+    size: string;
+    type: string;
+    tag: string;
+    alignment: string;
+    otherTypePlaceholder: string;
+    sizes: Record<string, string>;
+    types: Record<string, string>;
   }
-} as const satisfies Record<Language, {
-  title: string;
-  name: string;
-  size: string;
-  type: string;
-  tag: string;
-  alignment: string;
-  otherTypePlaceholder: string;
-  sizes: Record<string, string>;
-  types: Record<string, string>;
-}>;
+>;
 
 export const mapCreatureType = (
   value: string,
   fromLang: Language,
-  toLang: Language
+  toLang: Language,
 ): string | undefined => {
   const fromTypes = TypeFormLocalization[fromLang].types;
   const toTypes = TypeFormLocalization[toLang].types;
 
-  const entry = Object.entries(fromTypes).find(
-    ([, localizedValue]) => localizedValue === value
-  );
+  const entry = Object.entries(fromTypes).find(([, localizedValue]) => localizedValue === value);
 
   if (!entry) return undefined;
 
@@ -102,7 +103,7 @@ export const mapCreatureType = (
 
 export const getKeyByLocalizedValue = (
   localizedValue: string,
-  section: 'types' | 'sizes'
+  section: 'types' | 'sizes',
 ): string | undefined => {
   const normalizedValue = capitalizeFirstLetter(localizedValue.trim());
 
@@ -119,14 +120,12 @@ export const getKeyByLocalizedValue = (
 export const mapCreatureSize = (
   value: string,
   fromLang: Language,
-  toLang: Language
+  toLang: Language,
 ): string | undefined => {
   const fromSizes = TypeFormLocalization[fromLang].sizes;
   const toSizes = TypeFormLocalization[toLang].sizes;
 
-  const entry = Object.entries(fromSizes).find(
-    ([, localizedValue]) => localizedValue === value
-  );
+  const entry = Object.entries(fromSizes).find(([, localizedValue]) => localizedValue === value);
 
   if (!entry) return undefined;
 
@@ -144,12 +143,12 @@ export const getCellSizeDescription = (size: string): string | undefined => {
     huge: 'huge',
     gargantuan: 'gargantuan',
 
-    'Крошечный': 'tiny',
-    'Маленький': 'small',
-    'Средний': 'medium',
-    'Большой': 'large',
-    'Огромный': 'huge',
-    'Громадный': 'gargantuan'
+    Крошечный: 'tiny',
+    Маленький: 'small',
+    Средний: 'medium',
+    Большой: 'large',
+    Огромный: 'huge',
+    Громадный: 'gargantuan',
   };
 
   const sizeDescriptions: Record<
@@ -161,15 +160,10 @@ export const getCellSizeDescription = (size: string): string | undefined => {
     medium: '1 клетка',
     large: '2x2 клетки',
     huge: '3x3 клетки',
-    gargantuan: '4x4 клетки или больше'
+    gargantuan: '4x4 клетки или больше',
   };
 
-  const key = sizeKeyMap[size.toLowerCase() as keyof typeof sizeKeyMap] ||
-              sizeKeyMap[size as keyof typeof sizeKeyMap];
+  const key = sizeKeyMap[size.toLowerCase()] || sizeKeyMap[size];
 
   return key ? sizeDescriptions[key] : undefined;
 };
-
-
-
-

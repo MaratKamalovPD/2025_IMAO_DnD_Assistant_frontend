@@ -9,7 +9,7 @@ export const PropertiesListsLocalization = {
     proficient: 'Proficient',
     expert: 'Expert',
     immune: 'Immune',
-    remove: 'Remove'
+    remove: 'Remove',
   },
   ru: {
     title: 'Особые свойства',
@@ -19,15 +19,18 @@ export const PropertiesListsLocalization = {
     proficient: 'Владение',
     expert: 'Эксперт',
     immune: 'Иммунитет',
-    remove: 'Удалить'
+    remove: 'Удалить',
+  },
+} as const satisfies Record<
+  Language,
+  {
+    title: string;
+    savingThrows: string;
+    skills: string;
+    conditionImmunities: string;
+    proficient: string;
+    expert: string;
+    immune: string;
+    remove: string;
   }
-} as const satisfies Record<Language, {
-  title: string;
-  savingThrows: string;
-  skills: string;
-  conditionImmunities: string;
-  proficient: string;
-  expert: string;
-  immune: string;
-  remove: string;
-}>;
+>;

@@ -1,9 +1,8 @@
 export {
-    default as bestiaryApi,
-    useGetCreaturesQuery,
-    useLazyGetCreatureByNameQuery,
-    useGetCreatureByNameQuery
-  } from './statblockGenerator.api';
-  
-  export type { GetCreaturesRequest } from './statblockGenerator.api';
-  
+  default as bestiaryApi,
+  useGetCreatureByNameQuery,
+  useGetCreaturesQuery,
+  useLazyGetCreatureByNameQuery,
+} from './statblockGenerator.api';
+
+export type { GetCreaturesRequest } from './statblockGenerator.api';

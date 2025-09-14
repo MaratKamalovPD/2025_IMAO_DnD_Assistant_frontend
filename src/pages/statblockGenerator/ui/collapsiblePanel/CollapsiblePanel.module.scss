@@ -1,52 +1,52 @@
 .panel {
-    border-radius: 15px;
-    background-color: var(--primary-bg-color);
+  border-radius: 15px;
+  background-color: var(--primary-bg-color);
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+  border: 2.5px solid black;
+  margin-bottom: 20px;
+
+  &__header {
     display: flex;
-    flex-direction: column;
-    padding: 25px;
-    border: 2.5px solid black;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
     margin-bottom: 20px;
-  
-    &__header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      margin-bottom: 20px;
-      cursor: pointer;
-      position: relative;
-    }
-  
-    &__title {
-      color: var(--primary-btn-color);
-      font-weight: bold;
-      font-size: 24px;
-      margin: 0;
-    }
-  
-    &__toggleButton {
-      position: absolute;
-      right: 0;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary-btn-color);
-  
-      &:hover {
-        opacity: 0.8;
-      }
-    }
-  
-    &__toggleIcon {
-      transition: transform 0.3s ease;
-      color: var(--primary-btn-color);
-  
-      &_rotated {
-        transform: rotate(180deg);
-      }
+    cursor: pointer;
+    position: relative;
+  }
+
+  &__title {
+    color: var(--primary-btn-color);
+    font-weight: bold;
+    font-size: 24px;
+    margin: 0;
+  }
+
+  &__toggleButton {
+    position: absolute;
+    right: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-btn-color);
+
+    &:hover {
+      opacity: 0.8;
     }
   }
+
+  &__toggleIcon {
+    transition: transform 0.3s ease;
+    color: var(--primary-btn-color);
+
+    &_rotated {
+      transform: rotate(180deg);
+    }
+  }
+}

@@ -6,15 +6,18 @@ import {
 } from 'entities/generatedCreature/model';
 import { getSenseNameMap, SensesLocalization } from 'pages/statblockGenerator/lib';
 import { SensesFormProps } from 'pages/statblockGenerator/model';
-import { CollapsiblePanel, CollapsiblePanelRef } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import {
+  CollapsiblePanel,
+  CollapsiblePanelRef,
+} from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { SenseInput } from 'pages/statblockGenerator/ui/sensesForm/senseInput';
-import { forwardRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import s from './SensesForm.module.scss';
 
-
-
-export const SensesForm = forwardRef<CollapsiblePanelRef, SensesFormProps>(({ language = 'en' }, ref) => {
+export const SensesForm = ({
+  ref,
+  language = 'en',
+}: SensesFormProps & { ref?: React.RefObject<CollapsiblePanelRef | null> }) => {
   const t = SensesLocalization[language];
   const senseNames = getSenseNameMap(language);
 
@@ -26,7 +29,7 @@ export const SensesForm = forwardRef<CollapsiblePanelRef, SensesFormProps>(({ la
 
   const senseArray = generatedCreature?.senses?.senses ?? [];
 
-  const applicableForBlindBeyond: Array<keyof typeof senseNames> = ['blindsight', 'tremorsense'];
+  const applicableForBlindBeyond: (keyof typeof senseNames)[] = ['blindsight', 'tremorsense'];
 
   const getSenseValue = (senseKey: keyof typeof senseNames): number => {
     const senseName = senseNames[senseKey];
@@ -35,7 +38,7 @@ export const SensesForm = forwardRef<CollapsiblePanelRef, SensesFormProps>(({ la
 
   const updateSense = (senseKey: keyof typeof senseNames, value: number) => {
     const senseName = senseNames[senseKey];
-    let updated = [...senseArray];
+    const updated = [...senseArray];
 
     const index = updated.findIndex((s) => s.name === senseName);
 
@@ -109,4 +112,4 @@ export const SensesForm = forwardRef<CollapsiblePanelRef, SensesFormProps>(({ la
       </div>
     </CollapsiblePanel>
   );
-});
+};

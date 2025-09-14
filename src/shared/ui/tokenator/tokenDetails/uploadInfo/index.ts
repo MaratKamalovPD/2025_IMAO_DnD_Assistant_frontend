@@ -1,1 +1,1 @@
-export { UploadInfo } from './UploadInfo'
+export { UploadInfo } from './UploadInfo';

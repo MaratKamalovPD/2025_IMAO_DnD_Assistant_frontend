@@ -1,1 +1,1 @@
-export { GridCard } from './GridCard'
+export { GridCard } from './GridCard';

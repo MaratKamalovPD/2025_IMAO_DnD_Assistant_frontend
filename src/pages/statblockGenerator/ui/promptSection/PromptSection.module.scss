@@ -1,169 +1,167 @@
 .promptSection {
-    
-    gap: 25px;
-    border-radius: 15px;
-    background-color: var(--primary-bg-color);
+  gap: 25px;
+  border-radius: 15px;
+  background-color: var(--primary-bg-color);
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+  border: 3px solid black;
+  margin-bottom: 20px;
+
+  &__textarea {
+    width: 100%;
+    max-width: 691px;
+    height: 128px;
+    padding: 12px;
+    background: #3a3a50;
+    border-radius: 8px;
+    border: 1px solid #757575;
+    color: white;
+    font-family: 'ABeeZee', sans-serif;
+    font-size: 16px;
+    resize: vertical;
+    align-self: center;
+    resize: none;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary-btn-color);
+    }
+  }
+
+  &__buttonContainer {
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    padding: 25px;
-    border: 3px solid black;
-    margin-bottom: 20px;
-  
-    &__textarea {
-      width: 100%;
-      max-width: 691px;
-      height: 128px;
-      padding: 12px;
-      background: #3A3A50;
-      border-radius: 8px;
-      border: 1px solid #757575;
-      color: white;
-      font-family: 'ABeeZee', sans-serif;
-      font-size: 16px;
-      resize: vertical;
-      align-self: center;
-      resize: none;
-  
-      &:focus {
-        outline: none;
-        border-color: var(--primary-btn-color);
-      }
+    justify-content: center;
+  }
+
+  &__button {
+    padding: 8px 16px;
+    background: var(--primary-btn-color);
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: white;
+    font-family: 'ABeeZee', sans-serif;
+    font-size: 16px;
+    line-height: 20px;
+
+    &:hover {
+      background: #e05a4e;
     }
-  
-    &__buttonContainer {
-      width: 100%;
-      display: flex;
-      justify-content: center;
+
+    &:active {
+      transform: translateY(1px);
     }
-  
-    &__button {
-      padding: 8px 16px;
-      background: var(--primary-btn-color);
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      color: white;
-      font-family: 'ABeeZee', sans-serif;
-      font-size: 16px;
-      line-height: 20px;
-  
-      &:hover {
-        background: #E05A4E;
-      }
-  
-      &:active {
-        transform: translateY(1px);
-      }
+  }
+
+  &__presetsContainer {
+    width: 100%;
+    max-width: 864px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-self: center;
+  }
+
+  &__presetsLabel {
+    font-family: 'ABeeZee', sans-serif;
+    font-size: 16px;
+    color: #fdf6f6;
+    line-height: 20px;
+  }
+
+  &__presetsDropdown {
+    flex-grow: 1;
+    max-width: 300px;
+  }
+
+  &__presetSelect {
+    width: 100%;
+    height: 24px;
+    padding: 0 8px;
+    background: #3a3a50;
+    border-radius: 8px;
+    border: 1px solid #757575;
+    color: white;
+    font-family: 'ABeeZee', sans-serif;
+    font-size: 12.8px;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary-btn-color);
     }
-  
+  }
+
+  &__uploadContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+  }
+
+  &__uploadLabel {
+    padding: 10px 20px;
+    background: #4a4a6a;
+    border-radius: 8px;
+    border: 1px dashed #757575;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: white;
+    font-family: 'ABeeZee', sans-serif;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 300px;
+
+    &:hover {
+      background: #5a5a7a;
+      border-color: #ff6f61;
+    }
+  }
+
+  &__uploadInput {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
     &__presetsContainer {
-      width: 100%;
-      max-width: 864px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-self: center;
+      flex-direction: column;
+      align-items: stretch;
     }
-  
-    &__presetsLabel {
-      font-family: 'ABeeZee', sans-serif;
-      font-size: 16px;
-      color: #FDF6F6;
-      line-height: 20px;
-    }
-  
+
     &__presetsDropdown {
-      flex-grow: 1;
-      max-width: 300px;
-    }
-  
-    &__presetSelect {
-      width: 100%;
-      height: 24px;
-      padding: 0 8px;
-      background: #3A3A50;
-      border-radius: 8px;
-      border: 1px solid #757575;
-      color: white;
-      font-family: 'ABeeZee', sans-serif;
-      font-size: 12.8px;
-      cursor: pointer;
-  
-      &:focus {
-        outline: none;
-        border-color: var(--primary-btn-color);
-      }
-    }
-
-    &__uploadContainer {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin: 10px 0;
-    }
-  
-    &__uploadLabel {
-      padding: 10px 20px;
-      background: #4A4A6A;
-      border-radius: 8px;
-      border: 1px dashed #757575;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: white;
-      font-family: 'ABeeZee', sans-serif;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      max-width: 300px;
-  
-      &:hover {
-        background: #5A5A7A;
-        border-color: #FF6F61;
-      }
-    }
-  
-    &__uploadInput {
-      display: none;
-    }
-  
-    @media (max-width: 768px) {
-      &__presetsContainer {
-        flex-direction: column;
-        align-items: stretch;
-      }
-  
-      &__presetsDropdown {
-        max-width: 100%;
-      }
+      max-width: 100%;
     }
   }
+}
 
-  .progressWrapper {
-    overflow: visible;
-    max-height: 300px;
+.progressWrapper {
+  overflow: visible;
+  max-height: 300px;
+  opacity: 1;
+  transition-property: opacity, max-height;
+  transition-timing-function: ease;
+
+  // 👇 Быстрое появление
+  &[data-visible='true'] {
+    transition-duration: 0.2s;
     opacity: 1;
-    transition-property: opacity, max-height;
-    transition-timing-function: ease;
-  
-    // 👇 Быстрое появление
-    &[data-visible='true'] {
-      transition-duration: 0.2s;
-      opacity: 1;
-      max-height: 300px;
-      pointer-events: auto;
-    }
-  
-    // 👇 Медленное исчезновение
-    &[data-visible='false'] {
-      transition-duration: 3.6s;
-      opacity: 0;
-      max-height: 0;
-      pointer-events: none;
-    }
+    max-height: 300px;
+    pointer-events: auto;
   }
-  
+
+  // 👇 Медленное исчезновение
+  &[data-visible='false'] {
+    transition-duration: 3.6s;
+    opacity: 0;
+    max-height: 0;
+    pointer-events: none;
+  }
+}

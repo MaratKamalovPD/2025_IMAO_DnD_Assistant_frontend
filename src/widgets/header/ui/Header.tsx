@@ -53,7 +53,7 @@ export const Header = () => {
   }, []);
 
   useEffect(() => {
-    if (/encounter_tracker/.test(location.pathname)) {
+    if (location.pathname.includes('encounter_tracker')) {
       setVisible(false);
       return;
     }
@@ -90,11 +90,8 @@ export const Header = () => {
         <div className={s.rightSection}>
           <Link
             to={
-              sessionUrl
-                ? sessionUrl
-                : encounterId
-                  ? `/encounter_tracker/${encounterId}`
-                  : '/encounter_tracker'
+              sessionUrl ??
+              (encounterId ? `/encounter_tracker/${encounterId}` : '/encounter_tracker')
             }
           >
             <button data-variant='accent'>Трекер</button>
@@ -124,7 +121,7 @@ export const Header = () => {
                     <div className={s.dropdownContainer__btn}>Персонажи</div>
                   </Link>
                   <Link to='#'>
-                    <div className={s.dropdownContainer__btn} onClick={() => logout?.()}>
+                    <div className={s.dropdownContainer__btn} onClick={() => void logout?.()}>
                       Выйти
                     </div>
                   </Link>

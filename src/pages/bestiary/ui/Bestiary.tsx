@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Outlet, useParams } from 'react-router';
 
 import { CreatureClippedData } from 'entities/creature/model/types';
@@ -47,13 +47,16 @@ export const Bestiary = ({ type }: BestiaryProps) => {
 
 const BestiaryContent = () => {
   const { creatureName } = useParams();
-  const type = useTypeContext();
+  const prevCreatureName = useRef<string>('');
+  useEffect(() => {
+    if (creatureName) prevCreatureName.current = creatureName;
+  });
 
+  const type = useTypeContext();
   const [memoType, setMemoType] = useState(type);
   if (memoType !== type) {
     setMemoType(type);
   }
-
   const title = type === 'moder' ? 'Бестиарий' : 'Мой Бестиарий';
   const useGetCreatures = type === 'moder' ? useGetCreaturesQuery : useGetUserCreaturesQuery;
 
@@ -66,25 +69,32 @@ const BestiaryContent = () => {
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
   const hasOutlet = creatureName !== undefined;
 
-  const [selectedCreatureName, setSelectedCreatureName] = useState<string | undefined>('');
-  const [prevCreatureName, setPrevCreatureName] = useState<string | undefined>('');
-
-  useEffect(() => {
-    setPrevCreatureName(selectedCreatureName);
-    setSelectedCreatureName(creatureName);
-  }, [creatureName]);
-
   const cardRef = useRef<HTMLDivElement | null>(null);
+  const cardContainerRef = useRef<HTMLDivElement | null>(null);
+  const [contentWidth, setContentWidth] = useState(0);
 
   useEffect(() => {
-    setTimeout(
-      () => cardRef?.current?.scrollIntoView({ behavior: 'instant', block: 'start' }),
-      150,
-    );
-  }, [hasOutlet]);
+    const observer = new ResizeObserver((entries) => {
+      const currentContentWidth = entries[0].contentRect.width;
+      if (contentWidth === currentContentWidth) return;
+
+      setContentWidth(currentContentWidth);
+
+      cardRef.current?.scrollIntoView({
+        behavior: 'instant',
+        block: 'start',
+      });
+    });
+
+    if (cardContainerRef.current) {
+      observer.observe(cardContainerRef.current);
+    }
+
+    return () => observer.disconnect();
+  });
 
   const debouncedSearchValue = useDebounce(searchValue, DEBOUNCE_TIME);
-  const setStartThrottled = throttle(setStart, THROTTLE_TIME);
+  const setStartThrottled = useMemo(() => throttle(setStart, THROTTLE_TIME), [setStart]);
 
   const handleFilterChange = useCallback((newFilters: Filters) => {
     setFilters(newFilters);
@@ -116,9 +126,7 @@ const BestiaryContent = () => {
     mapFiltersToRequestBody(filters, 0, RESPONSE_SIZE, debouncedSearchValue, orderParams),
   );
 
-  const { data: creatures, isLoading, isError, status } = useGetCreatures(requestBody);
-
-  const isPending = status === 'pending';
+  const { data: creatures, isLoading, isError } = useGetCreatures(requestBody);
 
   useEffect(() => {
     if (creatures) {
@@ -158,13 +166,13 @@ const BestiaryContent = () => {
         !isLoading &&
         hasMore
       ) {
-        setStartThrottled((prev: any) => prev + RESPONSE_SIZE);
+        setStartThrottled((prev) => prev + RESPONSE_SIZE);
       }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isLoading, hasMore]);
+  }, [isLoading, hasMore, setStartThrottled]);
 
   return (
     <div
@@ -190,22 +198,22 @@ const BestiaryContent = () => {
       </ModalOverlay>
 
       {!isLoading && (
-        <div className={s.bestiaryContent}>
-          {allCreatures.map((creature, ind) => {
+        <div className={s.bestiaryContent} ref={cardContainerRef}>
+          {allCreatures.map((creature) => {
             const lastPart = creature.url.split('/').pop();
             const isSelected =
-              lastPart === selectedCreatureName ||
-              (selectedCreatureName === undefined && lastPart === prevCreatureName);
+              lastPart === creatureName ||
+              (creatureName === undefined && lastPart === prevCreatureName.current);
 
             if (isSelected)
               return (
-                <div key={ind} ref={cardRef} className={s.selectedCard}>
+                <div key={creature._id} ref={cardRef} className={s.selectedCard}>
                   <BestiaryCard creature={creature} viewMode={viewMode} isSelected={true} />
                 </div>
               );
             else
               return (
-                <div key={ind}>
+                <div key={creature._id}>
                   <BestiaryCard creature={creature} viewMode={viewMode} isSelected={false} />
                 </div>
               );
@@ -213,7 +221,7 @@ const BestiaryContent = () => {
         </div>
       )}
 
-      {(isPending || isLoading) && (
+      {isLoading && (
         <div className={s.spinnerContainer}>
           <Spinner size={100} />
         </div>

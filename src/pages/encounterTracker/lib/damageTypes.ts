@@ -1,4 +1,3 @@
-import { Language, Option } from 'shared/lib';
 import acidIcon from 'shared/assets/images/damage_types/40px-Acid_Damage_Icon.png';
 import bludgeoningIcon from 'shared/assets/images/damage_types/40px-Bludgeoning_Damage_Icon.png';
 import coldIcon from 'shared/assets/images/damage_types/40px-Cold_Damage_Icon.png';
@@ -10,12 +9,15 @@ import piercingIcon from 'shared/assets/images/damage_types/40px-Piercing_Damage
 import poisonIcon from 'shared/assets/images/damage_types/40px-Poison_Damage_Icon.png';
 import psychicIcon from 'shared/assets/images/damage_types/40px-Psychic_Damage_Icon.png';
 import radiantIcon from 'shared/assets/images/damage_types/40px-Radiant_Damage_Icon.png';
-import slashingIcon from 'shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png';
+import {
+  default as nonadamantineIcon,
+  default as nonmagicalIcon,
+  default as nonsilveredIcon,
+  default as otherIcon,
+  default as slashingIcon,
+} from 'shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png';
 import thunderIcon from 'shared/assets/images/damage_types/40px-Thunder_Damage_Icon.png';
-import nonmagicalIcon from 'shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png';
-import nonsilveredIcon from 'shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png';
-import nonadamantineIcon from 'shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png';
-import otherIcon from 'shared/assets/images/damage_types/40px-Slashing_Damage_Icon.png';
+import { Language, Option } from 'shared/lib';
 
 export type DamageType = {
   value: DamageTypeValue;

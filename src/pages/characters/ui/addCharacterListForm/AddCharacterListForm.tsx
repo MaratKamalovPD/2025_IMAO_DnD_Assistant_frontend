@@ -14,7 +14,7 @@ type AddCharacterListFormProps = {
 
 export const AddCharacterListForm = ({ reloadTrigger, requestBody }: AddCharacterListFormProps) => {
   const [file, setFile] = useState<File>();
-  const [jsonData, setJsonData] = useState(null);
+  const [jsonData, setJsonData] = useState<unknown>(null);
   const [fileName, setFileName] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -33,9 +33,9 @@ export const AddCharacterListForm = ({ reloadTrigger, requestBody }: AddCharacte
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const parsedJson = JSON.parse(event.target?.result as string);
+        const parsedJson = JSON.parse(event.target?.result as string) as unknown;
         setJsonData(parsedJson);
-      } catch (err) {
+      } catch {
         setError('Неверный формат JSON файла');
         setJsonData(null);
       }
@@ -72,15 +72,24 @@ export const AddCharacterListForm = ({ reloadTrigger, requestBody }: AddCharacte
     <div className={s.formContainer}>
       <form
         className={clsx(s.addCharacterForm, { [s.marginTop5Rem]: jsonData })}
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit}
       >
         <div className={s.lssContainer}>
-          <a href='https://longstoryshort.app/characters/list/' target='_blank'>
+          <a
+            href='https://longstoryshort.app/characters/list/'
+            target='_blank'
+            rel='noreferrer noopener'
+          >
             <LssLogo />
           </a>
           <div>
             Мы поддерживаем интеграцию с листами персонажей{' '}
-            <a href='https://longstoryshort.app/characters/list/' target='_blank'>
+            <a
+              href='https://longstoryshort.app/characters/list/'
+              target='_blank'
+              rel='noreferrer noopener'
+            >
               Long Story Short
             </a>
           </div>
@@ -114,7 +123,7 @@ export const AddCharacterListForm = ({ reloadTrigger, requestBody }: AddCharacte
         </button>
       </form>
 
-      {jsonData && (
+      {!!jsonData && (
         <div className={s.previewContainer}>
           <h3>Предпросмотр данных:</h3>
           <pre className={s.preview}>{JSON.stringify(jsonData, null, 2)}</pre>

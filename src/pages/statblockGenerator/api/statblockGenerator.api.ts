@@ -22,7 +22,7 @@ const statblockGeneratorApi = createApi({
         method: 'POST',
         body,
       }),
-      providesTags: ['Creature']
+      providesTags: ['Creature'],
     }),
 
     getCreatureByName: builder.query<CreatureFullData, string>({
@@ -45,7 +45,7 @@ const statblockGeneratorApi = createApi({
         body: formData,
       }),
     }),
-  
+
     submitGenerationPrompt: builder.mutation<{ status: string }, { description: string }>({
       query: (body) => ({
         url: '/bestiary/creature-generation-prompt',
@@ -56,13 +56,13 @@ const statblockGeneratorApi = createApi({
   }),
 });
 
-export const { 
-    useGetCreaturesQuery,
-    useLazyGetCreatureByNameQuery,
-    useGetCreatureByNameQuery,
-    useAddCreatureMutation,
-    useUploadStatblockImageMutation,
-    useSubmitGenerationPromptMutation
-  } = statblockGeneratorApi;
+export const {
+  useGetCreaturesQuery,
+  useLazyGetCreatureByNameQuery,
+  useGetCreatureByNameQuery,
+  useAddCreatureMutation,
+  useUploadStatblockImageMutation,
+  useSubmitGenerationPromptMutation,
+} = statblockGeneratorApi;
 
 export default statblockGeneratorApi;

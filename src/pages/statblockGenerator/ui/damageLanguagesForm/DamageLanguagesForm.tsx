@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
 import {
   generatedCreatureActions,
   generatedCreatureSelectors,
@@ -12,22 +15,30 @@ import {
   getLanguageOptions,
 } from 'pages/statblockGenerator/lib';
 import { DamageLanguagesFormProps, DamageListType } from 'pages/statblockGenerator/model';
-import { CollapsiblePanel, CollapsiblePanelRef } from 'pages/statblockGenerator/ui/collapsiblePanel';
+import {
+  CollapsiblePanel,
+  CollapsiblePanelRef,
+} from 'pages/statblockGenerator/ui/collapsiblePanel';
 import { DamageLanguageSection } from 'pages/statblockGenerator/ui/damageLanguagesForm/damageLanguageSection';
 import { ListGroup } from 'pages/statblockGenerator/ui/damageLanguagesForm/listGroup';
-import React, { forwardRef, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { capitalizeFirstLetter } from 'shared/lib';
+
 import s from './DamageLanguagesForm.module.scss';
 
-export const DamageLanguagesForm = forwardRef<CollapsiblePanelRef, DamageLanguagesFormProps>(({
-  initialDamageVulnerabilities = [],
-  initialDamageResistances = [],
-  initialDamageImmunities = [],
-  initialLanguages = [],
+const defaultInitialDamageVulnerabilities: string[] = [];
+const defaultInitialDamageResistances: string[] = [];
+const defaultInitialDamageImmunities: string[] = [];
+const defaultInitialLanguages: string[] = [];
+
+export const DamageLanguagesForm = ({
+  ref,
+  initialDamageVulnerabilities = defaultInitialDamageVulnerabilities,
+  initialDamageResistances = defaultInitialDamageResistances,
+  initialDamageImmunities = defaultInitialDamageImmunities,
+  initialLanguages = defaultInitialLanguages,
   initialTelepathy = 0,
   language = 'en',
-}, ref) => {
+}: DamageLanguagesFormProps & { ref?: React.RefObject<CollapsiblePanelRef | null> }) => {
   const t = DamageLanguagesLocalization[language];
 
   const dispatch = useDispatch();
@@ -63,7 +74,7 @@ export const DamageLanguagesForm = forwardRef<CollapsiblePanelRef, DamageLanguag
       const normalized = entry.toLowerCase();
 
       if (normalized.startsWith('телепатия')) {
-        const match = normalized.match(/\d+/);
+        const match = /\d+/.exec(normalized);
         parsedTelepathy = match ? parseInt(match[0], 10) : 0;
       } else {
         parsedLanguages.push(entry);
@@ -110,8 +121,8 @@ export const DamageLanguagesForm = forwardRef<CollapsiblePanelRef, DamageLanguag
     const rawLabel =
       selectedDamageType === '*'
         ? otherDamageType
-        : damageTypeOptions.find((opt) => opt.value === selectedDamageType)?.label ||
-          selectedDamageType;
+        : (damageTypeOptions.find((opt) => opt.value === selectedDamageType)?.label ??
+          selectedDamageType);
 
     const displayLabel = capitalizeFirstLetter(rawLabel);
 
@@ -197,7 +208,8 @@ export const DamageLanguagesForm = forwardRef<CollapsiblePanelRef, DamageLanguag
     let lang =
       selectedLanguage === '*'
         ? otherLanguage
-        : languageOptions.find((opt) => opt.value === selectedLanguage)?.label || selectedLanguage;
+        : (languageOptions.find((opt) => opt.value === selectedLanguage)?.label ??
+          selectedLanguage);
 
     if (!lang) return;
 
@@ -255,8 +267,8 @@ export const DamageLanguagesForm = forwardRef<CollapsiblePanelRef, DamageLanguag
                 damageVulnerabilities.includes(
                   selectedDamageType === '*'
                     ? otherDamageType
-                    : damageTypeOptions.find((opt) => opt.value === selectedDamageType)?.label ||
-                        selectedDamageType,
+                    : (damageTypeOptions.find((opt) => opt.value === selectedDamageType)?.label ??
+                        selectedDamageType),
                 )
                   ? s.damageLanguagesPanel__buttonActive
                   : ''
@@ -271,8 +283,8 @@ export const DamageLanguagesForm = forwardRef<CollapsiblePanelRef, DamageLanguag
                 damageResistances.includes(
                   selectedDamageType === '*'
                     ? otherDamageType
-                    : damageTypeOptions.find((opt) => opt.value === selectedDamageType)?.label ||
-                        selectedDamageType,
+                    : (damageTypeOptions.find((opt) => opt.value === selectedDamageType)?.label ??
+                        selectedDamageType),
                 )
                   ? s.damageLanguagesPanel__buttonActive
                   : ''
@@ -287,8 +299,8 @@ export const DamageLanguagesForm = forwardRef<CollapsiblePanelRef, DamageLanguag
                 damageImmunities.includes(
                   selectedDamageType === '*'
                     ? otherDamageType
-                    : damageTypeOptions.find((opt) => opt.value === selectedDamageType)?.label ||
-                        selectedDamageType,
+                    : (damageTypeOptions.find((opt) => opt.value === selectedDamageType)?.label ??
+                        selectedDamageType),
                 )
                   ? s.damageLanguagesPanel__buttonActive
                   : ''
@@ -421,4 +433,4 @@ export const DamageLanguagesForm = forwardRef<CollapsiblePanelRef, DamageLanguag
       </div>
     </CollapsiblePanel>
   );
-});
+};

@@ -29,7 +29,7 @@ export const CreateSessionDialog = ({
   const schemeAndDomain = `${urlObj.protocol}//${urlObj.hostname}`;
 
   const handleTrigger = () => {
-    trigger({ encounterID: encounterId });
+    void trigger({ encounterID: encounterId });
   };
 
   const handleCopy = () => {

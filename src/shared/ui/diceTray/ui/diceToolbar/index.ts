@@ -1,1 +1,1 @@
-export { DiceToolbar } from './DiceToolbar'
+export { DiceToolbar } from './DiceToolbar';
