@@ -24,7 +24,8 @@ npm run lint
 npm run build
 ```
 
-## After build 
+## After build
+
 ```
 sudo mkdir -p /var/www/encounterium
 sudo chown -R $USER:$USER /var/www/encounterium

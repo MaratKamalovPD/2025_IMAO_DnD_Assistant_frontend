@@ -5,8 +5,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 dotenv.config();
-const domain = process.env.VITE_DOMAIN || '127.0.0.1';
-const port = parseInt(process.env.VITE_PORT || '5173');
+const domain = process.env.VITE_DOMAIN ?? '127.0.0.1';
+const port = parseInt(process.env.VITE_PORT ?? '5173');
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,7 +14,7 @@ export default defineConfig({
   // base: '/2025_IMAO_DnD_Assistant_frontend/',
   server: {
     port: port,
-    //host: '0.0.0.0', // Разрешить доступ с любых IP (если нужно)
+    // host: '0.0.0.0', // Разрешить доступ с любых IP (если нужно)
     allowedHosts: [
       domain, // Разрешить домен
       'localhost', // Оставить локальный доступ
