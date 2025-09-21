@@ -248,7 +248,7 @@ const generatedCreatureSlice = createSlice({
       if (creature) creature.hits = action.payload.hits;
     },
 
-    setCustomHp: (state, action: PayloadAction<{ id: string; value: string }>) => {
+    setCustomHp: (state, action: PayloadAction<{ id: string; value: boolean }>) => {
       const creature = state.entities[action.payload.id];
       if (creature) creature.customHp = action.payload.value;
     },

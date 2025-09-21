@@ -20,6 +20,8 @@ export const TokenatorWidget = () => {
         <TokenDetails {...shared} {...rectState} shape='rect' />
         <TokenStamp
           shape='rect'
+          CANVAS_WIDTH={300}
+          CANVAS_HEIGHT={400}
           file={shared.file}
           processFile={shared.processFile}
           scaleConfig={shared.scaleConfig}
@@ -31,6 +33,8 @@ export const TokenatorWidget = () => {
         <TokenDetails {...shared} {...circleState} showHeaderAndInfo={false} shape='circle' />
         <TokenStamp
           shape='circle'
+          CANVAS_WIDTH={400}
+          CANVAS_HEIGHT={400}
           file={shared.file}
           processFile={shared.processFile}
           scaleConfig={shared.scaleConfig}

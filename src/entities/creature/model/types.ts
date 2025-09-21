@@ -43,7 +43,7 @@ export type CreatureFullData = {
   armorText?: string;
   armors?: Armor[];
   hits: HitPoints;
-  customHp?: string;
+  customHp?: boolean;
   speed: Speed[];
   ability: AbilityScores;
   savingThrows?: SavingThrow[];

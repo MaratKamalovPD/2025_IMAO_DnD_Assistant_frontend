@@ -133,6 +133,13 @@ export const StatblockGenerator = () => {
       return;
     }
 
+    const { imageBase64, imageBase64Circle } = generatedCreature;
+  
+    if (!imageBase64?.trim() && !imageBase64Circle?.trim()) {
+      toast.warning('Безобразное существо... в буквальном смысле. Добавь изображение!');
+      return;
+    }
+  
     void addCreature(generatedCreature); // без unwrap
   };
 

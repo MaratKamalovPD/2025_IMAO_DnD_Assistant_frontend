@@ -5,13 +5,16 @@ import { TokenatorWidget } from 'shared/ui/tokenator';
 import s from './CreatureSaveSection.module.scss';
 import { MagicButton } from './magicButton';
 import { MonsterSelect } from './monsterSelect';
+import { useLazyGetCreatureByNameQuery } from 'pages/statblockGenerator/api';
+
+type LazyTrigger = ReturnType<typeof useLazyGetCreatureByNameQuery>[0];
 
 type CreatureSaveSectionProps = {
   onSave?: () => void;
   onUsePreset?: () => void;
 
   onTextChange?: (text: string) => void;
-  onTriggerPreset?: (name: string) => Promise<void>;
+  onTriggerPreset?: LazyTrigger;
   presetOptions?: { label: string; value: string }[];
   selectedPreset?: string;
   language?: 'en' | 'ru';
