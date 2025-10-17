@@ -1,26 +1,18 @@
-import { type DragEvent, type MouseEvent, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type DragEvent, type MouseEvent } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import grassTile from 'shared/assets/images/map/grass.svg';
-import sandTile from 'shared/assets/images/map/sand.svg';
-import stoneTile from 'shared/assets/images/map/stone.svg';
-import waterTile from 'shared/assets/images/map/water.svg';
+import { AppDispatch } from 'app/store';
+import {
+  fetchTileCategories,
+  selectTileCategories,
+  selectTileCategoriesError,
+  selectTileCategoriesStatus,
+  type MapTile,
+} from 'entities/mapTiles';
 
 import s from './MapEditor.module.scss';
 
-type TileDefinition = {
-  id: string;
-  name: string;
-  image: string;
-};
-
-const TILE_DEFINITIONS = [
-  { id: 'grass', name: 'Трава', image: grassTile },
-  { id: 'sand', name: 'Песок', image: sandTile },
-  { id: 'stone', name: 'Камень', image: stoneTile },
-  { id: 'water', name: 'Вода', image: waterTile },
-] satisfies TileDefinition[];
-
-type TileId = (typeof TILE_DEFINITIONS)[number]['id'];
+type TileId = string;
 
 type Grid = (TileId | null)[][];
 
@@ -31,17 +23,26 @@ const createEmptyGrid = (): Grid =>
   Array.from({ length: GRID_ROWS }, () => Array.from({ length: GRID_COLUMNS }, () => null));
 
 export const MapEditor = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const categories = useSelector(selectTileCategories);
+  const status = useSelector(selectTileCategoriesStatus);
+  const error = useSelector(selectTileCategoriesError);
   const [grid, setGrid] = useState<Grid>(() => createEmptyGrid());
 
+  useEffect(() => {
+    if (status === 'idle') {
+      void dispatch(fetchTileCategories());
+    }
+  }, [dispatch, status]);
+
   const tilesById = useMemo(() => {
-    return TILE_DEFINITIONS.reduce<Record<TileId, TileDefinition>>(
-      (acc, tile) => {
+    return categories.reduce<Record<string, MapTile>>((acc, category) => {
+      category.tiles.forEach((tile) => {
         acc[tile.id] = tile;
-        return acc;
-      },
-      {} as Record<TileId, TileDefinition>,
-    );
-  }, []);
+      });
+      return acc;
+    }, {});
+  }, [categories]);
 
   const handleReset = () => {
     setGrid(createEmptyGrid());
@@ -51,7 +52,7 @@ export const MapEditor = () => {
     event.preventDefault();
     const tileId = event.dataTransfer.getData('tileId');
 
-    if (!tileId) {
+    if (!tileId || !tilesById[tileId]) {
       return;
     }
 
@@ -143,19 +144,36 @@ export const MapEditor = () => {
         <aside className={s.palette}>
           <h2>Панель плиток</h2>
           <div className={s.paletteItems}>
-            {TILE_DEFINITIONS.map((tile) => (
-              <div
-                key={tile.id}
-                className={s.paletteItem}
-                draggable
-                onDragStart={(event) => handleTileDragStart(event, tile.id)}
-              >
-                <div className={s.tilePreview}>
-                  <img src={tile.image} alt={tile.name} draggable={false} />
-                </div>
-                <span>{tile.name}</span>
+            {status === 'loading' && <div className={s.paletteState}>Загрузка плиток...</div>}
+            {status === 'failed' && (
+              <div className={s.paletteState} role='alert'>
+                {error ?? 'Не удалось загрузить плитки'}
               </div>
-            ))}
+            )}
+            {status === 'succeeded' &&
+              categories.map((category, index) => (
+                <details key={category.id} className={s.paletteGroup} open={index === 0}>
+                  <summary className={s.paletteGroupSummary}>{category.name}</summary>
+                  <div className={s.paletteGroupItems}>
+                    {category.tiles.map((tile) => (
+                      <div
+                        key={tile.id}
+                        className={s.paletteItem}
+                        draggable
+                        onDragStart={(event) => handleTileDragStart(event, tile.id)}
+                      >
+                        <div className={s.tilePreview}>
+                          <img src={tile.imageUrl} alt={tile.name} draggable={false} />
+                        </div>
+                        <span>{tile.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              ))}
+            {status === 'succeeded' && categories.length === 0 && (
+              <div className={s.paletteState}>Нет доступных плиток</div>
+            )}
           </div>
         </aside>
 
@@ -164,13 +182,15 @@ export const MapEditor = () => {
             className={s.board}
             style={{ gridTemplateColumns: `repeat(${GRID_COLUMNS}, minmax(0, 1fr))` }}
           >
+            {/* Индексы отражают координаты сетки и остаются стабильными, поэтому их безопасно использовать как часть ключа */}
             {grid.map((row, rowIndex) =>
               row.map((tileId, columnIndex) => {
                 const tile = tileId ? tilesById[tileId] : null;
 
                 return (
                   <div
-                    key={`${rowIndex}-${columnIndex}`}
+                    // eslint-disable-next-line react-x/no-array-index-key
+                    key={`cell-${rowIndex}-${columnIndex}`}
                     className={s.cell}
                     onDrop={(event) => handleDrop(rowIndex, columnIndex, event)}
                     onDragOver={handleDragOver}
@@ -186,7 +206,7 @@ export const MapEditor = () => {
                           handleTileDragStart(event, tile.id, { row: rowIndex, col: columnIndex })
                         }
                       >
-                        <img src={tile.image} alt={tile.name} draggable={false} />
+                        <img src={tile.imageUrl} alt={tile.name} draggable={false} />
                       </div>
                     ) : (
                       <span className={s.cellPlaceholder}>+</span>
