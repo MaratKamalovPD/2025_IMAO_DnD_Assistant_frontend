@@ -1,6 +1,7 @@
 // MapEditor.tsx
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import clsx from 'clsx';
 import type { MapTile, MapTileCategory } from 'entities/mapTiles';
 import { useGetTileCategoriesQuery } from 'entities/mapTiles/api';
 import { useMemo, useState, type DragEvent, type MouseEvent } from 'react';
@@ -120,23 +121,38 @@ export const MapEditor = () => {
     const fromCell = parseFromCell(event.dataTransfer.getData(DND_KEYS.fromCell));
 
     setGrid((prev) => {
-      // Ничего не меняем, если перетаскиваем в ту же ячейку
-      if (fromCell && fromCell.row === rowIndex && fromCell.col === columnIndex) {
-        return prev;
-      }
-
       const next = prev.map((row) => [...row]);
+      const destinationTileId = next[rowIndex][columnIndex];
 
-      // Если тянули с поля — очистим исходную ячейку
       if (
         fromCell &&
         fromCell.row >= 0 &&
         fromCell.row < next.length &&
         fromCell.col >= 0 &&
-        fromCell.col < next[fromCell.row].length &&
-        next[fromCell.row][fromCell.col] === tile.id
+        fromCell.col < next[fromCell.row].length
       ) {
+        if (fromCell.row === rowIndex && fromCell.col === columnIndex) {
+          return prev;
+        }
+
+        const sourceTileId = next[fromCell.row][fromCell.col];
+
+        if (!sourceTileId) {
+          // Источник оказался пустым — трактуем как перенос из палитры
+          next[rowIndex][columnIndex] = tile.id;
+          return next;
+        }
+
+        if (destinationTileId && destinationTileId !== sourceTileId) {
+          // Меняем плитки местами
+          next[rowIndex][columnIndex] = sourceTileId;
+          next[fromCell.row][fromCell.col] = destinationTileId;
+          return next;
+        }
+
+        next[rowIndex][columnIndex] = sourceTileId;
         next[fromCell.row][fromCell.col] = null;
+        return next;
       }
 
       next[rowIndex][columnIndex] = tile.id;
@@ -146,7 +162,8 @@ export const MapEditor = () => {
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
+    const fromCell = parseFromCell(event.dataTransfer.getData(DND_KEYS.fromCell));
+    event.dataTransfer.dropEffect = fromCell ? 'move' : 'copy';
   };
 
   const handleTileDragStart = (
@@ -242,7 +259,7 @@ export const MapEditor = () => {
                 return (
                   <div
                     key={`cell-r${rowIndex}-c${columnIndex}`}
-                    className={s.cell}
+                    className={clsx(s.cell, tile ? s.cellFilled : s.cellEmpty)}
                     onDrop={(event) => handleDrop(rowIndex, columnIndex, event)}
                     onDragOver={handleDragOver}
                     onContextMenu={(event) => handleClearCell(rowIndex, columnIndex, event)}
