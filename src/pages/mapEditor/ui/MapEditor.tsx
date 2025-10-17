@@ -1,42 +1,98 @@
-import { useEffect, useMemo, useState, type DragEvent, type MouseEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { AppDispatch } from 'app/store';
-import {
-  fetchTileCategories,
-  selectTileCategories,
-  selectTileCategoriesError,
-  selectTileCategoriesStatus,
-  type MapTile,
-} from 'entities/mapTiles';
+// MapEditor.tsx
+import type { SerializedError } from '@reduxjs/toolkit';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import type { MapTile, MapTileCategory } from 'entities/mapTiles';
+import { useGetTileCategoriesQuery } from 'entities/mapTiles/api';
+import { useMemo, useState, type DragEvent, type MouseEvent } from 'react';
 
 import s from './MapEditor.module.scss';
 
+// -------------------- types --------------------
 type TileId = string;
-
 type Grid = (TileId | null)[][];
+type CellPos = { row: number; col: number };
 
-const GRID_ROWS = 12;
-const GRID_COLUMNS = 12;
+// -------------------- constants --------------------
+const GRID_ROWS = 8;
+const GRID_COLUMNS = 8;
+
+const DND_KEYS = {
+  tileId: 'tileId',
+  fromCell: 'fromCell',
+} as const;
 
 const createEmptyGrid = (): Grid =>
   Array.from({ length: GRID_ROWS }, () => Array.from({ length: GRID_COLUMNS }, () => null));
 
+// -------------------- helpers --------------------
+function isFetchError(e: unknown): e is FetchBaseQueryError {
+  return typeof e === 'object' && e !== null && 'status' in e;
+}
+
+function extractErrorMessage(err: unknown): string {
+  if (isFetchError(err)) {
+    // data может быть строкой или объектом
+    const data: unknown = err.data;
+    if (typeof data === 'string') return data;
+    if (typeof data === 'object' && data !== null) {
+      const maybeMsg = 'message' in data ? (data as Record<string, unknown>).message : undefined;
+      const maybeErr = 'error' in data ? (data as Record<string, unknown>).error : undefined;
+      if (typeof maybeMsg === 'string') return maybeMsg;
+      if (typeof maybeErr === 'string') return maybeErr;
+    }
+    return `HTTP ${String(err.status)}`;
+  }
+
+  if (err instanceof Error) return err.message;
+  if ((err as SerializedError)?.message) return String((err as SerializedError).message);
+  return 'Не удалось загрузить плитки';
+}
+
+function parseFromCell(raw: string): CellPos | null {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (
+      typeof parsed === 'object' &&
+      parsed !== null &&
+      'row' in parsed &&
+      'col' in parsed &&
+      typeof (parsed as Record<string, unknown>).row === 'number' &&
+      typeof (parsed as Record<string, unknown>).col === 'number'
+    ) {
+      const row = (parsed as Record<string, number>).row;
+      const col = (parsed as Record<string, number>).col;
+      return { row, col };
+    }
+  } catch {
+    // ignore malformed payload
+  }
+  return null;
+}
+
+// -------------------- component --------------------
 export const MapEditor = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const categories = useSelector(selectTileCategories);
-  const status = useSelector(selectTileCategoriesStatus);
-  const error = useSelector(selectTileCategoriesError);
+  // ---------- данные из RTK Query ----------
+  const { data, isLoading, isError, isSuccess, error } = useGetTileCategoriesQuery();
+
+  const categories = useMemo<MapTileCategory[]>(() => data ?? [], [data]);
+
+  // Превращаем флаги RTKQ в один статус
+  const status: 'idle' | 'loading' | 'succeeded' | 'failed' = isLoading
+    ? 'loading'
+    : isError
+      ? 'failed'
+      : isSuccess
+        ? 'succeeded'
+        : 'idle';
+
+  const errorMessage = isError ? extractErrorMessage(error) : null;
+
+  // ---------- состояние редактора ----------
   const [grid, setGrid] = useState<Grid>(() => createEmptyGrid());
 
-  useEffect(() => {
-    if (status === 'idle') {
-      void dispatch(fetchTileCategories());
-    }
-  }, [dispatch, status]);
-
-  const tilesById = useMemo(() => {
-    return categories.reduce<Record<string, MapTile>>((acc, category) => {
+  const tilesById = useMemo<Record<TileId, MapTile>>(() => {
+    return categories.reduce<Record<TileId, MapTile>>((acc, category) => {
       category.tiles.forEach((tile) => {
         acc[tile.id] = tile;
       });
@@ -44,47 +100,51 @@ export const MapEditor = () => {
     }, {});
   }, [categories]);
 
-  const handleReset = () => {
+  const handleReset = (): void => {
     setGrid(createEmptyGrid());
   };
 
-  const handleDrop = (rowIndex: number, columnIndex: number, event: DragEvent<HTMLDivElement>) => {
+  const handleDrop = (
+    rowIndex: number,
+    columnIndex: number,
+    event: DragEvent<HTMLDivElement>,
+  ): void => {
     event.preventDefault();
-    const tileId = event.dataTransfer.getData('tileId');
 
-    if (!tileId || !tilesById[tileId]) {
-      return;
-    }
+    const tileIdRaw = event.dataTransfer.getData(DND_KEYS.tileId);
+    if (!tileIdRaw) return;
 
-    const fromCellRaw = event.dataTransfer.getData('fromCell');
-    const fromCell = fromCellRaw ? (JSON.parse(fromCellRaw) as { row: number; col: number }) : null;
+    const tile = tilesById[tileIdRaw];
+    if (!tile) return;
 
-    setGrid((prevGrid) => {
-      const nextGrid = prevGrid.map((row) => [...row]);
+    const fromCell = parseFromCell(event.dataTransfer.getData(DND_KEYS.fromCell));
 
+    setGrid((prev) => {
+      // Ничего не меняем, если перетаскиваем в ту же ячейку
       if (fromCell && fromCell.row === rowIndex && fromCell.col === columnIndex) {
-        return prevGrid;
+        return prev;
       }
 
-      if (fromCell) {
-        const { row, col } = fromCell;
-        if (
-          row >= 0 &&
-          row < nextGrid.length &&
-          col >= 0 &&
-          col < nextGrid[row].length &&
-          nextGrid[row][col] === tileId
-        ) {
-          nextGrid[row][col] = null;
-        }
+      const next = prev.map((row) => [...row]);
+
+      // Если тянули с поля — очистим исходную ячейку
+      if (
+        fromCell &&
+        fromCell.row >= 0 &&
+        fromCell.row < next.length &&
+        fromCell.col >= 0 &&
+        fromCell.col < next[fromCell.row].length &&
+        next[fromCell.row][fromCell.col] === tile.id
+      ) {
+        next[fromCell.row][fromCell.col] = null;
       }
 
-      nextGrid[rowIndex][columnIndex] = tileId;
-      return nextGrid;
+      next[rowIndex][columnIndex] = tile.id;
+      return next;
     });
   };
 
-  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+  const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'copy';
   };
@@ -92,35 +152,25 @@ export const MapEditor = () => {
   const handleTileDragStart = (
     event: DragEvent<HTMLDivElement>,
     tileId: TileId,
-    cellPosition?: { row: number; col: number },
-  ) => {
+    cellPosition?: CellPos,
+  ): void => {
     event.dataTransfer.effectAllowed = 'copyMove';
-    event.dataTransfer.setData('tileId', tileId);
-
-    if (cellPosition) {
-      event.dataTransfer.setData('fromCell', JSON.stringify(cellPosition));
-    } else {
-      event.dataTransfer.setData('fromCell', '');
-    }
+    event.dataTransfer.setData(DND_KEYS.tileId, tileId);
+    event.dataTransfer.setData(DND_KEYS.fromCell, cellPosition ? JSON.stringify(cellPosition) : '');
   };
 
   const handleClearCell = (
     rowIndex: number,
     columnIndex: number,
     event?: MouseEvent<HTMLDivElement>,
-  ) => {
-    if (event) {
-      event.preventDefault();
-    }
+  ): void => {
+    if (event) event.preventDefault();
 
-    setGrid((prevGrid) => {
-      if (!prevGrid[rowIndex][columnIndex]) {
-        return prevGrid;
-      }
-
-      const nextGrid = prevGrid.map((row) => [...row]);
-      nextGrid[rowIndex][columnIndex] = null;
-      return nextGrid;
+    setGrid((prev) => {
+      if (!prev[rowIndex][columnIndex]) return prev;
+      const next = prev.map((row) => [...row]);
+      next[rowIndex][columnIndex] = null;
+      return next;
     });
   };
 
@@ -147,7 +197,7 @@ export const MapEditor = () => {
             {status === 'loading' && <div className={s.paletteState}>Загрузка плиток...</div>}
             {status === 'failed' && (
               <div className={s.paletteState} role='alert'>
-                {error ?? 'Не удалось загрузить плитки'}
+                {errorMessage ?? 'Не удалось загрузить плитки'}
               </div>
             )}
             {status === 'succeeded' &&
@@ -181,21 +231,24 @@ export const MapEditor = () => {
           <div
             className={s.board}
             style={{ gridTemplateColumns: `repeat(${GRID_COLUMNS}, minmax(0, 1fr))` }}
+            role='grid'
+            aria-rowcount={GRID_ROWS}
+            aria-colcount={GRID_COLUMNS}
           >
-            {/* Индексы отражают координаты сетки и остаются стабильными, поэтому их безопасно использовать как часть ключа */}
             {grid.map((row, rowIndex) =>
               row.map((tileId, columnIndex) => {
                 const tile = tileId ? tilesById[tileId] : null;
 
                 return (
                   <div
-                    // eslint-disable-next-line react-x/no-array-index-key
-                    key={`cell-${rowIndex}-${columnIndex}`}
+                    key={`cell-r${rowIndex}-c${columnIndex}`}
                     className={s.cell}
                     onDrop={(event) => handleDrop(rowIndex, columnIndex, event)}
                     onDragOver={handleDragOver}
                     onContextMenu={(event) => handleClearCell(rowIndex, columnIndex, event)}
                     role='gridcell'
+                    aria-colindex={columnIndex + 1}
+                    aria-rowindex={rowIndex + 1}
                     aria-label={tile ? tile.name : 'Пустая клетка'}
                   >
                     {tile ? (
