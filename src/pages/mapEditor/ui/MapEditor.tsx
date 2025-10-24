@@ -276,14 +276,21 @@ export const MapEditor = () => {
     if (!activeDrag) return;
 
     const handleKeyDown = (event: KeyboardEvent): void => {
-      const key = event.key;
-      if (key === 'q' || key === 'Q' || key === 'й' || key === 'Й') {
+      const { key, code } = event;
+      const isRotateCounterClockwise =
+        code === 'KeyQ' || key === 'q' || key === 'Q' || key === 'й' || key === 'Й';
+      const isRotateClockwise =
+        code === 'KeyE' || key === 'e' || key === 'E' || key === 'у' || key === 'У';
+      const isResetRotation =
+        code === 'KeyR' || key === 'r' || key === 'R' || key === 'к' || key === 'К';
+
+      if (isRotateCounterClockwise) {
         event.preventDefault();
         rotateActiveDrag(-90);
-      } else if (key === 'e' || key === 'E' || key === 'у' || key === 'У') {
+      } else if (isRotateClockwise) {
         event.preventDefault();
         rotateActiveDrag(90);
-      } else if (key === 'r' || key === 'R' || key === 'к' || key === 'К') {
+      } else if (isResetRotation) {
         event.preventDefault();
         resetActiveDragRotation();
       }
