@@ -4,26 +4,93 @@ import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import clsx from 'clsx';
 import type { MapTile, MapTileCategory } from 'entities/mapTiles';
 import { useGetTileCategoriesQuery } from 'entities/mapTiles/api';
-import { useMemo, useState, type DragEvent, type MouseEvent } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type ChangeEvent,
+  type DragEvent,
+  type MouseEvent,
+} from 'react';
 
 import s from './MapEditor.module.scss';
 
 // -------------------- types --------------------
 type TileId = string;
-type Grid = (TileId | null)[][];
+type Cell = { id: string; tileId: TileId | null };
+type Grid = Cell[][];
 type CellPos = { row: number; col: number };
 
 // -------------------- constants --------------------
-const GRID_ROWS = 8;
-const GRID_COLUMNS = 8;
+const MIN_GRID_SIZE = 4;
+const MAX_GRID_SIZE = 64;
+const DEFAULT_GRID_ROWS = 8;
+const DEFAULT_GRID_COLUMNS = 8;
+
+const MIN_CELL_SIZE = 50;
+const MAX_CELL_SIZE = 300;
+const CELL_SIZE_STEP = 10;
+const DEFAULT_CELL_SIZE = 100;
 
 const DND_KEYS = {
   tileId: 'tileId',
   fromCell: 'fromCell',
 } as const;
 
-const createEmptyGrid = (): Grid =>
-  Array.from({ length: GRID_ROWS }, () => Array.from({ length: GRID_COLUMNS }, () => null));
+const clampGridSize = (value: number): number => {
+  if (Number.isNaN(value)) return MIN_GRID_SIZE;
+  return Math.min(Math.max(Math.trunc(value), MIN_GRID_SIZE), MAX_GRID_SIZE);
+};
+
+const snapCellSizeToStep = (value: number): number =>
+  Math.round(value / CELL_SIZE_STEP) * CELL_SIZE_STEP;
+
+const clampCellSize = (value: number): number =>
+  Math.min(Math.max(snapCellSizeToStep(value), MIN_CELL_SIZE), MAX_CELL_SIZE);
+
+const computeAutoCellSize = (rows: number, columns: number): number => {
+  const largestDimension = Math.max(rows, columns);
+  if (largestDimension <= 0) {
+    return clampCellSize(DEFAULT_CELL_SIZE);
+  }
+
+  const approximateBoardWidth = 720;
+  const approximateSize = Math.floor(approximateBoardWidth / largestDimension);
+  const fallback = approximateSize > 0 ? approximateSize : DEFAULT_CELL_SIZE;
+  return clampCellSize(fallback);
+};
+
+let cellIdCounter = 0;
+
+const generateCellId = (): string => {
+  cellIdCounter += 1;
+  return `cell-${cellIdCounter}`;
+};
+
+const createCell = (tileId: TileId | null = null): Cell => ({
+  id: generateCellId(),
+  tileId,
+});
+
+const createEmptyGrid = (rows: number, columns: number): Grid =>
+  Array.from({ length: rows }, () => Array.from({ length: columns }, () => createCell()));
+
+const resizeGrid = (grid: Grid, rows: number, columns: number): Grid => {
+  return Array.from({ length: rows }, (_, rowIndex) => {
+    const existingRow = grid[rowIndex] ?? [];
+    const preservedCells = existingRow.slice(0, columns);
+
+    if (preservedCells.length === columns) {
+      return preservedCells;
+    }
+
+    return preservedCells.concat(
+      Array.from({ length: columns - preservedCells.length }, () => createCell()),
+    );
+  });
+};
+
+const cloneGrid = (grid: Grid): Grid => grid.map((row) => row.map((cell) => ({ ...cell })));
 
 // -------------------- helpers --------------------
 function isFetchError(e: unknown): e is FetchBaseQueryError {
@@ -90,7 +157,26 @@ export const MapEditor = () => {
   const errorMessage = isError ? extractErrorMessage(error) : null;
 
   // ---------- состояние редактора ----------
-  const [grid, setGrid] = useState<Grid>(() => createEmptyGrid());
+  const [rows, setRows] = useState<number>(DEFAULT_GRID_ROWS);
+  const [columns, setColumns] = useState<number>(DEFAULT_GRID_COLUMNS);
+  const [rowsInput, setRowsInput] = useState<string>(String(DEFAULT_GRID_ROWS));
+  const [columnsInput, setColumnsInput] = useState<string>(String(DEFAULT_GRID_COLUMNS));
+  const [grid, setGrid] = useState<Grid>(() =>
+    createEmptyGrid(DEFAULT_GRID_ROWS, DEFAULT_GRID_COLUMNS),
+  );
+  const [cellSize, setCellSize] = useState<number>(() =>
+    computeAutoCellSize(DEFAULT_GRID_ROWS, DEFAULT_GRID_COLUMNS),
+  );
+  const [isZoomManuallyAdjusted, setIsZoomManuallyAdjusted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setGrid((prevGrid) => resizeGrid(prevGrid, rows, columns));
+  }, [rows, columns]);
+
+  useEffect(() => {
+    if (isZoomManuallyAdjusted) return;
+    setCellSize(computeAutoCellSize(rows, columns));
+  }, [rows, columns, isZoomManuallyAdjusted]);
 
   const tilesById = useMemo<Record<TileId, MapTile>>(() => {
     return categories.reduce<Record<TileId, MapTile>>((acc, category) => {
@@ -102,7 +188,51 @@ export const MapEditor = () => {
   }, [categories]);
 
   const handleReset = (): void => {
-    setGrid(createEmptyGrid());
+    setGrid(createEmptyGrid(rows, columns));
+  };
+
+  const handleRowsChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const { value } = event.target;
+    setRowsInput(value);
+
+    if (value === '') return;
+
+    const parsed = Number(value);
+    if (Number.isNaN(parsed)) return;
+
+    if (parsed >= MIN_GRID_SIZE && parsed <= MAX_GRID_SIZE) {
+      const normalized = Math.trunc(parsed);
+      setRows(normalized);
+      setRowsInput(String(normalized));
+    }
+  };
+
+  const handleColumnsChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const { value } = event.target;
+    setColumnsInput(value);
+
+    if (value === '') return;
+
+    const parsed = Number(value);
+    if (Number.isNaN(parsed)) return;
+
+    if (parsed >= MIN_GRID_SIZE && parsed <= MAX_GRID_SIZE) {
+      const normalized = Math.trunc(parsed);
+      setColumns(normalized);
+      setColumnsInput(String(normalized));
+    }
+  };
+
+  const handleRowsBlur = (): void => {
+    const clamped = clampGridSize(Number(rowsInput));
+    setRows(clamped);
+    setRowsInput(String(clamped));
+  };
+
+  const handleColumnsBlur = (): void => {
+    const clamped = clampGridSize(Number(columnsInput));
+    setColumns(clamped);
+    setColumnsInput(String(clamped));
   };
 
   const handleDrop = (
@@ -121,41 +251,47 @@ export const MapEditor = () => {
     const fromCell = parseFromCell(event.dataTransfer.getData(DND_KEYS.fromCell));
 
     setGrid((prev) => {
-      const next = prev.map((row) => [...row]);
-      const destinationTileId = next[rowIndex][columnIndex];
+      if (!prev[rowIndex]?.[columnIndex]) return prev;
+
+      const next = cloneGrid(prev);
+      const nextDestinationCell = next[rowIndex]?.[columnIndex];
+      if (!nextDestinationCell) return prev;
+      const destinationTileId = nextDestinationCell.tileId;
 
       if (
         fromCell &&
         fromCell.row >= 0 &&
         fromCell.row < next.length &&
         fromCell.col >= 0 &&
-        fromCell.col < next[fromCell.row].length
+        fromCell.col < (next[fromCell.row]?.length ?? 0)
       ) {
         if (fromCell.row === rowIndex && fromCell.col === columnIndex) {
           return prev;
         }
 
-        const sourceTileId = next[fromCell.row][fromCell.col];
+        const nextSourceCell = next[fromCell.row]?.[fromCell.col];
+        if (!nextSourceCell) return prev;
+        const sourceTileId = nextSourceCell.tileId;
 
         if (!sourceTileId) {
           // Источник оказался пустым — трактуем как перенос из палитры
-          next[rowIndex][columnIndex] = tile.id;
+          nextDestinationCell.tileId = tile.id;
           return next;
         }
 
         if (destinationTileId && destinationTileId !== sourceTileId) {
           // Меняем плитки местами
-          next[rowIndex][columnIndex] = sourceTileId;
-          next[fromCell.row][fromCell.col] = destinationTileId;
+          nextDestinationCell.tileId = sourceTileId;
+          nextSourceCell.tileId = destinationTileId;
           return next;
         }
 
-        next[rowIndex][columnIndex] = sourceTileId;
-        next[fromCell.row][fromCell.col] = null;
+        nextDestinationCell.tileId = sourceTileId;
+        nextSourceCell.tileId = null;
         return next;
       }
 
-      next[rowIndex][columnIndex] = tile.id;
+      nextDestinationCell.tileId = tile.id;
       return next;
     });
   };
@@ -184,11 +320,24 @@ export const MapEditor = () => {
     if (event) event.preventDefault();
 
     setGrid((prev) => {
-      if (!prev[rowIndex][columnIndex]) return prev;
-      const next = prev.map((row) => [...row]);
-      next[rowIndex][columnIndex] = null;
+      const targetCell = prev[rowIndex]?.[columnIndex];
+      if (!targetCell?.tileId) return prev;
+
+      const next = cloneGrid(prev);
+      next[rowIndex][columnIndex].tileId = null;
       return next;
     });
+  };
+
+  const zoomOutDisabled = cellSize <= MIN_CELL_SIZE;
+  const zoomInDisabled = cellSize >= MAX_CELL_SIZE;
+
+  const handleZoomChange = (direction: 'in' | 'out'): void => {
+    setCellSize((prev) => {
+      const delta = direction === 'in' ? CELL_SIZE_STEP : -CELL_SIZE_STEP;
+      return clampCellSize(prev + delta);
+    });
+    setIsZoomManuallyAdjusted(true);
   };
 
   return (
@@ -245,46 +394,105 @@ export const MapEditor = () => {
         </aside>
 
         <section className={s.boardSection}>
-          <div
-            className={s.board}
-            style={{ gridTemplateColumns: `repeat(${GRID_COLUMNS}, minmax(0, 1fr))` }}
-            role='grid'
-            aria-rowcount={GRID_ROWS}
-            aria-colcount={GRID_COLUMNS}
-          >
-            {grid.map((row, rowIndex) =>
-              row.map((tileId, columnIndex) => {
-                const tile = tileId ? tilesById[tileId] : null;
+          <div className={s.boardControls}>
+            <label className={s.boardControl}>
+              <span>Высота (строки)</span>
+              <input
+                type='number'
+                min={MIN_GRID_SIZE}
+                max={MAX_GRID_SIZE}
+                step={1}
+                value={rowsInput}
+                onChange={handleRowsChange}
+                onBlur={handleRowsBlur}
+              />
+            </label>
+            <label className={s.boardControl}>
+              <span>Ширина (столбцы)</span>
+              <input
+                type='number'
+                min={MIN_GRID_SIZE}
+                max={MAX_GRID_SIZE}
+                step={1}
+                value={columnsInput}
+                onChange={handleColumnsChange}
+                onBlur={handleColumnsBlur}
+              />
+            </label>
+            <div className={clsx(s.boardControl, s.boardZoomControl)}>
+              <span>Масштаб плиток</span>
+              <div className={s.boardZoomButtons}>
+                <button
+                  type='button'
+                  onClick={() => handleZoomChange('out')}
+                  disabled={zoomOutDisabled}
+                  aria-label='Уменьшить масштаб'
+                >
+                  −
+                </button>
+                <span className={s.boardZoomValue}>{cellSize} px</span>
+                <button
+                  type='button'
+                  onClick={() => handleZoomChange('in')}
+                  disabled={zoomInDisabled}
+                  aria-label='Увеличить масштаб'
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div className={s.boardControlHint}>
+              Диапазон размера поля: от {MIN_GRID_SIZE}×{MIN_GRID_SIZE} до {MAX_GRID_SIZE}×
+              {MAX_GRID_SIZE}
+            </div>
+          </div>
 
-                return (
-                  <div
-                    key={`cell-r${rowIndex}-c${columnIndex}`}
-                    className={clsx(s.cell, tile ? s.cellFilled : s.cellEmpty)}
-                    onDrop={(event) => handleDrop(rowIndex, columnIndex, event)}
-                    onDragOver={handleDragOver}
-                    onContextMenu={(event) => handleClearCell(rowIndex, columnIndex, event)}
-                    role='gridcell'
-                    aria-colindex={columnIndex + 1}
-                    aria-rowindex={rowIndex + 1}
-                    aria-label={tile ? tile.name : 'Пустая клетка'}
-                  >
-                    {tile ? (
-                      <div
-                        className={s.cellTile}
-                        draggable
-                        onDragStart={(event) =>
-                          handleTileDragStart(event, tile.id, { row: rowIndex, col: columnIndex })
-                        }
-                      >
-                        <img src={tile.imageUrl} alt={tile.name} draggable={false} />
-                      </div>
-                    ) : (
-                      <span className={s.cellPlaceholder}>+</span>
-                    )}
-                  </div>
-                );
-              }),
-            )}
+          <div className={s.boardScrollContainer}>
+            <div
+              className={s.board}
+              style={{
+                gridTemplateColumns: `repeat(${columns}, ${cellSize}px)`,
+                gridAutoRows: `${cellSize}px`,
+              }}
+              role='grid'
+              aria-rowcount={rows}
+              aria-colcount={columns}
+            >
+              {grid.map((row, rowIndex) =>
+                row.map((cell, columnIndex) => {
+                  const tileId = cell.tileId;
+                  const tile = tileId ? tilesById[tileId] : null;
+
+                  return (
+                    <div
+                      key={cell.id}
+                      className={clsx(s.cell, tile ? s.cellFilled : s.cellEmpty)}
+                      onDrop={(event) => handleDrop(rowIndex, columnIndex, event)}
+                      onDragOver={handleDragOver}
+                      onContextMenu={(event) => handleClearCell(rowIndex, columnIndex, event)}
+                      role='gridcell'
+                      aria-colindex={columnIndex + 1}
+                      aria-rowindex={rowIndex + 1}
+                      aria-label={tile ? tile.name : 'Пустая клетка'}
+                    >
+                      {tile ? (
+                        <div
+                          className={s.cellTile}
+                          draggable
+                          onDragStart={(event) =>
+                            handleTileDragStart(event, tile.id, { row: rowIndex, col: columnIndex })
+                          }
+                        >
+                          <img src={tile.imageUrl} alt={tile.name} draggable={false} />
+                        </div>
+                      ) : (
+                        <span className={s.cellPlaceholder}>+</span>
+                      )}
+                    </div>
+                  );
+                }),
+              )}
+            </div>
           </div>
         </section>
       </div>
