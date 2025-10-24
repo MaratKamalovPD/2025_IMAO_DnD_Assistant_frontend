@@ -242,6 +242,51 @@
   }
 }
 
+.boardZoomControl {
+  min-width: 220px;
+}
+
+.zoomControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  button {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(134, 142, 150, 0.35);
+    background: rgba(33, 37, 41, 0.85);
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background: rgba(134, 142, 150, 0.25);
+      border-color: var(--color-accent-primary, #7048e8);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.zoomValue {
+  min-width: 56px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.zoomReset {
+  padding-inline: 14px !important;
+}
+
 .boardControlHint {
   font-size: 14px;
   color: rgba(222, 226, 230, 0.7);

@@ -27,8 +27,10 @@ const MAX_GRID_SIZE = 64;
 const DEFAULT_GRID_ROWS = 8;
 const DEFAULT_GRID_COLUMNS = 8;
 
-const MIN_CELL_SIZE = 80;
+const MIN_CELL_SIZE = 50;
 const MAX_CELL_SIZE = 300;
+const CELL_SIZE_STEP = 10;
+const TARGET_BOARD_PIXEL_SIZE = 900;
 
 const DND_KEYS = {
   tileId: 'tileId',
@@ -41,6 +43,21 @@ const clampGridSize = (value: number): number => {
 };
 
 let cellIdCounter = 0;
+
+const clampCellSize = (value: number): number => {
+  if (Number.isNaN(value)) return MIN_CELL_SIZE;
+
+  const rounded = Math.round(value / CELL_SIZE_STEP) * CELL_SIZE_STEP;
+  return Math.min(Math.max(rounded, MIN_CELL_SIZE), MAX_CELL_SIZE);
+};
+
+const getAutoCellSize = (rows: number, columns: number): number => {
+  const largestDimension = Math.max(rows, columns);
+  if (largestDimension <= 0) return MIN_CELL_SIZE;
+
+  const estimated = Math.floor(TARGET_BOARD_PIXEL_SIZE / largestDimension);
+  return clampCellSize(estimated);
+};
 
 const generateCellId = (): string => {
   cellIdCounter += 1;
@@ -144,10 +161,19 @@ export const MapEditor = () => {
   const [grid, setGrid] = useState<Grid>(() =>
     createEmptyGrid(DEFAULT_GRID_ROWS, DEFAULT_GRID_COLUMNS),
   );
+  const [cellSize, setCellSize] = useState<number>(() =>
+    getAutoCellSize(DEFAULT_GRID_ROWS, DEFAULT_GRID_COLUMNS),
+  );
+  const [isCellSizeManual, setIsCellSizeManual] = useState<boolean>(false);
 
   useEffect(() => {
     setGrid((prevGrid) => resizeGrid(prevGrid, rows, columns));
   }, [rows, columns]);
+
+  useEffect(() => {
+    if (isCellSizeManual) return;
+    setCellSize(getAutoCellSize(rows, columns));
+  }, [rows, columns, isCellSizeManual]);
 
   const tilesById = useMemo<Record<TileId, MapTile>>(() => {
     return categories.reduce<Record<TileId, MapTile>>((acc, category) => {
@@ -205,6 +231,27 @@ export const MapEditor = () => {
     setColumns(clamped);
     setColumnsInput(String(clamped));
   };
+
+  const handleZoomChange = (delta: number): void => {
+    setIsCellSizeManual(true);
+    setCellSize((prev) => clampCellSize(prev + delta));
+  };
+
+  const handleZoomIn = (): void => {
+    handleZoomChange(CELL_SIZE_STEP);
+  };
+
+  const handleZoomOut = (): void => {
+    handleZoomChange(-CELL_SIZE_STEP);
+  };
+
+  const handleZoomReset = (): void => {
+    setIsCellSizeManual(false);
+    setCellSize(getAutoCellSize(rows, columns));
+  };
+
+  const canZoomOut = cellSize > MIN_CELL_SIZE;
+  const canZoomIn = cellSize < MAX_CELL_SIZE;
 
   const handleDrop = (
     rowIndex: number,
@@ -379,6 +426,31 @@ export const MapEditor = () => {
                 onBlur={handleColumnsBlur}
               />
             </label>
+            <div className={clsx(s.boardControl, s.boardZoomControl)}>
+              <span>Масштаб</span>
+              <div className={s.zoomControls}>
+                <button
+                  type='button'
+                  onClick={handleZoomOut}
+                  disabled={!canZoomOut}
+                  aria-label='Уменьшить размер клеток'
+                >
+                  −
+                </button>
+                <span className={s.zoomValue}>{cellSize}px</span>
+                <button
+                  type='button'
+                  onClick={handleZoomIn}
+                  disabled={!canZoomIn}
+                  aria-label='Увеличить размер клеток'
+                >
+                  +
+                </button>
+                <button type='button' onClick={handleZoomReset} className={s.zoomReset}>
+                  Авто
+                </button>
+              </div>
+            </div>
             <div className={s.boardControlHint}>
               Диапазон размера поля: от {MIN_GRID_SIZE}×{MIN_GRID_SIZE} до {MAX_GRID_SIZE}×
               {MAX_GRID_SIZE}
@@ -389,7 +461,8 @@ export const MapEditor = () => {
             <div
               className={s.board}
               style={{
-                gridTemplateColumns: `repeat(${columns}, minmax(${MIN_CELL_SIZE}px, ${MAX_CELL_SIZE}px))`,
+                gridTemplateColumns: `repeat(${columns}, ${cellSize}px)`,
+                gridAutoRows: `${cellSize}px`,
               }}
               role='grid'
               aria-rowcount={rows}
