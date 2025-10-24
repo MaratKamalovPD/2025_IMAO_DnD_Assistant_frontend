@@ -1,14 +1,22 @@
 // MapEditor.tsx
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import {
+  Icon28ComputerMouseArrowsOutline,
+  Icon28DeleteOutline,
+  Icon28RefreshOutline,
+} from '@vkontakte/icons';
 import clsx from 'clsx';
 import type { MapTile, MapTileCategory } from 'entities/mapTiles';
 import { useGetTileCategoriesQuery } from 'entities/mapTiles/api';
 import {
+  useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ChangeEvent,
+  type CSSProperties,
   type DragEvent,
   type MouseEvent,
 } from 'react';
@@ -17,9 +25,15 @@ import s from './MapEditor.module.scss';
 
 // -------------------- types --------------------
 type TileId = string;
-type Cell = { id: string; tileId: TileId | null };
+type Cell = { id: string; tileId: TileId | null; rotation: number };
 type Grid = Cell[][];
 type CellPos = { row: number; col: number };
+type ActiveDrag = {
+  tileId: TileId;
+  rotation: number;
+  tile: MapTile;
+  sourceCell: CellPos | null;
+};
 
 // -------------------- constants --------------------
 const MIN_GRID_SIZE = 4;
@@ -35,7 +49,13 @@ const TARGET_BOARD_PIXEL_SIZE = 900;
 const DND_KEYS = {
   tileId: 'tileId',
   fromCell: 'fromCell',
+  rotation: 'rotation',
 } as const;
+
+const normalizeRotation = (value: number): number => {
+  const normalized = value % 360;
+  return normalized < 0 ? normalized + 360 : normalized;
+};
 
 const clampGridSize = (value: number): number => {
   if (Number.isNaN(value)) return MIN_GRID_SIZE;
@@ -64,9 +84,10 @@ const generateCellId = (): string => {
   return `cell-${cellIdCounter}`;
 };
 
-const createCell = (tileId: TileId | null = null): Cell => ({
+const createCell = (tileId: TileId | null = null, rotation = 0): Cell => ({
   id: generateCellId(),
   tileId,
+  rotation,
 });
 
 const createEmptyGrid = (rows: number, columns: number): Grid =>
@@ -165,6 +186,56 @@ export const MapEditor = () => {
     getAutoCellSize(DEFAULT_GRID_ROWS, DEFAULT_GRID_COLUMNS),
   );
   const [isCellSizeManual, setIsCellSizeManual] = useState<boolean>(false);
+  const [activeDrag, setActiveDrag] = useState<ActiveDrag | null>(null);
+  const dragOverlayRef = useRef<HTMLDivElement | null>(null);
+  const dragDataTransferRef = useRef<DataTransfer | null>(null);
+
+  const disposeDragOverlay = useCallback(() => {
+    const overlay = dragOverlayRef.current;
+    if (overlay?.parentNode) {
+      overlay.parentNode.removeChild(overlay);
+    }
+    dragOverlayRef.current = null;
+  }, []);
+
+  const updateDragOverlayPosition = useCallback((clientX: number, clientY: number) => {
+    const overlay = dragOverlayRef.current;
+    if (!overlay) return;
+    overlay.style.left = `${clientX}px`;
+    overlay.style.top = `${clientY}px`;
+  }, []);
+
+  const createDragOverlay = useCallback(
+    (tile: MapTile, rotation: number, clientX: number, clientY: number) => {
+      disposeDragOverlay();
+
+      const overlay = document.createElement('div');
+      overlay.className = s.dragOverlay;
+      overlay.style.width = `${cellSize}px`;
+      overlay.style.height = `${cellSize}px`;
+      overlay.style.left = `${clientX}px`;
+      overlay.style.top = `${clientY}px`;
+      overlay.style.setProperty('--rotation', `${rotation}deg`);
+
+      const img = document.createElement('img');
+      img.src = tile.imageUrl;
+      img.alt = tile.name;
+      img.draggable = false;
+
+      overlay.appendChild(img);
+      document.body.appendChild(overlay);
+      dragOverlayRef.current = overlay;
+    },
+    [cellSize, disposeDragOverlay],
+  );
+
+  const clearActiveDrag = useCallback(() => {
+    setActiveDrag(null);
+    dragDataTransferRef.current = null;
+    disposeDragOverlay();
+  }, [disposeDragOverlay]);
+
+  useEffect(() => () => clearActiveDrag(), [clearActiveDrag]);
 
   useEffect(() => {
     setGrid((prevGrid) => resizeGrid(prevGrid, rows, columns));
@@ -174,6 +245,55 @@ export const MapEditor = () => {
     if (isCellSizeManual) return;
     setCellSize(getAutoCellSize(rows, columns));
   }, [rows, columns, isCellSizeManual]);
+
+  useEffect(() => {
+    const overlay = dragOverlayRef.current;
+    if (overlay && activeDrag) {
+      overlay.style.setProperty('--rotation', `${activeDrag.rotation}deg`);
+    }
+
+    if (activeDrag) {
+      dragDataTransferRef.current?.setData(DND_KEYS.rotation, String(activeDrag.rotation));
+    }
+  }, [activeDrag]);
+
+  const rotateActiveDrag = useCallback((delta: number) => {
+    setActiveDrag((prev) => {
+      if (!prev) return prev;
+      const nextRotation = normalizeRotation(prev.rotation + delta);
+      return { ...prev, rotation: nextRotation };
+    });
+  }, []);
+
+  const resetActiveDragRotation = useCallback(() => {
+    setActiveDrag((prev) => {
+      if (!prev) return prev;
+      return { ...prev, rotation: 0 };
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!activeDrag) return;
+
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      const key = event.key;
+      if (key === 'q' || key === 'Q' || key === 'й' || key === 'Й') {
+        event.preventDefault();
+        rotateActiveDrag(-90);
+      } else if (key === 'e' || key === 'E' || key === 'у' || key === 'У') {
+        event.preventDefault();
+        rotateActiveDrag(90);
+      } else if (key === 'r' || key === 'R' || key === 'к' || key === 'К') {
+        event.preventDefault();
+        resetActiveDragRotation();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activeDrag, rotateActiveDrag, resetActiveDragRotation]);
 
   const tilesById = useMemo<Record<TileId, MapTile>>(() => {
     return categories.reduce<Record<TileId, MapTile>>((acc, category) => {
@@ -261,12 +381,25 @@ export const MapEditor = () => {
     event.preventDefault();
 
     const tileIdRaw = event.dataTransfer.getData(DND_KEYS.tileId);
-    if (!tileIdRaw) return;
+    if (!tileIdRaw) {
+      clearActiveDrag();
+      return;
+    }
 
     const tile = tilesById[tileIdRaw];
-    if (!tile) return;
+    if (!tile) {
+      clearActiveDrag();
+      return;
+    }
 
     const fromCell = parseFromCell(event.dataTransfer.getData(DND_KEYS.fromCell));
+    const rotationFromTransferRaw = event.dataTransfer.getData(DND_KEYS.rotation);
+    const rotationFromTransfer = Number(rotationFromTransferRaw);
+    const rotation = activeDrag
+      ? activeDrag.rotation
+      : Number.isFinite(rotationFromTransfer)
+        ? normalizeRotation(rotationFromTransfer)
+        : 0;
 
     setGrid((prev) => {
       if (!prev[rowIndex]?.[columnIndex]) return prev;
@@ -275,6 +408,7 @@ export const MapEditor = () => {
       const nextDestinationCell = next[rowIndex]?.[columnIndex];
       if (!nextDestinationCell) return prev;
       const destinationTileId = nextDestinationCell.tileId;
+      const destinationRotation = nextDestinationCell.rotation;
 
       if (
         fromCell &&
@@ -290,28 +424,35 @@ export const MapEditor = () => {
         const nextSourceCell = next[fromCell.row]?.[fromCell.col];
         if (!nextSourceCell) return prev;
         const sourceTileId = nextSourceCell.tileId;
-
         if (!sourceTileId) {
           // Источник оказался пустым — трактуем как перенос из палитры
           nextDestinationCell.tileId = tile.id;
+          nextDestinationCell.rotation = rotation;
           return next;
         }
 
         if (destinationTileId && destinationTileId !== sourceTileId) {
           // Меняем плитки местами
           nextDestinationCell.tileId = sourceTileId;
+          nextDestinationCell.rotation = rotation;
           nextSourceCell.tileId = destinationTileId;
+          nextSourceCell.rotation = destinationRotation;
           return next;
         }
 
         nextDestinationCell.tileId = sourceTileId;
+        nextDestinationCell.rotation = rotation;
         nextSourceCell.tileId = null;
+        nextSourceCell.rotation = 0;
         return next;
       }
 
       nextDestinationCell.tileId = tile.id;
+      nextDestinationCell.rotation = rotation;
       return next;
     });
+
+    clearActiveDrag();
   };
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
@@ -322,12 +463,40 @@ export const MapEditor = () => {
 
   const handleTileDragStart = (
     event: DragEvent<HTMLDivElement>,
-    tileId: TileId,
-    cellPosition?: CellPos,
+    tile: MapTile,
+    options?: { cellPosition?: CellPos; rotation?: number },
   ): void => {
+    const { cellPosition = null, rotation = 0 } = options ?? {};
+    const normalizedRotation = normalizeRotation(rotation);
+
+    dragDataTransferRef.current = event.dataTransfer;
+
     event.dataTransfer.effectAllowed = 'copyMove';
-    event.dataTransfer.setData(DND_KEYS.tileId, tileId);
+    event.dataTransfer.setData(DND_KEYS.tileId, tile.id);
     event.dataTransfer.setData(DND_KEYS.fromCell, cellPosition ? JSON.stringify(cellPosition) : '');
+    event.dataTransfer.setData(DND_KEYS.rotation, String(normalizedRotation));
+
+    const emptyCanvas = document.createElement('canvas');
+    emptyCanvas.width = 1;
+    emptyCanvas.height = 1;
+    event.dataTransfer.setDragImage(emptyCanvas, 0, 0);
+
+    createDragOverlay(tile, normalizedRotation, event.clientX, event.clientY);
+    setActiveDrag({
+      tileId: tile.id,
+      rotation: normalizedRotation,
+      tile,
+      sourceCell: cellPosition,
+    });
+  };
+
+  const handleTileDrag = (event: DragEvent<HTMLDivElement>): void => {
+    dragDataTransferRef.current = event.dataTransfer;
+    updateDragOverlayPosition(event.clientX, event.clientY);
+  };
+
+  const handleTileDragEnd = (): void => {
+    clearActiveDrag();
   };
 
   const handleClearCell = (
@@ -343,6 +512,7 @@ export const MapEditor = () => {
 
       const next = cloneGrid(prev);
       next[rowIndex][columnIndex].tileId = null;
+      next[rowIndex][columnIndex].rotation = 0;
       return next;
     });
   };
@@ -360,6 +530,38 @@ export const MapEditor = () => {
           <button type='button' onClick={handleReset}>
             Очистить карту
           </button>
+        </div>
+        <div className={s.helpBox}>
+          <h2 className={s.helpTitle}>Справка по управлению</h2>
+          <div className={s.helpSection}>
+            <h3 className={s.helpSectionTitle}>Работа с плитками</h3>
+            <div className={s.helpItems}>
+              <div className={s.helpItem}>
+                <span className={s.helpIcon}>
+                  <Icon28ComputerMouseArrowsOutline />
+                </span>
+                <p className={s.helpText}>
+                  Перетаскивание — зажмите ЛКМ по плитке в палитре или на поле и перенесите её в
+                  нужную клетку.
+                </p>
+              </div>
+              <div className={s.helpItem}>
+                <span className={s.helpIcon}>
+                  <Icon28RefreshOutline />
+                </span>
+                <p className={s.helpText}>
+                  Поворот — пока плитка в руках, нажимайте Q (Й) для поворота против часовой стрелки
+                  и E (У) для поворота по часовой стрелке. Клавиша R (К) сбрасывает угол.
+                </p>
+              </div>
+              <div className={s.helpItem}>
+                <span className={s.helpIcon}>
+                  <Icon28DeleteOutline />
+                </span>
+                <p className={s.helpText}>Очистка клетки — нажмите ПКМ по плитке на поле.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -383,7 +585,9 @@ export const MapEditor = () => {
                         key={tile.id}
                         className={s.paletteItem}
                         draggable
-                        onDragStart={(event) => handleTileDragStart(event, tile.id)}
+                        onDragStart={(event) => handleTileDragStart(event, tile)}
+                        onDrag={handleTileDrag}
+                        onDragEnd={handleTileDragEnd}
                       >
                         <div className={s.tilePreview}>
                           <img src={tile.imageUrl} alt={tile.name} draggable={false} />
@@ -489,9 +693,19 @@ export const MapEditor = () => {
                         <div
                           className={s.cellTile}
                           draggable
-                          onDragStart={(event) =>
-                            handleTileDragStart(event, tile.id, { row: rowIndex, col: columnIndex })
+                          style={
+                            {
+                              '--tile-rotation': `${cell.rotation}deg`,
+                            } as CSSProperties
                           }
+                          onDragStart={(event) =>
+                            handleTileDragStart(event, tile, {
+                              cellPosition: { row: rowIndex, col: columnIndex },
+                              rotation: cell.rotation,
+                            })
+                          }
+                          onDrag={handleTileDrag}
+                          onDragEnd={handleTileDragEnd}
                         >
                           <img src={tile.imageUrl} alt={tile.name} draggable={false} />
                         </div>
