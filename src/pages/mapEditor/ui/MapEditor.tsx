@@ -17,8 +17,8 @@ import {
   useState,
   type ChangeEvent,
   type CSSProperties,
-  type DragEvent,
   type MouseEvent,
+  type PointerEvent as ReactPointerEvent,
 } from 'react';
 
 import s from './MapEditor.module.scss';
@@ -28,11 +28,16 @@ type TileId = string;
 type Cell = { id: string; tileId: TileId | null; rotation: number };
 type Grid = Cell[][];
 type CellPos = { row: number; col: number };
+type DragOrigin = 'palette' | 'cell';
+
 type ActiveDrag = {
   tileId: TileId;
   rotation: number;
   tile: MapTile;
   sourceCell: CellPos | null;
+  pointerId: number;
+  anchorOffset?: { x: number; y: number };
+  origin: DragOrigin;
 };
 
 // -------------------- constants --------------------
@@ -45,12 +50,6 @@ const MIN_CELL_SIZE = 80;
 const MAX_CELL_SIZE = 200;
 const CELL_SIZE_STEP = 10;
 const TARGET_BOARD_PIXEL_SIZE = 900;
-
-const DND_KEYS = {
-  tileId: 'tileId',
-  fromCell: 'fromCell',
-  rotation: 'rotation',
-} as const;
 
 const normalizeRotation = (value: number): number => {
   const normalized = value % 360;
@@ -134,28 +133,6 @@ function extractErrorMessage(err: unknown): string {
   return 'Не удалось загрузить плитки';
 }
 
-function parseFromCell(raw: string): CellPos | null {
-  if (!raw) return null;
-  try {
-    const parsed = JSON.parse(raw) as unknown;
-    if (
-      typeof parsed === 'object' &&
-      parsed !== null &&
-      'row' in parsed &&
-      'col' in parsed &&
-      typeof (parsed as Record<string, unknown>).row === 'number' &&
-      typeof (parsed as Record<string, unknown>).col === 'number'
-    ) {
-      const row = (parsed as Record<string, number>).row;
-      const col = (parsed as Record<string, number>).col;
-      return { row, col };
-    }
-  } catch {
-    // ignore malformed payload
-  }
-  return null;
-}
-
 // -------------------- component --------------------
 export const MapEditor = () => {
   // ---------- данные из RTK Query ----------
@@ -187,8 +164,29 @@ export const MapEditor = () => {
   );
   const [isCellSizeManual, setIsCellSizeManual] = useState<boolean>(false);
   const [activeDrag, setActiveDrag] = useState<ActiveDrag | null>(null);
+  const activeDragRef = useRef<ActiveDrag | null>(null);
   const dragOverlayRef = useRef<HTMLDivElement | null>(null);
-  const dragDataTransferRef = useRef<DataTransfer | null>(null);
+  const boardRef = useRef<HTMLDivElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const pointerCaptureTargetRef = useRef<Element | null>(null);
+  const pointerMoveHandlerRef = useRef<((event: PointerEvent) => void) | null>(null);
+  const pointerUpHandlerRef = useRef<((event: PointerEvent) => void) | null>(null);
+  const keyDownHandlerRef = useRef<((event: KeyboardEvent) => void) | null>(null);
+  const blurHandlerRef = useRef<(() => void) | null>(null);
+
+  const setActiveDragState = useCallback(
+    (updater: ActiveDrag | null | ((prev: ActiveDrag | null) => ActiveDrag | null)): void => {
+      setActiveDrag((prev) => {
+        const next =
+          typeof updater === 'function'
+            ? (updater as (prevState: ActiveDrag | null) => ActiveDrag | null)(prev)
+            : updater;
+        activeDragRef.current = next;
+        return next;
+      });
+    },
+    [],
+  );
 
   const disposeDragOverlay = useCallback(() => {
     const overlay = dragOverlayRef.current;
@@ -198,23 +196,23 @@ export const MapEditor = () => {
     dragOverlayRef.current = null;
   }, []);
 
-  const updateDragOverlayPosition = useCallback((clientX: number, clientY: number) => {
+  const updateDragOverlayPosition = useCallback((left: number, top: number) => {
     const overlay = dragOverlayRef.current;
     if (!overlay) return;
-    overlay.style.left = `${clientX}px`;
-    overlay.style.top = `${clientY}px`;
+    overlay.style.left = `${left}px`;
+    overlay.style.top = `${top}px`;
   }, []);
 
   const createDragOverlay = useCallback(
-    (tile: MapTile, rotation: number, clientX: number, clientY: number) => {
+    (tile: MapTile, rotation: number, left: number, top: number) => {
       disposeDragOverlay();
 
       const overlay = document.createElement('div');
       overlay.className = s.dragOverlay;
       overlay.style.width = `${cellSize}px`;
       overlay.style.height = `${cellSize}px`;
-      overlay.style.left = `${clientX}px`;
-      overlay.style.top = `${clientY}px`;
+      overlay.style.left = `${left}px`;
+      overlay.style.top = `${top}px`;
       overlay.style.setProperty('--rotation', `${rotation}deg`);
 
       const img = document.createElement('img');
@@ -229,13 +227,12 @@ export const MapEditor = () => {
     [cellSize, disposeDragOverlay],
   );
 
-  const clearActiveDrag = useCallback(() => {
-    setActiveDrag(null);
-    dragDataTransferRef.current = null;
-    disposeDragOverlay();
-  }, [disposeDragOverlay]);
-
-  useEffect(() => () => clearActiveDrag(), [clearActiveDrag]);
+  const applyOverlayRotation = useCallback((rotation: number) => {
+    const overlay = dragOverlayRef.current;
+    if (overlay) {
+      overlay.style.setProperty('--rotation', `${rotation}deg`);
+    }
+  }, []);
 
   useEffect(() => {
     setGrid((prevGrid) => resizeGrid(prevGrid, rows, columns));
@@ -248,34 +245,167 @@ export const MapEditor = () => {
 
   useEffect(() => {
     const overlay = dragOverlayRef.current;
-    if (overlay && activeDrag) {
-      overlay.style.setProperty('--rotation', `${activeDrag.rotation}deg`);
+    if (overlay) {
+      overlay.style.width = `${cellSize}px`;
+      overlay.style.height = `${cellSize}px`;
     }
-
-    if (activeDrag) {
-      dragDataTransferRef.current?.setData(DND_KEYS.rotation, String(activeDrag.rotation));
-    }
-  }, [activeDrag]);
-
-  const rotateActiveDrag = useCallback((delta: number) => {
-    setActiveDrag((prev) => {
-      if (!prev) return prev;
-      const nextRotation = normalizeRotation(prev.rotation + delta);
-      return { ...prev, rotation: nextRotation };
-    });
-  }, []);
-
-  const resetActiveDragRotation = useCallback(() => {
-    setActiveDrag((prev) => {
-      if (!prev) return prev;
-      return { ...prev, rotation: 0 };
-    });
-  }, []);
+  }, [cellSize]);
 
   useEffect(() => {
-    if (!activeDrag) return;
+    if (activeDrag) {
+      applyOverlayRotation(activeDrag.rotation);
+    }
+  }, [activeDrag, applyOverlayRotation]);
 
-    const handleKeyDown = (event: KeyboardEvent): void => {
+  const rotateActiveDrag = useCallback(
+    (delta: number) => {
+      setActiveDragState((prev) => {
+        if (!prev) return prev;
+        const nextRotation = normalizeRotation(prev.rotation + delta);
+        applyOverlayRotation(nextRotation);
+        return { ...prev, rotation: nextRotation };
+      });
+    },
+    [applyOverlayRotation, setActiveDragState],
+  );
+
+  const resetActiveDragRotation = useCallback(() => {
+    setActiveDragState((prev) => {
+      if (!prev) return prev;
+      applyOverlayRotation(0);
+      return { ...prev, rotation: 0 };
+    });
+  }, [applyOverlayRotation, setActiveDragState]);
+
+  const hitTestCellAt = useCallback((clientX: number, clientY: number): CellPos | null => {
+    let element = document.elementFromPoint(clientX, clientY) as HTMLElement | null;
+    while (element) {
+      const rowAttr = element.getAttribute('data-row');
+      const colAttr = element.getAttribute('data-col');
+      if (rowAttr !== null && colAttr !== null) {
+        const row = Number(rowAttr);
+        const col = Number(colAttr);
+        if (Number.isFinite(row) && Number.isFinite(col)) {
+          return { row, col };
+        }
+      }
+      element = element.parentElement;
+    }
+    return null;
+  }, []);
+
+  const detachGlobalListeners = useCallback(() => {
+    if (pointerMoveHandlerRef.current) {
+      window.removeEventListener('pointermove', pointerMoveHandlerRef.current);
+      pointerMoveHandlerRef.current = null;
+    }
+    if (pointerUpHandlerRef.current) {
+      window.removeEventListener('pointerup', pointerUpHandlerRef.current);
+      pointerUpHandlerRef.current = null;
+    }
+    if (keyDownHandlerRef.current) {
+      window.removeEventListener('keydown', keyDownHandlerRef.current);
+      keyDownHandlerRef.current = null;
+    }
+    if (blurHandlerRef.current) {
+      window.removeEventListener('blur', blurHandlerRef.current);
+      blurHandlerRef.current = null;
+    }
+  }, []);
+
+  const teardownDrag = useCallback(() => {
+    const drag = activeDragRef.current;
+    detachGlobalListeners();
+
+    if (drag && pointerCaptureTargetRef.current instanceof Element) {
+      try {
+        pointerCaptureTargetRef.current.releasePointerCapture(drag.pointerId);
+      } catch {
+        // ignore release errors
+      }
+    }
+
+    pointerCaptureTargetRef.current = null;
+    document.body.style.userSelect = '';
+    document.body.style.cursor = '';
+    disposeDragOverlay();
+    setActiveDragState(null);
+  }, [detachGlobalListeners, disposeDragOverlay, setActiveDragState]);
+
+  const applyDropLogic = useCallback((destination: CellPos, drag: ActiveDrag) => {
+    setGrid((prev) => {
+      const destinationRow = prev[destination.row];
+      const destinationCell = destinationRow?.[destination.col];
+      if (!destinationCell) return prev;
+
+      const next = cloneGrid(prev);
+      const nextDestinationCell = next[destination.row]?.[destination.col];
+      if (!nextDestinationCell) return prev;
+
+      const destinationTileId = nextDestinationCell.tileId;
+      const destinationRotation = nextDestinationCell.rotation;
+
+      if (drag.sourceCell) {
+        const { row: sourceRow, col: sourceCol } = drag.sourceCell;
+        if (sourceRow === destination.row && sourceCol === destination.col) {
+          return prev;
+        }
+
+        const sourceRowCells = next[sourceRow];
+        const nextSourceCell = sourceRowCells?.[sourceCol];
+        if (!nextSourceCell) return prev;
+
+        const sourceTileId = nextSourceCell.tileId;
+        if (!sourceTileId) {
+          nextDestinationCell.tileId = drag.tile.id;
+          nextDestinationCell.rotation = drag.rotation;
+          return next;
+        }
+
+        if (destinationTileId && destinationTileId !== sourceTileId) {
+          nextDestinationCell.tileId = sourceTileId;
+          nextDestinationCell.rotation = drag.rotation;
+          nextSourceCell.tileId = destinationTileId;
+          nextSourceCell.rotation = destinationRotation;
+          return next;
+        }
+
+        nextDestinationCell.tileId = sourceTileId;
+        nextDestinationCell.rotation = drag.rotation;
+        nextSourceCell.tileId = null;
+        nextSourceCell.rotation = 0;
+        return next;
+      }
+
+      nextDestinationCell.tileId = drag.tile.id;
+      nextDestinationCell.rotation = drag.rotation;
+      return next;
+    });
+  }, []);
+
+  const attachGlobalListeners = useCallback(() => {
+    detachGlobalListeners();
+
+    const pointerMoveHandler = (event: PointerEvent): void => {
+      const drag = activeDragRef.current;
+      if (!drag || event.pointerId !== drag.pointerId) return;
+      const anchor = drag.anchorOffset ?? { x: 0, y: 0 };
+      updateDragOverlayPosition(event.clientX - anchor.x, event.clientY - anchor.y);
+    };
+
+    const pointerUpHandler = (event: PointerEvent): void => {
+      const drag = activeDragRef.current;
+      if (!drag || event.pointerId !== drag.pointerId) return;
+      const targetCell = hitTestCellAt(event.clientX, event.clientY);
+      if (targetCell) {
+        applyDropLogic(targetCell, drag);
+      }
+      teardownDrag();
+    };
+
+    const keyDownHandler = (event: KeyboardEvent): void => {
+      if (!activeDragRef.current) return;
+
       const { key, code } = event;
       const isRotateCounterClockwise =
         code === 'KeyQ' || key === 'q' || key === 'Q' || key === 'й' || key === 'Й';
@@ -283,6 +413,7 @@ export const MapEditor = () => {
         code === 'KeyE' || key === 'e' || key === 'E' || key === 'у' || key === 'У';
       const isResetRotation =
         code === 'KeyR' || key === 'r' || key === 'R' || key === 'к' || key === 'К';
+      const isEscape = code === 'Escape' || key === 'Escape';
 
       if (isRotateCounterClockwise) {
         event.preventDefault();
@@ -293,14 +424,141 @@ export const MapEditor = () => {
       } else if (isResetRotation) {
         event.preventDefault();
         resetActiveDragRotation();
+      } else if (isEscape) {
+        event.preventDefault();
+        teardownDrag();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+    const blurHandler = (): void => {
+      if (!activeDragRef.current) return;
+      teardownDrag();
     };
-  }, [activeDrag, rotateActiveDrag, resetActiveDragRotation]);
+
+    pointerMoveHandlerRef.current = pointerMoveHandler;
+    pointerUpHandlerRef.current = pointerUpHandler;
+    keyDownHandlerRef.current = keyDownHandler;
+    blurHandlerRef.current = blurHandler;
+
+    window.addEventListener('pointermove', pointerMoveHandler);
+    window.addEventListener('pointerup', pointerUpHandler);
+    window.addEventListener('keydown', keyDownHandler);
+    window.addEventListener('blur', blurHandler);
+  }, [
+    applyDropLogic,
+    detachGlobalListeners,
+    hitTestCellAt,
+    resetActiveDragRotation,
+    rotateActiveDrag,
+    teardownDrag,
+    updateDragOverlayPosition,
+  ]);
+
+  const beginDragFromPalette = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>, tile: MapTile) => {
+      if (activeDragRef.current) return;
+      if (event.button !== 0 && event.pointerType !== 'touch') return;
+
+      event.preventDefault();
+
+      const anchorOffset = { x: cellSize / 2, y: cellSize / 2 };
+      const rotation = 0;
+      const left = event.clientX - anchorOffset.x;
+      const top = event.clientY - anchorOffset.y;
+
+      try {
+        event.currentTarget.setPointerCapture(event.pointerId);
+        pointerCaptureTargetRef.current = event.currentTarget;
+      } catch {
+        pointerCaptureTargetRef.current = event.currentTarget;
+      }
+
+      document.body.style.userSelect = 'none';
+      document.body.style.cursor = 'grabbing';
+
+      createDragOverlay(tile, rotation, left, top);
+
+      const drag: ActiveDrag = {
+        tileId: tile.id,
+        rotation,
+        tile,
+        sourceCell: null,
+        pointerId: event.pointerId,
+        anchorOffset,
+        origin: 'palette',
+      };
+
+      setActiveDragState(drag);
+      attachGlobalListeners();
+    },
+    [attachGlobalListeners, cellSize, createDragOverlay, setActiveDragState],
+  );
+
+  const beginDragFromCell = useCallback(
+    (
+      event: ReactPointerEvent<HTMLDivElement>,
+      cellPos: CellPos,
+      tile: MapTile,
+      rotation: number,
+    ) => {
+      if (activeDragRef.current) return;
+      if (event.button !== 0 && event.pointerType !== 'touch') return;
+
+      event.preventDefault();
+
+      const normalizedRotation = normalizeRotation(rotation);
+      const anchorOffset = { x: cellSize / 2, y: cellSize / 2 };
+      const left = event.clientX - anchorOffset.x;
+      const top = event.clientY - anchorOffset.y;
+
+      try {
+        event.currentTarget.setPointerCapture(event.pointerId);
+        pointerCaptureTargetRef.current = event.currentTarget;
+      } catch {
+        pointerCaptureTargetRef.current = event.currentTarget;
+      }
+
+      document.body.style.userSelect = 'none';
+      document.body.style.cursor = 'grabbing';
+
+      createDragOverlay(tile, normalizedRotation, left, top);
+
+      const drag: ActiveDrag = {
+        tileId: tile.id,
+        rotation: normalizedRotation,
+        tile,
+        sourceCell: cellPos,
+        pointerId: event.pointerId,
+        anchorOffset,
+        origin: 'cell',
+      };
+
+      setActiveDragState(drag);
+      attachGlobalListeners();
+    },
+    [attachGlobalListeners, cellSize, createDragOverlay, setActiveDragState],
+  );
+
+  useEffect(
+    () => () => {
+      if (activeDragRef.current) {
+        detachGlobalListeners();
+      }
+      if (pointerCaptureTargetRef.current && activeDragRef.current) {
+        try {
+          pointerCaptureTargetRef.current.releasePointerCapture(activeDragRef.current.pointerId);
+        } catch {
+          // ignore
+        }
+      }
+      pointerCaptureTargetRef.current = null;
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+      disposeDragOverlay();
+      activeDragRef.current = null;
+    },
+    [detachGlobalListeners, disposeDragOverlay],
+  );
 
   const tilesById = useMemo<Record<TileId, MapTile>>(() => {
     return categories.reduce<Record<TileId, MapTile>>((acc, category) => {
@@ -380,132 +638,6 @@ export const MapEditor = () => {
   const canZoomOut = cellSize > MIN_CELL_SIZE;
   const canZoomIn = cellSize < MAX_CELL_SIZE;
 
-  const handleDrop = (
-    rowIndex: number,
-    columnIndex: number,
-    event: DragEvent<HTMLDivElement>,
-  ): void => {
-    event.preventDefault();
-
-    const tileIdRaw = event.dataTransfer.getData(DND_KEYS.tileId);
-    if (!tileIdRaw) {
-      clearActiveDrag();
-      return;
-    }
-
-    const tile = tilesById[tileIdRaw];
-    if (!tile) {
-      clearActiveDrag();
-      return;
-    }
-
-    const fromCell = parseFromCell(event.dataTransfer.getData(DND_KEYS.fromCell));
-    const rotationFromTransferRaw = event.dataTransfer.getData(DND_KEYS.rotation);
-    const rotationFromTransfer = Number(rotationFromTransferRaw);
-    const rotation = activeDrag
-      ? activeDrag.rotation
-      : Number.isFinite(rotationFromTransfer)
-        ? normalizeRotation(rotationFromTransfer)
-        : 0;
-
-    setGrid((prev) => {
-      if (!prev[rowIndex]?.[columnIndex]) return prev;
-
-      const next = cloneGrid(prev);
-      const nextDestinationCell = next[rowIndex]?.[columnIndex];
-      if (!nextDestinationCell) return prev;
-      const destinationTileId = nextDestinationCell.tileId;
-      const destinationRotation = nextDestinationCell.rotation;
-
-      if (
-        fromCell &&
-        fromCell.row >= 0 &&
-        fromCell.row < next.length &&
-        fromCell.col >= 0 &&
-        fromCell.col < (next[fromCell.row]?.length ?? 0)
-      ) {
-        if (fromCell.row === rowIndex && fromCell.col === columnIndex) {
-          return prev;
-        }
-
-        const nextSourceCell = next[fromCell.row]?.[fromCell.col];
-        if (!nextSourceCell) return prev;
-        const sourceTileId = nextSourceCell.tileId;
-        if (!sourceTileId) {
-          // Источник оказался пустым — трактуем как перенос из палитры
-          nextDestinationCell.tileId = tile.id;
-          nextDestinationCell.rotation = rotation;
-          return next;
-        }
-
-        if (destinationTileId && destinationTileId !== sourceTileId) {
-          // Меняем плитки местами
-          nextDestinationCell.tileId = sourceTileId;
-          nextDestinationCell.rotation = rotation;
-          nextSourceCell.tileId = destinationTileId;
-          nextSourceCell.rotation = destinationRotation;
-          return next;
-        }
-
-        nextDestinationCell.tileId = sourceTileId;
-        nextDestinationCell.rotation = rotation;
-        nextSourceCell.tileId = null;
-        nextSourceCell.rotation = 0;
-        return next;
-      }
-
-      nextDestinationCell.tileId = tile.id;
-      nextDestinationCell.rotation = rotation;
-      return next;
-    });
-
-    clearActiveDrag();
-  };
-
-  const handleDragOver = (event: DragEvent<HTMLDivElement>): void => {
-    event.preventDefault();
-    const fromCell = parseFromCell(event.dataTransfer.getData(DND_KEYS.fromCell));
-    event.dataTransfer.dropEffect = fromCell ? 'move' : 'copy';
-  };
-
-  const handleTileDragStart = (
-    event: DragEvent<HTMLDivElement>,
-    tile: MapTile,
-    options?: { cellPosition?: CellPos; rotation?: number },
-  ): void => {
-    const { cellPosition = null, rotation = 0 } = options ?? {};
-    const normalizedRotation = normalizeRotation(rotation);
-
-    dragDataTransferRef.current = event.dataTransfer;
-
-    event.dataTransfer.effectAllowed = 'copyMove';
-    event.dataTransfer.setData(DND_KEYS.tileId, tile.id);
-    event.dataTransfer.setData(DND_KEYS.fromCell, cellPosition ? JSON.stringify(cellPosition) : '');
-    event.dataTransfer.setData(DND_KEYS.rotation, String(normalizedRotation));
-
-    const emptyCanvas = document.createElement('canvas');
-    emptyCanvas.width = 1;
-    emptyCanvas.height = 1;
-    event.dataTransfer.setDragImage(emptyCanvas, 0, 0);
-
-    createDragOverlay(tile, normalizedRotation, event.clientX, event.clientY);
-    setActiveDrag({
-      tileId: tile.id,
-      rotation: normalizedRotation,
-      tile,
-      sourceCell: cellPosition,
-    });
-  };
-
-  const handleTileDrag = (event: DragEvent<HTMLDivElement>): void => {
-    dragDataTransferRef.current = event.dataTransfer;
-    updateDragOverlayPosition(event.clientX, event.clientY);
-  };
-
-  const handleTileDragEnd = (): void => {
-    clearActiveDrag();
-  };
-
   const handleClearCell = (
     rowIndex: number,
     columnIndex: number,
@@ -525,7 +657,7 @@ export const MapEditor = () => {
   };
 
   return (
-    <div className={s.editorPage}>
+    <div className={s.editorPage} ref={rootRef}>
       <header className={s.headerSection}>
         <h1>Редактор карт</h1>
         <p>
@@ -558,7 +690,8 @@ export const MapEditor = () => {
                 </span>
                 <p className={s.helpText}>
                   Поворот — пока плитка в руках, нажимайте Q (Й) для поворота против часовой стрелки
-                  и E (У) для поворота по часовой стрелке. Клавиша R (К) сбрасывает угол.
+                  и E (У) для поворота по часовой стрелке. Клавиша R (К) сбрасывает угол. Esc —
+                  отменить перенос.
                 </p>
               </div>
               <div className={s.helpItem}>
@@ -591,10 +724,8 @@ export const MapEditor = () => {
                       <div
                         key={tile.id}
                         className={s.paletteItem}
-                        draggable
-                        onDragStart={(event) => handleTileDragStart(event, tile)}
-                        onDrag={handleTileDrag}
-                        onDragEnd={handleTileDragEnd}
+                        onPointerDown={(event) => beginDragFromPalette(event, tile)}
+                        onContextMenu={(event) => event.preventDefault()}
                       >
                         <div className={s.tilePreview}>
                           <img src={tile.imageUrl} alt={tile.name} draggable={false} />
@@ -670,6 +801,7 @@ export const MapEditor = () => {
 
           <div className={s.boardScrollContainer}>
             <div
+              ref={boardRef}
               className={s.board}
               style={{
                 gridTemplateColumns: `repeat(${columns}, ${cellSize}px)`,
@@ -688,9 +820,9 @@ export const MapEditor = () => {
                     <div
                       key={cell.id}
                       className={clsx(s.cell, tile ? s.cellFilled : s.cellEmpty)}
-                      onDrop={(event) => handleDrop(rowIndex, columnIndex, event)}
-                      onDragOver={handleDragOver}
                       onContextMenu={(event) => handleClearCell(rowIndex, columnIndex, event)}
+                      data-row={rowIndex}
+                      data-col={columnIndex}
                       role='gridcell'
                       aria-colindex={columnIndex + 1}
                       aria-rowindex={rowIndex + 1}
@@ -699,20 +831,19 @@ export const MapEditor = () => {
                       {tile ? (
                         <div
                           className={s.cellTile}
-                          draggable
                           style={
                             {
                               '--tile-rotation': `${cell.rotation}deg`,
                             } as CSSProperties
                           }
-                          onDragStart={(event) =>
-                            handleTileDragStart(event, tile, {
-                              cellPosition: { row: rowIndex, col: columnIndex },
-                              rotation: cell.rotation,
-                            })
+                          onPointerDown={(event) =>
+                            beginDragFromCell(
+                              event,
+                              { row: rowIndex, col: columnIndex },
+                              tile,
+                              cell.rotation,
+                            )
                           }
-                          onDrag={handleTileDrag}
-                          onDragEnd={handleTileDragEnd}
                         >
                           <img src={tile.imageUrl} alt={tile.name} draggable={false} />
                         </div>

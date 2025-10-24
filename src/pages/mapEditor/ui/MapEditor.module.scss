@@ -440,9 +440,11 @@
   position: fixed;
   top: 0;
   left: 0;
+  width: var(--cell-size, 100px);
+  height: var(--cell-size, 100px);
   pointer-events: none;
-  transform: translate(-50%, -50%) rotate(var(--rotation, 0deg));
-  transform-origin: center;
+  transform: translate3d(0, 0, 0) rotate(var(--rotation, 0deg));
+  transform-origin: center center;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
