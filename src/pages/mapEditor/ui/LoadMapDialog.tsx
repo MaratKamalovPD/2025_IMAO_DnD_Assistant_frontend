@@ -138,6 +138,8 @@ export const LoadMapDialog = ({ isOpen, setIsOpen, onLoadMap, tilesById }: LoadM
     setDeleteTarget(null);
   }, [setIsOpen]);
 
+  const hasMaps = maps && maps.length > 0;
+
   return (
     <>
       <ModalOverlay title='Загрузить карту' isModalOpen={isOpen} setIsModalOpen={handleClose}>
@@ -161,58 +163,109 @@ export const LoadMapDialog = ({ isOpen, setIsOpen, onLoadMap, tilesById }: LoadM
             </div>
           )}
 
-          {!isLoading && !isLoadingMap && !isError && maps && maps.length === 0 && (
-            <div className={s.dialogEmptyState}>
-              <span className={s.dialogEmptyIcon}>🗺️</span>
-              <p className={s.dialogEmptyText}>Сейчас у вас ничего нет</p>
-              <p className={s.dialogEmptyHint}>
-                Создайте карту в редакторе и нажмите «Сохранить карту»
-              </p>
-            </div>
-          )}
-
-          {!isLoading && !isLoadingMap && !isError && maps && maps.length > 0 && (
+          {!isLoading && !isLoadingMap && !isError && (
             <>
-              {/* Preview pane */}
-              {selectedMapData && (
+              {/* Preview pane - always shown when maps exist or as placeholder */}
+              {hasMaps && (
                 <div className={s.mapPreviewPane}>
-                  <MapPreviewCanvas
-                    mapData={selectedMapData.data}
-                    tilesById={tilesById}
-                    width={280}
-                    height={180}
-                  />
-                  <div className={s.mapPreviewActions}>
-                    <button type='button' data-variant='accent' onClick={handleLoad}>
-                      Загрузить
-                    </button>
-                  </div>
+                  {selectedMapData ? (
+                    <>
+                      <MapPreviewCanvas
+                        mapData={selectedMapData.data}
+                        tilesById={tilesById}
+                        width={280}
+                        height={180}
+                      />
+                      <div className={s.mapPreviewActions}>
+                        <button type='button' data-variant='accent' onClick={handleLoad}>
+                          Загрузить
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className={s.mapPreviewPlaceholder}>
+                      <span className={s.mapPreviewPlaceholderIcon}>👁</span>
+                      <p className={s.mapPreviewPlaceholderText}>
+                        Выберите карту в списке, чтобы посмотреть превью
+                      </p>
+                      <p className={s.mapPreviewPlaceholderHint}>
+                        Клик по карте — предпросмотр. Кнопка «Загрузить» — применить.
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 
-              {/* Map list */}
-              <div className={s.mapList}>
-                {maps.map((map) => (
-                  <div
-                    key={map.id}
-                    className={`${s.mapListItem} ${selectedMapId === map.id ? s.mapListItemSelected : ''}`}
-                    onClick={() => void handleSelectMap(map)}
-                  >
-                    <div className={s.mapListItemInfo}>
-                      <span className={s.mapListItemName}>{map.name}</span>
-                      <span className={s.mapListItemDate}>{formatDate(map.updatedAt)}</span>
-                    </div>
-                    <button
-                      type='button'
-                      className={s.mapListItemDelete}
-                      onClick={(e) => handleDeleteClick(map, e)}
-                      title='Удалить'
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
+              {/* Map list or empty state */}
+              {hasMaps ? (
+                <div className={s.mapList}>
+                  {maps.map((map) => {
+                    const cachedData = previewCache[map.id];
+                    const isSelected = selectedMapId === map.id;
+
+                    return (
+                      <div
+                        key={map.id}
+                        className={`${s.mapListItem} ${isSelected ? s.mapListItemSelected : ''}`}
+                        onClick={() => void handleSelectMap(map)}
+                        role='button'
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            void handleSelectMap(map);
+                          }
+                        }}
+                      >
+                        {/* Mini thumbnail */}
+                        <div className={s.mapListItemThumbnail}>
+                          {cachedData ? (
+                            <MapPreviewCanvas
+                              mapData={cachedData.data}
+                              tilesById={tilesById}
+                              width={64}
+                              height={40}
+                            />
+                          ) : (
+                            <div className={s.mapListItemThumbnailSkeleton}>
+                              <span>🗺️</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Map info */}
+                        <div className={s.mapListItemInfo}>
+                          <span className={s.mapListItemName}>{map.name}</span>
+                          <span className={s.mapListItemDate}>{formatDate(map.updatedAt)}</span>
+                        </div>
+
+                        {/* Affordance icon */}
+                        <span className={s.mapListItemAffordance} aria-hidden='true'>
+                          ›
+                        </span>
+
+                        {/* Delete button */}
+                        <button
+                          type='button'
+                          className={s.mapListItemDelete}
+                          onClick={(e) => handleDeleteClick(map, e)}
+                          title='Удалить'
+                        >
+                          ×
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className={s.dialogEmptyState}>
+                  <span className={s.dialogEmptyIcon}>🗺️</span>
+                  <p className={s.dialogEmptyText}>Сейчас у вас ничего нет</p>
+                  <p className={s.dialogEmptyHint}>
+                    Создайте карту в редакторе и нажмите «Сохранить карту»
+                  </p>
+                </div>
+              )}
             </>
           )}
         </div>
