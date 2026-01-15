@@ -85,8 +85,8 @@ export const LoadMapDialog = ({ isOpen, setIsOpen, onLoadMap }: LoadMapDialogPro
 
         {!isLoading && !isLoadingMap && !isError && maps && maps.length === 0 && (
           <div className={s.dialogEmptyState}>
-            <span className={s.dialogEmptyIcon}>📁</span>
-            <p className={s.dialogEmptyText}>У вас пока нет сохранённых карт</p>
+            <span className={s.dialogEmptyIcon}>🗺️</span>
+            <p className={s.dialogEmptyText}>Сейчас у вас ничего нет</p>
             <p className={s.dialogEmptyHint}>
               Создайте карту в редакторе и нажмите «Сохранить карту»
             </p>

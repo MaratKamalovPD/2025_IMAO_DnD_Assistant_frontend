@@ -8,6 +8,12 @@ import type {
   UpdateMapRequest,
 } from '../model';
 
+/** Backend response shape for list endpoint */
+type ListMapsResponse = {
+  maps: MapMetadata[];
+  total: number;
+};
+
 export const mapsApi = createApi({
   reducerPath: 'mapsApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/api/maps' }),
@@ -25,6 +31,8 @@ export const mapsApi = createApi({
         const queryString = searchParams.toString();
         return { url: queryString ? `?${queryString}` : '' };
       },
+      // Backend returns { maps: [...], total }, extract just the maps array
+      transformResponse: (response: ListMapsResponse) => response.maps,
       providesTags: ['MapList'],
     }),
 
