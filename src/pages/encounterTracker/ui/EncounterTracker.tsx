@@ -3,21 +3,27 @@ import {
   Icon28DiamondOutline,
   Icon28Dice6Outline,
   Icon28DocumentListOutline,
+  Icon28FolderOutline,
   Icon28HomeOutline,
 } from '@vkontakte/icons';
-import { use, useCallback, useEffect, useRef, useState } from 'react';
+import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Rnd } from 'react-rnd';
+import { toast } from 'react-toastify';
 
 import { EncounterState, EncounterStore } from 'entities/encounter/model';
 import { loggerActions, LoggerState, LoggerStore } from 'entities/logger/model';
+import type { MapFull } from 'entities/maps';
+import type { MapTile } from 'entities/mapTiles';
+import { useGetTileCategoriesQuery } from 'entities/mapTiles/api/mapTiles.api';
 import { SessionContext } from 'entities/session/model';
 import {
   userInterfaceActions,
   UserInterfaceState,
   UserInterfaceStore,
 } from 'entities/userInterface/model';
-import { Placeholder } from 'shared/ui';
+import { getOrRenderMosaic, validateMapForMosaic } from 'shared/lib';
+import { Placeholder, SelectSavedMapDialog } from 'shared/ui';
 import { Chatbot } from 'widgets/chatbot';
 import { BattleMap } from './battleMap';
 import { CardList } from './cardList';
@@ -46,6 +52,53 @@ export const EncounterTracker = () => {
     Array(rows)
       .fill(false)
       .map(() => Array<boolean>(cols).fill(false)),
+  );
+
+  // Saved map dialog state
+  const [isSavedMapDialogOpen, setIsSavedMapDialogOpen] = useState(false);
+
+  // Fetch tile categories for mosaic rendering
+  const { data: tileCategories } = useGetTileCategoriesQuery(undefined, {
+    skip: !isSavedMapDialogOpen,
+  });
+
+  // Build tilesById lookup from categories
+  const tilesById = useMemo(() => {
+    if (!tileCategories) return {};
+    const result: Record<string, MapTile> = {};
+    for (const category of tileCategories) {
+      for (const tile of category.tiles) {
+        result[tile.id] = tile;
+      }
+    }
+    return result;
+  }, [tileCategories]);
+
+  // Handle saved map selection
+  const handleSelectSavedMap = useCallback(
+    async (map: MapFull) => {
+      // Validate map data
+      const validation = validateMapForMosaic(map.data);
+      if (!validation.valid) {
+        toast.error(`Не удалось загрузить карту: ${validation.error}`);
+        return;
+      }
+
+      // Check if tiles are loaded
+      if (Object.keys(tilesById).length === 0) {
+        toast.error('Тайлы ещё не загружены. Попробуйте ещё раз.');
+        return;
+      }
+
+      try {
+        const result = await getOrRenderMosaic(map.id, map.data, tilesById, 50);
+        setMapImage(result.dataUrl);
+        toast.success(`Карта «${map.name}» загружена`);
+      } catch {
+        toast.error('Не удалось отрисовать карту');
+      }
+    },
+    [tilesById],
   );
 
   const { lastLogs } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
@@ -191,6 +244,19 @@ export const EncounterTracker = () => {
       content: {
         type: 'component',
         component: (
+          <Tippy content='Загрузить сохранённую карту' placement='left'>
+            <div className={s.toggle} onClick={() => setIsSavedMapDialogOpen(true)}>
+              <Icon28FolderOutline fill='white' />
+            </div>
+          </Tippy>
+        ),
+      },
+      href: '#rocket',
+    },
+    {
+      content: {
+        type: 'component',
+        component: (
           <Tippy content='Броски костей'>
             <div className={s.toggleDiceTray} onClick={closeDiceTrayWindow}>
               <Icon28Dice6Outline fill='black' />
@@ -287,6 +353,13 @@ export const EncounterTracker = () => {
       ) : (
         <Placeholder />
       )}
+
+      <SelectSavedMapDialog
+        isOpen={isSavedMapDialogOpen}
+        onClose={() => setIsSavedMapDialogOpen(false)}
+        onSelectMap={(map) => void handleSelectSavedMap(map)}
+        tilesById={tilesById}
+      />
     </div>
   );
 };

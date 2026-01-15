@@ -20,3 +20,11 @@ export { useClamp } from './useClamp';
 export { useSessionURL } from './useSessionURL';
 export { useTokenatorShared } from './useTokenatorShared';
 export { useTokenatorState } from './useTokenatorState';
+
+export {
+  clearMosaicCache,
+  getOrRenderMosaic,
+  renderMapMosaic,
+  validateMapForMosaic,
+} from './mosaicRenderer';
+export type { MosaicRenderResult, TilesById, ValidateMosaicResult } from './mosaicRenderer';
