@@ -21,6 +21,8 @@ export { useSessionURL } from './useSessionURL';
 export { useTokenatorShared } from './useTokenatorShared';
 export { useTokenatorState } from './useTokenatorState';
 
+export { MAP_UNITS_PER_TILE } from './mapUnits';
+
 export {
   clearMosaicCache,
   getOrRenderMosaic,

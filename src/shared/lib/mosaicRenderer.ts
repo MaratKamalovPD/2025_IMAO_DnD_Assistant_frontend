@@ -1,8 +1,10 @@
 import type { MapData, Rotation } from 'entities/maps';
 import type { MapTile } from 'entities/mapTiles';
 
-/** 1 macro cell = 8 microcells (same as MapEditor) */
-const MACRO_CELL_UNITS = 8;
+import { MAP_UNITS_PER_TILE } from './mapUnits';
+
+/** Units per placed tile (same as MapEditor) */
+const MACRO_CELL_UNITS = MAP_UNITS_PER_TILE;
 
 export type TilesById = Record<string, MapTile>;
 

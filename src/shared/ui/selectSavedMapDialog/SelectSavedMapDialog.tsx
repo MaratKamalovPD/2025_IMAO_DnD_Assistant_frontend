@@ -3,12 +3,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MapData, MapFull, MapMetadata, Rotation } from 'entities/maps';
 import { useLazyGetMapByIdQuery, useListMyMapsQuery } from 'entities/maps';
 import type { MapTile } from 'entities/mapTiles';
+import { MAP_UNITS_PER_TILE } from 'shared/lib';
 import { ModalOverlay, Spinner } from 'shared/ui';
 
 import s from './SelectSavedMapDialog.module.scss';
 
-/** 1 macro cell = 8 microcells */
-const MACRO_CELL_UNITS = 8;
+/** Units per placed tile */
+const MACRO_CELL_UNITS = MAP_UNITS_PER_TILE;
 
 type TilesById = Record<string, MapTile>;
 
