@@ -336,43 +336,48 @@ export const MapEditor = () => {
       const nextDestinationCell = next[destination.row]?.[destination.col];
       if (!nextDestinationCell) return prev;
 
-      const destinationTileId = nextDestinationCell.tileId;
-      const destinationRotation = nextDestinationCell.rotation;
-
-      if (drag.sourceCell) {
-        const { row: sourceRow, col: sourceCol } = drag.sourceCell;
-        if (sourceRow === destination.row && sourceCol === destination.col) {
-          return prev;
-        }
-
-        const sourceRowCells = next[sourceRow];
-        const nextSourceCell = sourceRowCells?.[sourceCol];
-        if (!nextSourceCell) return prev;
-
-        const sourceTileId = nextSourceCell.tileId;
-        if (!sourceTileId) {
-          nextDestinationCell.tileId = drag.tile.id;
-          nextDestinationCell.rotation = drag.rotation;
-          return next;
-        }
-
-        if (destinationTileId && destinationTileId !== sourceTileId) {
-          nextDestinationCell.tileId = sourceTileId;
-          nextDestinationCell.rotation = drag.rotation;
-          nextSourceCell.tileId = destinationTileId;
-          nextSourceCell.rotation = destinationRotation;
-          return next;
-        }
-
-        nextDestinationCell.tileId = sourceTileId;
+      // Drag from palette: place/replace at destination
+      if (!drag.sourceCell) {
+        nextDestinationCell.tileId = drag.tile.id;
         nextDestinationCell.rotation = drag.rotation;
-        nextSourceCell.tileId = null;
-        nextSourceCell.rotation = 0;
         return next;
       }
 
+      // Drag from cell
+      const { row: sourceRow, col: sourceCol } = drag.sourceCell;
+
+      // BUG 3 fix: Same cell - update rotation if changed
+      if (sourceRow === destination.row && sourceCol === destination.col) {
+        if (nextDestinationCell.rotation === drag.rotation) {
+          return prev; // No change needed
+        }
+        nextDestinationCell.rotation = drag.rotation;
+        return next;
+      }
+
+      const nextSourceCell = next[sourceRow]?.[sourceCol];
+      if (!nextSourceCell) return prev;
+
+      // Capture destination payload before modifying (tileId + rotation as a unit)
+      const destTileId = nextDestinationCell.tileId;
+      const destRotation = nextDestinationCell.rotation;
+
+      // Place dragged tile at destination with its (possibly modified) rotation
       nextDestinationCell.tileId = drag.tile.id;
       nextDestinationCell.rotation = drag.rotation;
+
+      // Handle source cell based on whether destination was occupied
+      if (destTileId !== null) {
+        // BUG 1 & 2 fix: Destination was occupied - swap payloads
+        // Rotation travels with the tile (payload = tileId + rotation)
+        nextSourceCell.tileId = destTileId;
+        nextSourceCell.rotation = destRotation;
+      } else {
+        // Destination was empty - clear source
+        nextSourceCell.tileId = null;
+        nextSourceCell.rotation = 0;
+      }
+
       return next;
     });
   }, []);
