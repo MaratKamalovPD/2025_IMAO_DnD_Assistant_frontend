@@ -68,6 +68,7 @@ export const MapBoardGrid = ({
               >
                 {tile ? (
                   <div
+                    key={`${cell.tileId}-${cell.rotation}`}
                     className={s.cellTile}
                     style={
                       {
