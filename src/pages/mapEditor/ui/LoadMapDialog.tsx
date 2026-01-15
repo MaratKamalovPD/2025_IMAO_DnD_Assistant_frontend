@@ -13,7 +13,15 @@ type LoadMapDialogProps = {
 };
 
 export const LoadMapDialog = ({ isOpen, setIsOpen, onLoadMap }: LoadMapDialogProps) => {
-  const { data: maps, isLoading, isError, refetch } = useListMyMapsQuery();
+  // Only fetch when dialog is open to avoid request on initial mount
+  const {
+    data: maps,
+    isLoading,
+    isError,
+    refetch,
+  } = useListMyMapsQuery(undefined, {
+    skip: !isOpen,
+  });
   const [getMapById, { isFetching: isLoadingMap }] = useLazyGetMapByIdQuery();
   const [deleteMap] = useDeleteMapMutation();
 
@@ -56,12 +64,33 @@ export const LoadMapDialog = ({ isOpen, setIsOpen, onLoadMap }: LoadMapDialogPro
   return (
     <ModalOverlay title='Загрузить карту' isModalOpen={isOpen} setIsModalOpen={setIsOpen}>
       <div className={s.dialogContent}>
-        {(isLoading || isLoadingMap) && <Spinner size={60} />}
+        {(isLoading || isLoadingMap) && (
+          <div className={s.dialogLoadingState}>
+            <Spinner size={48} />
+            <p className={s.dialogLoadingText}>
+              {isLoadingMap ? 'Загрузка карты...' : 'Загрузка списка карт...'}
+            </p>
+          </div>
+        )}
 
-        {isError && <div className={s.dialogError}>Не удалось загрузить список карт</div>}
+        {isError && (
+          <div className={s.dialogErrorState}>
+            <span className={s.dialogErrorIcon}>⚠</span>
+            <p className={s.dialogErrorText}>Не удалось загрузить список карт</p>
+            <button type='button' className={s.dialogRetryBtn} onClick={() => void refetch()}>
+              Повторить попытку
+            </button>
+          </div>
+        )}
 
         {!isLoading && !isLoadingMap && !isError && maps && maps.length === 0 && (
-          <div className={s.dialogEmpty}>У вас пока нет сохранённых карт</div>
+          <div className={s.dialogEmptyState}>
+            <span className={s.dialogEmptyIcon}>📁</span>
+            <p className={s.dialogEmptyText}>У вас пока нет сохранённых карт</p>
+            <p className={s.dialogEmptyHint}>
+              Создайте карту в редакторе и нажмите «Сохранить карту»
+            </p>
+          </div>
         )}
 
         {!isLoading && !isLoadingMap && !isError && maps && maps.length > 0 && (
