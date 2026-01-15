@@ -1,12 +1,7 @@
 // MapEditor.tsx
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import {
-  Icon28ComputerMouseArrowsOutline,
-  Icon28DeleteOutline,
-  Icon28RefreshOutline,
-} from '@vkontakte/icons';
-import clsx from 'clsx';
+import type { MapFull } from 'entities/maps';
 import type { MapTile, MapTileCategory } from 'entities/mapTiles';
 import { useGetTileCategoriesQuery } from 'entities/mapTiles/api';
 import {
@@ -16,18 +11,22 @@ import {
   useRef,
   useState,
   type ChangeEvent,
-  type CSSProperties,
   type MouseEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
+import { toast } from 'react-toastify';
 
+import { deserializeMapData, serializeGrid } from '../lib';
+import { BoardControls } from './BoardControls';
+import { LoadMapDialog } from './LoadMapDialog';
+import { MapBoardGrid } from './MapBoardGrid';
 import s from './MapEditor.module.scss';
+import { MapEditorHeader } from './MapEditorHeader';
+import { SaveMapDialog } from './SaveMapDialog';
+import { TilePalette } from './TilePalette';
+import type { Cell, CellPos, Grid, TileId } from './types';
 
 // -------------------- types --------------------
-type TileId = string;
-type Cell = { id: string; tileId: TileId | null; rotation: number };
-type Grid = Cell[][];
-type CellPos = { row: number; col: number };
 type DragOrigin = 'palette' | 'cell';
 
 type ActiveDrag = {
@@ -173,6 +172,12 @@ export const MapEditor = () => {
   const pointerUpHandlerRef = useRef<((event: PointerEvent) => void) | null>(null);
   const keyDownHandlerRef = useRef<((event: KeyboardEvent) => void) | null>(null);
   const blurHandlerRef = useRef<(() => void) | null>(null);
+
+  // ---------- map persistence state ----------
+  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [isLoadDialogOpen, setIsLoadDialogOpen] = useState(false);
+  const [currentMapId, setCurrentMapId] = useState<string | null>(null);
+  const [currentMapName, setCurrentMapName] = useState<string>('');
 
   const setActiveDragState = useCallback(
     (updater: ActiveDrag | null | ((prev: ActiveDrag | null) => ActiveDrag | null)): void => {
@@ -342,43 +347,48 @@ export const MapEditor = () => {
       const nextDestinationCell = next[destination.row]?.[destination.col];
       if (!nextDestinationCell) return prev;
 
-      const destinationTileId = nextDestinationCell.tileId;
-      const destinationRotation = nextDestinationCell.rotation;
-
-      if (drag.sourceCell) {
-        const { row: sourceRow, col: sourceCol } = drag.sourceCell;
-        if (sourceRow === destination.row && sourceCol === destination.col) {
-          return prev;
-        }
-
-        const sourceRowCells = next[sourceRow];
-        const nextSourceCell = sourceRowCells?.[sourceCol];
-        if (!nextSourceCell) return prev;
-
-        const sourceTileId = nextSourceCell.tileId;
-        if (!sourceTileId) {
-          nextDestinationCell.tileId = drag.tile.id;
-          nextDestinationCell.rotation = drag.rotation;
-          return next;
-        }
-
-        if (destinationTileId && destinationTileId !== sourceTileId) {
-          nextDestinationCell.tileId = sourceTileId;
-          nextDestinationCell.rotation = drag.rotation;
-          nextSourceCell.tileId = destinationTileId;
-          nextSourceCell.rotation = destinationRotation;
-          return next;
-        }
-
-        nextDestinationCell.tileId = sourceTileId;
+      // Drag from palette: place/replace at destination
+      if (!drag.sourceCell) {
+        nextDestinationCell.tileId = drag.tile.id;
         nextDestinationCell.rotation = drag.rotation;
-        nextSourceCell.tileId = null;
-        nextSourceCell.rotation = 0;
         return next;
       }
 
+      // Drag from cell
+      const { row: sourceRow, col: sourceCol } = drag.sourceCell;
+
+      // BUG 3 fix: Same cell - update rotation if changed
+      if (sourceRow === destination.row && sourceCol === destination.col) {
+        if (nextDestinationCell.rotation === drag.rotation) {
+          return prev; // No change needed
+        }
+        nextDestinationCell.rotation = drag.rotation;
+        return next;
+      }
+
+      const nextSourceCell = next[sourceRow]?.[sourceCol];
+      if (!nextSourceCell) return prev;
+
+      // Capture destination payload before modifying (tileId + rotation as a unit)
+      const destTileId = nextDestinationCell.tileId;
+      const destRotation = nextDestinationCell.rotation;
+
+      // Place dragged tile at destination with its (possibly modified) rotation
       nextDestinationCell.tileId = drag.tile.id;
       nextDestinationCell.rotation = drag.rotation;
+
+      // Handle source cell based on whether destination was occupied
+      if (destTileId !== null) {
+        // BUG 1 & 2 fix: Destination was occupied - swap payloads
+        // Rotation travels with the tile (payload = tileId + rotation)
+        nextSourceCell.tileId = destTileId;
+        nextSourceCell.rotation = destRotation;
+      } else {
+        // Destination was empty - clear source
+        nextSourceCell.tileId = null;
+        nextSourceCell.rotation = 0;
+      }
+
       return next;
     });
   }, []);
@@ -571,6 +581,45 @@ export const MapEditor = () => {
 
   const handleReset = (): void => {
     setGrid(createEmptyGrid(rows, columns));
+    setCurrentMapId(null);
+    setCurrentMapName('');
+  };
+
+  const handleOpenSaveDialog = (): void => {
+    setIsSaveDialogOpen(true);
+  };
+
+  const handleOpenLoadDialog = (): void => {
+    setIsLoadDialogOpen(true);
+  };
+
+  const handleSaveSuccess = (id: string, name: string): void => {
+    setCurrentMapId(id);
+    setCurrentMapName(name);
+  };
+
+  const handleLoadMap = (map: MapFull): void => {
+    const result = deserializeMapData(map.data, tilesById);
+
+    if (!result.success) {
+      toast.error(result.error);
+      return;
+    }
+
+    // Show warnings if any
+    result.warnings.forEach((warning) => {
+      toast.warning(warning);
+    });
+
+    // Update editor state
+    setRows(result.rows);
+    setColumns(result.columns);
+    setRowsInput(String(result.rows));
+    setColumnsInput(String(result.columns));
+    setGrid(result.grid);
+    setCurrentMapId(map.id);
+    setCurrentMapName(map.name);
+    setIsCellSizeManual(false);
   };
 
   const handleRowsChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -656,208 +705,71 @@ export const MapEditor = () => {
     });
   };
 
+  const mapData = useMemo(() => serializeGrid(grid, rows, columns), [grid, rows, columns]);
+
   return (
     <div className={s.editorPage} ref={rootRef}>
-      <header className={s.headerSection}>
-        <h1>Редактор карт</h1>
-        <p>
-          Соберите собственную карту из квадратных плиток. Перетащите плитку из панели элементов на
-          поле. Чтобы переместить плитку, потяните её из ячейки. Щёлкните правой кнопкой, чтобы
-          очистить клетку.
-        </p>
-        <div className={s.actions}>
-          <button type='button' onClick={handleReset}>
-            Очистить карту
-          </button>
-        </div>
-        <div className={s.helpBox}>
-          <h2 className={s.helpTitle}>Справка по управлению</h2>
-          <div className={s.helpSection}>
-            <h3 className={s.helpSectionTitle}>Работа с плитками</h3>
-            <div className={s.helpItems}>
-              <div className={s.helpItem}>
-                <span className={s.helpIcon}>
-                  <Icon28ComputerMouseArrowsOutline />
-                </span>
-                <p className={s.helpText}>
-                  Перетаскивание — зажмите ЛКМ по плитке в палитре или на поле и перенесите её в
-                  нужную клетку.
-                </p>
-              </div>
-              <div className={s.helpItem}>
-                <span className={s.helpIcon}>
-                  <Icon28RefreshOutline />
-                </span>
-                <p className={s.helpText}>
-                  Поворот — пока плитка в руках, нажимайте Q (Й) для поворота против часовой стрелки
-                  и E (У) для поворота по часовой стрелке. Клавиша R (К) сбрасывает угол. Esc —
-                  отменить перенос.
-                </p>
-              </div>
-              <div className={s.helpItem}>
-                <span className={s.helpIcon}>
-                  <Icon28DeleteOutline />
-                </span>
-                <p className={s.helpText}>Очистка клетки — нажмите ПКМ по плитке на поле.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <MapEditorHeader
+        onReset={handleReset}
+        onSave={handleOpenSaveDialog}
+        onLoad={handleOpenLoadDialog}
+        currentMapName={currentMapName || null}
+      />
 
       <div className={s.workspace}>
-        <aside className={s.palette}>
-          <h2>Панель плиток</h2>
-          <div className={s.paletteItems}>
-            {status === 'loading' && <div className={s.paletteState}>Загрузка плиток...</div>}
-            {status === 'failed' && (
-              <div className={s.paletteState} role='alert'>
-                {errorMessage ?? 'Не удалось загрузить плитки'}
-              </div>
-            )}
-            {status === 'succeeded' &&
-              categories.map((category, index) => (
-                <details key={category.id} className={s.paletteGroup} open={index === 0}>
-                  <summary className={s.paletteGroupSummary}>{category.name}</summary>
-                  <div className={s.paletteGroupItems}>
-                    {category.tiles.map((tile) => (
-                      <div
-                        key={tile.id}
-                        className={s.paletteItem}
-                        onPointerDown={(event) => beginDragFromPalette(event, tile)}
-                        onContextMenu={(event) => event.preventDefault()}
-                      >
-                        <div className={s.tilePreview}>
-                          <img src={tile.imageUrl} alt={tile.name} draggable={false} />
-                        </div>
-                        <span>{tile.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </details>
-              ))}
-            {status === 'succeeded' && categories.length === 0 && (
-              <div className={s.paletteState}>Нет доступных плиток</div>
-            )}
-          </div>
-        </aside>
+        <TilePalette
+          status={status}
+          categories={categories}
+          errorMessage={errorMessage}
+          onTilePointerDown={beginDragFromPalette}
+        />
 
         <section className={s.boardSection}>
-          <div className={s.boardControls}>
-            <label className={s.boardControl}>
-              <span>Высота (строки)</span>
-              <input
-                type='number'
-                min={MIN_GRID_SIZE}
-                max={MAX_GRID_SIZE}
-                step={1}
-                value={rowsInput}
-                onChange={handleRowsChange}
-                onBlur={handleRowsBlur}
-              />
-            </label>
-            <label className={s.boardControl}>
-              <span>Ширина (столбцы)</span>
-              <input
-                type='number'
-                min={MIN_GRID_SIZE}
-                max={MAX_GRID_SIZE}
-                step={1}
-                value={columnsInput}
-                onChange={handleColumnsChange}
-                onBlur={handleColumnsBlur}
-              />
-            </label>
-            <div className={clsx(s.boardControl, s.boardZoomControl)}>
-              <span>Масштаб</span>
-              <div className={s.zoomControls}>
-                <button
-                  type='button'
-                  onClick={handleZoomOut}
-                  disabled={!canZoomOut}
-                  aria-label='Уменьшить размер клеток'
-                >
-                  −
-                </button>
-                <span className={s.zoomValue}>{cellSize}px</span>
-                <button
-                  type='button'
-                  onClick={handleZoomIn}
-                  disabled={!canZoomIn}
-                  aria-label='Увеличить размер клеток'
-                >
-                  +
-                </button>
-                <button type='button' onClick={handleZoomReset} className={s.zoomReset}>
-                  Авто
-                </button>
-              </div>
-            </div>
-            <div className={s.boardControlHint}>
-              Диапазон размера поля: от {MIN_GRID_SIZE}×{MIN_GRID_SIZE} до {MAX_GRID_SIZE}×
-              {MAX_GRID_SIZE}
-            </div>
-          </div>
+          <BoardControls
+            rowsInput={rowsInput}
+            columnsInput={columnsInput}
+            cellSize={cellSize}
+            canZoomIn={canZoomIn}
+            canZoomOut={canZoomOut}
+            minGridSize={MIN_GRID_SIZE}
+            maxGridSize={MAX_GRID_SIZE}
+            onRowsChange={handleRowsChange}
+            onColumnsChange={handleColumnsChange}
+            onRowsBlur={handleRowsBlur}
+            onColumnsBlur={handleColumnsBlur}
+            onZoomIn={handleZoomIn}
+            onZoomOut={handleZoomOut}
+            onZoomReset={handleZoomReset}
+          />
 
-          <div className={s.boardScrollContainer}>
-            <div
-              ref={boardRef}
-              className={s.board}
-              style={{
-                gridTemplateColumns: `repeat(${columns}, ${cellSize}px)`,
-                gridAutoRows: `${cellSize}px`,
-              }}
-              role='grid'
-              aria-rowcount={rows}
-              aria-colcount={columns}
-            >
-              {grid.map((row, rowIndex) =>
-                row.map((cell, columnIndex) => {
-                  const tileId = cell.tileId;
-                  const tile = tileId ? tilesById[tileId] : null;
-
-                  return (
-                    <div
-                      key={cell.id}
-                      className={clsx(s.cell, tile ? s.cellFilled : s.cellEmpty)}
-                      onContextMenu={(event) => handleClearCell(rowIndex, columnIndex, event)}
-                      data-row={rowIndex}
-                      data-col={columnIndex}
-                      role='gridcell'
-                      aria-colindex={columnIndex + 1}
-                      aria-rowindex={rowIndex + 1}
-                      aria-label={tile ? tile.name : 'Пустая клетка'}
-                    >
-                      {tile ? (
-                        <div
-                          className={s.cellTile}
-                          style={
-                            {
-                              '--tile-rotation': `${cell.rotation}deg`,
-                            } as CSSProperties
-                          }
-                          onPointerDown={(event) =>
-                            beginDragFromCell(
-                              event,
-                              { row: rowIndex, col: columnIndex },
-                              tile,
-                              cell.rotation,
-                            )
-                          }
-                        >
-                          <img src={tile.imageUrl} alt={tile.name} draggable={false} />
-                        </div>
-                      ) : (
-                        <span className={s.cellPlaceholder}>+</span>
-                      )}
-                    </div>
-                  );
-                }),
-              )}
-            </div>
-          </div>
+          <MapBoardGrid
+            grid={grid}
+            rows={rows}
+            columns={columns}
+            cellSize={cellSize}
+            tilesById={tilesById}
+            boardRef={boardRef}
+            onCellClear={handleClearCell}
+            onCellPointerDown={beginDragFromCell}
+          />
         </section>
       </div>
+
+      <SaveMapDialog
+        isOpen={isSaveDialogOpen}
+        setIsOpen={setIsSaveDialogOpen}
+        mapData={mapData}
+        currentMapId={currentMapId}
+        currentMapName={currentMapName}
+        onSaveSuccess={handleSaveSuccess}
+      />
+
+      <LoadMapDialog
+        isOpen={isLoadDialogOpen}
+        setIsOpen={setIsLoadDialogOpen}
+        onLoadMap={handleLoadMap}
+        tilesById={tilesById}
+      />
     </div>
   );
 };
