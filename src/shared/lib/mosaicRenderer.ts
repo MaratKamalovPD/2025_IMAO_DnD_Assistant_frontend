@@ -8,22 +8,23 @@ const MACRO_CELL_UNITS = MAP_UNITS_PER_TILE;
 
 export type TilesById = Record<string, MapTile>;
 
-export type MosaicScaleMode = 'fit' | 'cellAligned';
+export type MosaicScaleMode = 'fit' | 'cellAligned' | 'trackerAligned';
 
 export type MosaicRenderOptions = {
   mapData: MapData;
   tilesById: TilesById;
-  /** Target width in CSS pixels */
+  /** Target width in CSS pixels (board width for trackerAligned mode) */
   targetWidthPx: number;
-  /** Target height in CSS pixels */
+  /** Target height in CSS pixels (board height for trackerAligned mode) */
   targetHeightPx: number;
   /**
    * Scaling mode:
-   * - "fit": scale map to fit inside target dimensions
+   * - "fit": scale map to fit inside target dimensions (may not fill board)
    * - "cellAligned": 1 macro cell = cellSizePx (default 50px), may exceed target
+   * - "trackerAligned": render at exact target dimensions, each tile at grid position
    */
   mode?: MosaicScaleMode;
-  /** Cell size in pixels for "cellAligned" mode (default: 50) */
+  /** Cell size in pixels for "cellAligned" and "trackerAligned" modes (default: 50) */
   cellSizePx?: number;
 };
 
@@ -139,7 +140,12 @@ export const renderMapMosaic = async (
   let logicalHeight: number;
   let unitPx: number;
 
-  if (mode === 'cellAligned') {
+  if (mode === 'trackerAligned') {
+    // Render at exact target dimensions, each tile at grid position
+    logicalWidth = targetWidthPx;
+    logicalHeight = targetHeightPx;
+    unitPx = cellSizePx; // Each tile renders as cellSizePx × cellSizePx
+  } else if (mode === 'cellAligned') {
     // 1 macro cell = cellSizePx
     unitPx = cellSizePx;
     logicalWidth = cols * unitPx;

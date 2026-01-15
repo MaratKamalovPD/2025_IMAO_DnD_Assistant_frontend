@@ -102,7 +102,8 @@ export const EncounterTracker = () => {
           tilesById,
           targetWidthPx: boardWidthPx,
           targetHeightPx: boardHeightPx,
-          mode: 'fit',
+          mode: 'trackerAligned',
+          cellSizePx: 50,
         });
 
         // Revoke previous blob URL if exists
