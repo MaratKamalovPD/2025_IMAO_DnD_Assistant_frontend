@@ -1,6 +1,7 @@
 // MapEditor.tsx
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import type { MapFull } from 'entities/maps';
 import type { MapTile, MapTileCategory } from 'entities/mapTiles';
 import { useGetTileCategoriesQuery } from 'entities/mapTiles/api';
 import {
@@ -13,11 +14,15 @@ import {
   type MouseEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
+import { toast } from 'react-toastify';
 
+import { deserializeMapData, serializeGrid } from '../lib';
 import { BoardControls } from './BoardControls';
+import { LoadMapDialog } from './LoadMapDialog';
 import { MapBoardGrid } from './MapBoardGrid';
 import s from './MapEditor.module.scss';
 import { MapEditorHeader } from './MapEditorHeader';
+import { SaveMapDialog } from './SaveMapDialog';
 import { TilePalette } from './TilePalette';
 import type { Cell, CellPos, Grid, TileId } from './types';
 
@@ -167,6 +172,12 @@ export const MapEditor = () => {
   const pointerUpHandlerRef = useRef<((event: PointerEvent) => void) | null>(null);
   const keyDownHandlerRef = useRef<((event: KeyboardEvent) => void) | null>(null);
   const blurHandlerRef = useRef<(() => void) | null>(null);
+
+  // ---------- map persistence state ----------
+  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [isLoadDialogOpen, setIsLoadDialogOpen] = useState(false);
+  const [currentMapId, setCurrentMapId] = useState<string | null>(null);
+  const [currentMapName, setCurrentMapName] = useState<string>('');
 
   const setActiveDragState = useCallback(
     (updater: ActiveDrag | null | ((prev: ActiveDrag | null) => ActiveDrag | null)): void => {
@@ -570,6 +581,45 @@ export const MapEditor = () => {
 
   const handleReset = (): void => {
     setGrid(createEmptyGrid(rows, columns));
+    setCurrentMapId(null);
+    setCurrentMapName('');
+  };
+
+  const handleOpenSaveDialog = (): void => {
+    setIsSaveDialogOpen(true);
+  };
+
+  const handleOpenLoadDialog = (): void => {
+    setIsLoadDialogOpen(true);
+  };
+
+  const handleSaveSuccess = (id: string, name: string): void => {
+    setCurrentMapId(id);
+    setCurrentMapName(name);
+  };
+
+  const handleLoadMap = (map: MapFull): void => {
+    const result = deserializeMapData(map.data, tilesById);
+
+    if (!result.success) {
+      toast.error(result.error);
+      return;
+    }
+
+    // Show warnings if any
+    result.warnings.forEach((warning) => {
+      toast.warning(warning);
+    });
+
+    // Update editor state
+    setRows(result.rows);
+    setColumns(result.columns);
+    setRowsInput(String(result.rows));
+    setColumnsInput(String(result.columns));
+    setGrid(result.grid);
+    setCurrentMapId(map.id);
+    setCurrentMapName(map.name);
+    setIsCellSizeManual(false);
   };
 
   const handleRowsChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -655,9 +705,16 @@ export const MapEditor = () => {
     });
   };
 
+  const mapData = useMemo(() => serializeGrid(grid, rows, columns), [grid, rows, columns]);
+
   return (
     <div className={s.editorPage} ref={rootRef}>
-      <MapEditorHeader onReset={handleReset} />
+      <MapEditorHeader
+        onReset={handleReset}
+        onSave={handleOpenSaveDialog}
+        onLoad={handleOpenLoadDialog}
+        currentMapName={currentMapName || null}
+      />
 
       <div className={s.workspace}>
         <TilePalette
@@ -697,6 +754,21 @@ export const MapEditor = () => {
           />
         </section>
       </div>
+
+      <SaveMapDialog
+        isOpen={isSaveDialogOpen}
+        setIsOpen={setIsSaveDialogOpen}
+        mapData={mapData}
+        currentMapId={currentMapId}
+        currentMapName={currentMapName}
+        onSaveSuccess={handleSaveSuccess}
+      />
+
+      <LoadMapDialog
+        isOpen={isLoadDialogOpen}
+        setIsOpen={setIsLoadDialogOpen}
+        onLoadMap={handleLoadMap}
+      />
     </div>
   );
 };

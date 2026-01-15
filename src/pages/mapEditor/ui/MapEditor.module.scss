@@ -502,3 +502,138 @@
     }
   }
 }
+
+// Dialog styles for Save/Load
+.dialogContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  min-width: 300px;
+}
+
+.dialogField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  span {
+    font-weight: 600;
+    color: var(--color-text-secondary, #ced4da);
+  }
+
+  input {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(134, 142, 150, 0.35);
+    background: rgba(33, 37, 41, 0.85);
+    color: inherit;
+    font: inherit;
+    outline: none;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      border-color: var(--color-accent-primary, #7048e8);
+    }
+  }
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+
+  button {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid rgba(134, 142, 150, 0.35);
+    background: rgba(33, 37, 41, 0.85);
+    color: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+
+    &:hover {
+      background: rgba(134, 142, 150, 0.25);
+    }
+
+    &[data-variant='accent'] {
+      background: var(--color-accent-primary, #7048e8);
+      border-color: transparent;
+      color: #fff;
+
+      &:hover {
+        background: #5f3dc4;
+      }
+    }
+  }
+}
+
+.dialogError,
+.dialogEmpty {
+  text-align: center;
+  color: var(--color-text-secondary, #ced4da);
+  padding: 20px;
+}
+
+.mapList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.mapListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(134, 142, 150, 0.35);
+  background: rgba(33, 37, 41, 0.6);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+
+  &:hover {
+    background: rgba(134, 142, 150, 0.2);
+    border-color: var(--color-accent-primary, #7048e8);
+  }
+}
+
+.mapListItemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mapListItemName {
+  font-weight: 600;
+}
+
+.mapListItemDate {
+  font-size: 12px;
+  color: var(--color-text-secondary, #ced4da);
+}
+
+.mapListItemDelete {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary, #ced4da);
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+  }
+}

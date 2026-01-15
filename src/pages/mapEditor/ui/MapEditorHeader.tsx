@@ -8,18 +8,37 @@ import s from './MapEditor.module.scss';
 
 export type MapEditorHeaderProps = {
   onReset: () => void;
+  onSave: () => void;
+  onLoad: () => void;
+  currentMapName: string | null;
 };
 
-export const MapEditorHeader = ({ onReset }: MapEditorHeaderProps) => {
+export const MapEditorHeader = ({
+  onReset,
+  onSave,
+  onLoad,
+  currentMapName,
+}: MapEditorHeaderProps) => {
   return (
     <header className={s.headerSection}>
       <h1>Редактор карт</h1>
+      {currentMapName && (
+        <p style={{ fontWeight: 600, color: 'var(--color-accent-primary, #7048e8)' }}>
+          Текущая карта: {currentMapName}
+        </p>
+      )}
       <p>
         Соберите собственную карту из квадратных плиток. Перетащите плитку из панели элементов на
         поле. Чтобы переместить плитку, потяните её из ячейки. Щёлкните правой кнопкой, чтобы
         очистить клетку.
       </p>
       <div className={s.actions}>
+        <button type='button' onClick={onSave}>
+          Сохранить карту
+        </button>
+        <button type='button' onClick={onLoad}>
+          Загрузить карту
+        </button>
         <button type='button' onClick={onReset}>
           Очистить карту
         </button>
