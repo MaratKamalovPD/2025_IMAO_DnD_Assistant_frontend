@@ -768,6 +768,7 @@ export const MapEditor = () => {
         isOpen={isLoadDialogOpen}
         setIsOpen={setIsLoadDialogOpen}
         onLoadMap={handleLoadMap}
+        tilesById={tilesById}
       />
     </div>
   );
