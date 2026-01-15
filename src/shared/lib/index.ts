@@ -25,6 +25,13 @@ export {
   clearMosaicCache,
   getOrRenderMosaic,
   renderMapMosaic,
+  revokeMosaicUrl,
   validateMapForMosaic,
 } from './mosaicRenderer';
-export type { MosaicRenderResult, TilesById, ValidateMosaicResult } from './mosaicRenderer';
+export type {
+  MosaicRenderOptions,
+  MosaicRenderResult,
+  MosaicScaleMode,
+  TilesById,
+  ValidateMosaicResult,
+} from './mosaicRenderer';

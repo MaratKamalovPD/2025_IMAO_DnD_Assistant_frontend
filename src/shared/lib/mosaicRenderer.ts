@@ -6,9 +6,31 @@ const MACRO_CELL_UNITS = 8;
 
 export type TilesById = Record<string, MapTile>;
 
+export type MosaicScaleMode = 'fit' | 'cellAligned';
+
+export type MosaicRenderOptions = {
+  mapData: MapData;
+  tilesById: TilesById;
+  /** Target width in CSS pixels */
+  targetWidthPx: number;
+  /** Target height in CSS pixels */
+  targetHeightPx: number;
+  /**
+   * Scaling mode:
+   * - "fit": scale map to fit inside target dimensions
+   * - "cellAligned": 1 macro cell = cellSizePx (default 50px), may exceed target
+   */
+  mode?: MosaicScaleMode;
+  /** Cell size in pixels for "cellAligned" mode (default: 50) */
+  cellSizePx?: number;
+};
+
 export type MosaicRenderResult = {
-  dataUrl: string;
+  /** Blob URL for the rendered mosaic image */
+  blobUrl: string;
+  /** Actual rendered width in CSS pixels */
   width: number;
+  /** Actual rendered height in CSS pixels */
   height: number;
 };
 
@@ -32,7 +54,7 @@ const loadImage = (url: string): Promise<HTMLImageElement> => {
   });
 };
 
-/** Draw a tile with rotation on canvas context */
+/** Draw a tile with rotation on canvas context (coordinates in logical pixels) */
 const drawRotatedTile = (
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
@@ -55,7 +77,6 @@ export type ValidateMosaicResult = { valid: true } | { valid: false; error: stri
  * Checks for proper MACRO_CELL_UNITS alignment.
  */
 export const validateMapForMosaic = (mapData: MapData): ValidateMosaicResult => {
-  // Check dimensions are aligned to macro cells
   if (mapData.widthUnits % MACRO_CELL_UNITS !== 0) {
     return {
       valid: false,
@@ -70,7 +91,6 @@ export const validateMapForMosaic = (mapData: MapData): ValidateMosaicResult => 
     };
   }
 
-  // Check that all placements are aligned
   for (const placement of mapData.placements) {
     if (placement.x % MACRO_CELL_UNITS !== 0) {
       return {
@@ -90,17 +110,21 @@ export const validateMapForMosaic = (mapData: MapData): ValidateMosaicResult => 
 };
 
 /**
- * Renders a map's tiles to a data URL that can be used as a background image.
- * @param mapData The map data containing placements
- * @param tilesById A lookup object from tile ID to tile info (with imageUrl)
- * @param cellSizePx The size of each macro cell in pixels (default: 50 to match BattleMap)
- * @returns Promise resolving to a data URL of the rendered mosaic
+ * Renders a map's tiles to a Blob URL with proper DPR scaling.
+ * Background is transparent (no fill).
  */
 export const renderMapMosaic = async (
-  mapData: MapData,
-  tilesById: TilesById,
-  cellSizePx = 50,
+  options: MosaicRenderOptions,
 ): Promise<MosaicRenderResult> => {
+  const {
+    mapData,
+    tilesById,
+    targetWidthPx,
+    targetHeightPx,
+    mode = 'fit',
+    cellSizePx = 50,
+  } = options;
+
   const cols = mapData.widthUnits / MACRO_CELL_UNITS;
   const rows = mapData.heightUnits / MACRO_CELL_UNITS;
 
@@ -108,22 +132,41 @@ export const renderMapMosaic = async (
     throw new Error('Некорректные размеры карты');
   }
 
-  const width = cols * cellSizePx;
-  const height = rows * cellSizePx;
+  // Calculate logical pixel dimensions based on mode
+  let logicalWidth: number;
+  let logicalHeight: number;
+  let unitPx: number;
 
-  // Create offscreen canvas
+  if (mode === 'cellAligned') {
+    // 1 macro cell = cellSizePx
+    unitPx = cellSizePx;
+    logicalWidth = cols * unitPx;
+    logicalHeight = rows * unitPx;
+  } else {
+    // mode === 'fit': scale to fit inside target dimensions
+    unitPx = Math.min(targetWidthPx / cols, targetHeightPx / rows);
+    logicalWidth = cols * unitPx;
+    logicalHeight = rows * unitPx;
+  }
+
+  // Use devicePixelRatio for crisp rendering
+  const dpr = window.devicePixelRatio || 1;
+
+  // Create offscreen canvas with physical pixel dimensions
   const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width = Math.round(logicalWidth * dpr);
+  canvas.height = Math.round(logicalHeight * dpr);
 
   const ctx = canvas.getContext('2d');
   if (!ctx) {
     throw new Error('Не удалось создать canvas context');
   }
 
-  // Fill with dark background
-  ctx.fillStyle = '#212529';
-  ctx.fillRect(0, 0, width, height);
+  // Scale context to account for DPR - draw in logical pixels
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  // Clear canvas (transparent background)
+  ctx.clearRect(0, 0, logicalWidth, logicalHeight);
 
   // Collect unique tile URLs to load
   const urlsToLoad = new Set<string>();
@@ -150,48 +193,87 @@ export const renderMapMosaic = async (
 
     const col = placement.x / MACRO_CELL_UNITS;
     const row = placement.y / MACRO_CELL_UNITS;
-    const x = col * cellSizePx;
-    const y = row * cellSizePx;
+    const x = col * unitPx;
+    const y = row * unitPx;
 
-    drawRotatedTile(ctx, img, x, y, cellSizePx, placement.rot);
+    drawRotatedTile(ctx, img, x, y, unitPx, placement.rot);
   }
 
+  // Convert to Blob URL (more efficient than base64 dataURL)
+  const blobUrl = await new Promise<string>((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          resolve(URL.createObjectURL(blob));
+        } else {
+          reject(new Error('Не удалось создать blob'));
+        }
+      },
+      'image/png',
+      1.0,
+    );
+  });
+
   return {
-    dataUrl: canvas.toDataURL('image/png'),
-    width,
-    height,
+    blobUrl,
+    width: logicalWidth,
+    height: logicalHeight,
   };
 };
 
+/** Cache entry with blob URL for cleanup */
+type MosaicCacheEntry = MosaicRenderResult;
+
 /** Cache for rendered mosaics by map ID */
-const mosaicCache = new Map<string, MosaicRenderResult>();
+const mosaicCache = new Map<string, MosaicCacheEntry>();
 
 /**
  * Gets a cached mosaic or renders a new one.
- * @param mapId The map ID for caching
- * @param mapData The map data
- * @param tilesById Tiles lookup
- * @param cellSizePx Cell size in pixels
+ * Automatically revokes old blob URLs when cache is updated.
  */
 export const getOrRenderMosaic = async (
   mapId: string,
-  mapData: MapData,
-  tilesById: TilesById,
-  cellSizePx = 50,
+  options: Omit<MosaicRenderOptions, 'mapData' | 'tilesById'> & {
+    mapData: MapData;
+    tilesById: TilesById;
+  },
 ): Promise<MosaicRenderResult> => {
+  // Check cache
   const cached = mosaicCache.get(mapId);
   if (cached) return cached;
 
-  const result = await renderMapMosaic(mapData, tilesById, cellSizePx);
+  // Render new mosaic
+  const result = await renderMapMosaic(options);
+
+  // Store in cache
   mosaicCache.set(mapId, result);
+
   return result;
 };
 
-/** Clear a specific mosaic from cache */
+/** Revoke a blob URL and remove from cache */
 export const clearMosaicCache = (mapId?: string) => {
   if (mapId) {
-    mosaicCache.delete(mapId);
+    const entry = mosaicCache.get(mapId);
+    if (entry) {
+      URL.revokeObjectURL(entry.blobUrl);
+      mosaicCache.delete(mapId);
+    }
   } else {
+    // Clear all
+    for (const entry of mosaicCache.values()) {
+      URL.revokeObjectURL(entry.blobUrl);
+    }
     mosaicCache.clear();
+  }
+};
+
+/**
+ * Revoke a specific blob URL (use when replacing background).
+ * Does NOT affect cache - use for URLs not in cache.
+ */
+export const revokeMosaicUrl = (blobUrl: string) => {
+  if (blobUrl.startsWith('blob:')) {
+    URL.revokeObjectURL(blobUrl);
   }
 };

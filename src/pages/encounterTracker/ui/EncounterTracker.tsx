@@ -22,7 +22,7 @@ import {
   UserInterfaceState,
   UserInterfaceStore,
 } from 'entities/userInterface/model';
-import { getOrRenderMosaic, validateMapForMosaic } from 'shared/lib';
+import { getOrRenderMosaic, revokeMosaicUrl, validateMapForMosaic } from 'shared/lib';
 import { Placeholder, SelectSavedMapDialog } from 'shared/ui';
 import { Chatbot } from 'widgets/chatbot';
 import { BattleMap } from './battleMap';
@@ -56,6 +56,8 @@ export const EncounterTracker = () => {
 
   // Saved map dialog state
   const [isSavedMapDialogOpen, setIsSavedMapDialogOpen] = useState(false);
+  // Track current mosaic blob URL for cleanup
+  const currentMosaicUrlRef = useRef<string | null>(null);
 
   // Fetch tile categories for mosaic rendering
   const { data: tileCategories } = useGetTileCategoriesQuery(undefined, {
@@ -74,6 +76,10 @@ export const EncounterTracker = () => {
     return result;
   }, [tileCategories]);
 
+  // Target dimensions for mosaic (board size)
+  const boardWidthPx = cols * 50; // 1300px
+  const boardHeightPx = rows * 50; // 900px
+
   // Handle saved map selection
   const handleSelectSavedMap = useCallback(
     async (map: MapFull) => {
@@ -91,15 +97,37 @@ export const EncounterTracker = () => {
       }
 
       try {
-        const result = await getOrRenderMosaic(map.id, map.data, tilesById, 50);
-        setMapImage(result.dataUrl);
+        const result = await getOrRenderMosaic(map.id, {
+          mapData: map.data,
+          tilesById,
+          targetWidthPx: boardWidthPx,
+          targetHeightPx: boardHeightPx,
+          mode: 'fit',
+        });
+
+        // Revoke previous blob URL if exists
+        if (currentMosaicUrlRef.current) {
+          revokeMosaicUrl(currentMosaicUrlRef.current);
+        }
+        currentMosaicUrlRef.current = result.blobUrl;
+
+        setMapImage(result.blobUrl);
         toast.success(`Карта «${map.name}» загружена`);
       } catch {
         toast.error('Не удалось отрисовать карту');
       }
     },
-    [tilesById],
+    [tilesById, boardWidthPx, boardHeightPx],
   );
+
+  // Helper to switch to static map and revoke blob URL
+  const switchToStaticMap = useCallback((url: string) => {
+    if (currentMosaicUrlRef.current) {
+      revokeMosaicUrl(currentMosaicUrlRef.current);
+      currentMosaicUrlRef.current = null;
+    }
+    setMapImage(url);
+  }, []);
 
   const { lastLogs } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
   const { participants, currentTurnIndex } = useSelector<EncounterStore>(
@@ -219,7 +247,7 @@ export const EncounterTracker = () => {
         type: 'component',
         component: (
           <Tippy content='Установить карту подземелья' placement='left'>
-            <div className={s.toggle} onClick={() => setMapImage(DANGEON_MAP_IMAGE)}>
+            <div className={s.toggle} onClick={() => switchToStaticMap(DANGEON_MAP_IMAGE)}>
               <Icon28DiamondOutline fill='white' />
             </div>
           </Tippy>
@@ -232,7 +260,7 @@ export const EncounterTracker = () => {
         type: 'component',
         component: (
           <Tippy content='Установить карту деревни' placement='left'>
-            <div className={s.toggle} onClick={() => setMapImage(VILLAGE_MAP_IMAGE)}>
+            <div className={s.toggle} onClick={() => switchToStaticMap(VILLAGE_MAP_IMAGE)}>
               <Icon28HomeOutline fill='white' />
             </div>
           </Tippy>
