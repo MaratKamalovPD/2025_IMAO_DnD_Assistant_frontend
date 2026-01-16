@@ -62,14 +62,16 @@ export const EncounterTracker = () => {
       .map(() => Array<boolean>(DEFAULT_COLS).fill(false)),
   );
 
-  // Reinitialize cells grid when dimensions change
-  useEffect(() => {
+  // Atomic helper to resize grid - sets dimensions AND recreates cells together
+  const setTrackerSize = useCallback((newRows: number, newCols: number) => {
+    setTrackerRows(newRows);
+    setTrackerCols(newCols);
     setCells(
-      Array(trackerRows)
+      Array(newRows)
         .fill(false)
-        .map(() => Array<boolean>(trackerCols).fill(false)),
+        .map(() => Array<boolean>(newCols).fill(false)),
     );
-  }, [trackerRows, trackerCols]);
+  }, []);
 
   // Saved map dialog state
   const [isSavedMapDialogOpen, setIsSavedMapDialogOpen] = useState(false);
@@ -109,11 +111,10 @@ export const EncounterTracker = () => {
         return;
       }
 
-      // Set grid dimensions from map (in microcell units)
+      // Set grid dimensions from map (in microcell units) - atomic update
       const newCols = map.data.widthUnits;
       const newRows = map.data.heightUnits;
-      setTrackerCols(newCols);
-      setTrackerRows(newRows);
+      setTrackerSize(newRows, newCols);
 
       try {
         // Render mosaic at the new dimensions
@@ -141,21 +142,23 @@ export const EncounterTracker = () => {
         toast.error('Не удалось отрисовать карту');
       }
     },
-    [tilesById],
+    [tilesById, setTrackerSize],
   );
 
   // Helper to switch to static map and revoke blob URL
-  const switchToStaticMap = useCallback((url: string) => {
-    // Revoke mosaic blob URL if exists
-    if (currentMosaicUrlRef.current) {
-      revokeMosaicUrl(currentMosaicUrlRef.current);
-      currentMosaicUrlRef.current = null;
-    }
-    // Reset grid to default dimensions
-    setTrackerCols(DEFAULT_COLS);
-    setTrackerRows(DEFAULT_ROWS);
-    setMapImage(url);
-  }, []);
+  const switchToStaticMap = useCallback(
+    (url: string) => {
+      // Revoke mosaic blob URL if exists
+      if (currentMosaicUrlRef.current) {
+        revokeMosaicUrl(currentMosaicUrlRef.current);
+        currentMosaicUrlRef.current = null;
+      }
+      // Reset grid to default dimensions - atomic update
+      setTrackerSize(DEFAULT_ROWS, DEFAULT_COLS);
+      setMapImage(url);
+    },
+    [setTrackerSize],
+  );
 
   const { lastLogs } = useSelector<LoggerStore>((state) => state.logger) as LoggerState;
   const { participants, currentTurnIndex } = useSelector<EncounterStore>(

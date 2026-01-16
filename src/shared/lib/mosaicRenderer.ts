@@ -207,11 +207,11 @@ export const renderMapMosaic = async (
 
     if (mode === 'trackerAligned') {
       // In trackerAligned mode:
-      // - placement.x/y are in microcell units
-      // - each pixel = cellSizePx per microcell
-      // - tile size = MAP_UNITS_PER_TILE * cellSizePx (macro tile covers multiple microcells)
-      x = placement.x * cellSizePx;
-      y = placement.y * cellSizePx;
+      // - placement.x/y are in MAP_UNITS_PER_TILE-based units (multiples of 6)
+      // - convert to macro cell index, then to pixel position
+      // - tile size = MAP_UNITS_PER_TILE * cellSizePx (macro tile covers 6×6 microcells)
+      x = (placement.x / MACRO_CELL_UNITS) * cellSizePx;
+      y = (placement.y / MACRO_CELL_UNITS) * cellSizePx;
       tileW = MACRO_CELL_UNITS * cellSizePx;
       tileH = MACRO_CELL_UNITS * cellSizePx;
     } else {
