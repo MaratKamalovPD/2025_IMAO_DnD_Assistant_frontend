@@ -210,8 +210,8 @@ export const renderMapMosaic = async (
       // - placement.x/y are in MAP_UNITS_PER_TILE-based units (multiples of 6)
       // - convert to macro cell index, then to pixel position
       // - tile size = MAP_UNITS_PER_TILE * cellSizePx (macro tile covers 6×6 microcells)
-      x = (placement.x / MACRO_CELL_UNITS) * cellSizePx;
-      y = (placement.y / MACRO_CELL_UNITS) * cellSizePx;
+      x = placement.x * cellSizePx;
+      y = placement.y * cellSizePx;
       tileW = MACRO_CELL_UNITS * cellSizePx;
       tileH = MACRO_CELL_UNITS * cellSizePx;
     } else {
