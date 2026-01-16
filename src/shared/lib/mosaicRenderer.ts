@@ -63,13 +63,14 @@ const drawRotatedTile = (
   img: HTMLImageElement,
   x: number,
   y: number,
-  size: number,
+  width: number,
+  height: number,
   rot: Rotation,
 ) => {
   ctx.save();
-  ctx.translate(x + size / 2, y + size / 2);
+  ctx.translate(x + width / 2, y + height / 2);
   ctx.rotate((rot * Math.PI) / 2);
-  ctx.drawImage(img, -size / 2, -size / 2, size, size);
+  ctx.drawImage(img, -width / 2, -height / 2, width, height);
   ctx.restore();
 };
 
@@ -199,12 +200,31 @@ export const renderMapMosaic = async (
     const img = imageCache.get(tile.imageUrl);
     if (!img) continue;
 
-    const col = placement.x / MACRO_CELL_UNITS;
-    const row = placement.y / MACRO_CELL_UNITS;
-    const x = col * unitPx;
-    const y = row * unitPx;
+    let x: number;
+    let y: number;
+    let tileW: number;
+    let tileH: number;
 
-    drawRotatedTile(ctx, img, x, y, unitPx, placement.rot);
+    if (mode === 'trackerAligned') {
+      // In trackerAligned mode:
+      // - placement.x/y are in microcell units
+      // - each pixel = cellSizePx per microcell
+      // - tile size = MAP_UNITS_PER_TILE * cellSizePx (macro tile covers multiple microcells)
+      x = placement.x * cellSizePx;
+      y = placement.y * cellSizePx;
+      tileW = MACRO_CELL_UNITS * cellSizePx;
+      tileH = MACRO_CELL_UNITS * cellSizePx;
+    } else {
+      // fit/cellAligned modes: tiles positioned by macro cell index
+      const col = placement.x / MACRO_CELL_UNITS;
+      const row = placement.y / MACRO_CELL_UNITS;
+      x = col * unitPx;
+      y = row * unitPx;
+      tileW = unitPx;
+      tileH = unitPx;
+    }
+
+    drawRotatedTile(ctx, img, x, y, tileW, tileH, placement.rot);
   }
 
   // Convert to Blob URL (more efficient than base64 dataURL)

@@ -38,8 +38,11 @@ import s from './EncounterTracker.module.scss';
 const DANGEON_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-1.png';
 const VILLAGE_MAP_IMAGE = 'https://encounterium.ru/map-images/plug-maps/cropped-map-2.png';
 
-const cols = 26;
-const rows = 18;
+/** Default grid dimensions for static maps */
+const DEFAULT_COLS = 26;
+const DEFAULT_ROWS = 18;
+/** Micro cell size in pixels (constant for tracker) */
+const CELL_PX = 50;
 
 export const EncounterTracker = () => {
   const dispatch = useDispatch();
@@ -48,11 +51,25 @@ export const EncounterTracker = () => {
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [isFirstRender2, setIsFirstRender2] = useState(true);
   const [mapImage, setMapImage] = useState(DANGEON_MAP_IMAGE);
+
+  // Dynamic grid dimensions (microcell units)
+  const [trackerCols, setTrackerCols] = useState(DEFAULT_COLS);
+  const [trackerRows, setTrackerRows] = useState(DEFAULT_ROWS);
+
   const [cells, setCells] = useState<boolean[][]>(() =>
-    Array(rows)
+    Array(DEFAULT_ROWS)
       .fill(false)
-      .map(() => Array<boolean>(cols).fill(false)),
+      .map(() => Array<boolean>(DEFAULT_COLS).fill(false)),
   );
+
+  // Reinitialize cells grid when dimensions change
+  useEffect(() => {
+    setCells(
+      Array(trackerRows)
+        .fill(false)
+        .map(() => Array<boolean>(trackerCols).fill(false)),
+    );
+  }, [trackerRows, trackerCols]);
 
   // Saved map dialog state
   const [isSavedMapDialogOpen, setIsSavedMapDialogOpen] = useState(false);
@@ -76,10 +93,6 @@ export const EncounterTracker = () => {
     return result;
   }, [tileCategories]);
 
-  // Target dimensions for mosaic (board size)
-  const boardWidthPx = cols * 50; // 1300px
-  const boardHeightPx = rows * 50; // 900px
-
   // Handle saved map selection
   const handleSelectSavedMap = useCallback(
     async (map: MapFull) => {
@@ -96,14 +109,24 @@ export const EncounterTracker = () => {
         return;
       }
 
+      // Set grid dimensions from map (in microcell units)
+      const newCols = map.data.widthUnits;
+      const newRows = map.data.heightUnits;
+      setTrackerCols(newCols);
+      setTrackerRows(newRows);
+
       try {
+        // Render mosaic at the new dimensions
+        const targetWidthPx = newCols * CELL_PX;
+        const targetHeightPx = newRows * CELL_PX;
+
         const result = await getOrRenderMosaic(map.id, {
           mapData: map.data,
           tilesById,
-          targetWidthPx: boardWidthPx,
-          targetHeightPx: boardHeightPx,
+          targetWidthPx,
+          targetHeightPx,
           mode: 'trackerAligned',
-          cellSizePx: 50,
+          cellSizePx: CELL_PX,
         });
 
         // Revoke previous blob URL if exists
@@ -118,15 +141,19 @@ export const EncounterTracker = () => {
         toast.error('Не удалось отрисовать карту');
       }
     },
-    [tilesById, boardWidthPx, boardHeightPx],
+    [tilesById],
   );
 
   // Helper to switch to static map and revoke blob URL
   const switchToStaticMap = useCallback((url: string) => {
+    // Revoke mosaic blob URL if exists
     if (currentMosaicUrlRef.current) {
       revokeMosaicUrl(currentMosaicUrlRef.current);
       currentMosaicUrlRef.current = null;
     }
+    // Reset grid to default dimensions
+    setTrackerCols(DEFAULT_COLS);
+    setTrackerRows(DEFAULT_ROWS);
     setMapImage(url);
   }, []);
 
@@ -304,7 +331,14 @@ export const EncounterTracker = () => {
           <TrackPanel />
 
           <div className={s.trackerPanel}>
-            <BattleMap image={mapImage} cells={cells} setCells={setCells} />
+            <BattleMap
+              image={mapImage}
+              cells={cells}
+              setCells={setCells}
+              cols={trackerCols}
+              rows={trackerRows}
+              cellSize={CELL_PX}
+            />
             <PopupMenu items={menuItems} />
             <div className={s.stickyPanel}>
               <CardList />
